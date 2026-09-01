@@ -1,0 +1,491 @@
+{
+ "碾碎爪": {
+  "max_hp_seen": [
+   209
+  ],
+  "floors": [
+   33
+  ],
+  "intents": {
+   "Attack": {
+    "18": 2,
+    "12": 2,
+    "4": 3,
+    "6": 3,
+    "9×2": 1,
+    "6×2": 3,
+    "21": 2,
+    "14": 6
+   },
+   "Buff": {
+    "<空>": 7
+   },
+   "Debuff": {
+    "<空>": 4
+   },
+   "Defend": {
+    "<空>": 3
+   }
+  },
+  "status_seen": [
+   "BACK_ATTACK_LEFT_POWER",
+   "CRAB_RAGE_POWER",
+   "STRENGTH_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "火箭": {
+  "max_hp_seen": [
+   199
+  ],
+  "floors": [
+   33
+  ],
+  "intents": {
+   "Attack": {
+    "3": 2,
+    "4": 2,
+    "27": 3,
+    "18": 2,
+    "49": 3,
+    "33": 4,
+    "7": 5,
+    "30": 1
+   },
+   "Buff": {
+    "<空>": 4
+   },
+   "Sleep": {
+    "<空>": 3
+   }
+  },
+  "status_seen": [
+   "BACK_ATTACK_RIGHT_POWER",
+   "CRAB_RAGE_POWER",
+   "STRENGTH_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "同族神官": {
+  "max_hp_seen": [
+   190
+  ],
+  "floors": [
+   17
+  ],
+  "intents": {
+   "Attack": {
+    "8": 7,
+    "3×3": 6,
+    "10": 8
+   },
+   "Buff": {
+    "<空>": 3
+   },
+   "Debuff": {
+    "<空>": 15
+   }
+  },
+  "status_seen": [
+   "STRENGTH_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "虱虫之祖": {
+  "max_hp_seen": [
+   134
+  ],
+  "floors": [
+   31
+  ],
+  "intents": {
+   "Attack": {
+    "9": 4,
+    "19": 5,
+    "14": 6
+   },
+   "Buff": {
+    "<空>": 4
+   },
+   "Debuff": {
+    "<空>": 10
+   },
+   "Defend": {
+    "<空>": 4
+   }
+  },
+  "status_seen": [
+   "CURL_UP_POWER",
+   "STRENGTH_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "旧日雕像": {
+  "max_hp_seen": [
+   127
+  ],
+  "floors": [
+   13
+  ],
+  "intents": {
+   "Attack": {
+    "23": 6
+   },
+   "Buff": {
+    "<空>": 4
+   },
+   "Sleep": {
+    "<空>": 7
+   }
+  },
+  "status_seen": [
+   "SLOW_POWER",
+   "STRENGTH_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "雾菇": {
+  "max_hp_seen": [
+   74
+  ],
+  "floors": [
+   15
+  ],
+  "intents": {
+   "Attack": {
+    "8": 3,
+    "15": 1
+   },
+   "Buff": {
+    "<空>": 3
+   },
+   "Summon": {
+    "<空>": 5
+   }
+  },
+  "status_seen": [
+   "STRENGTH_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "立柱构造体": {
+  "max_hp_seen": [
+   65
+  ],
+  "floors": [
+   6
+  ],
+  "intents": {
+   "Attack": {
+    "9": 4,
+    "11": 1
+   },
+   "Buff": {
+    "<空>": 8
+   }
+  },
+  "status_seen": [
+   "ARTIFACT_POWER",
+   "STRENGTH_POWER"
+  ]
+ },
+ "同族信徒": {
+  "max_hp_seen": [
+   58,
+   59
+  ],
+  "floors": [
+   17
+  ],
+  "intents": {
+   "Attack": {
+    "5": 3,
+    "7": 7,
+    "2×2": 4,
+    "4×2": 12,
+    "9": 6,
+    "6×2": 2
+   },
+   "Buff": {
+    "<空>": 14
+   }
+  },
+  "status_seen": [
+   "MINION_POWER",
+   "STRENGTH_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "毛绒伏地虫": {
+  "max_hp_seen": [
+   56
+  ],
+  "floors": [
+   5
+  ],
+  "intents": {
+   "Attack": {
+    "4": 4
+   },
+   "Buff": {
+    "<空>": 2
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "飞蝇菌子": {
+  "max_hp_seen": [
+   47
+  ],
+  "floors": [
+   14
+  ],
+  "intents": {
+   "Attack": {
+    "8": 4,
+    "11": 4,
+    "16": 3,
+    "12": 2
+   },
+   "Debuff": {
+    "<空>": 10
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "盛碗虫（石）": {
+  "max_hp_seen": [
+   45
+  ],
+  "floors": [
+   19
+  ],
+  "intents": {
+   "Attack": {
+    "15": 6
+   }
+  },
+  "status_seen": [
+   "IMBALANCED_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "小啃兽": {
+  "max_hp_seen": [
+   42,
+   44
+  ],
+  "floors": [
+   7
+  ],
+  "intents": {
+   "Attack": {
+    "6": 4,
+    "14": 4,
+    "8": 1
+   },
+   "Buff": {
+    "<空>": 6
+   },
+   "Defend": {
+    "<空>": 5
+   }
+  },
+  "status_seen": [
+   "STRENGTH_POWER",
+   "VULNERABLE_POWER"
+  ]
+ },
+ "缩小甲虫": {
+  "max_hp_seen": [
+   40
+  ],
+  "floors": [
+   2
+  ],
+  "intents": {
+   "Attack": {
+    "7": 5,
+    "13": 3
+   },
+   "DebuffStrong": {
+    "<空>": 4
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "树叶史莱姆（中）": {
+  "max_hp_seen": [
+   34
+  ],
+  "floors": [
+   8
+  ],
+  "intents": {
+   "Attack": {
+    "8": 4
+   },
+   "StatusCard": {
+    "2": 6
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "树枝史莱姆（中）": {
+  "max_hp_seen": [
+   27,
+   28
+  ],
+  "floors": [
+   4,
+   8,
+   14
+  ],
+  "intents": {
+   "Attack": {
+    "11": 10
+   },
+   "StatusCard": {
+    "1": 14
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "劫掠者追踪手": {
+  "max_hp_seen": [
+   24
+  ],
+  "floors": [
+   12
+  ],
+  "intents": {
+   "Attack": {
+    "1×8": 4
+   },
+   "Debuff": {
+    "<空>": 4
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "盛碗虫（卵）": {
+  "max_hp_seen": [
+   22
+  ],
+  "floors": [
+   19
+  ],
+  "intents": {
+   "Attack": {
+    "7": 8
+   },
+   "Defend": {
+    "<空>": 8
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "劫掠者斧手": {
+  "max_hp_seen": [
+   20
+  ],
+  "floors": [
+   12
+  ],
+  "intents": {
+   "Attack": {
+    "5": 7,
+    "12": 2
+   },
+   "Defend": {
+    "<空>": 7
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "劫掠者弩手": {
+  "max_hp_seen": [
+   18
+  ],
+  "floors": [
+   12
+  ],
+  "intents": {
+   "Defend": {
+    "<空>": 3
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "树叶史莱姆（小）": {
+  "max_hp_seen": [
+   13
+  ],
+  "floors": [
+   4,
+   8
+  ],
+  "intents": {
+   "Attack": {
+    "3": 4
+   },
+   "StatusCard": {
+    "1": 4
+   }
+  },
+  "status_seen": [
+   "VULNERABLE_POWER"
+  ]
+ },
+ "树枝史莱姆（小）": {
+  "max_hp_seen": [
+   7,
+   10
+  ],
+  "floors": [
+   4,
+   8
+  ],
+  "intents": {
+   "Attack": {
+    "4": 3
+   }
+  },
+  "status_seen": []
+ },
+ "利齿之眼": {
+  "max_hp_seen": [
+   6
+  ],
+  "floors": [
+   15
+  ],
+  "intents": {
+   "StatusCard": {
+    "3": 2
+   }
+  },
+  "status_seen": [
+   "ILLUSION_POWER",
+   "MINION_POWER"
+  ]
+ }
+}

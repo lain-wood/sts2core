@@ -1,0 +1,250 @@
+{
+ "source": "id 来自 /api/v1/compendium 的 sections.potion_lab（游戏权威）；文本来自 player.potions[] / rewards.items[]（当前局面 + traces/raw_*/ 历史帧）",
+ "why_not_wiki": "GET /api/v1/wiki 的 scope 是 active_profile_discovered_cards_and_relics，item_type 只认 all/card/relic —— 药水查不到。compendium 的 potion_lab 也自己声明只给 id、不给规则文本。",
+ "note": "只含本档案**已发现**的药水。有文本的那些是**游戏原文**（[wiki] 一档）；没文本的留空 —— 内核那边就该继续缺着，不要照初代记忆填。数值要升到 [实测] 得在实战里喝一次录进 trace，verify 会自动比。",
+ "count": 40,
+ "with_text": 21,
+ "no_text": [
+  "STRENGTH_POTION",
+  "HEART_OF_IRON",
+  "COLORLESS_POTION",
+  "GIGANTIFICATION_POTION",
+  "FYSH_OIL",
+  "FOUL_POTION",
+  "DISTILLED_CHAOS",
+  "CLARITY",
+  "LUCKY_TONIC",
+  "BLESSING_OF_THE_FORGE",
+  "FLEX_POTION",
+  "FORTIFIER",
+  "CURE_ALL",
+  "LIQUID_BRONZE",
+  "SOLDIERS_STEW",
+  "ASHWATER",
+  "BLOOD_POTION",
+  "MAZALETHS_GIFT",
+  "DROPLET_OF_PRECOGNITION"
+ ],
+ "raw_frames_scanned": 1019,
+ "potions": {
+  "FIRE_POTION": {
+   "name": "火焰药水",
+   "description": "造成20点伤害。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "target_type": "AnyEnemy",
+   "can_use_in_combat": true,
+   "id": "FIRE_POTION"
+  },
+  "STRENGTH_POTION": {
+   "id": "STRENGTH_POTION"
+  },
+  "WEAK_POTION": {
+   "name": "虚弱药水",
+   "description": "给予3层虚弱。",
+   "target_type": "AnyEnemy",
+   "can_use_in_combat": true,
+   "text_from": "当前局面",
+   "id": "WEAK_POTION"
+  },
+  "ENERGY_POTION": {
+   "name": "能量药水",
+   "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。",
+   "target_type": "AnyPlayer",
+   "can_use_in_combat": true,
+   "text_from": "raw 历史帧",
+   "id": "ENERGY_POTION"
+  },
+  "BLOCK_POTION": {
+   "name": "格挡药水",
+   "description": "获得12点格挡。",
+   "target_type": "AnyPlayer",
+   "can_use_in_combat": true,
+   "text_from": "raw 历史帧",
+   "id": "BLOCK_POTION"
+  },
+  "EXPLOSIVE_AMPOULE": {
+   "name": "爆炸安瓿",
+   "description": "对所有敌人造成10点伤害。",
+   "text_from": "当前局面(奖励屏)",
+   "target_type": "AllEnemies",
+   "can_use_in_combat": true,
+   "id": "EXPLOSIVE_AMPOULE"
+  },
+  "HEART_OF_IRON": {
+   "id": "HEART_OF_IRON"
+  },
+  "SKILL_POTION": {
+   "name": "技能药水",
+   "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。",
+   "target_type": "Self",
+   "can_use_in_combat": true,
+   "text_from": "raw 历史帧",
+   "id": "SKILL_POTION"
+  },
+  "COLORLESS_POTION": {
+   "id": "COLORLESS_POTION"
+  },
+  "POWER_POTION": {
+   "name": "能力药水",
+   "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。",
+   "target_type": "Self",
+   "can_use_in_combat": true,
+   "text_from": "raw 历史帧",
+   "id": "POWER_POTION"
+  },
+  "RADIANT_TINCTURE": {
+   "name": "明耀酊剂",
+   "description": "获得[ironclad_energy_icon.png]。在你的下3个回合开始时，额外获得[ironclad_energy_icon.png]。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "target_type": "AnyPlayer",
+   "can_use_in_combat": true,
+   "id": "RADIANT_TINCTURE"
+  },
+  "DEXTERITY_POTION": {
+   "name": "敏捷药水",
+   "description": "获得2点敏捷。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "target_type": "AnyPlayer",
+   "can_use_in_combat": true,
+   "id": "DEXTERITY_POTION"
+  },
+  "GIGANTIFICATION_POTION": {
+   "id": "GIGANTIFICATION_POTION"
+  },
+  "FYSH_OIL": {
+   "id": "FYSH_OIL"
+  },
+  "FOUL_POTION": {
+   "id": "FOUL_POTION"
+  },
+  "STABLE_SERUM": {
+   "name": "稳定血清",
+   "description": "保留你的手牌2回合。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "id": "STABLE_SERUM"
+  },
+  "DISTILLED_CHAOS": {
+   "id": "DISTILLED_CHAOS"
+  },
+  "VULNERABLE_POTION": {
+   "name": "易伤药水",
+   "description": "给予3层易伤。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "target_type": "AnyEnemy",
+   "can_use_in_combat": true,
+   "id": "VULNERABLE_POTION"
+  },
+  "GAMBLERS_BREW": {
+   "name": "赌徒特酿",
+   "description": "丢弃任意张牌，然后抽相同数量的牌。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "id": "GAMBLERS_BREW"
+  },
+  "CLARITY": {
+   "id": "CLARITY"
+  },
+  "REGEN_POTION": {
+   "name": "再生药水",
+   "description": "获得5层再生。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "target_type": "AnyPlayer",
+   "can_use_in_combat": true,
+   "id": "REGEN_POTION"
+  },
+  "LUCKY_TONIC": {
+   "id": "LUCKY_TONIC"
+  },
+  "ATTACK_POTION": {
+   "name": "攻击药水",
+   "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "target_type": "Self",
+   "can_use_in_combat": true,
+   "id": "ATTACK_POTION"
+  },
+  "BLESSING_OF_THE_FORGE": {
+   "id": "BLESSING_OF_THE_FORGE"
+  },
+  "FLEX_POTION": {
+   "id": "FLEX_POTION"
+  },
+  "SWIFT_POTION": {
+   "name": "迅捷药水",
+   "description": "抽3张牌。",
+   "text_from": "raw 历史帧(奖励屏)",
+   "id": "SWIFT_POTION"
+  },
+  "DUPLICATOR": {
+   "name": "复制药水",
+   "description": "本回合，你打出的下一张牌会额外打出一次。",
+   "target_type": "Self",
+   "can_use_in_combat": true,
+   "text_from": "raw 历史帧",
+   "id": "DUPLICATOR"
+  },
+  "FORTIFIER": {
+   "id": "FORTIFIER"
+  },
+  "FAIRY_IN_A_BOTTLE": {
+   "name": "瓶中精灵",
+   "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。",
+   "target_type": "Self",
+   "can_use_in_combat": false,
+   "text_from": "当前局面",
+   "id": "FAIRY_IN_A_BOTTLE"
+  },
+  "CURE_ALL": {
+   "id": "CURE_ALL"
+  },
+  "OROBIC_ACID": {
+   "name": "欧洛巴斯之酸",
+   "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。",
+   "target_type": "Self",
+   "can_use_in_combat": true,
+   "text_from": "raw 历史帧",
+   "id": "OROBIC_ACID"
+  },
+  "SNECKO_OIL": {
+   "name": "异蛇之油",
+   "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。",
+   "target_type": "AnyPlayer",
+   "can_use_in_combat": true,
+   "text_from": "raw 历史帧",
+   "id": "SNECKO_OIL"
+  },
+  "POTION_SHAPED_ROCK": {
+   "name": "药水形状的石头",
+   "description": "造成15点伤害。",
+   "target_type": "AnyEnemy",
+   "can_use_in_combat": true,
+   "text_from": "raw 历史帧",
+   "id": "POTION_SHAPED_ROCK"
+  },
+  "LIQUID_BRONZE": {
+   "id": "LIQUID_BRONZE"
+  },
+  "SOLDIERS_STEW": {
+   "id": "SOLDIERS_STEW"
+  },
+  "ASHWATER": {
+   "id": "ASHWATER"
+  },
+  "BLOOD_POTION": {
+   "id": "BLOOD_POTION"
+  },
+  "MAZALETHS_GIFT": {
+   "id": "MAZALETHS_GIFT"
+  },
+  "DROPLET_OF_PRECOGNITION": {
+   "id": "DROPLET_OF_PRECOGNITION"
+  },
+  "BOTTLED_POTENTIAL": {
+   "name": "瓶装潜能",
+   "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。",
+   "target_type": "AnyPlayer",
+   "can_use_in_combat": true,
+   "text_from": "当前局面",
+   "id": "BOTTLED_POTENTIAL"
+  }
+ }
+}

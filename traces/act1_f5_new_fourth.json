@@ -1,0 +1,2376 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-21T01:16:35+08:00",
+ "run": {
+  "act": 1,
+  "floor": 5,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 72,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 72,
+      "max_hp": 72,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 9,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1083,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 72,
+     "max_hp": 80,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 72,
+      "max_hp": 72,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 9,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1086,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 72,
+     "max_hp": 80,
+     "block": 10,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 72,
+      "max_hp": 72,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 9,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "MOLTEN_FIST",
+    "card_name": "熔融之拳",
+    "target": "MAWLER_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1150,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 72,
+     "max_hp": 80,
+     "block": 10,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 62,
+      "max_hp": 72,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 9,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 43,
+    "ms": 3800,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 72,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 62,
+      "max_hp": 72,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 4,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 4,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BASH",
+    "card_name": "痛击",
+    "target": "MAWLER_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1300,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 72,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 54,
+      "max_hp": 72,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 4,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击",
+    "target": "MAWLER_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1266,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 72,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 41,
+      "max_hp": 72,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 51,
+    "ms": 4449,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 41,
+      "max_hp": 72,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "MAWLER_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1186,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 32,
+      "max_hp": 72,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "TWIN_STRIKE",
+    "card_name": "双重打击",
+    "target": "MAWLER_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1365,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 18,
+      "max_hp": 72,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "MAWLER_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1180,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 9,
+      "max_hp": 72,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 47,
+    "ms": 3900,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "VULNERABLE_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 9,
+      "max_hp": 72,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6×2",
+        "description": "这个敌人将要攻击造成6点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "BASH",
+    "card_name": "痛击",
+    "target": "MAWLER_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1165,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "VULNERABLE_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "MAWLER_0",
+      "name": "蛮兽",
+      "hp": 1,
+      "max_hp": 72,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6×2",
+        "description": "这个敌人将要攻击造成6点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "MAWLER_0"
+   },
+   "settle": {
+    "polls": 19,
+    "ms": 1666,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 64,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "回合1 蛮兽(MAWLER)72血，内容表里没有这只敌人：求解器正确报\"跨回合推演不可用\"，拒绝作答而不是瞎推。\n瓶中精灵落到 potion::UNKNOWN，没进定价表——拒绝是对的；但 --live 把\"身上\"的瓶数印成了 2/3（实际 3/3），那是个静默漏报，待修。\n存活线：防御x2挡满8点，熔融之拳10点。熔融之拳会消耗，所以\"留到有易伤的回合再打\"这个选项单回合求解器结构性看不见。\n回合2 三条线都没选痛击（易伤权重按最多2层封顶，单回合看不到它下回合的乘数价值）。我改选痛击+剑柄打击=21点且留易伤1层，优于竞速线的24点无易伤。\n虚弱药水报\"省 0 血\"值得查：威胁是观测意图标签(14)，已经是最终伤害值；给敌人上虚弱不会改变注入的那个常数。若真是这样，这个 0 是个自信的错误答案，应该像跨回合药水那样拒绝评分。\n回合3 易伤兑现：打击9 + 双重打击7+7 + 打击9 = 32 点（敌人41->9）。上回合选痛击是对的。\n爆炸安瓿这回合报\"省 6 血\"——新加的药水进定价了；6 < 门槛10 所以留着，判决正确。\n回合4 三个目标函数一致，痛击(8点+易伤2)->打击(6x1.5=9) 清场。"
+}

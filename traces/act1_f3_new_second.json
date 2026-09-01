@@ -1,0 +1,1333 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-21T01:08:52+08:00",
+ "run": {
+  "act": 1,
+  "floor": 3,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SHRINKER_BEETLE_0",
+      "name": "缩小甲虫",
+      "hp": 40,
+      "max_hp": 40,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "DebuffStrong",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SHRINKER_BEETLE_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1064,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SHRINKER_BEETLE_0",
+      "name": "缩小甲虫",
+      "hp": 34,
+      "max_hp": 40,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "DebuffStrong",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击",
+    "target": "SHRINKER_BEETLE_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1287,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SHRINKER_BEETLE_0",
+      "name": "缩小甲虫",
+      "hp": 25,
+      "max_hp": 40,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "DebuffStrong",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SHRINKER_BEETLE_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1000,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SHRINKER_BEETLE_0",
+      "name": "缩小甲虫",
+      "hp": 19,
+      "max_hp": 40,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "DebuffStrong",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 42,
+    "ms": 3500,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "SHRINK_POWER": -1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SHRINKER_BEETLE_0",
+      "name": "缩小甲虫",
+      "hp": 19,
+      "max_hp": 40,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "7",
+        "description": "这个敌人将要攻击造成7点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 给予2层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "BASH",
+    "card_name": "痛击",
+    "target": "SHRINKER_BEETLE_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1243,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "SHRINK_POWER": -1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SHRINKER_BEETLE_0",
+      "name": "缩小甲虫",
+      "hp": 14,
+      "max_hp": 40,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "7",
+        "description": "这个敌人将要攻击造成7点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "BREAKTHROUGH",
+    "card_name": "突破",
+    "target": "SHRINKER_BEETLE_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1265,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 79,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "SHRINK_POWER": -1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SHRINKER_BEETLE_0",
+      "name": "缩小甲虫",
+      "hp": 5,
+      "max_hp": 40,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "7",
+        "description": "这个敌人将要攻击造成7点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 51,
+    "ms": 4385,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 72,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "SHRINK_POWER": -1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SHRINKER_BEETLE_0",
+      "name": "缩小甲虫",
+      "hp": 5,
+      "max_hp": 40,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "13",
+        "description": "这个敌人将要攻击造成13点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SHRINKER_BEETLE_0"
+   },
+   "settle": {
+    "polls": 19,
+    "ms": 1599,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 78,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "回合1 缩小甲虫 40 血，意图 DebuffStrong（会给我上缩小 x2/3）。存活与竞速给同一条线：打击->剑柄打击->打击 = 21 点。\n回合2 求解器分歧：存活=防御防御打击(敌人剩15)，竞速=痛击+突破(敌人剩5)。选竞速：80/80 满血挨7点无所谓，早一回合结束更值。这正是文档里\"单回合结构性低估伤害\"。\n缩小的卡面写的是\"攻击伤害减少30%\"，而内核 damage.rs 写的是 x2/3。本帧三个基础值 6/8/9 在两种算法下取整后完全相同(4/5/6)，分不开——要找 base 10 或 13 的样本。\n回合3 三个目标函数一致，一张打击(带易伤)清场。竞速线比存活线早一整回合结束。"
+}

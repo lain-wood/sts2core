@@ -1,0 +1,5 @@
+# 由 record_trace.py --plan 在执行后自动重写。
+# 2026-09-01T23:52:45+08:00：2 步成功
+# 下面的动作行已被注释；要继续录制请重写本文件。
+trace traces/act1_f17_waterfall_giant.json
+#. finish

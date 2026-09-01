@@ -1,0 +1,3248 @@
+{
+ "source": "https://sts2.wiki/enemies/（社区 wiki，**不是权威**；权威是游戏本身）",
+ "note": "每条都是假设。判决要靠 verify --predict-enemy 和实录 trace。",
+ "count": 115,
+ "enemies": {
+  "axebot": {
+   "slug": "axebot",
+   "name": "axebot",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "40 - 44 (42 - 46)",
+   "moves": [
+    {
+     "intent": "Defense",
+     "name": "Boot Up",
+     "id": "BOOT_UP",
+     "effect": "Block 10 / Gain 1 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "One-Two",
+     "id": "ONE_TWO",
+     "effect": "Damage 5x2 (6x2)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Sharpen",
+     "id": "SHARPEN",
+     "effect": "Gain 4 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Hammer Uppercut",
+     "id": "HAMMER_UPPERCUT",
+     "effect": "Damage 8 (10) / Apply 1 Weak / Apply 1 Frail"
+    }
+   ],
+   "pattern": "Chooses randomly from One-Two, Sharpen, and Hammer Uppercut (allowed options equally likely). Cannot Sharpen twice in a row. Cannot use One-Two or Hammer Uppercut more than twice in a row. Summoned Axebots (from Stock) immediately start with Boot Up, then resume choosing random moves.",
+   "source": "wiki"
+  },
+  "battle-friend-v1-0": {
+   "slug": "battle-friend-v1-0",
+   "name": "battle friend v1.0",
+   "category": "monster",
+   "acts": "Event encounters",
+   "hp_text": "75 HP",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Nothing",
+     "id": "NOTHING",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "battle-friend-v2-0": {
+   "slug": "battle-friend-v2-0",
+   "name": "battle friend v2.0",
+   "category": "monster",
+   "acts": "Event encounters",
+   "hp_text": "150 HP",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Nothing",
+     "id": "NOTHING",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "battle-friend-v3-0": {
+   "slug": "battle-friend-v3-0",
+   "name": "battle friend v3.0",
+   "category": "monster",
+   "acts": "Event encounters",
+   "hp_text": "300 HP",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Nothing",
+     "id": "NOTHING",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "bowlbug-egg": {
+   "slug": "bowlbug-egg",
+   "name": "bowlbug (egg)",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "21 - 22 (23 - 24)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Bite",
+     "id": "BITE",
+     "effect": "Damage 7 (8) / Block 7 (8)"
+    }
+   ],
+   "pattern": "Always uses Bite.",
+   "source": "wiki"
+  },
+  "bowlbug-nectar": {
+   "slug": "bowlbug-nectar",
+   "name": "bowlbug (nectar)",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "35 - 38 (36 - 39)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Thrash",
+     "id": "THRASH",
+     "effect": "Damage 3"
+    },
+    {
+     "intent": "Buff",
+     "name": "Buff",
+     "id": "BUFF",
+     "effect": "Gain 15 (16) Strength"
+    }
+   ],
+   "pattern": "Starts with Thrash -> Buff. Then uses Thrash every turn.",
+   "source": "wiki"
+  },
+  "bowlbug-rock": {
+   "slug": "bowlbug-rock",
+   "name": "bowlbug (rock)",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "45 - 48 (46 - 49)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Headbutt",
+     "id": "HEADBUTT",
+     "effect": "Damage 15 (16)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Dizzy",
+     "id": "DIZZY",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Uses Headbutt every turn. If fully blocked, becomes stunned for a turn before resuming Headbutt.",
+   "source": "wiki"
+  },
+  "bowlbug-silk": {
+   "slug": "bowlbug-silk",
+   "name": "bowlbug (silk)",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "40 - 43 (41 - 44)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Toxic Spit",
+     "id": "TOXIC_SPIT",
+     "effect": "Apply 1 Weak"
+    },
+    {
+     "intent": "Utility",
+     "name": "Trash",
+     "id": "TRASH",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Alternates between Toxic Spit and Thrash.",
+   "source": "wiki"
+  },
+  "bygone-effigy": {
+   "slug": "bygone-effigy",
+   "name": "bygone effigy",
+   "category": "elite",
+   "acts": "The Overgrowth",
+   "hp_text": "127 (132)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Sleep",
+     "id": "SLEEP",
+     "effect": "Pass Turn"
+    },
+    {
+     "intent": "Buff",
+     "name": "Wake",
+     "id": "WAKE",
+     "effect": "Gain 10 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Initial Sleep",
+     "id": "INITIAL_SLEEP",
+     "effect": "No effect text documented yet."
+    },
+    {
+     "intent": "Attack",
+     "name": "Slashes",
+     "id": "SLASHES",
+     "effect": "Deals 15 (17 ascension) damage."
+    }
+   ],
+   "pattern": "Starts with Sleep -> Wake -> Slash. Then uses Slash every turn after.",
+   "source": "wiki"
+  },
+  "byrdonis": {
+   "slug": "byrdonis",
+   "name": "byrdonis",
+   "category": "elite",
+   "acts": "The Overgrowth",
+   "hp_text": "91 - 94 (99)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Peck",
+     "id": "PECK",
+     "effect": "Damage 3x3 (4x3)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Swoop",
+     "id": "SWOOP",
+     "effect": "Damage 16 (18)"
+    }
+   ],
+   "pattern": "Alternates between Swoop -> Peck.",
+   "source": "wiki"
+  },
+  "byrdpip": {
+   "slug": "byrdpip",
+   "name": "byrdpip",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "9999 HP",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Nothing",
+     "id": "NOTHING",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "calcified-cultist": {
+   "slug": "calcified-cultist",
+   "name": "calcified cultist",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "38 - 41 (39 - 42)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Incantation",
+     "id": "INCANTATION",
+     "effect": "Gain Ritual 2"
+    },
+    {
+     "intent": "Attack",
+     "name": "Dark Strike",
+     "id": "DARK_STRIKE",
+     "effect": "Damage 9 (11)"
+    }
+   ],
+   "pattern": "Starts with Incantation. Then uses Dark Strike every turn after.",
+   "source": "wiki"
+  },
+  "ceremonial-beast": {
+   "slug": "ceremonial-beast",
+   "name": "ceremonial beast",
+   "category": "boss",
+   "acts": "The Overgrowth",
+   "hp_text": "252 (262)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Stamp",
+     "id": "STAMP",
+     "effect": "Gains Plow 150 (160)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Plow",
+     "id": "PLOW",
+     "effect": "Damage 18 (20) / Gains 2 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Beast Cry",
+     "id": "BEAST_CRY",
+     "effect": "Apply Ringing"
+    },
+    {
+     "intent": "Attack",
+     "name": "Stomp",
+     "id": "STOMP",
+     "effect": "Damage 15 (17)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Crush",
+     "id": "CRUSH",
+     "effect": "Damage 17 (19) / Gains 3 (4) Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Stun",
+     "id": "STUN",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Starts with Stamp. Then uses Plow every turn until it is stunned. After being stunned, cycles through Beast Cry -> Stomp -> Crush.",
+   "source": "wiki"
+  },
+  "chomper": {
+   "slug": "chomper",
+   "name": "chomper",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "60 - 64 (63 - 67)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Clamp",
+     "id": "CLAMP",
+     "effect": "Damage 8x2 (9x2)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Screech",
+     "id": "SCREECH",
+     "effect": "Add 3 Dazed to Discard"
+    }
+   ],
+   "pattern": "First Chomper starts with Clamp, second with Screech. Then continue cycling through Clamp -> Screech.",
+   "source": "wiki"
+  },
+  "corpse-slug": {
+   "slug": "corpse-slug",
+   "name": "corpse slug",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "25 - 27 (27 - 29)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Whip Slap",
+     "id": "WHIP_SLAP",
+     "effect": "Damage 3x2"
+    },
+    {
+     "intent": "Attack",
+     "name": "Glomp",
+     "id": "GLOMP",
+     "effect": "Damage 8 (9)"
+    },
+    {
+     "intent": "Debuff",
+     "name": "Goop",
+     "id": "GOOP",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "First Corpse Slug picks its first move randomly. Each subsequent Corpse Slug starts with the next move in the cycle. Cycle through Whip Slap -> Glomp -> Gloop",
+   "source": "wiki"
+  },
+  "crusher": {
+   "slug": "crusher",
+   "name": "crusher",
+   "category": "boss",
+   "acts": "The Hive",
+   "hp_text": "199 (209)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Thrash",
+     "id": "THRASH",
+     "effect": "Damage 12 (14)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Enlarging Strike",
+     "id": "ENLARGING_STRIKE",
+     "effect": "Damage 4"
+    },
+    {
+     "intent": "Attack",
+     "name": "Bug Sting",
+     "id": "BUG_STING",
+     "effect": "Damage 6x2 (7x2) / Apply 2 Weak / Apply 2 Frail"
+    },
+    {
+     "intent": "Buff",
+     "name": "Adapt",
+     "id": "ADAPT",
+     "effect": "Gain 2 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Guarded Strike",
+     "id": "GUARDED_STRIKE",
+     "effect": "Damage 12 (14) / Block 18"
+    }
+   ],
+   "pattern": "Cycles through Thrash -> Enlarging Strike -> Bug Sting -> Adapt -> Guarded Strike.",
+   "source": "wiki"
+  },
+  "cubex-construct": {
+   "slug": "cubex-construct",
+   "name": "cubex construct",
+   "category": "monster",
+   "acts": "The Glory|The Overgrowth",
+   "hp_text": "65 (70)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Charge Up",
+     "id": "CHARGE_UP",
+     "effect": "Gain 2 Strength"
+    },
+    {
+     "intent": "Buff",
+     "name": "Expel Blast",
+     "id": "EXPEL_BLAST",
+     "effect": "Damage 5x2 (6x2)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Submerge",
+     "id": "SUBMERGE",
+     "effect": "Block 15"
+    },
+    {
+     "intent": "Utility",
+     "name": "Repeater",
+     "id": "REPEATER",
+     "effect": "No effect text documented yet."
+    },
+    {
+     "intent": "Utility",
+     "name": "Repeater Move 2",
+     "id": "REPEATER_MOVE_2",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Cycles through Charge Up -> Repeater Blast - > Repeater Blast -> Expel Blast -> Submerge.",
+   "source": "wiki"
+  },
+  "damp-cultist": {
+   "slug": "damp-cultist",
+   "name": "damp cultist",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "51 - 53 (52 - 54)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Incantation",
+     "id": "INCANTATION",
+     "effect": "Ritual 5 (6)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Dark Strike",
+     "id": "DARK_STRIKE",
+     "effect": "Damage 1 (3)"
+    }
+   ],
+   "pattern": "Starts with Incantation. Then uses Dark Strike every turn after.",
+   "source": "wiki"
+  },
+  "decimillipede-3-segments": {
+   "slug": "decimillipede-3-segments",
+   "name": "decimillipede (3 segments)",
+   "category": "elite",
+   "acts": "",
+   "hp_text": "42 - 48 (48 - 56)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Writhe",
+     "id": "WRITHE",
+     "effect": "Damage 5x2 (6x2)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Bulk",
+     "id": "BULK",
+     "effect": "Damage 6 (7) / Gain 2 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Constrict",
+     "id": "CONSTRICT",
+     "effect": "Damage 8 (9) / Apply 1 Weak"
+    },
+    {
+     "intent": "Utility",
+     "name": "Dead",
+     "id": "DEAD",
+     "effect": "No effect text documented yet."
+    },
+    {
+     "intent": "Utility",
+     "name": "Reattach",
+     "id": "REATTACH",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "First segment starts with a random move, second segment starts with the next move in the cycle Writhe -> Bulk -> Constrict, and third segment starts with the next move after that. Cycles through Writhe -> Constrict -> Bulk. When killed, spends one turn dead and then one turn reviving with 25 HP. After reviving, continues the regular attack cycle from a random starting move.",
+   "source": "wiki"
+  },
+  "devoted-sculptor": {
+   "slug": "devoted-sculptor",
+   "name": "devoted sculptor",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "162 (172)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Forbidden Incantation",
+     "id": "FORBIDDEN_INCANTATION",
+     "effect": "Gain 9 Ritual."
+    },
+    {
+     "intent": "Attack",
+     "name": "Savage",
+     "id": "SAVAGE",
+     "effect": "Damage 12 (15)"
+    }
+   ],
+   "pattern": "Starts with Forbidden Incantation, then uses Savage every turn.",
+   "source": "wiki"
+  },
+  "door": {
+   "slug": "door",
+   "name": "door",
+   "category": "boss",
+   "acts": "The Glory",
+   "hp_text": "155 (165)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Dramatic Open",
+     "id": "DRAMATIC_OPEN",
+     "effect": "Damage 25 (28)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Door Slam",
+     "id": "DOOR_SLAM",
+     "effect": "Damage 15x2"
+    },
+    {
+     "intent": "Attack",
+     "name": "Enforce",
+     "id": "ENFORCE",
+     "effect": "Damage 20 / Gain 3 (4) Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Dead",
+     "id": "DEAD",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Cycles through Dramatic Open -> Door Slam -> Enforce. On death, becomes Doormaker.",
+   "source": "wiki"
+  },
+  "doormaker": {
+   "slug": "doormaker",
+   "name": "doormaker",
+   "category": "boss",
+   "acts": "The Glory",
+   "hp_text": "489 (512)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Beam",
+     "id": "BEAM",
+     "effect": "Damage 31 (34)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Get Back In",
+     "id": "GET_BACK_IN",
+     "effect": "Damage 40 (45) / Gains 5 Strength / Becomes Door"
+    },
+    {
+     "intent": "Utility",
+     "name": "What Is It",
+     "id": "WHAT_IS_IT",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Does Beam -> Get Back In.",
+   "source": "wiki"
+  },
+  "entomancer": {
+   "slug": "entomancer",
+   "name": "entomancer",
+   "category": "elite",
+   "acts": "The Hive",
+   "hp_text": "145 (155)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Pheromone Spit",
+     "id": "PHEROMONE_SPIT",
+     "effect": "If less than 3 Personal Hive: Gain 1 Personal Hive and 1 Strength / If at 3 Personal Hive: Gain 2 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Spear",
+     "id": "SPEAR",
+     "effect": "Damage 18 (20)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Beeeees!",
+     "id": "BEES",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Cycles through Bees -> Spear -> Pheromone Spit. After reaching 3 stacks of Personal Hive, switches to gaining 2 strength when using Pheromone Spit.",
+   "source": "wiki"
+  },
+  "exoskeleton": {
+   "slug": "exoskeleton",
+   "name": "exoskeleton",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "24 - 28 (25 - 29)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Skitter",
+     "id": "SKITTER",
+     "effect": "Damage 1x3 (1x4)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Mandible",
+     "id": "MANDIBLE",
+     "effect": "Damage 8 (9)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Enrage",
+     "id": "ENRAGE",
+     "effect": "Gain 2 Strength"
+    }
+   ],
+   "pattern": "First Exoskeleton starts with Skitter, second starts with Mandible, third starts with Enrage (and fourth starts randomly with Skitter or Mandible, if present). After Skitter always uses Mandible. After Mandible always uses Enrage. After Enrage chooses randomly between Skitter and Mandible.",
+   "source": "wiki"
+  },
+  "eye-with-teeth-minion": {
+   "slug": "eye-with-teeth-minion",
+   "name": "eye with teeth (minion)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "6",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Distract",
+     "id": "DISTRACT",
+     "effect": "3 Dazed to Discard"
+    }
+   ],
+   "pattern": "Always uses Distract.",
+   "source": "wiki"
+  },
+  "fabricator": {
+   "slug": "fabricator",
+   "name": "fabricator",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "150 (155)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Fabricate",
+     "id": "FABRICATE",
+     "effect": "Summons 1 Defensive Bot / Summons 1 Aggro Bot"
+    },
+    {
+     "intent": "Attack",
+     "name": "Fabricating Strike",
+     "id": "FABRICATING_STRIKE",
+     "effect": "Damage 18 (21) / Summon 1 Aggro Bot"
+    },
+    {
+     "intent": "Attack",
+     "name": "Disintegrate",
+     "id": "DISINTEGRATE",
+     "effect": "Damage 11 (13)"
+    }
+   ],
+   "pattern": "When # allies (not counting self) is 2 or fewer, picks randomly between Fabricate and Fabricating Strike (equally likely). When # allies (not counting self) is 3 or more, always uses Disintegrate.",
+   "source": "wiki"
+  },
+  "fat-gremlin": {
+   "slug": "fat-gremlin",
+   "name": "fat gremlin",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "13 - 17 (14 - 18)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Flee",
+     "id": "FLEE",
+     "effect": "Escape from combat"
+    },
+    {
+     "intent": "Utility",
+     "name": "Spawned",
+     "id": "SPAWNED",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Always uses Flee.",
+   "source": "wiki"
+  },
+  "flail-knight": {
+   "slug": "flail-knight",
+   "name": "flail knight",
+   "category": "elite",
+   "acts": "The Glory",
+   "hp_text": "101 (108)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "War Chant",
+     "id": "WAR_CHANT",
+     "effect": "Gain 3 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Flail",
+     "id": "FLAIL",
+     "effect": "Damage 9x2 (10x2)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Ram",
+     "id": "RAM",
+     "effect": "Damage 15 (17)"
+    }
+   ],
+   "pattern": "Starts with Ram. Then chooses randomly between War Chant, Flail, and Ram (allowed options equally likely). Flail and Ram cannot be used more than twice in a row. War Chant cannot be used twice in a row.",
+   "source": "wiki"
+  },
+  "flyconid": {
+   "slug": "flyconid",
+   "name": "flyconid",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "47 - 49 (51 - 53)",
+   "moves": [
+    {
+     "intent": "Debuff",
+     "name": "Vulnerable Spores",
+     "id": "VULNERABLE_SPORES",
+     "effect": "Apply 2 Vulnerable"
+    },
+    {
+     "intent": "Debuff",
+     "name": "Frail Spores",
+     "id": "FRAIL_SPORES",
+     "effect": "Damage 8 (9) / Apply 2 Frail"
+    },
+    {
+     "intent": "Attack",
+     "name": "Smash",
+     "id": "SMASH",
+     "effect": "Damage 11 (12)"
+    }
+   ],
+   "pattern": "Starts randomly with Frail Spores or Smash (equal probability). Then picks move randomly (equal probability for allowed moves). Cannot use any move twice in a row. Vulnerable Spores has a 3 turn cooldown after use, and Frail Spores has a 2 turn cooldown after use. Exception: If at any point it uses Vuln Spores -> Frail Spores -> Smash, then it will have no allowed moves and default to Vulnerable Spores.",
+   "source": "wiki"
+  },
+  "fogmog": {
+   "slug": "fogmog",
+   "name": "fogmog",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "74 (78)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Illusion",
+     "id": "ILLUSION",
+     "effect": "Summon 1 Eye with Teeth"
+    },
+    {
+     "intent": "Attack",
+     "name": "Swipe",
+     "id": "SWIPE",
+     "effect": "Damage 8 (9) / Gain 1 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Headbutt",
+     "id": "HEADBUTT",
+     "effect": "Damage 14 (16)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Swipe Random",
+     "id": "SWIPE_RANDOM",
+     "effect": "Deals 8 (9 ascension) damage."
+    }
+   ],
+   "pattern": "Starts with Illusion -> Swipe. When using Swipe after a non-Swipe move, follows up with 40% chance to Swipe and 60% chance to Headbutt. After using Swipe for second time in a row, always follows with Headbutt. After Headbutt, always uses Swipe.",
+   "source": "wiki"
+  },
+  "fossil-stalker": {
+   "slug": "fossil-stalker",
+   "name": "fossil stalker",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "51 - 53 (54 - 56)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Tackle",
+     "id": "TACKLE",
+     "effect": "Damage 9 (11) / Apply 1 Frail"
+    },
+    {
+     "intent": "Attack",
+     "name": "Latch",
+     "id": "LATCH",
+     "effect": "Damage 12 (14)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Lash",
+     "id": "LASH",
+     "effect": "Damage 3x2 (4x2)"
+    }
+   ],
+   "pattern": "Starts with Latch. Then chooses randomly between allowed options of Tackle, Latch, and Lash (allowed options equally likely). Moves cannot be used more than twice in a row.",
+   "source": "wiki"
+  },
+  "frog-knight": {
+   "slug": "frog-knight",
+   "name": "frog knight",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "191 (199)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "For the Queen",
+     "id": "FOR_THE_QUEEN",
+     "effect": "Gain 5 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Strike Down Evil",
+     "id": "STRIKE_DOWN_EVIL",
+     "effect": "Damage 21 (23)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Tongue Lash",
+     "id": "TONGUE_LASH",
+     "effect": "Damage 13 (14) / Apply 2 Frail"
+    },
+    {
+     "intent": "Attack",
+     "name": "Beetle Charge",
+     "id": "BEETLE_CHARGE",
+     "effect": "Damage 35 (40)"
+    }
+   ],
+   "pattern": "Cycles through Tongue Lash -> Strike Down Evil -> For the Queen. After For the Queen, if below half HP and Beetle Charge has not been used, then uses Beetle Charge before starting the cycle over.",
+   "source": "wiki"
+  },
+  "fuzzy-wurm-crawler": {
+   "slug": "fuzzy-wurm-crawler",
+   "name": "fuzzy wurm crawler",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "55 - 57 (58 - 59)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Acid Goop",
+     "id": "ACID_GOOP",
+     "effect": "Damage 4 (6)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Inhale",
+     "id": "INHALE",
+     "effect": "Gain 7 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "First Acid Goop",
+     "id": "FIRST_ACID_GOOP",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Starts with Acid Goop. Then cycles through Inhale -> Acid Goop -> Acid Goop.",
+   "source": "wiki"
+  },
+  "gas-bomb-minion": {
+   "slug": "gas-bomb-minion",
+   "name": "gas bomb (minion)",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "10 (12)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Explode",
+     "id": "EXPLODE",
+     "effect": "Damage 8 (9) / Dies"
+    }
+   ],
+   "pattern": "Uses Explode and dies.",
+   "source": "wiki"
+  },
+  "globe-head": {
+   "slug": "globe-head",
+   "name": "globe head",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "148 (158)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Thunder Strike",
+     "id": "THUNDER_STRIKE",
+     "effect": "Damage 6x3 (7x3)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Shocking Slap",
+     "id": "SHOCKING_SLAP",
+     "effect": "Damage 13 (14) / Apply 2 Frail"
+    },
+    {
+     "intent": "Attack",
+     "name": "Galvanic Burst",
+     "id": "GALVANIC_BURST",
+     "effect": "Damage 16 (17) / Gain 2 Strength"
+    }
+   ],
+   "pattern": "Cycles through Shocking Slap -> Thunder Strike -> Galvanic Burst.",
+   "source": "wiki"
+  },
+  "gremlin-merc": {
+   "slug": "gremlin-merc",
+   "name": "gremlin merc",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "47 - 49 (51 - 53)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Gimme",
+     "id": "GIMME",
+     "effect": "Damage 7x2 (8x2)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Double Smash",
+     "id": "DOUBLE_SMASH",
+     "effect": "Damage 6x2 (7x2) / Apply 2 Weak"
+    },
+    {
+     "intent": "Attack",
+     "name": "Hehe",
+     "id": "HEHE",
+     "effect": "Damage 8 (9) / Gain 2 Strength"
+    }
+   ],
+   "pattern": "Cycles through Gimme -> Double Smash -> Hehe.",
+   "source": "wiki"
+  },
+  "guardbot-minion": {
+   "slug": "guardbot-minion",
+   "name": "guardbot (minion)",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "21 - 25 (22 - 26)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Guard",
+     "id": "GUARD",
+     "effect": "Block 15 on Fabricator"
+    }
+   ],
+   "pattern": "Always uses Guard",
+   "source": "wiki"
+  },
+  "hatchling-minion": {
+   "slug": "hatchling-minion",
+   "name": "hatchling (minion)",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "19 - 22 (20 - 23)",
+   "moves": [],
+   "pattern": "Always uses Nibble.",
+   "source": "wiki"
+  },
+  "haunted-ship": {
+   "slug": "haunted-ship",
+   "name": "haunted ship",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "63 (67)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Ramming Speed",
+     "id": "RAMMING_SPEED",
+     "effect": "Damage 10 (11) / Add 2 Wounds to Discard"
+    },
+    {
+     "intent": "Attack",
+     "name": "Swipe",
+     "id": "SWIPE",
+     "effect": "Damage 13 (14)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Stomp",
+     "id": "STOMP",
+     "effect": "Damage 4x3 (5x3)"
+    },
+    {
+     "intent": "Debuff",
+     "name": "Haunt",
+     "id": "HAUNT",
+     "effect": "Apply 2 Weak / Apply 2 Frail / Apply 2 Vulnerable"
+    }
+   ],
+   "pattern": "Starts with Ramming Speed -> Haunt. Then picks randomly between Ramming Speed, Swipe, and Stomp (allowed options equally likely). Cannot use same move twice in a row.",
+   "source": "wiki"
+  },
+  "hunter-killer": {
+   "slug": "hunter-killer",
+   "name": "hunter killer",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "121 (126)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Tenderizing Goop",
+     "id": "TENDERIZING_GOOP",
+     "effect": "Apply Tender"
+    },
+    {
+     "intent": "Attack",
+     "name": "Bite",
+     "id": "BITE",
+     "effect": "Damage 17 (19)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Puncture",
+     "id": "PUNCTURE",
+     "effect": "Damage 7x3 (8x3)"
+    }
+   ],
+   "pattern": "Starts with Tenderizing Goop. Then chooses randomly between Bite and Puncture each turn. Bite cannot be used twice in a row. Puncture cannot be used more than twice in a row.",
+   "source": "wiki"
+  },
+  "infested-prism": {
+   "slug": "infested-prism",
+   "name": "infested prism",
+   "category": "elite",
+   "acts": "The Hive",
+   "hp_text": "200 (215)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Jab",
+     "id": "JAB",
+     "effect": "Damage 22 (24)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Radiate",
+     "id": "RADIATE",
+     "effect": "Damage 16 (18) / Block 16 (18)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Whirlwind",
+     "id": "WHIRLWIND",
+     "effect": "Damage 9x3 (10x3)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Pulsate",
+     "id": "PULSATE",
+     "effect": "Block 20 (22) / Gain 4 (5) Strength"
+    }
+   ],
+   "pattern": "Cycles through Jab -> Radiate -> Whirlwind -> Pulsate",
+   "source": "wiki"
+  },
+  "inklet": {
+   "slug": "inklet",
+   "name": "inklet",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "11 - 17 (12 - 18)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Jab",
+     "id": "JAB",
+     "effect": "Damage 3 (4)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Whirlwind",
+     "id": "WHIRLWIND",
+     "effect": "Damage 2x3 (3x3)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Piercing Gaze",
+     "id": "PIERCING_GAZE",
+     "effect": "Damage 10 (11)"
+    }
+   ],
+   "pattern": "Front and back Inklet start with Jab. Middle Inklet starts with Whirlwind. Alternates between Jab -> Whirlwind or Piercing Gaze (chosen randomly, equally likely).",
+   "source": "wiki"
+  },
+  "kin-follower-minion": {
+   "slug": "kin-follower-minion",
+   "name": "kin follower (minion)",
+   "category": "boss",
+   "acts": "The Overgrowth",
+   "hp_text": "58 - 59 (62 - 63)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Quick Slash",
+     "id": "QUICK_SLASH",
+     "effect": "Damage 5"
+    },
+    {
+     "intent": "Attack",
+     "name": "Boomerang",
+     "id": "BOOMERANG",
+     "effect": "Damage 2x2"
+    },
+    {
+     "intent": "Buff",
+     "name": "Power Dance",
+     "id": "POWER_DANCE",
+     "effect": "Gain 2 (3) Strength"
+    }
+   ],
+   "pattern": "Cycles through Quick Slash -> Boomerang -> Power Dance.",
+   "source": "wiki"
+  },
+  "kin-priest": {
+   "slug": "kin-priest",
+   "name": "kin priest",
+   "category": "boss",
+   "acts": "The Overgrowth",
+   "hp_text": "190 (199)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Orb of Frailty",
+     "id": "ORB_OF_FRAILTY",
+     "effect": "Damage 8 (9) / Apply 1 Frail"
+    },
+    {
+     "intent": "Attack",
+     "name": "Orb of Weakness",
+     "id": "ORB_OF_WEAKNESS",
+     "effect": "Damage 8 (9) / Apply 1 Weak"
+    },
+    {
+     "intent": "Attack",
+     "name": "Beam",
+     "id": "BEAM",
+     "effect": "Damage 3x3"
+    },
+    {
+     "intent": "Buff",
+     "name": "Ritual",
+     "id": "RITUAL",
+     "effect": "Gain 2 (3) Strength"
+    }
+   ],
+   "pattern": "Cycles through Orb of Frailty -> Orb of Weakness -> Beam -> Ritual.",
+   "source": "wiki"
+  },
+  "knowledge-demon": {
+   "slug": "knowledge-demon",
+   "name": "knowledge demon",
+   "category": "boss",
+   "acts": "The Hive",
+   "hp_text": "379 (399)",
+   "moves": [
+    {
+     "intent": "Debuff",
+     "name": "Curse of Knowledge",
+     "id": "CURSE_OF_KNOWLEDGE",
+     "effect": "Player must choose one of two debuffs: / 1st choice: Disentegration 6 or Mind Rot / 2nd choice: Disentegration 7 or Sloth / 3rd Choice: Disentegration 8 or Waste Away"
+    },
+    {
+     "intent": "Attack",
+     "name": "Slap",
+     "id": "SLAP",
+     "effect": "Damage 17 (18)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Knowledge Overwhelming",
+     "id": "KNOWLEDGE_OVERWHELMING",
+     "effect": "Damage 8x3 (9x3)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Ponder",
+     "id": "PONDER",
+     "effect": "Damage 11 (13) / Heal 30* / Gain 2 (3) Strength"
+    }
+   ],
+   "pattern": "Cycles through Curse of Knowledge -> Slap -> Knowledge Overwhelming -> Ponder until Curse of Knowledge has been used 3 times. Then cycles through Slap -> Knowledge Overwhelming -> Ponder.",
+   "source": "wiki"
+  },
+  "lagavulin-matriarch": {
+   "slug": "lagavulin-matriarch",
+   "name": "lagavulin matriarch",
+   "category": "boss",
+   "acts": "The Underdocks",
+   "hp_text": "222 (233)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Slash",
+     "id": "SLASH",
+     "effect": "Damage 19 (21)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Disembowel",
+     "id": "DISEMBOWEL",
+     "effect": "Damage 9x2 (10x2)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Slash 2",
+     "id": "SLASH2",
+     "effect": "Damage 12 (14) / Block 12 (14)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Soul Siphon",
+     "id": "SOUL_SIPHON",
+     "effect": "Apply -2 Strength / Apply -2 Dexterity / Gain 2 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Sleep",
+     "id": "SLEEP",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Cycles through Slash -> Disembowel -> Slash 2 -> Soul Siphon.",
+   "source": "wiki"
+  },
+  "leaf-slime-medium": {
+   "slug": "leaf-slime-medium",
+   "name": "leaf slime (medium)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "32 - 35 (33 - 36)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Clump Shot",
+     "id": "CLUMP_SHOT",
+     "effect": "Damage 8 (9)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Sticky Shot",
+     "id": "STICKY_SHOT",
+     "effect": "Add 2 Slimed to Discard"
+    }
+   ],
+   "pattern": "Starts with Sticky Shot then alternates Clump Shot -> Sticky Shot.",
+   "source": "wiki"
+  },
+  "leaf-slime-small": {
+   "slug": "leaf-slime-small",
+   "name": "leaf slime (small)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "11 - 15 (12 - 16)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Goop",
+     "id": "GOOP",
+     "effect": "Add 1 Slimed to Discard"
+    },
+    {
+     "intent": "Utility",
+     "name": "Butt",
+     "id": "BUTT",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Starts randomly with Tackle or Goop. Then alternates between them.",
+   "source": "wiki"
+  },
+  "living-fog": {
+   "slug": "living-fog",
+   "name": "living fog",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "80 (82)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Advanced Gas",
+     "id": "ADVANCED_GAS",
+     "effect": "Damage 8 (9) / Apply Smoggy"
+    },
+    {
+     "intent": "Attack",
+     "name": "Bloat",
+     "id": "BLOAT",
+     "effect": "Summon N Gas Bombs / (N = # times Bloat has been used + 1, capped to 5)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Super Gas Blast",
+     "id": "SUPER_GAS_BLAST",
+     "effect": "Damage 8 (9)"
+    }
+   ],
+   "pattern": "Starts with Advanced Gas. Then alternates between Bloat -> Super Gas Blast.",
+   "source": "wiki"
+  },
+  "living-shield": {
+   "slug": "living-shield",
+   "name": "living shield",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "55 (65)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Shield Slam",
+     "id": "SHIELD_SLAM",
+     "effect": "Damage 6"
+    },
+    {
+     "intent": "Attack",
+     "name": "Smash",
+     "id": "SMASH",
+     "effect": "Damage 16 (18) / Gain 3 Strength"
+    }
+   ],
+   "pattern": "Uses Shield Slam every turn if Turret Operator is alive. Then uses Smash every turn once Turret Operator is dead.",
+   "source": "wiki"
+  },
+  "louse-progenitor": {
+   "slug": "louse-progenitor",
+   "name": "louse progenitor",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "134 - 136 (138 - 141)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Web Cannon",
+     "id": "WEB_CANNON",
+     "effect": "Damage 9 (10) / Apply 2 Frail"
+    },
+    {
+     "intent": "Attack",
+     "name": "Pounce",
+     "id": "POUNCE",
+     "effect": "Damage 14 (16)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Curl and Grow",
+     "id": "CURL_AND_GROW",
+     "effect": "Block 14 (18) / Gain 5 Strength"
+    }
+   ],
+   "pattern": "Cycles through Web Cannon -> Curl and Grow -> Pounce.",
+   "source": "wiki"
+  },
+  "magi-knight": {
+   "slug": "magi-knight",
+   "name": "magi knight",
+   "category": "elite",
+   "acts": "The Glory",
+   "hp_text": "82 (89)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Dampen",
+     "id": "DAMPEN",
+     "effect": "Apply Dampen"
+    },
+    {
+     "intent": "Utility",
+     "name": "Prep",
+     "id": "PREP",
+     "effect": "Block 5 (9)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Magic Bomb",
+     "id": "MAGIC_BOMB",
+     "effect": "Damage 35 (40)"
+    },
+    {
+     "intent": "Utility",
+     "name": "First Power Shield",
+     "id": "FIRST_POWER_SHIELD",
+     "effect": "No effect text documented yet."
+    },
+    {
+     "intent": "Utility",
+     "name": "Ram",
+     "id": "RAM",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Cycles through Power Shield -> Dampen -> Spear -> Prep -> Magic Bomb.",
+   "source": "wiki"
+  },
+  "mawler": {
+   "slug": "mawler",
+   "name": "mawler",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "72 (76)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Rip & Tear",
+     "id": "RIP_AND_TEAR",
+     "effect": "Damage 14 (16)"
+    },
+    {
+     "intent": "Debuff",
+     "name": "Roar",
+     "id": "ROAR",
+     "effect": "Apply 3 Vulnerable"
+    },
+    {
+     "intent": "Attack",
+     "name": "Claw",
+     "id": "CLAW",
+     "effect": "Damage 4x2 (5x2)"
+    }
+   ],
+   "pattern": "Starts with Claw. Then chooses randomly between Rip & Tear, Roar, and Claw (all allowed options equally likely). Roar can only be used once. Claw and Rip & Tear cannot be used twice in a row.",
+   "source": "wiki"
+  },
+  "mecha-knight": {
+   "slug": "mecha-knight",
+   "name": "mecha knight",
+   "category": "elite",
+   "acts": "The Glory",
+   "hp_text": "300 (320)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Charge",
+     "id": "CHARGE",
+     "effect": "Damage 25 (30)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Flamethrower",
+     "id": "FLAMETHROWER",
+     "effect": "Add 4 Burns to Hand"
+    },
+    {
+     "intent": "Defense",
+     "name": "Windup",
+     "id": "WINDUP",
+     "effect": "Block 15 / Strength 5"
+    },
+    {
+     "intent": "Attack",
+     "name": "Heavy Cleave",
+     "id": "HEAVY_CLEAVE",
+     "effect": "Damage 35 (40)"
+    }
+   ],
+   "pattern": "Starts with Charge. Then cycles through Flamethrower -> Windup -> Heavy Cleave.",
+   "source": "wiki"
+  },
+  "myte": {
+   "slug": "myte",
+   "name": "myte",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "61 - 67 (64 - 69)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Bite",
+     "id": "BITE",
+     "effect": "Damage 13 (15)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Suck",
+     "id": "SUCK",
+     "effect": "Damage 4 (6) / Gain 2 (3) Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Toxic Cornucopia",
+     "id": "TOXIC",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "First Myte starts with Toxic, second Myte starts with Suck. Then continue cycling through Toxic -> Bite -> Suck.",
+   "source": "wiki"
+  },
+  "nibbit": {
+   "slug": "nibbit",
+   "name": "nibbit",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "42 - 46 (44 - 48)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Butt",
+     "id": "BUTT",
+     "effect": "Damage 12 (13)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Slice",
+     "id": "SLICE",
+     "effect": "Damage 6 / Block 5"
+    },
+    {
+     "intent": "Buff",
+     "name": "Hiss",
+     "id": "HISS",
+     "effect": "Strength 2"
+    }
+   ],
+   "pattern": "In the single Nibbit encounter, it cycles through Butt -> Slice -> Hiss. In the two Nibbits encounter, the front starts with Slice and the back starts with Hiss. They then continue the cycle Butt -> Slice -> Hiss.",
+   "source": "wiki"
+  },
+  "noisebot-minion": {
+   "slug": "noisebot-minion",
+   "name": "noisebot (minion)",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "23 - 28 (24 - 29)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Noise",
+     "id": "NOISE",
+     "effect": "Add 1 Dazed to Discard / Add 1 Dazed to Draw"
+    }
+   ],
+   "pattern": "Always uses Noise",
+   "source": "wiki"
+  },
+  "osty": {
+   "slug": "osty",
+   "name": "osty",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "1 HP",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Nothing",
+     "id": "NOTHING",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "ovicopter": {
+   "slug": "ovicopter",
+   "name": "ovicopter",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "124 - 130 (126 - 132)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Lay Eggs",
+     "id": "LAY_EGGS",
+     "effect": "Summon up to 3 Tough Eggs"
+    },
+    {
+     "intent": "Attack",
+     "name": "Smash",
+     "id": "SMASH",
+     "effect": "Damage 16 (17)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Tenderizer",
+     "id": "TENDERIZER",
+     "effect": "Damage 7 (8) / Apply 2 Vulnerable"
+    },
+    {
+     "intent": "Buff",
+     "name": "Nutritional Paste",
+     "id": "NUTRITIONAL_PASTE",
+     "effect": "Gain 3 (4) Strength"
+    }
+   ],
+   "pattern": "Starts with Lay Eggs -> Smash -> Tenderizer. If 3 allies are alive after Tenderizer, uses Nutritional Paste -> Smash -> Tenderizer. If less than 3 allies are alive after Tenderizer, uses Lay Eggs -> Smash -> Tenderizer.",
+   "source": "wiki"
+  },
+  "owl-magistrate": {
+   "slug": "owl-magistrate",
+   "name": "owl magistrate",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "234 (243)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Magistrate Scrutiny",
+     "id": "MAGISTRATE_SCRUTINY",
+     "effect": "Damage 16 (17)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Peck Assault",
+     "id": "PECK_ASSAULT",
+     "effect": "Damage 4x6"
+    },
+    {
+     "intent": "Utility",
+     "name": "Judicial Flight",
+     "id": "JUDICIAL_FLIGHT",
+     "effect": "Gain Soar"
+    },
+    {
+     "intent": "Attack",
+     "name": "Verdict",
+     "id": "VERDICT",
+     "effect": "Damage 33 (36) / Apply 4 Vulnerable / Lose Soar"
+    }
+   ],
+   "pattern": "Cycles through Magistrate Scrutiny -> Peck Assault -> Judicial Flight -> Verdict.",
+   "source": "wiki"
+  },
+  "paels-legion": {
+   "slug": "paels-legion",
+   "name": "pael's legion",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "9999 HP",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Nothing",
+     "id": "NOTHING",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "parafright-minion": {
+   "slug": "parafright-minion",
+   "name": "parafright (minion)",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "21",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Slam",
+     "id": "SLAM",
+     "effect": "Damage 16 (17)"
+    }
+   ],
+   "pattern": "Always uses Slam.",
+   "source": "wiki"
+  },
+  "phantasmal-gardener": {
+   "slug": "phantasmal-gardener",
+   "name": "phantasmal gardener",
+   "category": "elite",
+   "acts": "The Underdocks",
+   "hp_text": "28 - 32 (29 -33)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Bite",
+     "id": "BITE",
+     "effect": "Damage 5"
+    },
+    {
+     "intent": "Attack",
+     "name": "Lash",
+     "id": "LASH",
+     "effect": "Damage 7"
+    },
+    {
+     "intent": "Attack",
+     "name": "Flail",
+     "id": "FLAIL",
+     "effect": "Damage 1x3"
+    },
+    {
+     "intent": "Buff",
+     "name": "Enlarge",
+     "id": "ENLARGE",
+     "effect": "Strength 2 (3)"
+    }
+   ],
+   "pattern": "1st one starts with Flail, 2nd with Bite, 3rd with Lash, and 4th with Enlarge. Then cycle through Bite -> Lash -> Flail -> Enlarge.",
+   "source": "wiki"
+  },
+  "phrog-parasite": {
+   "slug": "phrog-parasite",
+   "name": "phrog parasite",
+   "category": "elite",
+   "acts": "The Overgrowth",
+   "hp_text": "61 - 64 (66 - 68)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Infect",
+     "id": "INFECT",
+     "effect": "Add 3 Infection to Discard"
+    },
+    {
+     "intent": "Attack",
+     "name": "Lash",
+     "id": "LASH",
+     "effect": "Damage 4x4 (5x4)"
+    }
+   ],
+   "pattern": "Alternates between Infect -> Lash.",
+   "source": "wiki"
+  },
+  "punch-construct": {
+   "slug": "punch-construct",
+   "name": "punch construct",
+   "category": "monster",
+   "acts": "Event encounters|The Glory|The Underdocks",
+   "hp_text": "55 (60)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Ready",
+     "id": "READY",
+     "effect": "Block 10"
+    },
+    {
+     "intent": "Attack",
+     "name": "Strong Punch",
+     "id": "STRONG_PUNCH",
+     "effect": "Damage 14 (16)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Fast Punch",
+     "id": "FAST_PUNCH",
+     "effect": "Damage 5x2 (6x2) / Apply 1 Weak"
+    }
+   ],
+   "pattern": "Regular encounter: Cycles through Ready -> Strong Punch -> Fast Punch. Punch-Off event: First Punch Construct starts the cycle with Strong Punch (second starts with Ready like usual).",
+   "source": "wiki"
+  },
+  "queen": {
+   "slug": "queen",
+   "name": "queen",
+   "category": "boss",
+   "acts": "The Glory",
+   "hp_text": "400 (419)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Puppet Strings",
+     "id": "PUPPET_STRINGS",
+     "effect": "Apply Chains of Binding 3"
+    },
+    {
+     "intent": "Debuff",
+     "name": "Burn Bright For Me",
+     "id": "BURN_BRIGHT_FOR_ME",
+     "effect": "Give allies 1 Strength / Block 20"
+    },
+    {
+     "intent": "Attack",
+     "name": "Off With Your Head",
+     "id": "OFF_WITH_YOUR_HEAD",
+     "effect": "Damage 3x5 (4x5)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Execution",
+     "id": "EXECUTION",
+     "effect": "Damage 15 (18)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Enrage",
+     "id": "ENRAGE",
+     "effect": "Gain 2 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Your Mine",
+     "id": "YOUR_MINE",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Begins with Puppet Strings -> You Are Mine! Afterwards, while Amalgam is alive, always does Burn Bright For Me. If Amalgam dies and intent is Burn Bright For Me, intent is immediately replaced with Enrage. After Amalgam dies, cycles Off With Your Head -> Execution -> Enrage.",
+   "source": "wiki"
+  },
+  "rocket": {
+   "slug": "rocket",
+   "name": "rocket",
+   "category": "boss",
+   "acts": "The Hive",
+   "hp_text": "189 (199)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Targeting Reticle",
+     "id": "TARGETING_RETICLE",
+     "effect": "Damage 3 (4)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Precision Beam",
+     "id": "PRECISION_BEAM",
+     "effect": "Damage 18 (20)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Charge Up",
+     "id": "CHARGE_UP",
+     "effect": "Strength 2"
+    },
+    {
+     "intent": "Attack",
+     "name": "Laser",
+     "id": "LASER",
+     "effect": "Damage 31 (35)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Recharge",
+     "id": "RECHARGE",
+     "effect": "Pass turn"
+    }
+   ],
+   "pattern": "Cycles through Targeting Reticle -> Precision Beam -> Charge Up -> Laser -> Recharge.",
+   "source": "wiki"
+  },
+  "ruby-raider-assassin": {
+   "slug": "ruby-raider-assassin",
+   "name": "ruby raider (assassin)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "18 - 23 (19 - 24)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Killshot",
+     "id": "KILLSHOT",
+     "effect": "Damage 11 (12)"
+    }
+   ],
+   "pattern": "Always uses Killshot.",
+   "source": "wiki"
+  },
+  "ruby-raider-axe": {
+   "slug": "ruby-raider-axe",
+   "name": "ruby raider (axe)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "20 - 22 (21 - 23)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Big Swing",
+     "id": "BIG_SWING",
+     "effect": "Damage 12 (13)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Swing 1",
+     "id": "SWING_1",
+     "effect": "Deals 5 (6 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Swing 2",
+     "id": "SWING_2",
+     "effect": "Deals 5 (6 ascension) damage."
+    }
+   ],
+   "pattern": "Cycles through Swing -> Swing -> Big Swing.",
+   "source": "wiki"
+  },
+  "ruby-raider-brute": {
+   "slug": "ruby-raider-brute",
+   "name": "ruby raider (brute)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "30 - 33 (31 - 34)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Beat",
+     "id": "BEAT",
+     "effect": "Damage 7 (8)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Roar",
+     "id": "ROAR",
+     "effect": "Gain 3 Strength"
+    }
+   ],
+   "pattern": "Alternates between Beat -> Roar.",
+   "source": "wiki"
+  },
+  "ruby-raider-crossbow": {
+   "slug": "ruby-raider-crossbow",
+   "name": "ruby raider (crossbow)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "18 - 21 (19 - 22)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Fire",
+     "id": "FIRE",
+     "effect": "Damage 14 (16)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Reload",
+     "id": "RELOAD",
+     "effect": "Block 3"
+    }
+   ],
+   "pattern": "Alternates between Reload -> Fire.",
+   "source": "wiki"
+  },
+  "ruby-raider-tracker": {
+   "slug": "ruby-raider-tracker",
+   "name": "ruby raider (tracker)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "21 - 25 (22 - 26)",
+   "moves": [
+    {
+     "intent": "Debuff",
+     "name": "Track",
+     "id": "TRACK",
+     "effect": "Apply 2 Frail"
+    },
+    {
+     "intent": "Utility",
+     "name": "Unleash the Hounds",
+     "id": "HOUNDS",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Starts with Track, then uses Hounds every turn.",
+   "source": "wiki"
+  },
+  "scroll-of-biting": {
+   "slug": "scroll-of-biting",
+   "name": "scroll of biting",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "31 - 38 (32 - 39)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Chomp",
+     "id": "CHOMP",
+     "effect": "Damage 14 (16)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Chew",
+     "id": "CHEW",
+     "effect": "Damage 5x2 (6x2)"
+    },
+    {
+     "intent": "Buff",
+     "name": "More Teeth",
+     "id": "MORE_TEETH",
+     "effect": "Gain 2 Strength"
+    }
+   ],
+   "pattern": "First scroll picks its first move randomly. Scrolls 2 and 3 starts with the next moves in the cycle Chomp -> Chew -> More Teeth. Scroll 4 (if present) starts with More Teeth. Then follows pattern Chomp -> More Teeth -> Chew, but after Chew picks randomly between Chomp and More Teeth and resumes pattern.",
+   "source": "wiki"
+  },
+  "seapunk": {
+   "slug": "seapunk",
+   "name": "seapunk",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "44 - 46 (47 - 49)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Sea Kick",
+     "id": "SEA_KICK",
+     "effect": "Damage 11 (12)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Spinning Kick",
+     "id": "SPINNING_KICK",
+     "effect": "Damage 2x4"
+    },
+    {
+     "intent": "Buff",
+     "name": "Bubble Burp",
+     "id": "BUBBLE_BURP",
+     "effect": "Block 7 (8) / Gain 1 (2) Strength"
+    }
+   ],
+   "pattern": "Cycles through Sea Kick -> Spinning Kick -> Bubble Burp.",
+   "source": "wiki"
+  },
+  "sewer-clam": {
+   "slug": "sewer-clam",
+   "name": "sewer clam",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "56 (58)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Pressurize",
+     "id": "PRESSURIZE",
+     "effect": "Strength 4"
+    },
+    {
+     "intent": "Attack",
+     "name": "Jet",
+     "id": "JET",
+     "effect": "Damage 10 (11)"
+    }
+   ],
+   "pattern": "Alternates between Pressurize -> Jet.",
+   "source": "wiki"
+  },
+  "shrinker-beetle": {
+   "slug": "shrinker-beetle",
+   "name": "shrinker beetle",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "38 - 40 (40 - 42)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Shrinker",
+     "id": "SHRINKER",
+     "effect": "Apply Shrink"
+    },
+    {
+     "intent": "Attack",
+     "name": "Chomp",
+     "id": "CHOMP",
+     "effect": "Damage 7 (8)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Stomp",
+     "id": "STOMP",
+     "effect": "Damage 13 (14)"
+    }
+   ],
+   "pattern": "Starts with Shrinker. Then alternates Chomp -> Stomp.",
+   "source": "wiki"
+  },
+  "skulking-colony": {
+   "slug": "skulking-colony",
+   "name": "skulking colony",
+   "category": "elite",
+   "acts": "The Underdocks",
+   "hp_text": "79 (84)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Inertia",
+     "id": "INERTIA",
+     "effect": "Block 10 (13) / Gain 3 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Zoom",
+     "id": "ZOOM",
+     "effect": "Damage 16 (17)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Super Crab",
+     "id": "SUPER_CRAB",
+     "effect": "Damage 6x2 (7x2)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Smash",
+     "id": "SMASH",
+     "effect": "Damage 9 (11) / Add 4 Dazed to Discard"
+    }
+   ],
+   "pattern": "Cycles through Smash -> Zoom -> Inertia -> Super Crab.",
+   "source": "wiki"
+  },
+  "slimed-berserker": {
+   "slug": "slimed-berserker",
+   "name": "slimed berserker",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "266 (276)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Vomit Ichor",
+     "id": "VOMIT_ICHOR",
+     "effect": "Add 10 Slimed to discard"
+    },
+    {
+     "intent": "Debuff",
+     "name": "Leeching Hug",
+     "id": "LEECHING_HUG",
+     "effect": "Apply 3 Weak / Gain 3 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Smother",
+     "id": "SMOTHER",
+     "effect": "Damage 30 (33)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Furious Pummeling",
+     "id": "FURIOUS_PUMMELING",
+     "effect": "Damage 4x4 (5x4)"
+    }
+   ],
+   "pattern": "Cycles through Vomit Ichor -> Furious Pummeling -> Leeching Hug -> Smother.",
+   "source": "wiki"
+  },
+  "slithering-strangler": {
+   "slug": "slithering-strangler",
+   "name": "slithering strangler",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "53 - 55 (54 - 56)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Constrict",
+     "id": "CONSTRICT",
+     "effect": "Apply 3 Constrict"
+    },
+    {
+     "intent": "Utility",
+     "name": "Lash",
+     "id": "LASH",
+     "effect": "Damage 12 (13)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Twack",
+     "id": "TWACK",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Alternates between Constrict -> Thwack/Lash (chooses between Thwack and Lash at random, equally likely)",
+   "source": "wiki"
+  },
+  "sludge-spinner": {
+   "slug": "sludge-spinner",
+   "name": "sludge spinner",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "37 - 39 (41 - 42)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Oil Spray",
+     "id": "OIL_SPRAY",
+     "effect": "Damage 8 (9) / Weak 1"
+    },
+    {
+     "intent": "Attack",
+     "name": "Slam",
+     "id": "SLAM",
+     "effect": "Damage 11 (12)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Rage",
+     "id": "RAGE",
+     "effect": "Damage 6 (7) / Strength 3"
+    }
+   ],
+   "pattern": "Starts with Oil Spray. Then chooses randomly between all allowed moves each turn. Cannot use any move twice in a row.",
+   "source": "wiki"
+  },
+  "slumbering-beetle": {
+   "slug": "slumbering-beetle",
+   "name": "slumbering beetle",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "86 (89)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Roll Out",
+     "id": "ROLL_OUT",
+     "effect": "Damage 16 (18) / Gain 2 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Snore",
+     "id": "SNORE",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Sleeps until it awakens. Then uses Roll Out every turn.",
+   "source": "wiki"
+  },
+  "snapping-jaxfruit": {
+   "slug": "snapping-jaxfruit",
+   "name": "snapping jaxfruit",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "31 - 33 (34 - 36)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Energy Orb",
+     "id": "ENERGY_ORB",
+     "effect": "Damage 3 (4) / Gain 2 Strength"
+    }
+   ],
+   "pattern": "Always uses Energy Orb.",
+   "source": "wiki"
+  },
+  "sneaky-gremlin": {
+   "slug": "sneaky-gremlin",
+   "name": "sneaky gremlin",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "10 - 14 (11 - 15)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Tackle",
+     "id": "TACKLE",
+     "effect": "Damage 9 (10)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Spawned",
+     "id": "SPAWNED",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Always uses Tackle.",
+   "source": "wiki"
+  },
+  "soul-fysh": {
+   "slug": "soul-fysh",
+   "name": "soul fysh",
+   "category": "boss",
+   "acts": "The Underdocks",
+   "hp_text": "211 (221)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Beckon",
+     "id": "BECKON",
+     "effect": "Shuffle 1 Beckon into draw / Shuffle 1 Beckon into discard"
+    },
+    {
+     "intent": "Attack",
+     "name": "De-Gas",
+     "id": "DE_GAS",
+     "effect": "Damage 16 (17)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Gaze",
+     "id": "GAZE",
+     "effect": "Damage 7 (8) / Shuffle 1 Beckon into discard"
+    },
+    {
+     "intent": "Utility",
+     "name": "Fade",
+     "id": "FADE",
+     "effect": "Gain 2* Intangible"
+    },
+    {
+     "intent": "Attack",
+     "name": "Scream",
+     "id": "SCREAM",
+     "effect": "Damage 11 (12) / Apply 3 Vulnerable"
+    }
+   ],
+   "pattern": "Cycles through Beckon -> De-Gas -> Gaze -> Fade -> Scream.",
+   "source": "wiki"
+  },
+  "soul-nexus": {
+   "slug": "soul-nexus",
+   "name": "soul nexus",
+   "category": "elite",
+   "acts": "The Glory",
+   "hp_text": "234 (254)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Soul Burn",
+     "id": "SOUL_BURN",
+     "effect": "Damage 29 (31)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Maelstrom",
+     "id": "MAELSTROM",
+     "effect": "Damage 6x4 (7x4)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Drain Life",
+     "id": "DRAIN_LIFE",
+     "effect": "Damage 18 (19) / Apply 2 Vulnerable / Apply 2 Weak"
+    }
+   ],
+   "pattern": "Starts with Soul Burn. Then picks randomly between Soul Burn, Maelstrom, and Drain Life (all allowed options equally likely). Cannot use the same move twice in a row.",
+   "source": "wiki"
+  },
+  "spectral-knight": {
+   "slug": "spectral-knight",
+   "name": "spectral knight",
+   "category": "elite",
+   "acts": "The Glory",
+   "hp_text": "93 (97)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Hex",
+     "id": "HEX",
+     "effect": "Apply Hex"
+    },
+    {
+     "intent": "Attack",
+     "name": "Soul Slash",
+     "id": "SOUL_SLASH",
+     "effect": "Damage 15 (17)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Soul Flame",
+     "id": "SOUL_FLAME",
+     "effect": "Damage 3x3 (4x3)"
+    }
+   ],
+   "pattern": "Starts with Hex and then Soul Slash. Then chooses randomly between Soul Slash and Soul Flame (allowed options equally likely). Soul Slash cannot be used more than twice in a row. Soul Flame cannot be used twice in a row.",
+   "source": "wiki"
+  },
+  "spiny-toad": {
+   "slug": "spiny-toad",
+   "name": "spiny toad",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "116 - 119 (121 - 124)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Protruding Spikes",
+     "id": "PROTRUDING_SPIKES",
+     "effect": "Gain 5 Thorns"
+    },
+    {
+     "intent": "Buff",
+     "name": "Spike Explosion",
+     "id": "SPIKE_EXPLOSION",
+     "effect": "Damage 23 (25) / Lose 5 Thorns"
+    },
+    {
+     "intent": "Utility",
+     "name": "Tongue Lash",
+     "id": "TONGUE_LASH",
+     "effect": "Damage 17 (19)"
+    }
+   ],
+   "pattern": "Cycles through Protruding Spikes -> Spike Explosion -> Tongue Lash.",
+   "source": "wiki"
+  },
+  "stabbot-minion": {
+   "slug": "stabbot-minion",
+   "name": "stabbot (minion)",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "23 - 28 (24 - 29)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Stab",
+     "id": "STAB",
+     "effect": "Damage 11 (12) / Apply 1 Frail"
+    }
+   ],
+   "pattern": "Always uses Stab",
+   "source": "wiki"
+  },
+  "stage-1": {
+   "slug": "stage-1",
+   "name": "stage 1",
+   "category": "boss",
+   "acts": "",
+   "hp_text": "100 (111)",
+   "moves": [],
+   "pattern": "Cycles through Bite -> Skull Bash. When killed, revive next turn in stage 2.",
+   "source": "wiki"
+  },
+  "stage-2": {
+   "slug": "stage-2",
+   "name": "stage 2",
+   "category": "boss",
+   "acts": "",
+   "hp_text": "200 (212)",
+   "moves": [],
+   "pattern": "Cycles through Multi-Claw -> Pounce. When killed, revive next turn in stage 3.",
+   "source": "wiki"
+  },
+  "stage-3": {
+   "slug": "stage-3",
+   "name": "stage 3",
+   "category": "boss",
+   "acts": "",
+   "hp_text": "300 (313)",
+   "moves": [],
+   "pattern": "Cycles through Lacerate -> Big Pounce -> Burning Growl.",
+   "source": "wiki"
+  },
+  "terror-eel": {
+   "slug": "terror-eel",
+   "name": "terror eel",
+   "category": "elite",
+   "acts": "The Underdocks",
+   "hp_text": "140 (150)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Crash",
+     "id": "CRASH",
+     "effect": "Damage 17 (19)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Terror",
+     "id": "TERROR",
+     "effect": "Apply 99 Vulnerable"
+    },
+    {
+     "intent": "Attack",
+     "name": "Thrashmove",
+     "id": "ThrashMove",
+     "effect": "Deals 3 (4 ascension) damage."
+    },
+    {
+     "intent": "Utility",
+     "name": "Stun",
+     "id": "STUN",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Cycles between Crash -> Thrash until it gets stunned by reaching 75 HP. Then uses Terror before cycling Crash -> Thrash again.",
+   "source": "wiki"
+  },
+  "test-subject-c-count": {
+   "slug": "test-subject-c-count",
+   "name": "test subject #c{count}",
+   "category": "boss",
+   "acts": "The Glory",
+   "hp_text": "HP pending",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Respawn",
+     "id": "RESPAWN",
+     "effect": "No effect text documented yet."
+    },
+    {
+     "intent": "Attack",
+     "name": "Bite",
+     "id": "BITE",
+     "effect": "Deals 20 (22 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Skull Bash",
+     "id": "SKULL_BASH",
+     "effect": "Deals 14 (16 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Pounce",
+     "id": "POUNCE",
+     "effect": "Deals 30 (32 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Multi Claw",
+     "id": "MULTI_CLAW",
+     "effect": "Deals 10 (11 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Phase3 Lacerate",
+     "id": "PHASE3_LACERATE",
+     "effect": "Deals 10 (11 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Big Pounce",
+     "id": "BIG_POUNCE",
+     "effect": "Deals 45 damage."
+    },
+    {
+     "intent": "Utility",
+     "name": "Burning Growl",
+     "id": "BURNING_GROWL",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "the-adversary-mk-1": {
+   "slug": "the-adversary-mk-1",
+   "name": "the adversary mk 1",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "HP pending",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Smash",
+     "id": "SMASH",
+     "effect": "Deals 12 damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Beam",
+     "id": "BEAM",
+     "effect": "Deals 15 damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Barrage",
+     "id": "BARRAGE",
+     "effect": "Deals 8 damage."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "the-adversary-mk-2": {
+   "slug": "the-adversary-mk-2",
+   "name": "the adversary mk 2",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "HP pending",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Bash",
+     "id": "BASH",
+     "effect": "Deals 13 damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Flame Beam",
+     "id": "FLAME_BEAM",
+     "effect": "Deals 16 damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Barrage",
+     "id": "BARRAGE",
+     "effect": "Deals 9 damage."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "the-adversary-mk-3": {
+   "slug": "the-adversary-mk-3",
+   "name": "the adversary mk 3",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "HP pending",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Crash",
+     "id": "CRASH",
+     "effect": "Deals 15 damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Flame Beam",
+     "id": "FLAME_BEAM",
+     "effect": "Deals 18 damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Barrage",
+     "id": "BARRAGE",
+     "effect": "Deals 10 damage."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "the-architect": {
+   "slug": "the-architect",
+   "name": "the architect",
+   "category": "monster",
+   "acts": "Event encounters",
+   "hp_text": "9999 HP",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Nothing",
+     "id": "NOTHING",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "",
+   "source": "wiki"
+  },
+  "the-forgotten": {
+   "slug": "the-forgotten",
+   "name": "the forgotten",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "106 (111)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Miasma",
+     "id": "MIASMA",
+     "effect": "Apply -2 Dexterity / Block 8 / Gain 2 Dexterity"
+    },
+    {
+     "intent": "Attack",
+     "name": "Dread",
+     "id": "DREAD",
+     "effect": "Damage 15 (17)"
+    }
+   ],
+   "pattern": "Alternates between Miasma -> Dread.",
+   "source": "wiki"
+  },
+  "the-insatiable": {
+   "slug": "the-insatiable",
+   "name": "the insatiable",
+   "category": "boss",
+   "acts": "The Hive",
+   "hp_text": "321 (341)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Liquify Ground",
+     "id": "LIQUIFY_GROUND",
+     "effect": "Gain Sandpit 4 / Shuffle 3 Frantic Escapes into draw / Shuffle 3 Frantic Escapes into discard"
+    },
+    {
+     "intent": "Utility",
+     "name": "Lunging Bite",
+     "id": "LUNGING_BITE",
+     "effect": "Damage 28 (31)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Salivate",
+     "id": "SALIVATE",
+     "effect": "Gain 2 (3) Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Thrash Move 1",
+     "id": "THRASH_MOVE_1",
+     "effect": "Deals 8 (9 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Thrash Move 2",
+     "id": "THRASH_MOVE_2",
+     "effect": "Deals 8 (9 ascension) damage."
+    }
+   ],
+   "pattern": "Starts with Liquify Ground. Afterwards, cycles through Thrash -> Lunging Bite -> Salivate -> Thrash.",
+   "source": "wiki"
+  },
+  "the-lost": {
+   "slug": "the-lost",
+   "name": "the lost",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "93 (99)",
+   "moves": [
+    {
+     "intent": "Buff",
+     "name": "Debilitating Smog",
+     "id": "DEBILITATING_SMOG",
+     "effect": "Apply -2 Strength / Gain 2 Strength"
+    },
+    {
+     "intent": "Attack",
+     "name": "Eye Lasers",
+     "id": "EYE_LASERS",
+     "effect": "Damage 4x2 (5x2)"
+    }
+   ],
+   "pattern": "Alternates between Debilitating Smog -> Eye Lasers",
+   "source": "wiki"
+  },
+  "the-obscura": {
+   "slug": "the-obscura",
+   "name": "the obscura",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "123 (129)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Illusion",
+     "id": "ILLUSION",
+     "effect": "Summon 1 Parafright"
+    },
+    {
+     "intent": "Attack",
+     "name": "Piercing Gaze",
+     "id": "PIERCING_GAZE",
+     "effect": "Damage 10 (11)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Hardening Strike",
+     "id": "HARDENING_STRIKE",
+     "effect": "Damage 6 (7) / Block 6 (7)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Sail",
+     "id": "SAIL",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Starts with Illusion. Then chooses randomly between Piercing Gaze, Wail, and Hardening Strike (allowed options equally likely). Cannot use any move twice in a row.",
+   "source": "wiki"
+  },
+  "thieving-hopper": {
+   "slug": "thieving-hopper",
+   "name": "thieving hopper",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "79 (84)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Thievery",
+     "id": "THIEVERY",
+     "effect": "Damage 17 (19) / Steal 1 card and gain Swipe / (Stolen card is taken from draw or discard pile. Chooses a random card with priorities: 1. non-imbued uncommon card, 2. non-imbued common, rare, or event card, 3. non-imbued basic or quest card, 4. imbued or ancient card, 5. curse or anything else) / (Warning: Game softlocks if Thieving Hopper cannot find a valid target to steal)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Nab",
+     "id": "NAB",
+     "effect": "Damage 14 (16)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Hat Trick",
+     "id": "HAT_TRICK",
+     "effect": "Damage 21 (23)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Flutter",
+     "id": "FLUTTER",
+     "effect": "Gain Flutter 5"
+    },
+    {
+     "intent": "Utility",
+     "name": "Escape",
+     "id": "ESCAPE",
+     "effect": "Escape from the combat"
+    }
+   ],
+   "pattern": "Always uses Thievery -> Flutter -> Hat Trick -> Nab -> Escape. If stunned before turn 5, resumes with the next intent in the pattern. If stunned on turn 5, tries to Escape again.",
+   "source": "wiki"
+  },
+  "toadpole": {
+   "slug": "toadpole",
+   "name": "toadpole",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "21 - 25 (22 - 26)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Spike Spit",
+     "id": "SPIKE_SPIT",
+     "effect": "Lose 2 Thorns / Damage 3x3 (4x3)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Whirl",
+     "id": "WHIRL",
+     "effect": "Damage 7 (8)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Spiken",
+     "id": "SPIKEN",
+     "effect": "Gain 2 Thorns"
+    }
+   ],
+   "pattern": "Front Toadpole starts with Spiken. Non-front Toadpole(s) start with Whirl. Then continue following cycle Spike Spit -> Whirl -> Spiken (then repeat).",
+   "source": "wiki"
+  },
+  "torch-head-amalgam": {
+   "slug": "torch-head-amalgam",
+   "name": "torch head amalgam",
+   "category": "boss",
+   "acts": "The Glory",
+   "hp_text": "199 (211)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Tackle 1",
+     "id": "TACKLE_1",
+     "effect": "Deals 18 (19 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Tackle 2",
+     "id": "TACKLE_2",
+     "effect": "Deals 18 (19 ascension) damage."
+    },
+    {
+     "intent": "Utility",
+     "name": "Beam",
+     "id": "BEAM",
+     "effect": "No effect text documented yet."
+    },
+    {
+     "intent": "Attack",
+     "name": "Tackle 3",
+     "id": "TACKLE_3",
+     "effect": "Deals 18 (19 ascension) damage."
+    },
+    {
+     "intent": "Attack",
+     "name": "Tackle 4",
+     "id": "TACKLE_4",
+     "effect": "Deals 18 (19 ascension) damage."
+    }
+   ],
+   "pattern": "Begins with Tackle -> Tackle. Afterwards, cycles Soul Beam -> Weak Tackle -> Weak Tackle.",
+   "source": "wiki"
+  },
+  "tough-egg-minion": {
+   "slug": "tough-egg-minion",
+   "name": "tough egg (minion)",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "14 - 18 (15 - 19)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Hatch",
+     "id": "HATCH",
+     "effect": "Hatches into Hatchling."
+    },
+    {
+     "intent": "Attack",
+     "name": "Nibble",
+     "id": "NIBBLE",
+     "effect": "Deals 4 (5 ascension) damage."
+    }
+   ],
+   "pattern": "Always uses Hatch.",
+   "source": "wiki"
+  },
+  "tunneler": {
+   "slug": "tunneler",
+   "name": "tunneler",
+   "category": "monster",
+   "acts": "The Hive",
+   "hp_text": "87 (92)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Bite",
+     "id": "BITE",
+     "effect": "Damage 13 (15)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Burrow",
+     "id": "BURROW",
+     "effect": "Gain Burrowed / Block 32 (37)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Below Move 1",
+     "id": "BELOW_MOVE_1",
+     "effect": "Deals 23 (26 ascension) damage."
+    },
+    {
+     "intent": "Utility",
+     "name": "Dizzy",
+     "id": "DIZZY",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Starts with Bite -> Burrow. While Burrowed, always uses Below. After being stunned, loses Burrowed and uses Bite -> Burrow.",
+   "source": "wiki"
+  },
+  "turret-operator": {
+   "slug": "turret-operator",
+   "name": "turret operator",
+   "category": "monster",
+   "acts": "The Glory",
+   "hp_text": "41 (51)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Reload",
+     "id": "RELOAD",
+     "effect": "Gain 1 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Unload Move 1",
+     "id": "UNLOAD_MOVE_1",
+     "effect": "No effect text documented yet."
+    },
+    {
+     "intent": "Utility",
+     "name": "Unload Move 2",
+     "id": "UNLOAD_MOVE_2",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Cycles through Unload -> Unload -> Reload.",
+   "source": "wiki"
+  },
+  "twig-slime-m": {
+   "slug": "twig-slime-m",
+   "name": "twig slime (m)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "26 - 28 (27 - 29)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Clump Shot",
+     "id": "CLUMP_SHOT",
+     "effect": "Damage 11 (12)"
+    },
+    {
+     "intent": "Utility",
+     "name": "Sticky Shot",
+     "id": "STICKY_SHOT",
+     "effect": "Add 1 Slimed to Discard"
+    }
+   ],
+   "pattern": "Starts with Sticky Shot -> Clump Shot. Then chooses randomly each turn between Sticky Shot and Clump Shot (allowed options equally likely). Cannot use Sticky Shot twice in a row, and cannot use Clump shot more than twice in a row.",
+   "source": "wiki"
+  },
+  "twig-slime-s": {
+   "slug": "twig-slime-s",
+   "name": "twig slime (s)",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "7 - 11 (8 - 12)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Butt",
+     "id": "BUTT",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Uses Tackle every turn.",
+   "source": "wiki"
+  },
+  "two-tailed-rat": {
+   "slug": "two-tailed-rat",
+   "name": "two-tailed rat",
+   "category": "monster",
+   "acts": "The Underdocks",
+   "hp_text": "17 - 21 (18 - 22)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Scratch",
+     "id": "SCRATCH",
+     "effect": "Damage 8 (9)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Disease Bite",
+     "id": "DISEASE_BITE",
+     "effect": "Damage 6 (7)"
+    },
+    {
+     "intent": "Debuff",
+     "name": "Screech",
+     "id": "SCREECH",
+     "effect": "Apply 1 Frail"
+    },
+    {
+     "intent": "Utility",
+     "name": "Call for Backup",
+     "id": "CALL_FOR_BACKUP",
+     "effect": "Summon Two-Tailed Rat / (with random intent)"
+    }
+   ],
+   "pattern": "First Rat starts randomly with Scratch, Disesase Bite, or Screech. 2nd Rat has next move after it in the cycle Scratch -> Disease Bite -> Screech, and 3rd Rat has the next after that. A rat cannot Call for Backup until it has taken 2 turns. Each rat can only Call for Backup once. Only 1 rat can Call for Backup in any particular turn. Call for Backup can only be used 3 times total across all rats. If Call for Backup is not allowed for a rat, it picks randomly between Scratch, Disease Bite, and Screech (equal weight among allowed options). If Call for Backup is allowed for a rat, then it has a 75% chance to Call for Backup, and remaining 25% to pick randomly between Scratch, Disease Bite, and Screech (equal weight among allowed options). Screech has a 3 turn cooldown. Scratch and Disease Bite cannot be used twice in a row.",
+   "source": "wiki"
+  },
+  "vantom": {
+   "slug": "vantom",
+   "name": "vantom",
+   "category": "boss",
+   "acts": "The Overgrowth",
+   "hp_text": "173 (183)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Ink Blot",
+     "id": "INK_BLOT",
+     "effect": "Damage 7 (8)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Inky Lance",
+     "id": "INKY_LANCE",
+     "effect": "Damage 6x2 (7x2)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Dismember",
+     "id": "DISMEMBER",
+     "effect": "Damage 27 (30) / Add 3 Wounds into discard"
+    },
+    {
+     "intent": "Buff",
+     "name": "Prepare",
+     "id": "PREPARE",
+     "effect": "Gain 2 Strength"
+    }
+   ],
+   "pattern": "Cycles through Ink Blot -> Inky Lance -> Dismember -> Prepare.",
+   "source": "wiki"
+  },
+  "vine-shambler": {
+   "slug": "vine-shambler",
+   "name": "vine shambler",
+   "category": "monster",
+   "acts": "The Overgrowth",
+   "hp_text": "61 (64)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Grasping Vines",
+     "id": "GRASPING_VINES",
+     "effect": "Damage 8 (9) / Apply 1 Tangled"
+    },
+    {
+     "intent": "Attack",
+     "name": "Swipe",
+     "id": "SWIPE",
+     "effect": "Damage 6x2 (7x2)"
+    },
+    {
+     "intent": "Attack",
+     "name": "Chomp",
+     "id": "CHOMP",
+     "effect": "Damage 16 (18)"
+    }
+   ],
+   "pattern": "Cycles through Swipe -> Grasping Vines -> Chomp.",
+   "source": "wiki"
+  },
+  "waterfall-giant": {
+   "slug": "waterfall-giant",
+   "name": "waterfall giant",
+   "category": "boss",
+   "acts": "The Underdocks",
+   "hp_text": "250 (260)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Pressurize",
+     "id": "PRESSURIZE",
+     "effect": "Gain 15 (20) Steam Eruption"
+    },
+    {
+     "intent": "Attack",
+     "name": "Stomp",
+     "id": "STOMP",
+     "effect": "Damage 15 (16) / Apply 1 Weak / Gain 3 Steam Eruption"
+    },
+    {
+     "intent": "Attack",
+     "name": "Ram",
+     "id": "RAM",
+     "effect": "Damage 10 (11) / Gain 3 Steam Eruption"
+    },
+    {
+     "intent": "Utility",
+     "name": "Siphon",
+     "id": "SIPHON",
+     "effect": "Heal 15* / Gain 3 Steam Eruption"
+    },
+    {
+     "intent": "Utility",
+     "name": "Pressure Gun",
+     "id": "PRESSURE_GUN",
+     "effect": "Damage 20 (23) + 5*N / N = # of times this move was used / Gain 3 Steam Eruption"
+    },
+    {
+     "intent": "Attack",
+     "name": "Pressure Up",
+     "id": "PRESSURE_UP",
+     "effect": "Damage 13 (14) / Gain 3 Steam Eruption"
+    },
+    {
+     "intent": "Utility",
+     "name": "About To Blow",
+     "id": "ABOUT_TO_BLOW",
+     "effect": "No effect text documented yet."
+    },
+    {
+     "intent": "Utility",
+     "name": "Explode",
+     "id": "EXPLODE",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "Cycles through Pressurize -> Stomp -> Ram -> Siphon -> Pressure Gun -> Pressure Up.",
+   "source": "wiki"
+  },
+  "wriggler": {
+   "slug": "wriggler",
+   "name": "wriggler",
+   "category": "monster",
+   "acts": "Event encounters|The Overgrowth",
+   "hp_text": "17 - 21 (18 - 22)",
+   "moves": [
+    {
+     "intent": "Utility",
+     "name": "Nasty Bite",
+     "id": "NASTY_BITE",
+     "effect": "Damage 6 (7)"
+    },
+    {
+     "intent": "Buff",
+     "name": "Wriggle",
+     "id": "WRIGGLE",
+     "effect": "Add 1 Infection to Discard / Gain 2 Strength"
+    },
+    {
+     "intent": "Utility",
+     "name": "Spawned",
+     "id": "SPAWNED",
+     "effect": "No effect text documented yet."
+    }
+   ],
+   "pattern": "If spawned from Phrog Parasite's death, starts stunned. Otherwise (or after stun), Wrigglers in positions 1 & 3 start with Nasty Bite and Wrigglers in positions 2 & 4 start with Wriggle. They then alternate between Nasty Bite -> Wriggle.",
+   "source": "wiki"
+  },
+  "zapbot-minion": {
+   "slug": "zapbot-minion",
+   "name": "zapbot (minion)",
+   "category": "monster",
+   "acts": "",
+   "hp_text": "23 - 28 (24 - 29)",
+   "moves": [
+    {
+     "intent": "Attack",
+     "name": "Zap",
+     "id": "ZAP",
+     "effect": "Damage 14 (15)"
+    }
+   ],
+   "pattern": "Always uses Zap",
+   "source": "wiki"
+  }
+ }
+}

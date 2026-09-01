@@ -1,0 +1,1453 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-21T01:05:06+08:00",
+ "run": {
+  "act": 1,
+  "floor": 2,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 57,
+      "max_hp": 57,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4",
+        "description": "这个敌人将要攻击造成4点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BASH",
+    "card_name": "痛击",
+    "target": "FUZZY_WURM_CRAWLER_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1233,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 49,
+      "max_hp": 57,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4",
+        "description": "这个敌人将要攻击造成4点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击",
+    "target": "FUZZY_WURM_CRAWLER_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1167,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 36,
+      "max_hp": 57,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4",
+        "description": "这个敌人将要攻击造成4点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 43,
+    "ms": 3881,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 76,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 36,
+      "max_hp": 57,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "FUZZY_WURM_CRAWLER_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1112,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 76,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 27,
+      "max_hp": 57,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "FUZZY_WURM_CRAWLER_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1132,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 76,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 18,
+      "max_hp": 57,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 52,
+    "ms": 4700,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 76,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 18,
+      "max_hp": 57,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 7
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "FUZZY_WURM_CRAWLER_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1101,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 76,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 12,
+      "max_hp": 57,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 7
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "FUZZY_WURM_CRAWLER_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1052,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 76,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FUZZY_WURM_CRAWLER_0",
+      "name": "毛绒伏地虫",
+      "hp": 6,
+      "max_hp": 57,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 7
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击",
+    "target": "FUZZY_WURM_CRAWLER_0"
+   },
+   "settle": {
+    "polls": 19,
+    "ms": 1599,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "回合1 三个目标函数分歧：survive=打击+剑柄打击+防御，damage=痛击+剑柄打击。选后者：57血敌人，易伤早上更值，且只挨4点。\n回合2 敌人强化无攻击意图，格挡值0；求解器只花2费打两张打击，第3费留着（防御在零来袭下值0）。\n回合3 三个目标函数一致，求解器说这回合能清场：6+6+9=21 >= 18 血。敌人力量已叠到7。"
+}

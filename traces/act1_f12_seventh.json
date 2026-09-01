@@ -1,0 +1,1537 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-15T12:51:31+08:00",
+ "run": {
+  "act": 1,
+  "floor": 12,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 70,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "CROSSBOW_RUBY_RAIDER_0",
+      "name": "劫掠者弩手",
+      "hp": 18,
+      "max_hp": 18,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TRACKER_RUBY_RAIDER_0",
+      "name": "劫掠者追踪手",
+      "hp": 24,
+      "max_hp": 24,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 20,
+      "max_hp": 20,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5",
+        "description": "这个敌人将要攻击造成5点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "THUNDERCLAP",
+      "name": "闪电霹雳+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成7点伤害，给予1层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 8,
+    "discard": [],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "3"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "THUNDERCLAP",
+    "card_name": "闪电霹雳+",
+    "target": null
+   },
+   "settle": {
+    "polls": 19,
+    "ms": 1499,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 70,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "CROSSBOW_RUBY_RAIDER_0",
+      "name": "劫掠者弩手",
+      "hp": 11,
+      "max_hp": 18,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TRACKER_RUBY_RAIDER_0",
+      "name": "劫掠者追踪手",
+      "hp": 17,
+      "max_hp": 24,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 13,
+      "max_hp": 20,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5",
+        "description": "这个敌人将要攻击造成5点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 8,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "2"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "CROSSBOW_RUBY_RAIDER_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1118,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 70,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "CROSSBOW_RUBY_RAIDER_0",
+      "name": "劫掠者弩手",
+      "hp": 2,
+      "max_hp": 18,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TRACKER_RUBY_RAIDER_0",
+      "name": "劫掠者追踪手",
+      "hp": 17,
+      "max_hp": 24,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 13,
+      "max_hp": 20,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5",
+        "description": "这个敌人将要攻击造成5点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 8,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "CROSSBOW_RUBY_RAIDER_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1233,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 70,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TRACKER_RUBY_RAIDER_0",
+      "name": "劫掠者追踪手",
+      "hp": 17,
+      "max_hp": 24,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 13,
+      "max_hp": 20,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5",
+        "description": "这个敌人将要攻击造成5点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 8,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 58,
+    "ms": 5449,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "FRAIL_POWER": 2
+     }
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TRACKER_RUBY_RAIDER_0",
+      "name": "劫掠者追踪手",
+      "hp": 17,
+      "max_hp": 24,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "1×8",
+        "description": "这个敌人将要攻击造成1点伤害8次。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 13,
+      "max_hp": 20,
+      "block": 5,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5",
+        "description": "这个敌人将要攻击造成5点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "STOMP",
+      "name": "踩踏",
+      "cost": "3",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 3,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1114,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 3,
+     "status": {
+      "FRAIL_POWER": 2
+     }
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TRACKER_RUBY_RAIDER_0",
+      "name": "劫掠者追踪手",
+      "hp": 17,
+      "max_hp": 24,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "1×8",
+        "description": "这个敌人将要攻击造成1点伤害8次。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 13,
+      "max_hp": 20,
+      "block": 5,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5",
+        "description": "这个敌人将要攻击造成5点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STOMP",
+      "name": "踩踏",
+      "cost": "3",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 3,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BASH",
+    "card_name": "痛击+",
+    "target": "TRACKER_RUBY_RAIDER_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1351,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 3,
+     "status": {
+      "FRAIL_POWER": 2
+     }
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TRACKER_RUBY_RAIDER_0",
+      "name": "劫掠者追踪手",
+      "hp": 7,
+      "max_hp": 24,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "1×8",
+        "description": "这个敌人将要攻击造成1点伤害8次。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 13,
+      "max_hp": 20,
+      "block": 5,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5",
+        "description": "这个敌人将要攻击造成5点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STOMP",
+      "name": "踩踏",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 3,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 74,
+    "ms": 6533,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 55,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "FRAIL_POWER": 1
+     }
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TRACKER_RUBY_RAIDER_0",
+      "name": "劫掠者追踪手",
+      "hp": 7,
+      "max_hp": 24,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "1×8",
+        "description": "这个敌人将要攻击造成1点伤害8次。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 13,
+      "max_hp": 20,
+      "block": 5,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "DISMANTLE",
+      "name": "拆卸+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。"
+     },
+     {
+      "slot": 3,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 8,
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "TRACKER_RUBY_RAIDER_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1167,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 55,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "FRAIL_POWER": 1
+     }
+    },
+    "enemies": {
+     "3": {
+      "entity_id": "AXE_RUBY_RAIDER_0",
+      "name": "劫掠者斧手",
+      "hp": 13,
+      "max_hp": 20,
+      "block": 5,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DISMANTLE",
+      "name": "拆卸+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。"
+     },
+     {
+      "slot": 2,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": 8,
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "HEMOKINESIS",
+    "card_name": "御血术+",
+    "target": "AXE_RUBY_RAIDER_0"
+   },
+   "settle": {
+    "polls": 21,
+    "ms": 1698,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 59,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ENERGY_POTION",
+      "name": "能量药水",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "BLOCK_POTION",
+      "name": "格挡药水",
+      "description": "获得12点格挡。"
+     }
+    ],
+    "draw_count": null,
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "第2回合：脆弱2 下出防御，测 ×0.75 取整；保留追踪手 Attack:1×8 检验多段逐次吸收\n第3回合：斧手意图由 Attack:5 变为 Attack:12（出招表换招，非乘区）；追踪手带易伤2"
+}

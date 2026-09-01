@@ -1,0 +1,3859 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-18T20:46:07+08:00",
+ "run": {
+  "act": 2,
+  "floor": 31,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 134,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "CURL_UP_POWER": 14
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "9",
+        "description": "这个敌人将要攻击造成9点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "THUNDERCLAP",
+      "name": "闪电霹雳+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成7点伤害，给予1层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "CRIMSON_MANTLE",
+      "name": "绯红披风",
+      "cost": "1",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在你的回合开始时，失去1点生命并获得8点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 12,
+    "discard": [],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "踩踏",
+      "cost": "3"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "THUNDERCLAP",
+    "card_name": "闪电霹雳+",
+    "target": null
+   },
+   "settle": {
+    "polls": 18,
+    "ms": 1764,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 127,
+      "max_hp": 134,
+      "block": 14,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "9",
+        "description": "这个敌人将要攻击造成9点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "CRIMSON_MANTLE",
+      "name": "绯红披风",
+      "cost": "1",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在你的回合开始时，失去1点生命并获得8点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 12,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "踩踏",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1130,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 80,
+     "block": 16,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 127,
+      "max_hp": 134,
+      "block": 14,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "9",
+        "description": "这个敌人将要攻击造成9点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "CRIMSON_MANTLE",
+      "name": "绯红披风",
+      "cost": "1",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在你的回合开始时，失去1点生命并获得8点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 12,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "踩踏",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "CRIMSON_MANTLE",
+    "card_name": "绯红披风",
+    "target": null
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1465,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 80,
+     "block": 16,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 127,
+      "max_hp": 134,
+      "block": 14,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "9",
+        "description": "这个敌人将要攻击造成9点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 12,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "踩踏",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ]
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 51,
+    "ms": 4629,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "FRAIL_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 127,
+      "max_hp": 134,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SETUP_STRIKE",
+      "name": "预备打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本回合内获得2点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "PYRE",
+      "name": "薪火之源",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "THUNDERCLAP",
+      "name": "闪电霹雳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成4点伤害，给予1层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "STOMP",
+      "name": "踩踏",
+      "cost": "3",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 7,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "THUNDERCLAP",
+    "card_name": "闪电霹雳",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1365,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "FRAIL_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 123,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SETUP_STRIKE",
+      "name": "预备打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本回合内获得2点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "PYRE",
+      "name": "薪火之源",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STOMP",
+      "name": "踩踏",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 7,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "PYRE",
+    "card_name": "薪火之源",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1366,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 4,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "FRAIL_POWER": 2,
+      "PYRE_POWER": 1
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 123,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SETUP_STRIKE",
+      "name": "预备打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本回合内获得2点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STOMP",
+      "name": "踩踏",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 7,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 47,
+    "ms": 4369,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 4,
+    "max_energy": 4,
+    "player": {
+     "hp": 46,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "FRAIL_POWER": 1,
+      "PYRE_POWER": 1
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 123,
+      "max_hp": 134,
+      "block": 14,
+      "status": {
+       "STRENGTH_POWER": 5
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成14点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 3,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 2,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "3"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1232,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 4,
+    "player": {
+     "hp": 46,
+     "max_hp": 80,
+     "block": 11,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "FRAIL_POWER": 1,
+      "PYRE_POWER": 1
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 123,
+      "max_hp": 134,
+      "block": 14,
+      "status": {
+       "STRENGTH_POWER": 5
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成14点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 2,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "BASH",
+    "card_name": "痛击+",
+    "target": "LOUSE_PROGENITOR_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1400,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 4,
+    "player": {
+     "hp": 46,
+     "max_hp": 80,
+     "block": 11,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "FRAIL_POWER": 1,
+      "PYRE_POWER": 1
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 123,
+      "max_hp": 134,
+      "block": 4,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成14点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 2,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "ULTIMATE_STRIKE",
+    "card_name": "究极打击",
+    "target": "LOUSE_PROGENITOR_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1266,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 4,
+    "player": {
+     "hp": 46,
+     "max_hp": 80,
+     "block": 11,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "FRAIL_POWER": 1,
+      "PYRE_POWER": 1
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 106,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 2,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "SPITE",
+    "card_name": "怨恨",
+    "target": "LOUSE_PROGENITOR_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1431,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 4,
+    "player": {
+     "hp": 46,
+     "max_hp": 80,
+     "block": 11,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "FRAIL_POWER": 1,
+      "PYRE_POWER": 1
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 92,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 2,
+    "discard": [
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "0"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 56,
+    "ms": 5468,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 4,
+    "max_energy": 4,
+    "player": {
+     "hp": 37,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "PYRE_POWER": 1
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 92,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "DISMANTLE",
+      "name": "拆卸+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。"
+     },
+     {
+      "slot": 2,
+      "id": "SETUP_STRIKE",
+      "name": "预备打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本回合内获得2点力量。"
+     },
+     {
+      "slot": 3,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 4,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "3"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1279,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 4,
+    "player": {
+     "hp": 37,
+     "max_hp": 80,
+     "block": 16,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "PYRE_POWER": 1
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 92,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DISMANTLE",
+      "name": "拆卸+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。"
+     },
+     {
+      "slot": 1,
+      "id": "SETUP_STRIKE",
+      "name": "预备打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本回合内获得2点力量。"
+     },
+     {
+      "slot": 2,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 3,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "3"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "SETUP_STRIKE",
+    "card_name": "预备打击",
+    "target": "LOUSE_PROGENITOR_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1547,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 14,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 4,
+    "player": {
+     "hp": 37,
+     "max_hp": 80,
+     "block": 16,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "PYRE_POWER": 1,
+      "STRENGTH_POWER": 2,
+      "SETUP_STRIKE_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 82,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DISMANTLE",
+      "name": "拆卸+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 如果该敌人有易伤状态，则攻击两次。"
+     },
+     {
+      "slot": 1,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成11点伤害。 抽1张牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "DISMANTLE",
+    "card_name": "拆卸+",
+    "target": "LOUSE_PROGENITOR_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1532,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 15,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 4,
+    "player": {
+     "hp": 37,
+     "max_hp": 80,
+     "block": 16,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "PYRE_POWER": 1,
+      "STRENGTH_POWER": 2,
+      "SETUP_STRIKE_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 46,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成11点伤害。 抽1张牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "SPITE",
+    "card_name": "怨恨",
+    "target": "LOUSE_PROGENITOR_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1534,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 16,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 4,
+    "player": {
+     "hp": 37,
+     "max_hp": 80,
+     "block": 16,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "PYRE_POWER": 1,
+      "STRENGTH_POWER": 2,
+      "SETUP_STRIKE_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 26,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成11点伤害。 抽1张牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "0"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击",
+    "target": "LOUSE_PROGENITOR_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1247,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 17,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 4,
+    "player": {
+     "hp": 37,
+     "max_hp": 80,
+     "block": 16,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "PYRE_POWER": 1,
+      "STRENGTH_POWER": 2,
+      "SETUP_STRIKE_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 10,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       },
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "THUNDERCLAP",
+      "name": "闪电霹雳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成6点伤害，给予1层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 9,
+    "discard": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "0"
+     },
+     {
+      "name": "究极打击",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 48,
+    "ms": 4802,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 18,
+   "obs": {
+    "state_type": "monster",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 4,
+    "max_energy": 4,
+    "player": {
+     "hp": 36,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "CRIMSON_MANTLE_POWER": 8,
+      "PYRE_POWER": 1,
+      "FRAIL_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LOUSE_PROGENITOR_0",
+      "name": "虱虫之祖",
+      "hp": 10,
+      "max_hp": 134,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 5,
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "STOMP",
+      "name": "踩踏",
+      "cost": "3",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得3点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成14点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 4,
+    "discard": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ],
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BASH",
+    "card_name": "痛击+",
+    "target": "LOUSE_PROGENITOR_0"
+   },
+   "settle": {
+    "polls": 18,
+    "ms": 1599,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 19,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 54,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DUPLICATOR",
+      "name": "复制药水",
+      "description": "本回合，你打出的下一张牌会额外打出一次。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": null,
+    "discard": [],
+    "exhaust": [],
+    "pending": null,
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "SILVER_CRUCIBLE",
+      "name": "白银熔炉",
+      "counter": null
+     },
+     {
+      "id": "MEAT_ON_THE_BONE",
+      "name": "带骨肉",
+      "counter": null
+     },
+     {
+      "id": "PAELS_WING",
+      "name": "佩尔之翼",
+      "counter": null
+     },
+     {
+      "id": "POTION_BELT",
+      "name": "药水腰带",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     }
+    ]
+   },
+   "action": null
+  }
+ ],
+ "notes": "【L2实战首测】第2幕31层 虱虫之祖134血 带蜷身14(内核无此机制)。我48/80。遗物臂甲(首次卡牌格挡翻倍)内核也看不见。\n求解器只出防御+，留1能量。我覆盖：加打绯红披风——134血长仗里每回合8格挡，单回合目标函数看不见跨回合价值。\n回合2 完全照求解器的线打：闪电霹雳->预备打击->打击->踩踏。踩踏减费3->0，3能量出4张牌。内核预测敌人 127->80。\n回合3 照求解器打，这次带上目标。上一回合我漏了--target导致预备打击被游戏拒收、录制器还报成功，已给录制器加拒绝检测。\n回合4 照求解器：防御++ -> 预备打击 -> 拆卸++ -> 怨恨 -> 剑柄打击。预备打击的+2力量排在三张攻击牌之前。内核预测敌人 92->20。\n回合5 斩杀。三个目标函数给出同一条线。 【已剔除2帧】录制时指向性攻击牌漏了--target，游戏拒收但当时的录制器报成功，于是把两个从未发生的动作记了进来。已按\"trace 是真实游戏的证词\"的原则删除；录制器已加拒绝检测（状态零变化即报错停止）。 【遗物为回填】录这条 trace 时录制器还没有采集 relics 字段。这 6 件是战斗刚结束时从游戏状态读到的确切列表，而遗物在一场战斗内恒定，所以回填的是已知常量、不是伪造的观测。以后录的 trace 由录制器直接采集。"
+}

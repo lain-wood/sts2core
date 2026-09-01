@@ -1,0 +1,2203 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-27T01:43:28+08:00",
+ "run": {
+  "act": 1,
+  "floor": 9,
+  "ascension": 1,
+  "character": "铁甲战士",
+  "room_type": "elite"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 82,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "17",
+        "description": "这个敌人将要攻击造成17点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "BASH",
+    "card_name": "痛击",
+    "target": "BYRDONIS_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1231,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 74,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "17",
+        "description": "这个敌人将要攻击造成17点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "use_potion",
+    "slot": 1,
+    "potion_id": "EXPLOSIVE_AMPOULE",
+    "potion_name": "爆炸安瓿",
+    "target": null
+   },
+   "settle": {
+    "polls": 20,
+    "ms": 1665,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 64,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "17",
+        "description": "这个敌人将要攻击造成17点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击",
+    "target": "BYRDONIS_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1265,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 80,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 51,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "17",
+        "description": "这个敌人将要攻击造成17点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得8点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 45,
+    "ms": 3935,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 51,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 1,
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×3",
+        "description": "这个敌人将要攻击造成4点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "TAUNT",
+      "name": "挑衅+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "获得8点格挡。 给予2层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1233,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 51,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 1,
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×3",
+        "description": "这个敌人将要攻击造成4点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "TAUNT",
+      "name": "挑衅+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "获得8点格挡。 给予2层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "BYRDONIS_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1266,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 42,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 1,
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×3",
+        "description": "这个敌人将要攻击造成4点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "TAUNT",
+      "name": "挑衅+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "获得8点格挡。 给予2层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "TAUNT",
+    "card_name": "挑衅+",
+    "target": "BYRDONIS_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1465,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 13,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 42,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 3,
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×3",
+        "description": "这个敌人将要攻击造成4点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "BULLY",
+    "card_name": "欺凌",
+    "target": "BYRDONIS_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1199,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 13,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 27,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 3,
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×3",
+        "description": "这个敌人将要攻击造成4点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 49,
+    "ms": 4752,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 27,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 2,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "COLOSSUS",
+      "name": "巨像",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "PYRE",
+      "name": "薪火之源",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "BYRDONIS_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1265,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 18,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 2,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "COLOSSUS",
+      "name": "巨像",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "PYRE",
+      "name": "薪火之源",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "BYRDONIS_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1214,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BYRDONIS_0",
+      "name": "多尼斯异鸟",
+      "hp": 9,
+      "max_hp": 82,
+      "block": 0,
+      "status": {
+       "TERRITORIAL_POWER": 1,
+       "VULNERABLE_POWER": 2,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "COLOSSUS",
+      "name": "巨像",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "PYRE",
+      "name": "薪火之源",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "BYRDONIS_0"
+   },
+   "settle": {
+    "polls": 18,
+    "ms": 1679,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 69,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "BOTTLED_POTENTIAL",
+      "name": "瓶装潜能",
+      "description": "将你的所有牌洗入你的抽牌堆。抽5张牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "第9层 精英 多尼斯异鸟 BYRDONIS 82血，意图17，带「领地意识」(回合结束+1力量)。内容表里没有这只，也没有这个 status —— 这条实录就是补它的依据。\n牌组这一趟是新构筑：突破/耸肩无视/巨像/挑衅+/欺凌/薪火之源，和现有 34 条实录那副不是一副。\n精英会每回合+1力量，仗拖长必输：这一回合按竞速打，痛击上易伤 + 爆炸安瓿，把它的回合数压下去。\n这一点能量按竞速用：剑柄打击带易伤是13点，等于少挨它一整回合的18+；耸肩无视只省8。"
+}

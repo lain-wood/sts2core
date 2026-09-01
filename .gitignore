@@ -1,0 +1,16 @@
+# Rust 编译产物与备份
+target/
+**/*.rs.bk
+
+# Python 虚拟环境与字节码
+.venv/
+__pycache__/
+*.pyc
+
+# 调试与临时文件
+traces/_live.json
+traces/_plan.txt.tmp
+traces/raw_*/
+decompiled/
+.idea/
+.vscode/

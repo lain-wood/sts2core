@@ -1,0 +1,3162 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-22T13:41:43+08:00",
+ "run": {
+  "act": 2,
+  "floor": 27,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "elite"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 77,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 144,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×7",
+        "description": "这个敌人将要攻击造成3点伤害7次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "ARMAMENTS",
+      "name": "武装+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得10点格挡。 升级你手牌中的所有牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "ARMAMENTS",
+    "card_name": "武装+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1117,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 77,
+     "max_hp": 80,
+     "block": 10,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 144,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×7",
+        "description": "这个敌人将要攻击造成3点伤害7次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "BASH",
+    "card_name": "痛击+",
+    "target": "ENTOMANCER_0"
+   },
+   "settle": {
+    "polls": 20,
+    "ms": 1932,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 77,
+     "max_hp": 80,
+     "block": 10,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 134,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×7",
+        "description": "这个敌人将要攻击造成3点伤害7次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 50,
+    "ms": 4677,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 66,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 132,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "18",
+        "description": "这个敌人将要攻击造成18点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 2,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "ULTIMATE_STRIKE",
+    "card_name": "究极打击+",
+    "target": "ENTOMANCER_0"
+   },
+   "settle": {
+    "polls": 19,
+    "ms": 1800,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 66,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 102,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "18",
+        "description": "这个敌人将要攻击造成18点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "SHRUG_IT_OFF",
+    "card_name": "耸肩无视+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1200,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 66,
+     "max_hp": 80,
+     "block": 11,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 102,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "18",
+        "description": "这个敌人将要攻击造成18点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "HEMOKINESIS",
+    "card_name": "御血术+",
+    "target": "ENTOMANCER_0"
+   },
+   "settle": {
+    "polls": 20,
+    "ms": 1899,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 64,
+     "max_hp": 80,
+     "block": 11,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 72,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "18",
+        "description": "这个敌人将要攻击造成18点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 44,
+    "ms": 4151,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 57,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 69,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击+",
+    "target": "ENTOMANCER_0"
+   },
+   "settle": {
+    "polls": 21,
+    "ms": 1979,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 57,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 54,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 4,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 5,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "MOLTEN_FIST",
+    "card_name": "熔融之拳",
+    "target": "ENTOMANCER_0"
+   },
+   "settle": {
+    "polls": 20,
+    "ms": 1901,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 57,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 39,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "use_potion",
+    "slot": 0,
+    "potion_id": "FIRE_POTION",
+    "potion_name": "火焰药水",
+    "target": "ENTOMANCER_0"
+   },
+   "settle": {
+    "polls": 17,
+    "ms": 1597,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 57,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 19,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "OROBIC_ACID",
+      "name": "欧洛巴斯之酸",
+      "description": "往你的手牌中加入一张随机攻击牌、一张随机技能牌和一张随机能力牌。这些牌在本回合免费。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "use_potion",
+    "slot": 1,
+    "potion_id": "OROBIC_ACID",
+    "potion_name": "欧洛巴斯之酸",
+    "target": "ENTOMANCER_0"
+   },
+   "settle": {
+    "polls": 19,
+    "ms": 1701,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 57,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 19,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 5,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 6,
+      "id": "HAVOC",
+      "name": "破灭",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "打出抽牌堆顶部的牌并将其消耗。"
+     },
+     {
+      "slot": 7,
+      "id": "DEMON_FORM",
+      "name": "恶魔形态",
+      "cost": "0",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在你的回合开始时，获得2点力量。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 5,
+    "card_id": "MOLTEN_FIST",
+    "card_name": "熔融之拳",
+    "target": "ENTOMANCER_0"
+   },
+   "settle": {
+    "polls": 22,
+    "ms": 2047,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 57,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "ENTOMANCER_0",
+      "name": "蜂群术士",
+      "hp": 4,
+      "max_hp": 145,
+      "block": 0,
+      "status": {
+       "PERSONAL_HIVE_POWER": 1,
+       "VULNERABLE_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "DAZED",
+      "name": "晕眩",
+      "cost": "0",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 5,
+      "id": "HAVOC",
+      "name": "破灭",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "打出抽牌堆顶部的牌并将其消耗。"
+     },
+     {
+      "slot": 6,
+      "id": "DEMON_FORM",
+      "name": "恶魔形态",
+      "cost": "0",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在你的回合开始时，获得2点力量。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": 4,
+    "draw": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "晕眩",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "晕眩",
+      "cost": "0"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "CONFLAGRATION",
+    "card_name": "焚烧+",
+    "target": null
+   },
+   "settle": {
+    "polls": 26,
+    "ms": 2434,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "精英 蜂群术士 145血，带人体蜂房（每当被攻击命中就往抽牌堆加1张晕眩）——内核不认识这个status。抱抱先生已确认回合1打1点（145->144）。\n不听求解器：它选双重打击+（两段=两张晕眩）。[源码]PersonalHivePower.AfterDamageReceived 判 IsPoweredAttack（Move且非Unpowered），每一段命中各加 Amount 张晕眩，而喷吐会把 Amount 从1加到3。内核不认识这个status。改成武装+ -> 痛击+：一段命中换3层易伤。火焰药水是Unpowered不触发，这场里它比平时值钱。\n痛击+ 落地10（144-10-2=132，抱抱先生回合2打2点），只吃1张晕眩，符合每段命中加1张。\n回合3是白给的（喷吐不出手），但下回合蜂房变2层、蜂群带力量变28点。算斩杀：69血 = 剑柄打击+15 + 熔融之拳15 + 两瓶火焰药水40 = 70。两瓶药水是Unpowered不加晕眩，且这一层看不见的价值是「在28点那一手之前结束战斗」。\n火焰药水实测：39->19 落地20，带易伤2却没放大——药水伤害不吃易伤（和\"药水格挡不吃脆弱\"对称）。且抽牌堆没增加晕眩，证实 Unpowered 不触发人体蜂房。\n操作失误记录：用掉槽0的火焰药水后药水槽重新编号，我按上一条输出里的\"药[1]\"传了 potion 1，喝掉的是欧洛巴斯之酸而不是火焰药水。它给了三张0费牌（熔融之拳/破灭/恶魔形态），这回合照样能打完，火焰药水留下。"
+}

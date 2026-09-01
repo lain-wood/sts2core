@@ -1,0 +1,10532 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-22T18:14:40+08:00",
+ "run": {
+  "act": 2,
+  "floor": 33,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "boss"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "boss",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 320,
+      "max_hp": 321,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "StatusCard",
+        "label": "6",
+        "description": "这个敌人将会给你6张状态牌。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "TREMBLE",
+      "name": "战栗+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予4层易伤。 消耗。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 13,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "TREMBLE",
+    "card_name": "战栗+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1265,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "boss",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 320,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "StatusCard",
+        "label": "6",
+        "description": "这个敌人将会给你6张状态牌。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 13,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "use_potion",
+    "slot": 0,
+    "potion_id": "ATTACK_POTION",
+    "potion_name": "攻击药水",
+    "target": null
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1481,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "card_select",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [
+     {
+      "slot": 0,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 13,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     }
+    ],
+    "pending": {
+     "kind": "card_select",
+     "prompt": "Choose a card.",
+     "can_confirm": false,
+     "can_cancel": true,
+     "selected": null,
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "FIEND_FIRE",
+       "name": "恶魔之焰",
+       "cost": "2",
+       "type": "Attack",
+       "rarity": "Rare",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "消耗所有手牌。 每张被消耗的牌造成7点伤害。 消耗。"
+      },
+      {
+       "slot": 1,
+       "id": "RAMPAGE",
+       "name": "暴走",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Uncommon",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成9点伤害。 将这张牌在本场战斗中的伤害增加5。"
+      },
+      {
+       "slot": 2,
+       "id": "WHIRLWIND",
+       "name": "旋风斩",
+       "cost": "X",
+       "type": "Attack",
+       "rarity": "Uncommon",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "对所有敌人造成5点伤害X次。"
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "select_card",
+    "slot": 0
+   },
+   "settle": {
+    "polls": 11,
+    "ms": 1007,
+    "unstable": false,
+    "intermediate_differs": false
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "boss",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 320,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "StatusCard",
+        "label": "6",
+        "description": "这个敌人将会给你6张状态牌。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "FIEND_FIRE",
+      "name": "恶魔之焰",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "消耗所有手牌。 每张被消耗的牌造成7点伤害。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 13,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "ULTIMATE_STRIKE",
+    "card_name": "究极打击+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1232,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "boss",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 290,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "StatusCard",
+        "label": "6",
+        "description": "这个敌人将会给你6张状态牌。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "FIEND_FIRE",
+      "name": "恶魔之焰",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "消耗所有手牌。 每张被消耗的牌造成7点伤害。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 13,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "FIEND_FIRE",
+    "card_name": "恶魔之焰",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 28,
+    "ms": 2630,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "boss",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 260,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "StatusCard",
+        "label": "6",
+        "description": "这个敌人将会给你6张状态牌。"
+       }
+      ]
+     }
+    },
+    "hand": [],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 13,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 75,
+    "ms": 7202,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "boss",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 258,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "8×2",
+        "description": "这个敌人将要攻击造成8点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 1,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 2,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 3,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 4,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 5,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "FRANTIC_ESCAPE",
+    "card_name": "狂乱逃离",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1499,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "boss",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 258,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 5
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "8×2",
+        "description": "这个敌人将要攻击造成8点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 1,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "MOLTEN_FIST",
+    "card_name": "熔融之拳",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1399,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "boss",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 243,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 6,
+       "SANDPIT_POWER": 5
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "8×2",
+        "description": "这个敌人将要攻击造成8点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1401,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "boss",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 65,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 228,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 6,
+       "SANDPIT_POWER": 5
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "8×2",
+        "description": "这个敌人将要攻击造成8点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 3,
+      "id": "UPPERCUT",
+      "name": "上勾拳+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予2层虚弱。 给予2层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 47,
+    "ms": 4468,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "boss",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 49,
+     "max_hp": 80,
+     "block": 18,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 225,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 5,
+       "SANDPIT_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "28",
+        "description": "这个敌人将要攻击造成28点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得10点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 4,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1268,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "boss",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 49,
+     "max_hp": 80,
+     "block": 28,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 225,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 5,
+       "SANDPIT_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "28",
+        "description": "这个敌人将要攻击造成28点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 3,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "FRANTIC_ESCAPE",
+    "card_name": "狂乱逃离",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1333,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "boss",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 49,
+     "max_hp": 80,
+     "block": 28,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 225,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 5,
+       "SANDPIT_POWER": 5
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "28",
+        "description": "这个敌人将要攻击造成28点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "TWIN_STRIKE",
+    "card_name": "双重打击",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1498,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "boss",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 49,
+     "max_hp": 80,
+     "block": 28,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 211,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 5,
+       "SANDPIT_POWER": 5
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "28",
+        "description": "这个敌人将要攻击造成28点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得8点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 58,
+    "ms": 5351,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 14,
+   "obs": {
+    "state_type": "boss",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 49,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 207,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DARK_SHACKLES",
+      "name": "黑暗镣铐",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "使一名敌人在本回合失去9点力量。 消耗。"
+     },
+     {
+      "slot": 2,
+      "id": "ARMAMENTS",
+      "name": "武装+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 升级你手牌中的所有牌。"
+     },
+     {
+      "slot": 3,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "ARMAMENTS",
+    "card_name": "武装+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1266,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 15,
+   "obs": {
+    "state_type": "boss",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 49,
+     "max_hp": 80,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 207,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DARK_SHACKLES",
+      "name": "黑暗镣铐+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "使一名敌人在本回合失去15点力量。 消耗。"
+     },
+     {
+      "slot": 2,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "HEMOKINESIS",
+    "card_name": "御血术+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1365,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 16,
+   "obs": {
+    "state_type": "boss",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 177,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DARK_SHACKLES",
+      "name": "黑暗镣铐+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "使一名敌人在本回合失去15点力量。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "ULTIMATE_STRIKE",
+    "card_name": "究极打击+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1167,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 17,
+   "obs": {
+    "state_type": "boss",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 147,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DARK_SHACKLES",
+      "name": "黑暗镣铐+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "使一名敌人在本回合失去15点力量。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 56,
+    "ms": 5435,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 18,
+   "obs": {
+    "state_type": "boss",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 142,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 3,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10×2",
+        "description": "这个敌人将要攻击造成10点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 3,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 5,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "use_potion",
+    "slot": 1,
+    "potion_id": "DEXTERITY_POTION",
+    "potion_name": "敏捷药水",
+    "target": null
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1516,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 19,
+   "obs": {
+    "state_type": "boss",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 142,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 3,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10×2",
+        "description": "这个敌人将要攻击造成10点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 3,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得7点格挡。"
+     },
+     {
+      "slot": 5,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "FRANTIC_ESCAPE",
+    "card_name": "狂乱逃离",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1366,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 20,
+   "obs": {
+    "state_type": "boss",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 142,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 4,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10×2",
+        "description": "这个敌人将要攻击造成10点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得7点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "FRANTIC_ESCAPE",
+    "card_name": "狂乱逃离",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1383,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 21,
+   "obs": {
+    "state_type": "boss",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 142,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 5,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10×2",
+        "description": "这个敌人将要攻击造成10点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得7点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1148,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 22,
+   "obs": {
+    "state_type": "boss",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 7,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 142,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 5,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10×2",
+        "description": "这个敌人将要攻击造成10点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 47,
+    "ms": 4333,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 23,
+   "obs": {
+    "state_type": "boss",
+    "round": 6,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 34,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 136,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2,
+       "SANDPIT_POWER": 4,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10×2",
+        "description": "这个敌人将要攻击造成10点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 1,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得10点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 2,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 4,
+      "id": "UPPERCUT",
+      "name": "上勾拳+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予2层虚弱。 给予2层易伤。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "COLOSSUS",
+    "card_name": "巨像+",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1367,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 24,
+   "obs": {
+    "state_type": "boss",
+    "round": 6,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 34,
+     "max_hp": 80,
+     "block": 10,
+     "status": {
+      "DEXTERITY_POWER": 2,
+      "COLOSSUS_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 136,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2,
+       "SANDPIT_POWER": 4,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5×2",
+        "description": "这个敌人将要攻击造成5点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 3,
+      "id": "UPPERCUT",
+      "name": "上勾拳+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予2层虚弱。 给予2层易伤。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "UPPERCUT",
+    "card_name": "上勾拳+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1500,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 25,
+   "obs": {
+    "state_type": "boss",
+    "round": 6,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 34,
+     "max_hp": 80,
+     "block": 10,
+     "status": {
+      "DEXTERITY_POWER": 2,
+      "COLOSSUS_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 117,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 4,
+       "STRENGTH_POWER": 2,
+       "WEAK_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×2",
+        "description": "这个敌人将要攻击造成3点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 62,
+    "ms": 5967,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 26,
+   "obs": {
+    "state_type": "boss",
+    "round": 7,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 34,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 110,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 3,
+       "STRENGTH_POWER": 2,
+       "WEAK_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "22",
+        "description": "这个敌人将要攻击造成22点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1435,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 27,
+   "obs": {
+    "state_type": "boss",
+    "round": 7,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 34,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 95,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 3,
+       "STRENGTH_POWER": 2,
+       "WEAK_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "22",
+        "description": "这个敌人将要攻击造成22点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 4,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 5,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "HEMOKINESIS",
+    "card_name": "御血术+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1367,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 28,
+   "obs": {
+    "state_type": "boss",
+    "round": 7,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 32,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 65,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 3,
+       "STRENGTH_POWER": 2,
+       "WEAK_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "22",
+        "description": "这个敌人将要攻击造成22点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 4,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "ULTIMATE_STRIKE",
+    "card_name": "究极打击+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1266,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 29,
+   "obs": {
+    "state_type": "boss",
+    "round": 7,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 32,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 35,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "SANDPIT_POWER": 3,
+       "STRENGTH_POWER": 2,
+       "WEAK_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "22",
+        "description": "这个敌人将要攻击造成22点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 57,
+    "ms": 5649,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 30,
+   "obs": {
+    "state_type": "boss",
+    "round": 8,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 10,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 27,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2,
+       "SANDPIT_POWER": 2,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得10点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 3,
+      "id": "ARMAMENTS",
+      "name": "武装+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得7点格挡。 升级你手牌中的所有牌。"
+     },
+     {
+      "slot": 4,
+      "id": "DARK_SHACKLES",
+      "name": "黑暗镣铐+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "使一名敌人在本回合失去15点力量。 消耗。"
+     },
+     {
+      "slot": 5,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "ARMAMENTS",
+    "card_name": "武装+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1187,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 31,
+   "obs": {
+    "state_type": "boss",
+    "round": 8,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 10,
+     "max_hp": 80,
+     "block": 7,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 27,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 2,
+       "SANDPIT_POWER": 2,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得10点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 3,
+      "id": "DARK_SHACKLES",
+      "name": "黑暗镣铐+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "使一名敌人在本回合失去15点力量。 消耗。"
+     },
+     {
+      "slot": 4,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BASH",
+    "card_name": "痛击+",
+    "target": "THE_INSATIABLE_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1365,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 32,
+   "obs": {
+    "state_type": "boss",
+    "round": 8,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 10,
+     "max_hp": 80,
+     "block": 7,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 12,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 5,
+       "SANDPIT_POWER": 2,
+       "STRENGTH_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得10点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 1,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 2,
+      "id": "DARK_SHACKLES",
+      "name": "黑暗镣铐+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "使一名敌人在本回合失去15点力量。 消耗。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 46,
+    "ms": 4419,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 33,
+   "obs": {
+    "state_type": "boss",
+    "round": 9,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 10,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 3,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 1,
+       "STRENGTH_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12×2",
+        "description": "这个敌人将要攻击造成12点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得7点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "1",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 3,
+      "id": "FRANTIC_ESCAPE",
+      "name": "狂乱逃离",
+      "cost": "2",
+      "type": "Status",
+      "rarity": "Status",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。"
+     },
+     {
+      "slot": 4,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "STOKE",
+    "card_name": "添柴+",
+    "target": null
+   },
+   "settle": {
+    "polls": 27,
+    "ms": 2532,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 34,
+   "obs": {
+    "state_type": "boss",
+    "round": 9,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 10,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 3,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 1,
+       "STRENGTH_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12×2",
+        "description": "这个敌人将要攻击造成12点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BRAND",
+      "name": "烙印+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 2,
+      "id": "BRAND",
+      "name": "烙印+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+     },
+     {
+      "slot": 3,
+      "id": "DARK_EMBRACE",
+      "name": "黑暗之拥+",
+      "cost": "1",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "每当有一张牌被消耗时， 抽1张牌。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "DARK_EMBRACE",
+    "card_name": "黑暗之拥+",
+    "target": null
+   },
+   "settle": {
+    "polls": 17,
+    "ms": 1499,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 35,
+   "obs": {
+    "state_type": "boss",
+    "round": 9,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 10,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2,
+      "DARK_EMBRACE_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 3,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 1,
+       "STRENGTH_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12×2",
+        "description": "这个敌人将要攻击造成12点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BRAND",
+      "name": "烙印+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 2,
+      "id": "BRAND",
+      "name": "烙印+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "BRAND",
+    "card_name": "烙印+",
+    "target": null
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1333,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 36,
+   "obs": {
+    "state_type": "hand_select",
+    "round": 9,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 9,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2,
+      "DARK_EMBRACE_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 3,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 1,
+       "STRENGTH_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12×2",
+        "description": "这个敌人将要攻击造成12点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "BRAND",
+      "name": "烙印+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "pending": {
+     "kind": "hand_select",
+     "prompt": "选择1张牌来消耗。",
+     "can_confirm": false,
+     "can_cancel": null,
+     "selected": null,
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "PYRE",
+       "name": "薪火之源+",
+       "cost": "2",
+       "type": "Power",
+       "rarity": "Rare",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+      },
+      {
+       "slot": 1,
+       "id": "BRAND",
+       "name": "烙印+",
+       "cost": "0",
+       "type": "Skill",
+       "rarity": "Rare",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "select_card",
+    "slot": 0
+   },
+   "settle": {
+    "polls": 11,
+    "ms": 1047,
+    "unstable": false,
+    "intermediate_differs": false
+   }
+  },
+  {
+   "i": 37,
+   "obs": {
+    "state_type": "hand_select",
+    "round": 9,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 9,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2,
+      "DARK_EMBRACE_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 3,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 1,
+       "STRENGTH_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12×2",
+        "description": "这个敌人将要攻击造成12点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "BRAND",
+      "name": "烙印+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "pending": {
+     "kind": "hand_select",
+     "prompt": "选择1张牌来消耗。",
+     "can_confirm": true,
+     "can_cancel": null,
+     "selected": [
+      {
+       "index": 0,
+       "name": "薪火之源+"
+      }
+     ],
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "BRAND",
+       "name": "烙印+",
+       "cost": "0",
+       "type": "Skill",
+       "rarity": "Rare",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "confirm_selection"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1479,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 38,
+   "obs": {
+    "state_type": "boss",
+    "round": 9,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 9,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2,
+      "DARK_EMBRACE_POWER": 1,
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 3,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 1,
+       "STRENGTH_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12×2",
+        "description": "这个敌人将要攻击造成12点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BRAND",
+      "name": "烙印+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "UPPERCUT",
+      "name": "上勾拳+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成15点伤害。 给予2层虚弱。 给予2层易伤。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "烙印+",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "BRAND",
+    "card_name": "烙印+",
+    "target": null
+   },
+   "settle": {
+    "polls": 29,
+    "ms": 2834,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 39,
+   "obs": {
+    "state_type": "boss",
+    "round": 9,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 8,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "DEXTERITY_POWER": 2,
+      "DARK_EMBRACE_POWER": 1,
+      "STRENGTH_POWER": 4
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "THE_INSATIABLE_0",
+      "name": "无厌沙虫",
+      "hp": 3,
+      "max_hp": 321,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4,
+       "SANDPIT_POWER": 1,
+       "STRENGTH_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12×2",
+        "description": "这个敌人将要攻击造成12点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成6点伤害5次。"
+     }
+    ],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "烙印+",
+      "cost": "0"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "烙印+",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "战栗+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "恶魔之焰",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "1"
+     },
+     {
+      "name": "狂乱逃离",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "CONFLAGRATION",
+    "card_name": "焚烧+",
+    "target": null
+   },
+   "settle": {
+    "polls": 12,
+    "ms": 1065,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 40,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 14,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "第2幕Boss 无厌沙虫 321血（不是碾碎者双怪，也不是advisor预测的知识恶魔）。开场意图 Buff + StatusCard 6（塞6张状态牌）。新遗物风箱：开局手牌全升级。\n关键机制[源码]：SandpitPower从4开始、每个敌人回合开始-1，归零时 AfterRemoved -> CreatureCmd.Kill(玩家,force:true)，即死。塞的6张狂乱逃离是1费状态牌，打出给计数器+1但自身费用永久+1。内核完全看不见这条时间线，求解器只能管单回合。这是一场边续命边竞速的仗。\n攻击药水三选一：恶魔之焰/暴走/旋风斩。旋风斩排除——X费牌免费打出时X=0（[源码]CapturedXValue取当前能量），0伤害。选恶魔之焰：本回合免费，先打完好牌再引爆，只吃两张防御+，竞速里格挡是死重，转伤害同时把牌组变薄。\n修剪：删掉两个从未发生的空动作帧（select/confirm 用错端点，mod 回 error、状态零变化，而当时的录制器没检查）。录制器已修：按 state_type 选端点 + 零变化守卫扩到选牌。\n回合1打掉61点（321->260）。SANDPIT_POWER=4 显形。时间线：每个敌人回合开始-1，归零秒杀，所以只剩回合2/3/4/5四次行动而boss还有258血。必须用狂乱逃离买时间——现在1费最便宜（每打一次自身永久+1费），1费换一整个回合的行动量。内核不认识这张牌，求解器也看不见这条时间线。\n求解器整条线是添柴+之后的生成牌（新加的标注让它一眼可见），而且它要烧掉的正是这回合最值钱的熔融之拳和剑柄打击+。不听。改打熔融之拳（15点且把易伤3翻成6=后面六回合全程x1.5）+剑柄打击+（15点抽2）。\n狂乱逃离的涨价是按牌实例的（[源码]base.EnergyCost.AddThisCombat(1)），6张各自第一次都是1费，买时间比预估便宜。臂甲这场还没用过（两张防御+和耸肩无视+都是被恶魔之焰消耗掉的、没打出去），所以防御吃翻倍给10点，18+10=28正好挡满撕咬。巨像+留着——它对易伤敌人的伤害减半对后面的28点更值钱。\n回合4敌人只上Buff不出手。第三费本来浪费，用武装+把黑暗镣铐升成+（-9变-15力量），留给后面那记30点撕咬。狂乱逃离是状态牌升不了（upgradable() 那条规则）。\n回合5取舍：求解器给痛击+防御(boss124)，但沙坑留在3=只剩2回合打124血，必死。改成敏捷药水+狂乱逃离x2+防御：这回合零伤害，换成4个回合打137血(34/回合可行)。承认回合1用恶魔之焰烧掉两张防御+和耸肩无视+是错的——这个Boss是血量卡我不是回合数卡我。\n求解器又是添柴+生成牌那条幻想线（它要烧掉巨像+和上勾拳+）。改打巨像+（10格挡且把易伤敌人伤害减半，20->10，零掉血）+上勾拳+（19点+2虚弱+2易伤，虚弱削后面那记撕咬25%）。\n巨像+实测：意图 Attack:10x2 -> Attack:5x2，对易伤敌人的伤害减半确认生效（St::Colossus 此前属于\"没被数据碰过\"）。\n回合7全力输出：boss110、来袭22。这回合约44点(boss->66)挨22剩12血；回合8敌人是唾液(0伤害)白给一回合再打约45(boss->13)；回合9在它出手前斩杀。沙坑3正好够走到回合9。求解器又是添柴+幻想线，不听。\n回合9生死局：boss剩3血但手上零攻击牌，沙坑=1（敌人回合一开始归零秒杀）。续命线算过了：来袭24、我10血、最多7格挡，照样死。唯一活路是添柴+把4张废牌换成4张随机升级牌，再用剩2费打出任意一张攻击——3血谁都够。\n生成的4张全是非攻击牌。改走抽牌链：黑暗之拥+(1费，每消耗一张牌抽一张) + 烙印+ x2(0费，消耗手牌1张) = 两次免费抽牌，抽牌堆见底会把14张弃牌堆洗回来。boss只剩3血，抽到任何攻击牌都赢，剩1费正好打。\n抽到上勾拳+但2费打不出（只剩1费）。最后一条线：再打烙印+(0费)消耗掉它，黑暗之拥+再抽一张，弃牌堆15张里约6张是1费攻击，抽中就赢。约四成，没有别的线。"
+}

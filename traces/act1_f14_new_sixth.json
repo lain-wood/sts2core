@@ -1,0 +1,2911 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-22T01:05:16+08:00",
+ "run": {
+  "act": 1,
+  "floor": 14,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SNAPPING_JAXFRUIT_0",
+      "name": "闪光贾克斯果",
+      "hp": 31,
+      "max_hp": 31,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3",
+        "description": "这个敌人将要攻击造成3点伤害。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 55,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成14点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "SPOILS_MAP",
+      "name": "藏宝图",
+      "cost": "0",
+      "type": "Quest",
+      "rarity": "Quest",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "ARMAMENTS",
+      "name": "武装+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 升级你手牌中的所有牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BASH",
+    "card_name": "痛击+",
+    "target": "SNAPPING_JAXFRUIT_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1334,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SNAPPING_JAXFRUIT_0",
+      "name": "闪光贾克斯果",
+      "hp": 21,
+      "max_hp": 31,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3",
+        "description": "这个敌人将要攻击造成3点伤害。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 55,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成14点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "SPOILS_MAP",
+      "name": "藏宝图",
+      "cost": "0",
+      "type": "Quest",
+      "rarity": "Quest",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "ARMAMENTS",
+      "name": "武装+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 升级你手牌中的所有牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "MOLTEN_FIST",
+    "card_name": "熔融之拳+",
+    "target": "SNAPPING_JAXFRUIT_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1298,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 55,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SPOILS_MAP",
+      "name": "藏宝图",
+      "cost": "0",
+      "type": "Quest",
+      "rarity": "Quest",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "ARMAMENTS",
+      "name": "武装+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 升级你手牌中的所有牌。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "ARMAMENTS",
+    "card_name": "武装+",
+    "target": null
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1244,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 55,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SPOILS_MAP",
+      "name": "藏宝图",
+      "cost": "0",
+      "type": "Quest",
+      "rarity": "Quest",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 39,
+    "ms": 3716,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "CONSTRICT_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 55,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "HEMOKINESIS",
+      "name": "御血术",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成15点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "藏宝图",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1199,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 5,
+     "status": {
+      "CONSTRICT_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 55,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "HEMOKINESIS",
+      "name": "御血术",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成15点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "藏宝图",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1166,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 58,
+     "max_hp": 80,
+     "block": 10,
+     "status": {
+      "CONSTRICT_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 55,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "HEMOKINESIS",
+      "name": "御血术",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成15点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "藏宝图",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "HEMOKINESIS",
+    "card_name": "御血术",
+    "target": "SLITHERING_STRANGLER_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1452,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 56,
+     "max_hp": 80,
+     "block": 10,
+     "status": {
+      "CONSTRICT_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 40,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "藏宝图",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 38,
+    "ms": 3734,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 51,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "CONSTRICT_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 40,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "SPORE_MIND",
+      "name": "孢子心灵",
+      "cost": "1",
+      "type": "Curse",
+      "rarity": "Curse",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "None",
+      "description": "消耗。"
+     },
+     {
+      "slot": 2,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 3,
+      "id": "CONFLAGRATION",
+      "name": "焚烧",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害4次。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "藏宝图",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击+",
+    "target": "SLITHERING_STRANGLER_0"
+   },
+   "settle": {
+    "polls": 23,
+    "ms": 2287,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 51,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "CONSTRICT_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 30,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SPORE_MIND",
+      "name": "孢子心灵",
+      "cost": "1",
+      "type": "Curse",
+      "rarity": "Curse",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "None",
+      "description": "消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 2,
+      "id": "CONFLAGRATION",
+      "name": "焚烧",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害4次。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "SPOILS_MAP",
+      "name": "藏宝图",
+      "cost": "0",
+      "type": "Quest",
+      "rarity": "Quest",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+     },
+     {
+      "slot": 5,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "TWIN_STRIKE",
+    "card_name": "双重打击",
+    "target": "SLITHERING_STRANGLER_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1379,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 51,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "CONSTRICT_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 20,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SPORE_MIND",
+      "name": "孢子心灵",
+      "cost": "1",
+      "type": "Curse",
+      "rarity": "Curse",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "None",
+      "description": "消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "CONFLAGRATION",
+      "name": "焚烧",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害4次。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "SPOILS_MAP",
+      "name": "藏宝图",
+      "cost": "0",
+      "type": "Quest",
+      "rarity": "Quest",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "CONFLAGRATION",
+    "card_name": "焚烧",
+    "target": null
+   },
+   "settle": {
+    "polls": 21,
+    "ms": 1916,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 51,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "CONSTRICT_POWER": 3
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 12,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SPORE_MIND",
+      "name": "孢子心灵",
+      "cost": "1",
+      "type": "Curse",
+      "rarity": "Curse",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "SPOILS_MAP",
+      "name": "藏宝图",
+      "cost": "0",
+      "type": "Quest",
+      "rarity": "Quest",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 41,
+    "ms": 3767,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "CONSTRICT_POWER": 6
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 12,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "7",
+        "description": "这个敌人将要攻击造成7点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "HEMOKINESIS",
+      "name": "御血术",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成15点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "藏宝图",
+      "cost": "0"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SLITHERING_STRANGLER_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1132,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "CONSTRICT_POWER": 6
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "SLITHERING_STRANGLER_0",
+      "name": "蛇行扼杀者",
+      "hp": 6,
+      "max_hp": 55,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "7",
+        "description": "这个敌人将要攻击造成7点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEMOKINESIS",
+      "name": "御血术",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成15点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "孢子心灵",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "藏宝图",
+      "cost": "0"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BASH",
+    "card_name": "痛击+",
+    "target": "SLITHERING_STRANGLER_0"
+   },
+   "settle": {
+    "polls": 18,
+    "ms": 1687,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 14,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 54,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "WEAK_POTION",
+      "name": "虚弱药水",
+      "description": "给予3层虚弱。"
+     },
+     {
+      "slot": 1,
+      "id": "EXPLOSIVE_AMPOULE",
+      "name": "爆炸安瓿",
+      "description": "对所有敌人造成10点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "FAIRY_IN_A_BOTTLE",
+      "name": "瓶中精灵",
+      "description": "当你的生命值将被减少至0或以下时，改为丢弃这瓶药水，然后将你回复到你最大生命值的30%。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "回合1 首遇闪光贾克斯果+蛇行扼杀者，两只都是这一轮刚从[源码]补进内核的。求解线 痛击+(10,易伤3) -> 熔融之拳+(14x1.5=21) 正好清掉贾克斯果31血。地精之角内核看不见，杀死后会给能量+抽牌，所以打完要重算。熔融之拳+/痛击+ 升级版首次入实录。\n回合1续 求解器说「什么都不打最好」，我仍打武装+：这1点能量本来就浪费（扼杀者这回合只上debuff，格挡无用），而武装+把手里两张防御永久升成防御+是跨回合价值，单回合目标函数看不见。同时武装+从没进过实录，是「手牌操作」那一类。\n回合2 扼杀者攻击(12)与缠绕交替，这回合挡、下回合它只上debuff时再全力输出。存活线 防御->防御->御血术。缠绕3在我回合结束先吃掉3点格挡（内核已算进-7）。\n回合3 敌人只上debuff，是输出窗口。先打剑柄打击+（抽2张，之后必须重算）。留意：求解器第3张给了防御而不是焚烧(8点)，而这回合格挡价值为0——待重算后确认是不是真选错。\n回合3续 澄清：求解器选防御不是错，那5点格挡吃掉缠绕的3点自伤(3x100)胜过焚烧多打的8点敌血(8x30)。我仍选焚烧：敌人打到12而不是20，下回合在出牌阶段打死它就省掉一整个敌人回合(缠绕6+攻击7~12)，这是单回合视角看不见的。焚烧首次入实录。\n回合4 三个目标函数一致：打击(6)->痛击+(10)=16 斩杀12血，且不付御血术的2点自伤（我原本想的那条线更差）。在出牌阶段清场，缠绕6和它的重击都没发生。"
+}

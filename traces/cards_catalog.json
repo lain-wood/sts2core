@@ -1,0 +1,3177 @@
+{
+ "source": "GET /api/v1/compendium (discovered ids) + GET /api/v1/wiki (rules text)",
+ "note": "wiki 只覆盖本档案已发现的牌，不是全游戏目录。没查到的 id 见 not_found。",
+ "count": 128,
+ "not_found": [],
+ "cards": {
+  "STRIKE_IRONCLAD": {
+   "id": "STRIKE_IRONCLAD",
+   "name": "打击",
+   "rarity": "Basic",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成6点伤害。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成9点伤害。",
+    "keywords": []
+   }
+  },
+  "DEFEND_IRONCLAD": {
+   "id": "DEFEND_IRONCLAD",
+   "name": "防御",
+   "rarity": "Basic",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得5点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得8点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "BASH": {
+   "id": "BASH",
+   "name": "痛击",
+   "rarity": "Basic",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "造成8点伤害。 给予2层易伤。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "造成10点伤害。 给予3层易伤。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   }
+  },
+  "SETUP_STRIKE": {
+   "id": "SETUP_STRIKE",
+   "name": "预备打击",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成7点伤害。 在本回合内获得2点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成9点伤害。 在本回合内获得3点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   }
+  },
+  "TREMBLE": {
+   "id": "TREMBLE",
+   "name": "战栗",
+   "rarity": "Common",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "给予3层易伤。 消耗。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "给予4层易伤。 消耗。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "BLOOD_WALL": {
+   "id": "BLOOD_WALL",
+   "name": "血墙",
+   "rarity": "Common",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "失去2点生命。 获得16点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "失去2点生命。 获得20点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "SLIMED": {
+   "id": "SLIMED",
+   "name": "黏液",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "1",
+    "description": "抽1张牌。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "BREAKTHROUGH": {
+   "id": "BREAKTHROUGH",
+   "name": "突破",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "失去1点生命。 对所有敌人造成9点伤害。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "失去1点生命。 对所有敌人造成13点伤害。",
+    "keywords": []
+   }
+  },
+  "INFLAME": {
+   "id": "INFLAME",
+   "name": "燃烧",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得2点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得3点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   }
+  },
+  "ANGER": {
+   "id": "ANGER",
+   "name": "愤怒",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "造成6点伤害。 将一张此牌的复制品加入你的弃牌堆。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "造成8点伤害。 将一张此牌的复制品加入你的弃牌堆。",
+    "keywords": []
+   }
+  },
+  "IRON_WAVE": {
+   "id": "IRON_WAVE",
+   "name": "铁斩波",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得5点格挡。 造成5点伤害。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得7点格挡。 造成7点伤害。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "DISMANTLE": {
+   "id": "DISMANTLE",
+   "name": "拆卸",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成8点伤害。 如果该敌人有易伤状态，则攻击两次。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   }
+  },
+  "CINDER": {
+   "id": "CINDER",
+   "name": "余烬",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "造成18点伤害。 随机消耗1张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "造成24点伤害。 随机消耗1张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "STOMP": {
+   "id": "STOMP",
+   "name": "踩踏",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "3",
+    "description": "对所有敌人造成15点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。",
+    "keywords": []
+   }
+  },
+  "SHRUG_IT_OFF": {
+   "id": "SHRUG_IT_OFF",
+   "name": "耸肩无视",
+   "rarity": "Common",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得8点格挡。 抽1张牌。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得11点格挡。 抽1张牌。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "ARMAMENTS": {
+   "id": "ARMAMENTS",
+   "name": "武装",
+   "rarity": "Common",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得5点格挡。 升级你手牌中的一张牌。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得5点格挡。 升级你手牌中的所有牌。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "THUNDERCLAP": {
+   "id": "THUNDERCLAP",
+   "name": "闪电霹雳",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "对所有敌人造成4点伤害，给予1层易伤。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "对所有敌人造成7点伤害，给予1层易伤。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   }
+  },
+  "RAGE": {
+   "id": "RAGE",
+   "name": "狂怒",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "打出此牌后，你在这个回合内每打出一张攻击牌，获得3点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "打出此牌后，你在这个回合内每打出一张攻击牌，获得5点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "HEMOKINESIS": {
+   "id": "HEMOKINESIS",
+   "name": "御血术",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "失去2点生命。 造成15点伤害。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "失去2点生命。 造成20点伤害。",
+    "keywords": []
+   }
+  },
+  "BODY_SLAM": {
+   "id": "BODY_SLAM",
+   "name": "全身撞击",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成你当前格挡值的伤害。 （造成0点伤害）",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "造成你当前格挡值的伤害。 （造成0点伤害）",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "HAVOC": {
+   "id": "HAVOC",
+   "name": "破灭",
+   "rarity": "Common",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "打出抽牌堆顶部的牌并将其消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "打出抽牌堆顶部的牌并将其消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "TRUE_GRIT": {
+   "id": "TRUE_GRIT",
+   "name": "坚毅",
+   "rarity": "Common",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得7点格挡。  随机消耗1张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得9点格挡。 消耗1张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "STONE_ARMOR": {
+   "id": "STONE_ARMOR",
+   "name": "岩石铠甲",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得4层覆甲。",
+    "keywords": [
+     {
+      "name": "覆甲",
+      "description": "在你的回合结束时获得格挡。覆甲会在你的回合开始时减少1层。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得6层覆甲。",
+    "keywords": [
+     {
+      "name": "覆甲",
+      "description": "在你的回合结束时获得格挡。覆甲会在你的回合开始时减少1层。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "OMNISLICE": {
+   "id": "OMNISLICE",
+   "name": "万向斩",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "造成8点伤害。 对所有其他敌人造成等量的伤害。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "造成11点伤害。 对所有其他敌人造成等量的伤害。",
+    "keywords": []
+   }
+  },
+  "SECRET_WEAPON": {
+   "id": "SECRET_WEAPON",
+   "name": "秘密武器",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "从抽牌堆中选择一张攻击牌放入你的手牌。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "从抽牌堆中选择一张攻击牌放入你的手牌。",
+    "keywords": []
+   }
+  },
+  "BLUDGEON": {
+   "id": "BLUDGEON",
+   "name": "重锤",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "造成32点伤害。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "3",
+    "description": "造成42点伤害。",
+    "keywords": []
+   }
+  },
+  "PYRE": {
+   "id": "PYRE",
+   "name": "薪火之源",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "在回合开始时，获得[ironclad_energy_icon.png]。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     }
+    ]
+   }
+  },
+  "EVIL_EYE": {
+   "id": "EVIL_EYE",
+   "name": "邪眼",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得8点格挡。 如果你在本回合消耗过卡牌，则额外获得8点格挡。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得11点格挡。 如果你在本回合消耗过卡牌，则额外获得11点格挡。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "BATTLE_TRANCE": {
+   "id": "BATTLE_TRANCE",
+   "name": "战斗专注",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "抽3张牌。 你在本回合内不能再抽任何牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "抽4张牌。 你在本回合内不能再抽任何牌。",
+    "keywords": []
+   }
+  },
+  "UPPERCUT": {
+   "id": "UPPERCUT",
+   "name": "上勾拳",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "造成13点伤害。 给予1层虚弱。 给予1层易伤。",
+    "keywords": [
+     {
+      "name": "虚弱",
+      "description": "虚弱的生物造成的攻击伤害减少25%。"
+     },
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "造成13点伤害。 给予2层虚弱。 给予2层易伤。",
+    "keywords": [
+     {
+      "name": "虚弱",
+      "description": "虚弱的生物造成的攻击伤害减少25%。"
+     },
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   }
+  },
+  "INFECTION": {
+   "id": "INFECTION",
+   "name": "感染",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 在你的回合结束时，如果这张牌在你的手牌中，你受到3点伤害。",
+    "keywords": [
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "PILLAGE": {
+   "id": "PILLAGE",
+   "name": "劫掠",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成6点伤害。 抽牌直到你抽到一张非攻击牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成9点伤害。 抽牌直到你抽到一张非攻击牌。",
+    "keywords": []
+   }
+  },
+  "RAMPAGE": {
+   "id": "RAMPAGE",
+   "name": "暴走",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成9点伤害。 将这张牌在本场战斗中的伤害增加5。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成9点伤害。 将这张牌在本场战斗中的伤害增加9。",
+    "keywords": []
+   }
+  },
+  "FLAME_BARRIER": {
+   "id": "FLAME_BARRIER",
+   "name": "火焰屏障",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "获得12点格挡。 你在这个回合每受到一次攻击，都会对攻击者造成4点伤害。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "获得16点格挡。 你在这个回合每受到一次攻击，都会对攻击者造成6点伤害。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "BLOODLETTING": {
+   "id": "BLOODLETTING",
+   "name": "放血",
+   "rarity": "Common",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "失去3点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "失去3点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png][ironclad_energy_icon.png]。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     }
+    ]
+   }
+  },
+  "WHIRLWIND": {
+   "id": "WHIRLWIND",
+   "name": "旋风斩",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "X",
+    "description": "对所有敌人造成5点伤害X次。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "X",
+    "description": "对所有敌人造成8点伤害X次。",
+    "keywords": []
+   }
+  },
+  "WOUND": {
+   "id": "WOUND",
+   "name": "伤口",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。",
+    "keywords": [
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "RELAX": {
+   "id": "RELAX",
+   "name": "放松",
+   "rarity": "Ancient",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "获得15点格挡。 下个回合，抽2张牌并获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 消耗。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "3",
+    "description": "获得17点格挡。 下个回合，抽3张牌并获得[ironclad_energy_icon.png][ironclad_energy_icon.png][ironclad_energy_icon.png]。 消耗。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "POMMEL_STRIKE": {
+   "id": "POMMEL_STRIKE",
+   "name": "剑柄打击",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成9点伤害。 抽1张牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成10点伤害。 抽2张牌。",
+    "keywords": []
+   }
+  },
+  "DAZED": {
+   "id": "DAZED",
+   "name": "晕眩",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 虚无。",
+    "keywords": [
+     {
+      "name": "虚无",
+      "description": "如果这张牌在这个回合结束时留在你的手牌中，则将其消耗。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "TWIN_STRIKE": {
+   "id": "TWIN_STRIKE",
+   "name": "双重打击",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成5点伤害两次。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成7点伤害两次。",
+    "keywords": []
+   }
+  },
+  "SWORD_BOOMERANG": {
+   "id": "SWORD_BOOMERANG",
+   "name": "飞剑回旋镖",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "随机对敌人造成3点伤害3次。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "随机对敌人造成3点伤害4次。",
+    "keywords": []
+   }
+  },
+  "EXPECT_A_FIGHT": {
+   "id": "EXPECT_A_FIGHT",
+   "name": "跃跃欲试",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "你的手牌中每有一张攻击牌，就获得[ironclad_energy_icon.png]。 你在本回合内 不能再获得[ironclad_energy_icon.png]。 （获得0[ironclad_energy_icon.png]）",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "你的手牌中每有一张攻击牌，就获得[ironclad_energy_icon.png]。 你在本回合内 不能再获得[ironclad_energy_icon.png]。 （获得0[ironclad_energy_icon.png]）",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     }
+    ]
+   }
+  },
+  "TAUNT": {
+   "id": "TAUNT",
+   "name": "挑衅",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得7点格挡。 给予1层易伤。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得8点格挡。 给予2层易伤。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "PRIMAL_FORCE": {
+   "id": "PRIMAL_FORCE",
+   "name": "原始力量",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "将手牌中的所有攻击牌变化为巨石。",
+    "keywords": [
+     {
+      "name": "巨石",
+      "description": "造成16点伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "将手牌中的所有攻击牌变化为巨石+。",
+    "keywords": [
+     {
+      "name": "巨石+",
+      "description": "造成20点伤害。"
+     }
+    ]
+   }
+  },
+  "GIANT_ROCK": {
+   "id": "GIANT_ROCK",
+   "name": "巨石",
+   "rarity": "Token",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成16点伤害。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成20点伤害。",
+    "keywords": []
+   }
+  },
+  "RUPTURE": {
+   "id": "RUPTURE",
+   "name": "撕裂",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "每当你在你的回合失去生命值时, 获得1点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "每当你在你的回合失去生命值时, 获得2点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   }
+  },
+  "THRASH": {
+   "id": "THRASH",
+   "name": "痛殴",
+   "rarity": "Rare",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成4点伤害两次。 消耗你的手牌中随机一张攻击牌，并将它的伤害添加给这张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成6点伤害两次。 消耗你的手牌中随机一张攻击牌，并将它的伤害添加给这张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "FORGOTTEN_RITUAL": {
+   "id": "FORGOTTEN_RITUAL",
+   "name": "被遗忘的仪式",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "如果你在本回合消耗过卡牌，则获得[ironclad_energy_icon.png][ironclad_energy_icon.png][ironclad_energy_icon.png]。 消耗。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "如果你在本回合消耗过卡牌，则获得4[ironclad_energy_icon.png]。 消耗。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "VICIOUS": {
+   "id": "VICIOUS",
+   "name": "凶恶",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "每当你给予易伤时，抽1张牌。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "每当你给予易伤时，抽2张牌。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   }
+  },
+  "EQUILIBRIUM": {
+   "id": "EQUILIBRIUM",
+   "name": "均衡",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "获得13点格挡。 在本回合保留你的手牌。",
+    "keywords": [
+     {
+      "name": "保留",
+      "description": "保留的牌不会在回合结束时被弃掉。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "获得16点格挡。 在本回合保留你的手牌。",
+    "keywords": [
+     {
+      "name": "保留",
+      "description": "保留的牌不会在回合结束时被弃掉。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "ROLLING_BOULDER": {
+   "id": "ROLLING_BOULDER",
+   "name": "滚石",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "在你的回合开始时，对所有敌人造成5点伤害，然后将该伤害增加5点。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "3",
+    "description": "在你的回合开始时，对所有敌人造成10点伤害，然后将该伤害增加5点。",
+    "keywords": []
+   }
+  },
+  "FRANTIC_ESCAPE": {
+   "id": "FRANTIC_ESCAPE",
+   "name": "狂乱逃离",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "1",
+    "description": "远离。 将沙坑的计数加1。 这张牌的耗能加1。",
+    "keywords": [
+     {
+      "name": "沙坑",
+      "description": "无厌沙虫的能力。"
+     }
+    ]
+   }
+  },
+  "STOKE": {
+   "id": "STOKE",
+   "name": "添柴",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "消耗所有手牌。 每消耗一张牌，将1张随机牌加入你的手牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。",
+    "keywords": []
+   }
+  },
+  "CASCADE": {
+   "id": "CASCADE",
+   "name": "倾泻",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "X",
+    "description": "打出你抽牌堆顶部的X张牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "X",
+    "description": "打出你抽牌堆顶部的X+1张牌。",
+    "keywords": []
+   }
+  },
+  "BARRICADE": {
+   "id": "BARRICADE",
+   "name": "壁垒",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "格挡不再在你的回合开始时消失。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "格挡不再在你的回合开始时消失。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "FEEL_NO_PAIN": {
+   "id": "FEEL_NO_PAIN",
+   "name": "无惧疼痛",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "每当有一张牌被消耗时，获得3点格挡。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "每当有一张牌被消耗时，获得4点格挡。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "JUGGLING": {
+   "id": "JUGGLING",
+   "name": "杂耍",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "将你在每回合打出的第三张攻击牌的复制品加入你的手牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "固有。 将你在每回合打出的第三张攻击牌的复制品加入你的手牌。",
+    "keywords": [
+     {
+      "name": "固有",
+      "description": "每场战斗开始时这张牌会出现在你的手牌。"
+     }
+    ]
+   }
+  },
+  "DEMON_FORM": {
+   "id": "DEMON_FORM",
+   "name": "恶魔形态",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "在你的回合开始时，获得2点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "3",
+    "description": "在你的回合开始时，获得3点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   }
+  },
+  "CRIMSON_MANTLE": {
+   "id": "CRIMSON_MANTLE",
+   "name": "绯红披风",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "在你的回合开始时，失去1点生命并获得8点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "在你的回合开始时，失去1点生命并获得10点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "DARK_EMBRACE": {
+   "id": "DARK_EMBRACE",
+   "name": "黑暗之拥",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "每当有一张牌被消耗时， 抽1张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "每当有一张牌被消耗时， 抽1张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "SECOND_WIND": {
+   "id": "SECOND_WIND",
+   "name": "重振精神",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "消耗手牌中所有非攻击牌，每张获得5点格挡。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "消耗手牌中所有非攻击牌，每张获得7点格挡。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "BURNING_PACT": {
+   "id": "BURNING_PACT",
+   "name": "燃烧契约",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "消耗1张牌。 抽2张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "消耗1张牌。 抽3张牌。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "PERFECTED_STRIKE": {
+   "id": "PERFECTED_STRIKE",
+   "name": "完美打击",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "造成6点伤害。 你每有一张名字中含有“打击”的牌，伤害+2。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "造成6点伤害。 你每有一张名字中含有“打击”的牌，伤害+3。",
+    "keywords": []
+   }
+  },
+  "DARK_SHACKLES": {
+   "id": "DARK_SHACKLES",
+   "name": "黑暗镣铐",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "使一名敌人在本回合失去9点力量。 消耗。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "使一名敌人在本回合失去15点力量。 消耗。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "SECRET_TECHNIQUE": {
+   "id": "SECRET_TECHNIQUE",
+   "name": "秘密技法",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "从抽牌堆中选择一张技能牌放入你的手牌。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "从抽牌堆中选择一张技能牌放入你的手牌。",
+    "keywords": []
+   }
+  },
+  "BULLY": {
+   "id": "BULLY",
+   "name": "欺凌",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成3点伤害。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     }
+    ]
+   }
+  },
+  "STAMPEDE": {
+   "id": "STAMPEDE",
+   "name": "惊逃",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "在你的回合结束时，随机打出你手牌中的1张攻击牌攻击随机敌人。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "在你的回合结束时，随机打出你手牌中的1张攻击牌攻击随机敌人。",
+    "keywords": []
+   }
+  },
+  "PROLONG": {
+   "id": "PROLONG",
+   "name": "延伸",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "在下个回合获得等量于你当前格挡值的格挡。 消耗。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "在下个回合获得等量于你当前格挡值的格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "HAND_OF_GREED": {
+   "id": "HAND_OF_GREED",
+   "name": "贪婪之手",
+   "rarity": "Rare",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "造成20点伤害。 斩杀时，获得20金币。",
+    "keywords": [
+     {
+      "name": "斩杀",
+      "description": "当这张牌杀死一名非爪牙敌人时触发。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "造成25点伤害。 斩杀时，获得25金币。",
+    "keywords": [
+     {
+      "name": "斩杀",
+      "description": "当这张牌杀死一名非爪牙敌人时触发。"
+     }
+    ]
+   }
+  },
+  "CLUMSY": {
+   "id": "CLUMSY",
+   "name": "笨拙",
+   "rarity": "Curse",
+   "type": "Curse",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 虚无。",
+    "keywords": [
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     },
+     {
+      "name": "虚无",
+      "description": "如果这张牌在这个回合结束时留在你的手牌中，则将其消耗。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "ONE_TWO_PUNCH": {
+   "id": "ONE_TWO_PUNCH",
+   "name": "连环拳",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "在这个回合，你打出的下1张攻击牌会被额外打出一次。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "在这个回合，你打出的下2张攻击牌会被额外打出一次。",
+    "keywords": []
+   }
+  },
+  "HIDDEN_GEM": {
+   "id": "HIDDEN_GEM",
+   "name": "未掘宝石",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "你抽牌堆中的一张没有重放的随机牌获得2层重放。",
+    "keywords": [
+     {
+      "name": "重放",
+      "description": "将这张牌额外打出一次。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "你抽牌堆中的一张没有重放的随机牌获得3层重放。",
+    "keywords": [
+     {
+      "name": "重放",
+      "description": "将这张牌额外打出一次。"
+     }
+    ]
+   }
+  },
+  "INFERNAL_BLADE": {
+   "id": "INFERNAL_BLADE",
+   "name": "地狱之刃",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "将一张随机攻击牌加入你的手牌。那张牌在本回合内可以免费打出。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "将一张随机攻击牌加入你的手牌。那张牌在本回合内可以免费打出。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "BRAND": {
+   "id": "BRAND",
+   "name": "烙印",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "失去1点生命。 消耗1张牌。 获得1点力量。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "失去1点生命。 消耗1张牌。 获得2点力量。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   }
+  },
+  "DECAY": {
+   "id": "DECAY",
+   "name": "腐朽",
+   "rarity": "Curse",
+   "type": "Curse",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 在你的回合结束时，如果这张牌在你的手牌中, 你受到2点伤害。",
+    "keywords": [
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "DOMINATE": {
+   "id": "DOMINATE",
+   "name": "主宰",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "给予1层易伤。 敌人身上每有一层易伤，就获得1点力量。 消耗。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     },
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "给予2层易伤。 敌人身上每有一层易伤，就获得1点力量。 消耗。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     },
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "ASHEN_STRIKE": {
+   "id": "ASHEN_STRIKE",
+   "name": "灰烬打击",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成6点伤害。 你的消耗牌堆中每有一张牌，伤害增加3。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成6点伤害。 你的消耗牌堆中每有一张牌，伤害增加4。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "COLOSSUS": {
+   "id": "COLOSSUS",
+   "name": "巨像",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得5点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得8点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "CONFLAGRATION": {
+   "id": "CONFLAGRATION",
+   "name": "焚烧",
+   "rarity": "Rare",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "对所有敌人造成2点伤害4次。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "对所有敌人造成2点伤害5次。",
+    "keywords": []
+   }
+  },
+  "PRODUCTION": {
+   "id": "PRODUCTION",
+   "name": "生产制造",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 消耗。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png][ironclad_energy_icon.png]。 消耗。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "SPOILS_MAP": {
+   "id": "SPOILS_MAP",
+   "name": "藏宝图",
+   "rarity": "Quest",
+   "type": "Quest",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。",
+    "keywords": [
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "MOLTEN_FIST": {
+   "id": "MOLTEN_FIST",
+   "name": "熔融之拳",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成14点伤害。 将该敌人身上的易伤层数翻倍。 消耗。",
+    "keywords": [
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "FIEND_FIRE": {
+   "id": "FIEND_FIRE",
+   "name": "恶魔之焰",
+   "rarity": "Rare",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "消耗所有手牌。 每张被消耗的牌造成7点伤害。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "消耗所有手牌。 每张被消耗的牌造成10点伤害。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "NOT_YET": {
+   "id": "NOT_YET",
+   "name": "时候未到",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "回复10点生命。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "回复13点生命。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "JUGGERNAUT": {
+   "id": "JUGGERNAUT",
+   "name": "势不可当",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "每当你获得格挡时，对随机敌人造成6点伤害。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "每当你获得格挡时，对随机敌人造成8点伤害。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "SPITE": {
+   "id": "SPITE",
+   "name": "怨恨",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击2次。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击3次。",
+    "keywords": []
+   }
+  },
+  "UNRELENTING": {
+   "id": "UNRELENTING",
+   "name": "无情猛攻",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "造成14点伤害。 你打出的下一张攻击牌耗能变为0[ironclad_energy_icon.png]。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "造成20点伤害。 你打出的下一张攻击牌耗能变为0[ironclad_energy_icon.png]。",
+    "keywords": []
+   }
+  },
+  "HEADBUTT": {
+   "id": "HEADBUTT",
+   "name": "头槌",
+   "rarity": "Common",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成9点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成12点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。",
+    "keywords": []
+   }
+  },
+  "FISTICUFFS": {
+   "id": "FISTICUFFS",
+   "name": "拳斗",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成7点伤害。 获得等量于所造成伤害的格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成9点伤害。 获得等量于所造成伤害的格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "MASTER_OF_STRATEGY": {
+   "id": "MASTER_OF_STRATEGY",
+   "name": "战略大师",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "抽3张牌。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "抽4张牌。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "AGGRESSION": {
+   "id": "AGGRESSION",
+   "name": "好勇斗狠",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "在你的回合开始时，将你弃牌堆的一张随机攻击牌放入你的手牌并将其升级。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "固有。 在你的回合开始时，将你弃牌堆的一张随机攻击牌放入你的手牌并将其升级。",
+    "keywords": [
+     {
+      "name": "固有",
+      "description": "每场战斗开始时这张牌会出现在你的手牌。"
+     }
+    ]
+   }
+  },
+  "DISINTEGRATION": {
+   "id": "DISINTEGRATION",
+   "name": "瓦解",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "在你的回合结束时，受到6点伤害。",
+    "keywords": []
+   }
+  },
+  "MIND_ROT": {
+   "id": "MIND_ROT",
+   "name": "心灵腐化",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "每回合少抽1张牌。",
+    "keywords": []
+   }
+  },
+  "DISCOVERY": {
+   "id": "DISCOVERY",
+   "name": "发现",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "从3张随机牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "从3张随机牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。",
+    "keywords": []
+   }
+  },
+  "MIND_BLAST": {
+   "id": "MIND_BLAST",
+   "name": "心灵震慑",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "固有。 造成你抽牌堆中剩余牌数的伤害。 （造成0点伤害）",
+    "keywords": [
+     {
+      "name": "固有",
+      "description": "每场战斗开始时这张牌会出现在你的手牌。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "固有。 造成你抽牌堆中剩余牌数的伤害。 （造成0点伤害）",
+    "keywords": [
+     {
+      "name": "固有",
+      "description": "每场战斗开始时这张牌会出现在你的手牌。"
+     }
+    ]
+   }
+  },
+  "SHOCKWAVE": {
+   "id": "SHOCKWAVE",
+   "name": "震荡波",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "给予所有敌人3层虚弱和易伤。 消耗。",
+    "keywords": [
+     {
+      "name": "虚弱",
+      "description": "虚弱的生物造成的攻击伤害减少25%。"
+     },
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "给予所有敌人5层虚弱和易伤。 消耗。",
+    "keywords": [
+     {
+      "name": "虚弱",
+      "description": "虚弱的生物造成的攻击伤害减少25%。"
+     },
+     {
+      "name": "易伤",
+      "description": "易伤的生物从攻击中受到的伤害增加50%。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "OFFERING": {
+   "id": "OFFERING",
+   "name": "祭品",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "失去6点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 抽3张牌。 消耗。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "失去6点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 抽5张牌。 消耗。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "FEED": {
+   "id": "FEED",
+   "name": "狂宴",
+   "rarity": "Rare",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成10点伤害。 斩杀时，永久获得3点最大生命值。 消耗。",
+    "keywords": [
+     {
+      "name": "斩杀",
+      "description": "当这张牌杀死一名非爪牙敌人时触发。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成12点伤害。 斩杀时，永久获得4点最大生命值。 消耗。",
+    "keywords": [
+     {
+      "name": "斩杀",
+      "description": "当这张牌杀死一名非爪牙敌人时触发。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "ULTIMATE_STRIKE": {
+   "id": "ULTIMATE_STRIKE",
+   "name": "究极打击",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成14点伤害。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成20点伤害。",
+    "keywords": []
+   }
+  },
+  "SHAME": {
+   "id": "SHAME",
+   "name": "羞耻",
+   "rarity": "Curse",
+   "type": "Curse",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 在你的回合结束时，如果这张牌在你的手牌中，则获得1层脆弱。",
+    "keywords": [
+     {
+      "name": "脆弱",
+      "description": "脆弱时，从卡牌中获得的格挡值减少25%。"
+     },
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "BURN": {
+   "id": "BURN",
+   "name": "灼伤",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 在你的回合结束时，如果这张牌在你的手牌中，你受到2点伤害。",
+    "keywords": [
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "FINESSE": {
+   "id": "FINESSE",
+   "name": "妙计",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "获得4点格挡。 抽1张牌。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "获得7点格挡。 抽1张牌。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "THE_GAMBIT": {
+   "id": "THE_GAMBIT",
+   "name": "孤注一掷",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "获得50点格挡。 如果你在本场战斗中受到未被格挡的攻击伤害，则立刻死亡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "获得75点格挡。 如果你在本场战斗中受到未被格挡的攻击伤害，则立刻死亡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "MANGLE": {
+   "id": "MANGLE",
+   "name": "凌虐",
+   "rarity": "Rare",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "造成15点伤害。 敌人在本回合失去10点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "3",
+    "description": "造成20点伤害。 敌人在本回合失去15点力量。",
+    "keywords": [
+     {
+      "name": "力量",
+      "description": "力量会增加攻击牌造成的伤害。"
+     }
+    ]
+   }
+  },
+  "IMPATIENCE": {
+   "id": "IMPATIENCE",
+   "name": "急躁",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "如果你的手牌中没有攻击牌，抽2张牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "如果你的手牌中没有攻击牌，抽3张牌。",
+    "keywords": []
+   }
+  },
+  "FASTEN": {
+   "id": "FASTEN",
+   "name": "勒紧",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "从“防御”牌中额外获得4点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     },
+     {
+      "name": "防御",
+      "description": "获得5点格挡。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "从“防御”牌中额外获得6点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     },
+     {
+      "name": "防御",
+      "description": "获得5点格挡。"
+     }
+    ]
+   }
+  },
+  "TOXIC": {
+   "id": "TOXIC",
+   "name": "毒素",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "1",
+    "description": "在你的回合结束时，如果这张牌在你的手牌中，你受到5点伤害。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "HOWL_FROM_BEYOND": {
+   "id": "HOWL_FROM_BEYOND",
+   "name": "彼岸咆哮",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "对所有敌人造成16点伤害。 在你的回合结束时，如果这张牌在你的消耗牌堆中，则将其打出。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "3",
+    "description": "对所有敌人造成21点伤害。 在你的回合结束时，如果这张牌在你的消耗牌堆中，则将其打出。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "PANACHE": {
+   "id": "PANACHE",
+   "name": "神气制胜",
+   "rarity": "Uncommon",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "每当你在一回合内打出五张牌时，对所有敌人造成10点伤害。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "每当你在一回合内打出五张牌时，对所有敌人造成14点伤害。",
+    "keywords": []
+   }
+  },
+  "SALVO": {
+   "id": "SALVO",
+   "name": "箭雨",
+   "rarity": "Rare",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成12点伤害。 在本回合保留你的手牌。",
+    "keywords": [
+     {
+      "name": "保留",
+      "description": "保留的牌不会在回合结束时被弃掉。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成16点伤害。 在本回合保留你的手牌。",
+    "keywords": [
+     {
+      "name": "保留",
+      "description": "保留的牌不会在回合结束时被弃掉。"
+     }
+    ]
+   }
+  },
+  "PECK": {
+   "id": "PECK",
+   "name": "啄击",
+   "rarity": "Event",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成2点伤害3次。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成2点伤害4次。",
+    "keywords": []
+   }
+  },
+  "FLASH_OF_STEEL": {
+   "id": "FLASH_OF_STEEL",
+   "name": "亮剑",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "造成5点伤害。 抽1张牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "造成8点伤害。 抽1张牌。",
+    "keywords": []
+   }
+  },
+  "SPORE_MIND": {
+   "id": "SPORE_MIND",
+   "name": "孢子心灵",
+   "rarity": "Curse",
+   "type": "Curse",
+   "is_upgradable": false,
+   "base": {
+    "cost": "1",
+    "description": "消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "IMPERVIOUS": {
+   "id": "IMPERVIOUS",
+   "name": "岿然不动",
+   "rarity": "Rare",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "获得30点格挡。 消耗。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "2",
+    "description": "获得40点格挡。 消耗。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  },
+  "THINKING_AHEAD": {
+   "id": "THINKING_AHEAD",
+   "name": "深谋远虑",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "抽2张牌。 将手牌中的一张牌放到你的抽牌堆的顶端。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "抽2张牌。 将手牌中的一张牌放到你的抽牌堆的顶端。",
+    "keywords": []
+   }
+  },
+  "ULTIMATE_DEFEND": {
+   "id": "ULTIMATE_DEFEND",
+   "name": "究极防御",
+   "rarity": "Uncommon",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "获得11点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "获得15点格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "THRUMMING_HATCHET": {
+   "id": "THRUMMING_HATCHET",
+   "name": "无休手斧",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成11点伤害。 在你的下个回合开始时，将此卡返回你的手牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "造成14点伤害。 在你的下个回合开始时，将此卡返回你的手牌。",
+    "keywords": []
+   }
+  },
+  "MAYHEM": {
+   "id": "MAYHEM",
+   "name": "乱战",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "在你的回合开始时，打出你抽牌堆顶部的牌。",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "在你的回合开始时，打出你抽牌堆顶部的牌。",
+    "keywords": []
+   }
+  },
+  "WISH": {
+   "id": "WISH",
+   "name": "许愿",
+   "rarity": "Ancient",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "将你抽牌堆中的一张牌放入你的手牌。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "保留。 将你抽牌堆中的一张牌放入你的手牌。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "保留",
+      "description": "保留的牌不会在回合结束时被弃掉。"
+     }
+    ]
+   }
+  },
+  "GOLD_AXE": {
+   "id": "GOLD_AXE",
+   "name": "金斧",
+   "rarity": "Rare",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "1",
+    "description": "造成本场战斗中所打出牌数的伤害。 （造成0点伤害）",
+    "keywords": []
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "保留。 造成本场战斗中所打出牌数的伤害。 （造成0点伤害）",
+    "keywords": [
+     {
+      "name": "保留",
+      "description": "保留的牌不会在回合结束时被弃掉。"
+     }
+    ]
+   }
+  },
+  "DRAMATIC_ENTRANCE": {
+   "id": "DRAMATIC_ENTRANCE",
+   "name": "闪亮登场",
+   "rarity": "Uncommon",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "固有。 对所有敌人造成11点伤害。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "固有",
+      "description": "每场战斗开始时这张牌会出现在你的手牌。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "固有。 对所有敌人造成15点伤害。 消耗。",
+    "keywords": [
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     },
+     {
+      "name": "固有",
+      "description": "每场战斗开始时这张牌会出现在你的手牌。"
+     }
+    ]
+   }
+  },
+  "WITHER": {
+   "id": "WITHER",
+   "name": "凋萎",
+   "rarity": "Status",
+   "type": "Status",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 在你的回合结束时，如果这张牌在你的手牌中，你受到3点伤害。",
+    "keywords": [
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "GREED": {
+   "id": "GREED",
+   "name": "贪婪",
+   "rarity": "Curse",
+   "type": "Curse",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 永恒。",
+    "keywords": [
+     {
+      "name": "永恒",
+      "description": "无法从你的牌组中移除或变化。"
+     },
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "BRIGHTEST_FLAME": {
+   "id": "BRIGHTEST_FLAME",
+   "name": "至亮之焰",
+   "rarity": "Ancient",
+   "type": "Skill",
+   "is_upgradable": true,
+   "base": {
+    "cost": "0",
+    "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 抽2张牌。 失去1点最大生命。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "0",
+    "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png][ironclad_energy_icon.png]。 抽3张牌。 失去1点最大生命。",
+    "keywords": [
+     {
+      "name": "能量",
+      "description": "能量用于打出你手牌中的卡牌。"
+     }
+    ]
+   }
+  },
+  "DEBT": {
+   "id": "DEBT",
+   "name": "债务",
+   "rarity": "Curse",
+   "type": "Curse",
+   "is_upgradable": false,
+   "base": {
+    "cost": "0",
+    "description": "不能被打出。 在你的回合结束时，如果这张牌在你的手牌中，你失去10金币。",
+    "keywords": [
+     {
+      "name": "不能被打出",
+      "description": "不能被打出的牌无法被打出。"
+     }
+    ]
+   }
+  },
+  "UNMOVABLE": {
+   "id": "UNMOVABLE",
+   "name": "坚定不移",
+   "rarity": "Rare",
+   "type": "Power",
+   "is_upgradable": true,
+   "base": {
+    "cost": "2",
+    "description": "翻倍你每回合第一次从卡牌中获得的格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "1",
+    "description": "翻倍你每回合第一次从卡牌中获得的格挡。",
+    "keywords": [
+     {
+      "name": "格挡",
+      "description": "在下个回合前，阻挡伤害。"
+     }
+    ]
+   }
+  },
+  "WHISTLE": {
+   "id": "WHISTLE",
+   "name": "吹哨",
+   "rarity": "Ancient",
+   "type": "Attack",
+   "is_upgradable": true,
+   "base": {
+    "cost": "3",
+    "description": "造成33点伤害。 击晕该敌人。 消耗。",
+    "keywords": [
+     {
+      "name": "击晕",
+      "description": "这个敌人在其下一回合无法行动。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   },
+   "upgraded": {
+    "cost": "3",
+    "description": "造成44点伤害。 击晕该敌人。 消耗。",
+    "keywords": [
+     {
+      "name": "击晕",
+      "description": "这个敌人在其下一回合无法行动。"
+     },
+     {
+      "name": "消耗",
+      "description": "在战斗结束前移除。"
+     }
+    ]
+   }
+  }
+ }
+}

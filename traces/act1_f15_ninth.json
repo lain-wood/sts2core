@@ -1,0 +1,1540 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-15T21:15:27+08:00",
+ "run": {
+  "act": 1,
+  "floor": 15,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 39,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 74,
+      "max_hp": 74,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Summon",
+        "label": "",
+        "description": "这个敌人将要召唤怪物。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SETUP_STRIKE",
+      "name": "预备打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本回合内获得2点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "SPITE",
+      "name": "怨恨",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 如果你在本回合失去过生命值， 则攻击2次。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "3"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "SPITE",
+    "card_name": "怨恨",
+    "target": "FOGMOG_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1098,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 39,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 69,
+      "max_hp": 74,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Summon",
+        "label": "",
+        "description": "这个敌人将要召唤怪物。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SETUP_STRIKE",
+      "name": "预备打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本回合内获得2点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [
+     {
+      "name": "怨恨",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "2"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "SETUP_STRIKE",
+    "card_name": "预备打击",
+    "target": "FOGMOG_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1431,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 39,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2,
+      "SETUP_STRIKE_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 62,
+      "max_hp": 74,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Summon",
+        "label": "",
+        "description": "这个敌人将要召唤怪物。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "FOGMOG_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1100,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 39,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2,
+      "SETUP_STRIKE_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 54,
+      "max_hp": 74,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Summon",
+        "label": "",
+        "description": "这个敌人将要召唤怪物。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "0"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "FOGMOG_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1047,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 39,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2,
+      "SETUP_STRIKE_POWER": 2
+     }
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 46,
+      "max_hp": 74,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Summon",
+        "label": "",
+        "description": "这个敌人将要召唤怪物。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 10,
+    "discard": [
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "0"
+     }
+    ]
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 50,
+    "ms": 4447,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 39,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "EYE_WITH_TEETH_0",
+      "name": "利齿之眼",
+      "hp": 6,
+      "max_hp": 6,
+      "block": 0,
+      "status": {
+       "ILLUSION_POWER": 1,
+       "MINION_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "StatusCard",
+        "label": "3",
+        "description": "这个敌人将会给你3张状态牌。"
+       }
+      ]
+     },
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 46,
+      "max_hp": 74,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "8",
+        "description": "这个敌人将要攻击造成8点伤害。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "DISMANTLE",
+      "name": "拆卸+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "THUNDERCLAP",
+      "name": "闪电霹雳+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成7点伤害，给予1层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 5,
+    "discard": [
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "3"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "THUNDERCLAP",
+    "card_name": "闪电霹雳+",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1399,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 39,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 39,
+      "max_hp": 74,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "8",
+        "description": "这个敌人将要攻击造成8点伤害。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "DISMANTLE",
+      "name": "拆卸+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 5,
+    "discard": [
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "2"
+     }
+    ]
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BASH",
+    "card_name": "痛击+",
+    "target": "FOGMOG_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1314,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 39,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 24,
+      "max_hp": 74,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "8",
+        "description": "这个敌人将要攻击造成8点伤害。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DISMANTLE",
+      "name": "拆卸+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 5,
+    "discard": [
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "踩踏",
+      "cost": "1"
+     }
+    ]
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 50,
+    "ms": 4633,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 31,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "EYE_WITH_TEETH_0",
+      "name": "利齿之眼",
+      "hp": 6,
+      "max_hp": 6,
+      "block": 0,
+      "status": {
+       "ILLUSION_POWER": 1,
+       "MINION_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "StatusCard",
+        "label": "3",
+        "description": "这个敌人将会给你3张状态牌。"
+       }
+      ]
+     },
+     "1": {
+      "entity_id": "FOGMOG_0",
+      "name": "雾菇",
+      "hp": 24,
+      "max_hp": 74,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3,
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STOMP",
+      "name": "踩踏",
+      "cost": "3",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成12点伤害。 你在本回合中每打出过一张攻击牌，其耗能减少1[ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": 0,
+    "discard": [
+     {
+      "name": "怨恨",
+      "cost": "0"
+     },
+     {
+      "name": "预备打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "闪电霹雳+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "拆卸+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null,
+    "draw": []
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "HEMOKINESIS",
+    "card_name": "御血术+",
+    "target": "FOGMOG_0"
+   },
+   "settle": {
+    "polls": 20,
+    "ms": 1797,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 47,
+     "max_hp": 80,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SKILL_POTION",
+      "name": "技能药水",
+      "description": "从3张随机技能牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "draw_count": null,
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "新敌人雾菇(FOGMOG) 74HP，意图 Summon。本回合做怨恨的阴性对照：未失血，预期只打一次 5 点。\n召唤实测：雾菇召出利齿之眼(EYE_WITH_TEETH) 6HP，combat_id=2，带 ILLUSION_POWER=1 和 MINION_POWER=1，意图 StatusCard:3。\n【复活实测】利齿之眼被闪电霹雳+ 打死后，第3回合又以 6/6 满血出现，状态不变。ILLUSION_POWER 很可能就是这个。雾菇的 Buff 给了自己 STRENGTH_POWER=1。\n【爪牙实测】雾菇一死战斗立刻结束，6 血的利齿之眼(MINION_POWER)不用单独清 —— 召唤物随召唤者一起死。"
+}

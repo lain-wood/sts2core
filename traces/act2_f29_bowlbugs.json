@@ -1,0 +1,3466 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-22T13:59:40+08:00",
+ "run": {
+  "act": 2,
+  "floor": 29,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 47,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 35,
+      "max_hp": 36,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3",
+        "description": "这个敌人将要攻击造成3点伤害。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 41,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成9点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得10点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "ARMAMENTS",
+      "name": "武装+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得10点格挡。 升级你手牌中的所有牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "ARMAMENTS",
+    "card_name": "武装+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1017,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 10,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 47,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 35,
+      "max_hp": 36,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3",
+        "description": "这个敌人将要攻击造成3点伤害。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 41,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1065,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 63,
+     "max_hp": 80,
+     "block": 18,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 47,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 35,
+      "max_hp": 36,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3",
+        "description": "这个敌人将要攻击造成3点伤害。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 41,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "BREAKTHROUGH",
+    "card_name": "突破+",
+    "target": null
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1201,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 62,
+     "max_hp": 80,
+     "block": 18,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 34,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 22,
+      "max_hp": 36,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3",
+        "description": "这个敌人将要攻击造成3点伤害。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 28,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成2点伤害5次。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 68,
+    "ms": 5667,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 62,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "WEAK_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 32,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Stun",
+        "label": "",
+        "description": "这个敌人在其下一回合无法行动。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 20,
+      "max_hp": 36,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 26,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 3,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成3点伤害两次。"
+     },
+     {
+      "slot": 4,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "COLOSSUS",
+    "card_name": "巨像+",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1377,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 62,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "WEAK_POWER": 1,
+      "COLOSSUS_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 32,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Stun",
+        "label": "",
+        "description": "这个敌人在其下一回合无法行动。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 20,
+      "max_hp": 36,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 26,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成3点伤害两次。"
+     },
+     {
+      "slot": 3,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "TWIN_STRIKE",
+    "card_name": "双重打击",
+    "target": "BOWLBUG_ROCK_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1529,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 62,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "WEAK_POWER": 1,
+      "COLOSSUS_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 26,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Stun",
+        "label": "",
+        "description": "这个敌人在其下一回合无法行动。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 20,
+      "max_hp": 36,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 26,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "MOLTEN_FIST",
+    "card_name": "熔融之拳",
+    "target": "BOWLBUG_ROCK_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1234,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 62,
+     "max_hp": 80,
+     "block": 8,
+     "status": {
+      "WEAK_POWER": 1,
+      "COLOSSUS_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 19,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Stun",
+        "label": "",
+        "description": "这个敌人在其下一回合无法行动。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 20,
+      "max_hp": 36,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 26,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 68,
+    "ms": 6434,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 62,
+     "max_hp": 80,
+     "block": 18,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 16,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "BOWLBUG_NECTAR_0",
+      "name": "盛碗虫（蜜）",
+      "hp": 17,
+      "max_hp": 36,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 15
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "18",
+        "description": "这个敌人将要攻击造成18点伤害。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 23,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 3,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 4,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "ULTIMATE_STRIKE",
+    "card_name": "究极打击+",
+    "target": "BOWLBUG_NECTAR_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1333,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 62,
+     "max_hp": 80,
+     "block": 18,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "BOWLBUG_ROCK_0",
+      "name": "盛碗虫（石）",
+      "hp": 16,
+      "max_hp": 48,
+      "block": 0,
+      "status": {
+       "IMBALANCED_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     },
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 23,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 3,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "HEMOKINESIS",
+    "card_name": "御血术+",
+    "target": "BOWLBUG_ROCK_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1499,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 60,
+     "max_hp": 80,
+     "block": 18,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 23,
+      "max_hp": 42,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 3,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "TREMBLE",
+    "card_name": "战栗",
+    "target": "BOWLBUG_SILK_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1300,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 60,
+     "max_hp": 80,
+     "block": 18,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 23,
+      "max_hp": 42,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "BASH",
+    "card_name": "痛击",
+    "target": "BOWLBUG_SILK_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1386,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 60,
+     "max_hp": 80,
+     "block": 18,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 11,
+      "max_hp": 42,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 5
+      },
+      "intents": [
+       {
+        "type": "Debuff",
+        "label": "",
+        "description": "这个敌人将要对你施加一个负面效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 51,
+    "ms": 4835,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 60,
+     "max_hp": 80,
+     "block": 0,
+     "status": {
+      "WEAK_POWER": 1
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "3": {
+      "entity_id": "BOWLBUG_SILK_0",
+      "name": "盛碗虫（丝）",
+      "hp": 7,
+      "max_hp": 42,
+      "block": 0,
+      "status": {
+       "VULNERABLE_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "4×2",
+        "description": "这个敌人将要攻击造成4点伤害2次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成15点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 4,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成3点伤害两次。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "TWIN_STRIKE",
+    "card_name": "双重打击",
+    "target": "BOWLBUG_SILK_0"
+   },
+   "settle": {
+    "polls": 21,
+    "ms": 1931,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 14,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 66,
+     "max_hp": 80,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "ATTACK_POTION",
+      "name": "攻击药水",
+      "description": "从3张随机攻击牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     },
+     {
+      "slot": 2,
+      "id": "FIRE_POTION",
+      "name": "火焰药水",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "三只盛碗虫（石47/蜜35/丝41）+ 新遗物舵盘（第3回合开始+18格挡，内核没有）。内核表里「盛碗虫（花蜜）/（蚕丝）」是照wiki写的名字，游戏实际叫「盛碗虫（蜜）/（丝）」——名字就是连接键，等于这两只没进表。战斗后按游戏改。\n不听求解器：它给10格挡挨9点。改成武装+(臂甲10格挡，并把防御升成防御+8)=18格挡=来袭总量18，石的15被完全格挡触发失衡->下回合眩晕，余3格挡吃掉蜜的3点，零掉血。失衡的价值在下一个回合，单回合求解器看不到。\n覆盖优先：求解器给耸肩无视+（11格挡），换成从没打过的巨像+（8格挡=来袭8点，同样零掉血），顺带第一次让 St::Colossus 这条规则见数据。\n回合3：舵盘给18格挡（实测生效）。蜜吃到力量15、攻击18，加石的15共33。两个攻击者都在斩杀线内：究极打击+20>=蜜17、御血术+20>=石16，各触发一次地精之角。求解器第3张起是添柴+生成的幻想牌，不采纳；第一张的目标改成蜜（先移大的）。\n收尾：求解器给痛击(2费)，改用双重打击(1费)——带虚弱1和易伤后每段5点，两段10>=7，同样斩杀而省1能量。"
+}

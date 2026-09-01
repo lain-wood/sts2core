@@ -1,0 +1,5120 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-22T20:25:34+08:00",
+ "run": {
+  "act": 3,
+  "floor": 38,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 54,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 40,
+      "max_hp": 41,
+      "block": 25,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BURNING_PACT",
+      "name": "燃烧契约+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗1张牌。 抽3张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 3,
+      "id": "DARK_SHACKLES",
+      "name": "黑暗镣铐+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "使一名敌人在本回合失去15点力量。 消耗。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 5,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 15,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "烙印",
+      "cost": "0"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "DARK_SHACKLES",
+    "card_name": "黑暗镣铐+",
+    "target": "TURRET_OPERATOR_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1435,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 54,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 40,
+      "max_hp": 41,
+      "block": 25,
+      "status": {
+       "STRENGTH_POWER": -15,
+       "DARK_SHACKLES_POWER": 15
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "0×5",
+        "description": "这个敌人将要攻击造成0点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BURNING_PACT",
+      "name": "燃烧契约+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗1张牌。 抽3张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 15,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "烙印",
+      "cost": "0"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "BURNING_PACT",
+    "card_name": "燃烧契约+",
+    "target": null
+   },
+   "settle": {
+    "polls": 11,
+    "ms": 1032,
+    "unstable": false,
+    "intermediate_differs": false
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "hand_select",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 54,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 40,
+      "max_hp": 41,
+      "block": 25,
+      "status": {
+       "STRENGTH_POWER": -15,
+       "DARK_SHACKLES_POWER": 15
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "0×5",
+        "description": "这个敌人将要攻击造成0点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 15,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "烙印",
+      "cost": "0"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     }
+    ],
+    "pending": {
+     "kind": "hand_select",
+     "prompt": "选择1张牌来消耗。",
+     "can_confirm": false,
+     "can_cancel": null,
+     "selected": null,
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "SHRUG_IT_OFF",
+       "name": "耸肩无视+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Common",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得22点格挡。 抽1张牌。"
+      },
+      {
+       "slot": 1,
+       "id": "COLOSSUS",
+       "name": "巨像+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Uncommon",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得16点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+      },
+      {
+       "slot": 2,
+       "id": "DEFEND_IRONCLAD",
+       "name": "防御+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Basic",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得16点格挡。"
+      },
+      {
+       "slot": 3,
+       "id": "DEFEND_IRONCLAD",
+       "name": "防御+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Basic",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得16点格挡。"
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "select_card",
+    "slot": 2
+   },
+   "settle": {
+    "polls": 11,
+    "ms": 1065,
+    "unstable": false,
+    "intermediate_differs": false
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "hand_select",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 54,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 40,
+      "max_hp": 41,
+      "block": 25,
+      "status": {
+       "STRENGTH_POWER": -15,
+       "DARK_SHACKLES_POWER": 15
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "0×5",
+        "description": "这个敌人将要攻击造成0点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 15,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "烙印",
+      "cost": "0"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     }
+    ],
+    "pending": {
+     "kind": "hand_select",
+     "prompt": "选择1张牌来消耗。",
+     "can_confirm": true,
+     "can_cancel": null,
+     "selected": [
+      {
+       "index": 0,
+       "name": "防御+"
+      }
+     ],
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "SHRUG_IT_OFF",
+       "name": "耸肩无视+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Common",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得22点格挡。 抽1张牌。"
+      },
+      {
+       "slot": 1,
+       "id": "COLOSSUS",
+       "name": "巨像+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Uncommon",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得16点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+      },
+      {
+       "slot": 2,
+       "id": "DEFEND_IRONCLAD",
+       "name": "防御+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Basic",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得16点格挡。"
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "confirm_selection"
+   },
+   "settle": {
+    "polls": 18,
+    "ms": 1666,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 54,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 40,
+      "max_hp": 41,
+      "block": 25,
+      "status": {
+       "STRENGTH_POWER": -15,
+       "DARK_SHACKLES_POWER": 15
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "0×5",
+        "description": "这个敌人将要攻击造成0点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得22点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得16点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "UPPERCUT",
+      "name": "上勾拳+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予2层虚弱。 给予2层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 5,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 12,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "烙印",
+      "cost": "0"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "SHRUG_IT_OFF",
+    "card_name": "耸肩无视+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1200,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 22,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 54,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 40,
+      "max_hp": 41,
+      "block": 25,
+      "status": {
+       "STRENGTH_POWER": -15,
+       "DARK_SHACKLES_POWER": 15
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "0×5",
+        "description": "这个敌人将要攻击造成0点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "UPPERCUT",
+      "name": "上勾拳+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予2层虚弱。 给予2层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 4,
+      "id": "TREMBLE",
+      "name": "战栗",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "给予3层易伤。 消耗。"
+     },
+     {
+      "slot": 5,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "烙印",
+      "cost": "0"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "TREMBLE",
+    "card_name": "战栗",
+    "target": "LIVING_SHIELD_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1300,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 22,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 54,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25,
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 40,
+      "max_hp": 41,
+      "block": 25,
+      "status": {
+       "STRENGTH_POWER": -15,
+       "DARK_SHACKLES_POWER": 15
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "0×5",
+        "description": "这个敌人将要攻击造成0点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "COLOSSUS",
+      "name": "巨像+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得8点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得8点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "UPPERCUT",
+      "name": "上勾拳+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予2层虚弱。 给予2层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "MOLTEN_FIST",
+      "name": "熔融之拳",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 将该敌人身上的易伤层数翻倍。 消耗。"
+     },
+     {
+      "slot": 4,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 0
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "双重打击",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "烙印",
+      "cost": "0"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 64,
+    "ms": 6067,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 52,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 38,
+      "max_hp": 41,
+      "block": 25,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BRAND",
+      "name": "烙印",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得1点力量。"
+     },
+     {
+      "slot": 4,
+      "id": "ULTIMATE_STRIKE",
+      "name": "究极打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成20点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "ULTIMATE_STRIKE",
+    "card_name": "究极打击+",
+    "target": "LIVING_SHIELD_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1250,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 90,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "LIVING_SHIELD_0",
+      "name": "活体盾",
+      "hp": 22,
+      "max_hp": 55,
+      "block": 0,
+      "status": {
+       "RAMPART_POWER": 25,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "6",
+        "description": "这个敌人将要攻击造成6点伤害。"
+       }
+      ]
+     },
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 38,
+      "max_hp": 41,
+      "block": 25,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成20点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BRAND",
+      "name": "烙印",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得1点力量。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "HEMOKINESIS",
+    "card_name": "御血术+",
+    "target": "LIVING_SHIELD_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1516,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 88,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 38,
+      "max_hp": 41,
+      "block": 25,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害两次。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "BRAND",
+      "name": "烙印",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得1点力量。"
+     },
+     {
+      "slot": 3,
+      "id": "ARMAMENTS",
+      "name": "武装+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 升级你手牌中的所有牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "ARMAMENTS",
+    "card_name": "武装+",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1179,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 88,
+     "max_hp": 90,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 38,
+      "max_hp": 41,
+      "block": 25,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害两次。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     },
+     {
+      "slot": 2,
+      "id": "BRAND",
+      "name": "烙印+",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去1点生命。 消耗1张牌。 获得2点力量。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "BRAND",
+    "card_name": "烙印+",
+    "target": null
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1233,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "hand_select",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 87,
+     "max_hp": 90,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 38,
+      "max_hp": 41,
+      "block": 25,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害两次。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": {
+     "kind": "hand_select",
+     "prompt": "选择1张牌来消耗。",
+     "can_confirm": false,
+     "can_cancel": null,
+     "selected": null,
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "TWIN_STRIKE",
+       "name": "双重打击+",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Common",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成7点伤害两次。"
+      },
+      {
+       "slot": 1,
+       "id": "STOKE",
+       "name": "添柴+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Rare",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "select_card",
+    "slot": 1
+   },
+   "settle": {
+    "polls": 11,
+    "ms": 1014,
+    "unstable": false,
+    "intermediate_differs": false
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "hand_select",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 87,
+     "max_hp": 90,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 38,
+      "max_hp": 41,
+      "block": 25,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害两次。"
+     },
+     {
+      "slot": 1,
+      "id": "STOKE",
+      "name": "添柴+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     }
+    ],
+    "pending": {
+     "kind": "hand_select",
+     "prompt": "选择1张牌来消耗。",
+     "can_confirm": true,
+     "can_cancel": null,
+     "selected": [
+      {
+       "index": 0,
+       "name": "添柴+"
+      }
+     ],
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "TWIN_STRIKE",
+       "name": "双重打击+",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Common",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成7点伤害两次。"
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "confirm_selection"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1367,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 87,
+     "max_hp": 90,
+     "block": 5,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 38,
+      "max_hp": 41,
+      "block": 25,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害两次。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "烙印+",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "TWIN_STRIKE",
+    "card_name": "双重打击+",
+    "target": "TURRET_OPERATOR_0"
+   },
+   "settle": {
+    "polls": 17,
+    "ms": 1501,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 14,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 87,
+     "max_hp": 90,
+     "block": 5,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 38,
+      "max_hp": 41,
+      "block": 7,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×5",
+        "description": "这个敌人将要攻击造成3点伤害5次。"
+       }
+      ]
+     }
+    },
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 1
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 5,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "突破",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     },
+     {
+      "name": "笨拙",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "烙印+",
+      "cost": "0"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 46,
+    "ms": 4433,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 15,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 77,
+     "max_hp": 90,
+     "block": 18,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 35,
+      "max_hp": 41,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 抽2张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成4点伤害5次。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成11点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "CLUMSY",
+      "name": "笨拙",
+      "cost": "0",
+      "type": "Curse",
+      "rarity": "Curse",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "御血术+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "烙印+",
+      "cost": "0"
+     },
+     {
+      "name": "双重打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击+",
+    "target": "TURRET_OPERATOR_0"
+   },
+   "settle": {
+    "polls": 25,
+    "ms": 2348,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 16,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 77,
+     "max_hp": 90,
+     "block": 18,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 23,
+      "max_hp": 41,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "CONFLAGRATION",
+      "name": "焚烧+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成4点伤害5次。"
+     },
+     {
+      "slot": 2,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成11点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "CLUMSY",
+      "name": "笨拙",
+      "cost": "0",
+      "type": "Curse",
+      "rarity": "Curse",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 4,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成22点伤害。"
+     },
+     {
+      "slot": 5,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害两次。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "烙印+",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "CONFLAGRATION",
+    "card_name": "焚烧+",
+    "target": "TURRET_OPERATOR_0"
+   },
+   "settle": {
+    "polls": 24,
+    "ms": 2199,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 17,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 77,
+     "max_hp": 90,
+     "block": 18,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "2": {
+      "entity_id": "TURRET_OPERATOR_0",
+      "name": "高塔炮手",
+      "hp": 3,
+      "max_hp": 41,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 1,
+      "id": "BREAKTHROUGH",
+      "name": "突破",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成11点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "CLUMSY",
+      "name": "笨拙",
+      "cost": "0",
+      "type": "Curse",
+      "rarity": "Curse",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "None",
+      "description": "不能被打出。 虚无。"
+     },
+     {
+      "slot": 3,
+      "id": "HEMOKINESIS",
+      "name": "御血术+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成22点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "TWIN_STRIKE",
+      "name": "双重打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害两次。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "武装+",
+      "cost": "1"
+     },
+     {
+      "name": "熔融之拳",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "燃烧契约+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像+",
+      "cost": "1"
+     },
+     {
+      "name": "究极打击+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳+",
+      "cost": "2"
+     },
+     {
+      "name": "烙印+",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "黑暗镣铐+",
+      "cost": "0"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "战栗",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BREAKTHROUGH",
+    "card_name": "突破",
+    "target": "TURRET_OPERATOR_0"
+   },
+   "settle": {
+    "polls": 20,
+    "ms": 1865,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 18,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 82,
+     "max_hp": 90,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "REGEN_POTION",
+      "name": "再生药水",
+      "description": "获得5层再生。"
+     },
+     {
+      "slot": 1,
+      "id": "SNECKO_OIL",
+      "name": "异蛇之油",
+      "description": "抽7张牌。在本回合随机化你手牌中所有牌的耗能。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LOST_COFFER",
+      "name": "失物盒",
+      "counter": null
+     },
+     {
+      "id": "BONE_TEA",
+      "name": "骨茶",
+      "counter": null
+     },
+     {
+      "id": "GREMLIN_HORN",
+      "name": "地精之角",
+      "counter": null
+     },
+     {
+      "id": "VAMBRACE",
+      "name": "臂甲",
+      "counter": null
+     },
+     {
+      "id": "YUMMY_COOKIE",
+      "name": "美味饼干",
+      "counter": null
+     },
+     {
+      "id": "MR_STRUGGLES",
+      "name": "抱抱先生",
+      "counter": null
+     },
+     {
+      "id": "PLANISPHERE",
+      "name": "活动星图",
+      "counter": null
+     },
+     {
+      "id": "CAPTAINS_WHEEL",
+      "name": "舵盘",
+      "counter": null
+     },
+     {
+      "id": "PENDULUM",
+      "name": "摆动球",
+      "counter": 2
+     },
+     {
+      "id": "BLOOD_VIAL",
+      "name": "小血瓶",
+      "counter": null
+     },
+     {
+      "id": "BELLOWS",
+      "name": "风箱",
+      "counter": null
+     },
+     {
+      "id": "JEWELED_MASK",
+      "name": "宝石面具",
+      "counter": null
+     },
+     {
+      "id": "PEAR",
+      "name": "梨子",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": ""
+}

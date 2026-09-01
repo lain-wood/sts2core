@@ -1,0 +1,590 @@
+{
+ "source": "GET /api/v1/wiki?item_type=relic（逐个 id 精确匹配） + /api/v1/compendium 的 relic_collection.discovered_ids",
+ "note": "只含本档案**已发现**的遗物；没见过的查不到，属于正常留空。",
+ "count": 97,
+ "not_found": [],
+ "relics": {
+  "BURNING_BLOOD": {
+   "id": "BURNING_BLOOD",
+   "name": "燃烧之血",
+   "rarity": "Starter",
+   "description": "在战斗结束时，回复6点生命。"
+  },
+  "BAG_OF_MARBLES": {
+   "id": "BAG_OF_MARBLES",
+   "name": "弹珠袋",
+   "rarity": "Common",
+   "description": "在每场战斗开始时，给予所有敌人1层易伤。"
+  },
+  "ORICHALCUM": {
+   "id": "ORICHALCUM",
+   "name": "奥利哈钢",
+   "rarity": "Uncommon",
+   "description": "如果你在回合结束时没有任何格挡，获得6点格挡。"
+  },
+  "TOOLBOX": {
+   "id": "TOOLBOX",
+   "name": "工具箱",
+   "rarity": "Shop",
+   "description": "在每场战斗开始时，从3张随机无色牌中选择1张加入你的手牌。"
+  },
+  "VAJRA": {
+   "id": "VAJRA",
+   "name": "金刚杵",
+   "rarity": "Common",
+   "description": "在每场战斗开始时，获得1点力量。"
+  },
+  "GORGET": {
+   "id": "GORGET",
+   "name": "护喉甲",
+   "rarity": "Common",
+   "description": "在每场战斗开始时，获得4层覆甲。"
+  },
+  "ORNAMENTAL_FAN": {
+   "id": "ORNAMENTAL_FAN",
+   "name": "精致折扇",
+   "rarity": "Uncommon",
+   "description": "你每在同一回合内打出3张攻击牌，就获得4点格挡。"
+  },
+  "PAELS_HORN": {
+   "id": "PAELS_HORN",
+   "name": "佩尔之角",
+   "rarity": "Ancient",
+   "description": "拾起时，将2张放松加入你的牌组。"
+  },
+  "BOWLER_HAT": {
+   "id": "BOWLER_HAT",
+   "name": "圆顶礼帽",
+   "rarity": "Uncommon",
+   "description": "额外获得25%的金币。"
+  },
+  "ETERNAL_FEATHER": {
+   "id": "ETERNAL_FEATHER",
+   "name": "永恒羽毛",
+   "rarity": "Uncommon",
+   "description": "你的牌组中每有5张牌，当你进入休息处时就会回复3点生命。"
+  },
+  "WAR_PAINT": {
+   "id": "WAR_PAINT",
+   "name": "战纹涂料",
+   "rarity": "Common",
+   "description": "拾起时，随机升级2张技能牌。"
+  },
+  "RAZOR_TOOTH": {
+   "id": "RAZOR_TOOTH",
+   "name": "剃刀牙",
+   "rarity": "Rare",
+   "description": "你打出攻击牌和技能牌时，将其在本场战斗内升级。"
+  },
+  "ROYAL_STAMP": {
+   "id": "ROYAL_STAMP",
+   "name": "王室印章",
+   "rarity": "Shop",
+   "description": "拾起时，从牌组中选择一张攻击牌或技能牌，为它附魔：王室认证。"
+  },
+  "DELICATE_FROND": {
+   "id": "DELICATE_FROND",
+   "name": "娇嫩蕨草",
+   "rarity": "Ancient",
+   "description": "在每场战斗开始时，用随机药水将你的空药水栏位填满。"
+  },
+  "PEN_NIB": {
+   "id": "PEN_NIB",
+   "name": "钢笔尖",
+   "rarity": "Uncommon",
+   "description": "你每打出的第10张攻击牌将会造成双倍伤害。"
+  },
+  "LANTERN": {
+   "id": "LANTERN",
+   "name": "灯笼",
+   "rarity": "Common",
+   "description": "在每场战斗的第一回合获得[ironclad_energy_icon.png]。"
+  },
+  "GHOST_SEED": {
+   "id": "GHOST_SEED",
+   "name": "幽灵种子",
+   "rarity": "Shop",
+   "description": "打击和防御获得虚无。"
+  },
+  "ODDLY_SMOOTH_STONE": {
+   "id": "ODDLY_SMOOTH_STONE",
+   "name": "意外光滑的石头",
+   "rarity": "Common",
+   "description": "在每场战斗开始时，获得1点敏捷。"
+  },
+  "STONE_CALENDAR": {
+   "id": "STONE_CALENDAR",
+   "name": "历石",
+   "rarity": "Rare",
+   "description": "在第7回合结束时，对所有敌人造成52点伤害。"
+  },
+  "BELT_BUCKLE": {
+   "id": "BELT_BUCKLE",
+   "name": "腰带扣",
+   "rarity": "Shop",
+   "description": "当你没有药水时，你额外拥有2点敏捷。"
+  },
+  "STRIKE_DUMMY": {
+   "id": "STRIKE_DUMMY",
+   "name": "打击木偶",
+   "rarity": "Common",
+   "description": "名字中有“打击”的卡牌造成3点额外伤害。"
+  },
+  "RED_MASK": {
+   "id": "RED_MASK",
+   "name": "红面具",
+   "rarity": "Common",
+   "description": "在每场战斗开始时，给于所有敌人1层虚弱。"
+  },
+  "AKABEKO": {
+   "id": "AKABEKO",
+   "name": "赤牛",
+   "rarity": "Uncommon",
+   "description": "在每场战斗开始时，获得8点活力。"
+  },
+  "STRAWBERRY": {
+   "id": "STRAWBERRY",
+   "name": "草莓",
+   "rarity": "Common",
+   "description": "拾起时，将你的最大生命值提升7。"
+  },
+  "WING_CHARM": {
+   "id": "WING_CHARM",
+   "name": "羽翼护符",
+   "rarity": "Shop",
+   "description": "每次卡牌奖励中，都会有随机一张牌被附魔：迅捷1。"
+  },
+  "RUINED_HELMET": {
+   "id": "RUINED_HELMET",
+   "name": "损毁头盔",
+   "rarity": "Rare",
+   "description": "你在每场战斗中第一次获得的力量值翻倍。"
+  },
+  "NEOWS_BONES": {
+   "id": "NEOWS_BONES",
+   "name": "涅奥骨骰",
+   "rarity": "Ancient",
+   "description": "拾起时，获得2件随机涅奥遗物。将1张随机诅咒加入你的牌组。"
+  },
+  "ARCANE_SCROLL": {
+   "id": "ARCANE_SCROLL",
+   "name": "奥术卷轴",
+   "rarity": "Ancient",
+   "description": "拾起时，将一张随机稀有牌加入你的牌组。"
+  },
+  "WINGED_BOOTS": {
+   "id": "WINGED_BOOTS",
+   "name": "羽翼之靴",
+   "rarity": "Ancient",
+   "description": "你在选择下一层的房间时有3次机会可以无视当前的路线。"
+  },
+  "BRONZE_SCALES": {
+   "id": "BRONZE_SCALES",
+   "name": "铜质鳞片",
+   "rarity": "Common",
+   "description": "在每场战斗开始时，获得3点荆棘。"
+  },
+  "POTION_BELT": {
+   "id": "POTION_BELT",
+   "name": "药水腰带",
+   "rarity": "Common",
+   "description": "拾起时，获得2个药水栏位。"
+  },
+  "ORRERY": {
+   "id": "ORRERY",
+   "name": "星系仪",
+   "rarity": "Shop",
+   "description": "拾起时，获得5次卡牌奖励"
+  },
+  "BAG_OF_PREPARATION": {
+   "id": "BAG_OF_PREPARATION",
+   "name": "准备背包",
+   "rarity": "Common",
+   "description": "在每场战斗开始时，额外抽2张牌。"
+  },
+  "CENTENNIAL_PUZZLE": {
+   "id": "CENTENNIAL_PUZZLE",
+   "name": "百年积木",
+   "rarity": "Common",
+   "description": "你在每场战斗中第一次损失生命值时，抽3张牌。"
+  },
+  "PAELS_FLESH": {
+   "id": "PAELS_FLESH",
+   "name": "佩尔之肉",
+   "rarity": "Ancient",
+   "description": "从你的第3回合开始，在回合开始时额外获得[ironclad_energy_icon.png]。"
+  },
+  "JUZU_BRACELET": {
+   "id": "JUZU_BRACELET",
+   "name": "佛珠手链",
+   "rarity": "Common",
+   "description": "你在?房间中不会再遭遇常规战斗。"
+  },
+  "REGAL_PILLOW": {
+   "id": "REGAL_PILLOW",
+   "name": "皇家枕头",
+   "rarity": "Common",
+   "description": "在休息时，额外回复15点生命。"
+  },
+  "POLLINOUS_CORE": {
+   "id": "POLLINOUS_CORE",
+   "name": "花粉核心",
+   "rarity": "Event",
+   "description": "每4个回合，额外抽2张牌。"
+  },
+  "CHOSEN_CHEESE": {
+   "id": "CHOSEN_CHEESE",
+   "name": "天选芝士",
+   "rarity": "Event",
+   "description": "在战斗结束时，获得1点最大生命值。"
+  },
+  "MERCURY_HOURGLASS": {
+   "id": "MERCURY_HOURGLASS",
+   "name": "水银沙漏",
+   "rarity": "Uncommon",
+   "description": "在你的回合开始时，对所有敌人造成3点伤害。"
+  },
+  "PANTOGRAPH": {
+   "id": "PANTOGRAPH",
+   "name": "缩放仪",
+   "rarity": "Uncommon",
+   "description": "在Boss战开始时，回复25点生命值。"
+  },
+  "FUR_COAT": {
+   "id": "FUR_COAT",
+   "name": "皮草大衣",
+   "rarity": "Ancient",
+   "description": "拾起时，随机标记7处战斗。这些战斗中的敌人将只有1点生命。"
+  },
+  "VENERABLE_TEA_SET": {
+   "id": "VENERABLE_TEA_SET",
+   "name": "古茶具套装",
+   "rarity": "Common",
+   "description": "到达休息处后的下一场战斗开始时额外获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+  },
+  "BLOOD_VIAL": {
+   "id": "BLOOD_VIAL",
+   "name": "小血瓶",
+   "rarity": "Common",
+   "description": "在每场战斗开始时，回复2点生命。"
+  },
+  "LEES_WAFFLE": {
+   "id": "LEES_WAFFLE",
+   "name": "李家华夫饼",
+   "rarity": "Shop",
+   "description": "拾起时，将你的最大生命值提升7点，并回复所有生命。"
+  },
+  "CHEMICAL_X": {
+   "id": "CHEMICAL_X",
+   "name": "化学物X",
+   "rarity": "Shop",
+   "description": "耗能为X的牌的效果数值增加2点。"
+  },
+  "PENDULUM": {
+   "id": "PENDULUM",
+   "name": "摆动球",
+   "rarity": "Common",
+   "description": "每3个回合，抽1张牌"
+  },
+  "PETRIFIED_TOAD": {
+   "id": "PETRIFIED_TOAD",
+   "name": "石化蟾蜍",
+   "rarity": "Uncommon",
+   "description": "在每场战斗开始时，获得一瓶药水形状的石头"
+  },
+  "THE_ABACUS": {
+   "id": "THE_ABACUS",
+   "name": "算盘",
+   "rarity": "Shop",
+   "description": "你每次将抽牌堆洗牌时，获得6点格挡。"
+  },
+  "SILVER_CRUCIBLE": {
+   "id": "SILVER_CRUCIBLE",
+   "name": "白银熔炉",
+   "rarity": "Ancient",
+   "description": "你遇到的前3次卡牌奖励将是被升级过的。你打开的第一个宝箱将是空的"
+  },
+  "PAPER_PHROG": {
+   "id": "PAPER_PHROG",
+   "name": "纸蛙",
+   "rarity": "Uncommon",
+   "description": "有易伤状态的敌人受到的伤害增加75%而非50%。"
+  },
+  "MEAT_ON_THE_BONE": {
+   "id": "MEAT_ON_THE_BONE",
+   "name": "带骨肉",
+   "rarity": "Rare",
+   "description": "如果你在战斗结束时生命值等于或低于50%，回复12点生命。"
+  },
+  "PAELS_WING": {
+   "id": "PAELS_WING",
+   "name": "佩尔之翼",
+   "rarity": "Ancient",
+   "description": "你可以将你的卡牌奖励献祭给佩尔。每献祭2次，就能获得一件遗物。"
+  },
+  "KIFUDA": {
+   "id": "KIFUDA",
+   "name": "木札",
+   "rarity": "Shop",
+   "description": "拾起时，从你的牌组中选择至多3张牌，附魔：伶俐。"
+  },
+  "VAMBRACE": {
+   "id": "VAMBRACE",
+   "name": "臂甲",
+   "rarity": "Uncommon",
+   "description": "每场战斗中，你第一次从卡牌中获得的格挡值翻倍。"
+  },
+  "UNSETTLING_LAMP": {
+   "id": "UNSETTLING_LAMP",
+   "name": "不安油灯",
+   "rarity": "Rare",
+   "description": "你在每场战斗中第一次打出能给予敌人负面状态的牌时，将其效果翻倍。"
+  },
+  "INTIMIDATING_HELMET": {
+   "id": "INTIMIDATING_HELMET",
+   "name": "骇人头盔",
+   "rarity": "Rare",
+   "description": "每当你打出一张耗能大于等于[ironclad_energy_icon.png][ironclad_energy_icon.png]的牌，获得4点格挡。"
+  },
+  "REPTILE_TRINKET": {
+   "id": "REPTILE_TRINKET",
+   "name": "爬行动物饰品",
+   "rarity": "Uncommon",
+   "description": "当你使用药水时，在本回合获得3力量。"
+  },
+  "PHIAL_HOLSTER": {
+   "id": "PHIAL_HOLSTER",
+   "name": "药瓶皮套",
+   "rarity": "Ancient",
+   "description": "拾起时，获得1个药水栏位并获得2瓶随机药水。"
+  },
+  "GIRYA": {
+   "id": "GIRYA",
+   "name": "壶铃",
+   "rarity": "Rare",
+   "description": "你现在能在休息处获得力量。（最多3次）"
+  },
+  "WHETSTONE": {
+   "id": "WHETSTONE",
+   "name": "磨刀石",
+   "rarity": "Common",
+   "description": "拾起时，随机升级2张攻击牌。"
+  },
+  "SHOVEL": {
+   "id": "SHOVEL",
+   "name": "铲子",
+   "rarity": "Rare",
+   "description": "现在你可以在休息处挖掘遗物。"
+  },
+  "GNARLED_HAMMER": {
+   "id": "GNARLED_HAMMER",
+   "name": "扭曲锤子",
+   "rarity": "Shop",
+   "description": "拾起时，从你的牌组中选择至多3张攻击牌，附魔：锋利3。"
+  },
+  "SLING_OF_COURAGE": {
+   "id": "SLING_OF_COURAGE",
+   "name": "勇气投石索",
+   "rarity": "Shop",
+   "description": "在与精英敌人战斗时，获得2点力量。"
+  },
+  "LOST_COFFER": {
+   "id": "LOST_COFFER",
+   "name": "失物盒",
+   "rarity": "Ancient",
+   "description": "拾起时，获得1次卡牌奖励和1瓶随机药水。"
+  },
+  "BONE_TEA": {
+   "id": "BONE_TEA",
+   "name": "骨茶",
+   "rarity": "Event",
+   "description": "在你接下来的1场战斗开始时，升级你的初始手牌。"
+  },
+  "GREMLIN_HORN": {
+   "id": "GREMLIN_HORN",
+   "name": "地精之角",
+   "rarity": "Uncommon",
+   "description": "每当有一名敌人死亡时，获得[ironclad_energy_icon.png]并抽1张牌。"
+  },
+  "ANCHOR": {
+   "id": "ANCHOR",
+   "name": "锚",
+   "rarity": "Common",
+   "description": "每场战斗开始时获得10点格挡。"
+  },
+  "YUMMY_COOKIE": {
+   "id": "YUMMY_COOKIE",
+   "name": "美味饼干",
+   "rarity": "Ancient",
+   "description": "拾起时，升级4张牌。"
+  },
+  "RED_SKULL": {
+   "id": "RED_SKULL",
+   "name": "红头骨",
+   "rarity": "Common",
+   "description": "当你的生命值低于或等于50%时，你额外获得3点力量"
+  },
+  "DRAGON_FRUIT": {
+   "id": "DRAGON_FRUIT",
+   "name": "火龙果",
+   "rarity": "Shop",
+   "description": "每当你获得金币时，提升1点你的最大生命值。"
+  },
+  "MR_STRUGGLES": {
+   "id": "MR_STRUGGLES",
+   "name": "抱抱先生",
+   "rarity": "Event",
+   "description": "在你的回合开始时，对所有敌人造成等量于当前回合数的伤害。"
+  },
+  "PLANISPHERE": {
+   "id": "PLANISPHERE",
+   "name": "活动星图",
+   "rarity": "Uncommon",
+   "description": "每当你进入？房间的时候，回复5点生命。"
+  },
+  "CAPTAINS_WHEEL": {
+   "id": "CAPTAINS_WHEEL",
+   "name": "舵盘",
+   "rarity": "Rare",
+   "description": "在你的第三回合开始时，获得18点格挡。"
+  },
+  "MYSTIC_LIGHTER": {
+   "id": "MYSTIC_LIGHTER",
+   "name": "神秘打火机",
+   "rarity": "Shop",
+   "description": "有附魔的攻击牌额外造成9点伤害。"
+  },
+  "BELLOWS": {
+   "id": "BELLOWS",
+   "name": "风箱",
+   "rarity": "Rare",
+   "description": "你在每场战斗开始时的手牌，将被升级。"
+  },
+  "JEWELED_MASK": {
+   "id": "JEWELED_MASK",
+   "name": "宝石面具",
+   "rarity": "Ancient",
+   "description": "在每场战斗开始时，将一张随机能力牌从你的抽牌堆放入你的手牌，这张牌在本场战斗可以免费打出。"
+  },
+  "PEAR": {
+   "id": "PEAR",
+   "name": "梨子",
+   "rarity": "Uncommon",
+   "description": "拾起时，将你的最大生命值提升10。"
+  },
+  "CANDELABRA": {
+   "id": "CANDELABRA",
+   "name": "烛台",
+   "rarity": "Uncommon",
+   "description": "在你的第2回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+  },
+  "HAPPY_FLOWER": {
+   "id": "HAPPY_FLOWER",
+   "name": "开心小花",
+   "rarity": "Common",
+   "description": "每3个回合，获得[ironclad_energy_icon.png]。"
+  },
+  "KUNAI": {
+   "id": "KUNAI",
+   "name": "苦无",
+   "rarity": "Rare",
+   "description": "你每在同一回合内打出3张攻击牌，就获得1点敏捷。"
+  },
+  "PERMAFROST": {
+   "id": "PERMAFROST",
+   "name": "永冻冰晶",
+   "rarity": "Uncommon",
+   "description": "当你在战斗中第一次打出能力牌时，获得7点格挡。"
+  },
+  "SWORD_OF_STONE": {
+   "id": "SWORD_OF_STONE",
+   "name": "石之剑",
+   "rarity": "Event",
+   "description": "在击败5名精英敌人之后将变化为一件强力遗物。"
+  },
+  "MEAL_TICKET": {
+   "id": "MEAL_TICKET",
+   "name": "餐券",
+   "rarity": "Common",
+   "description": "每当你进入商店房间时，回复15点生命。"
+  },
+  "PARRYING_SHIELD": {
+   "id": "PARRYING_SHIELD",
+   "name": "招架盾",
+   "rarity": "Uncommon",
+   "description": "如果你在回合结束时拥有至少10点格挡，则对随机敌人造成6点伤害。"
+  },
+  "STORYBOOK": {
+   "id": "STORYBOOK",
+   "name": "故事书",
+   "rarity": "Ancient",
+   "description": "拾起时，将1张至亮之焰添加到你的牌组中。"
+  },
+  "FAKE_ANCHOR": {
+   "id": "FAKE_ANCHOR",
+   "name": "锚？？？",
+   "rarity": "Event",
+   "description": "在每场战斗开始时，获得4点格挡。"
+  },
+  "FAKE_HAPPY_FLOWER": {
+   "id": "FAKE_HAPPY_FLOWER",
+   "name": "开心小花？？？",
+   "rarity": "Event",
+   "description": "每5个回合，获得[ironclad_energy_icon.png]。"
+  },
+  "FAKE_MANGO": {
+   "id": "FAKE_MANGO",
+   "name": "芒果？？？",
+   "rarity": "Event",
+   "description": "拾起时，将你的最大生命值提升3。"
+  },
+  "FAKE_VENERABLE_TEA_SET": {
+   "id": "FAKE_VENERABLE_TEA_SET",
+   "name": "古茶具套装？？？",
+   "rarity": "Event",
+   "description": "到达休息处后的下一场战斗开始时额外获得[ironclad_energy_icon.png]。"
+  },
+  "FAKE_BLOOD_VIAL": {
+   "id": "FAKE_BLOOD_VIAL",
+   "name": "小血瓶？？？",
+   "rarity": "Event",
+   "description": "在每场战斗开始时，回复1点生命。"
+  },
+  "FAKE_SNECKO_EYE": {
+   "id": "FAKE_SNECKO_EYE",
+   "name": "异蛇之眼？？？",
+   "rarity": "Event",
+   "description": "每场战斗开始时获得混乱效果。"
+  },
+  "LETTER_OPENER": {
+   "id": "LETTER_OPENER",
+   "name": "开信刀",
+   "rarity": "Uncommon",
+   "description": "你每在同一回合内打出3张技能牌，就对所有敌人造成5点伤害。"
+  },
+  "TANXS_WHISTLE": {
+   "id": "TANXS_WHISTLE",
+   "name": "坦克斯的哨子",
+   "rarity": "Ancient",
+   "description": "拾起时，将1张吹哨加入你的牌组。"
+  },
+  "BRIMSTONE": {
+   "id": "BRIMSTONE",
+   "name": "硫磺",
+   "rarity": "Shop",
+   "description": "在你的每个回合开始时，你获得2点力量，所有敌人获得1点力量。"
+  },
+  "NEOWS_TORMENT": {
+   "id": "NEOWS_TORMENT",
+   "name": "涅奥的苦痛",
+   "rarity": "Ancient",
+   "description": "拾起时，将1张涅奥之怒加入你的牌组。"
+  },
+  "AMETHYST_AUBERGINE": {
+   "id": "AMETHYST_AUBERGINE",
+   "name": "紫水晶茄子",
+   "rarity": "Common",
+   "description": "敌人额外掉落15金币。"
+  }
+ }
+}

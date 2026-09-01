@@ -1,0 +1,94 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-15T00:00:00+08:00",
+ "run": { "act": 1, "floor": 1, "ascension": 0, "character": "铁甲战士", "room_type": "monster" },
+ "settle": { "poll_interval_ms": 40, "stable_polls": 3, "timeout_ms": 4000 },
+ "notes": "手工合成，不是实录。专门用来守住 replay 的 TurnCounters：连打两张打击之后，踩踏的耗能应当从 3 降到 1（本回合每打出一张攻击牌减 1）。attacks_played 这个量【观测里根本没有】，如果 replay 不自己跨帧带着它，第 3 帧就会按 3 费扣能量，报出一个假 MISMATCH。踩踏的减费在实录 act1_f13_elite_effigy 的手牌显示费用里能看到（3→2→1→0），只是那一局始终没真的打出去，所以只能用合成样本守。",
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster", "round": 1, "side": "player", "is_play_phase": true,
+    "energy": 4, "max_energy": 4,
+    "player": { "hp": 70, "max_hp": 70, "block": 0, "status": {} },
+    "enemies": {
+     "1": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 100, "max_hp": 100,
+            "block": 0, "status": {}, "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [
+     { "slot": 0, "id": "strike", "name": "打击", "cost": "1", "type": "Attack",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "AnyEnemy", "description": "造成6点伤害。" },
+     { "slot": 1, "id": "strike", "name": "打击", "cost": "1", "type": "Attack",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "AnyEnemy", "description": "造成6点伤害。" },
+     { "slot": 2, "id": "stomp", "name": "踩踏", "cost": "3", "type": "Attack",
+       "rarity": "Uncommon", "upgraded": false, "can_play": true,
+       "target_type": "AllEnemies", "description": "对所有敌人造成12点伤害。" }
+    ],
+    "draw_count": 0, "discard": [], "exhaust": [], "pending": null
+   },
+   "action": { "kind": "play_card", "slot": 0, "card_id": "strike", "card_name": "打击", "target": "dummy_0" }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster", "round": 1, "side": "player", "is_play_phase": true,
+    "energy": 3, "max_energy": 4,
+    "player": { "hp": 70, "max_hp": 70, "block": 0, "status": {} },
+    "enemies": {
+     "1": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 94, "max_hp": 100,
+            "block": 0, "status": {}, "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [
+     { "slot": 0, "id": "strike", "name": "打击", "cost": "1", "type": "Attack",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "AnyEnemy", "description": "造成6点伤害。" },
+     { "slot": 1, "id": "stomp", "name": "踩踏", "cost": "2", "type": "Attack",
+       "rarity": "Uncommon", "upgraded": false, "can_play": true,
+       "target_type": "AllEnemies", "description": "对所有敌人造成12点伤害。" }
+    ],
+    "draw_count": 0, "discard": [ { "name": "打击", "cost": "1" } ], "exhaust": [], "pending": null
+   },
+   "action": { "kind": "play_card", "slot": 0, "card_id": "strike", "card_name": "打击", "target": "dummy_0" }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster", "round": 1, "side": "player", "is_play_phase": true,
+    "energy": 2, "max_energy": 4,
+    "player": { "hp": 70, "max_hp": 70, "block": 0, "status": {} },
+    "enemies": {
+     "1": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 88, "max_hp": 100,
+            "block": 0, "status": {}, "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [
+     { "slot": 0, "id": "stomp", "name": "踩踏", "cost": "1", "type": "Attack",
+       "rarity": "Uncommon", "upgraded": false, "can_play": true,
+       "target_type": "AllEnemies", "description": "对所有敌人造成12点伤害。" }
+    ],
+    "draw_count": 0,
+    "discard": [ { "name": "打击", "cost": "1" }, { "name": "打击", "cost": "1" } ],
+    "exhaust": [], "pending": null
+   },
+   "action": { "kind": "play_card", "slot": 0, "card_id": "stomp", "card_name": "踩踏", "target": null }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster", "round": 1, "side": "player", "is_play_phase": true,
+    "energy": 1, "max_energy": 4,
+    "player": { "hp": 70, "max_hp": 70, "block": 0, "status": {} },
+    "enemies": {
+     "1": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 76, "max_hp": 100,
+            "block": 0, "status": {}, "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [],
+    "draw_count": 0,
+    "discard": [ { "name": "打击", "cost": "1" }, { "name": "打击", "cost": "1" }, { "name": "踩踏", "cost": "3" } ],
+    "exhaust": [], "pending": null
+   },
+   "action": null
+  }
+ ]
+}

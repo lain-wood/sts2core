@@ -1,0 +1,2 @@
+trace   traces/passive_act3_f48_boss_aeonglass.json
+raw-dir traces/raw_passive_act3_f48_boss

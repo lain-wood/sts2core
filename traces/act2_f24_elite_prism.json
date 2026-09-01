@@ -1,0 +1,6395 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-27T20:33:43+08:00",
+ "run": {
+  "act": 2,
+  "floor": 24,
+  "ascension": 1,
+  "character": "铁甲战士",
+  "room_type": "elite"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 75,
+     "block": 4,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 161,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "MANGLE",
+      "name": "凌虐",
+      "cost": "3",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成15点伤害。 敌人在本回合失去10点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 3,
+      "id": "HEMOKINESIS",
+      "name": "御血术",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成15点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 获得2层污染。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 19,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "MANGLE",
+    "card_name": "凌虐",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 17,
+    "ms": 1479,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "elite",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 47,
+     "max_hp": 75,
+     "block": 4,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 146,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "STRENGTH_POWER": -10,
+       "MANGLE_POWER": 10
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5",
+        "description": "这个敌人将要攻击造成5点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 2,
+      "id": "HEMOKINESIS",
+      "name": "御血术",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "失去2点生命。 造成15点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。 获得2层污染。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 19,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 51,
+    "ms": 4218,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 46,
+     "max_hp": 75,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 146,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "TAUNT",
+      "name": "挑衅+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "获得8点格挡。 给予2层易伤。 获得2层污染。"
+     },
+     {
+      "slot": 2,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 3,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 5,
+      "id": "BRIGHTEST_FLAME",
+      "name": "至亮之焰",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Ancient",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 抽2张牌。 失去1点最大生命。 获得2层污染。"
+     },
+     {
+      "slot": 6,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 7,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。 获得2层污染。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "TAUNT",
+    "card_name": "挑衅+",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 17,
+    "ms": 1415,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 46,
+     "max_hp": 75,
+     "block": 8,
+     "status": {
+      "TAINTED_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 146,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "13",
+        "description": "这个敌人将要攻击造成13点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "BRIGHTEST_FLAME",
+      "name": "至亮之焰",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Ancient",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 抽2张牌。 失去1点最大生命。 获得2层污染。"
+     },
+     {
+      "slot": 5,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 6,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。 获得2层污染。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 11,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1216,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 46,
+     "max_hp": 75,
+     "block": 8,
+     "status": {
+      "TAINTED_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 133,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "13",
+        "description": "这个敌人将要攻击造成13点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BRIGHTEST_FLAME",
+      "name": "至亮之焰",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Ancient",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 抽2张牌。 失去1点最大生命。 获得2层污染。"
+     },
+     {
+      "slot": 4,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 5,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。 获得2层污染。"
+     },
+     {
+      "slot": 6,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 获得2层污染。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 10,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "BRIGHTEST_FLAME",
+    "card_name": "至亮之焰",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1333,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 46,
+     "max_hp": 74,
+     "block": 8,
+     "status": {
+      "TAINTED_POWER": 4
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 133,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。 获得2层污染。"
+     },
+     {
+      "slot": 5,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 6,
+      "id": "BLOODLETTING",
+      "name": "放血",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去3点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 获得2层污染。"
+     },
+     {
+      "slot": 7,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1149,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 46,
+     "max_hp": 74,
+     "block": 8,
+     "status": {
+      "TAINTED_POWER": 4
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 124,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。 获得2层污染。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 5,
+      "id": "BLOODLETTING",
+      "name": "放血",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去3点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 获得2层污染。"
+     },
+     {
+      "slot": 6,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "BULLY",
+    "card_name": "欺凌",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1167,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 46,
+     "max_hp": 74,
+     "block": 8,
+     "status": {
+      "TAINTED_POWER": 4
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 112,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得11点格挡。 抽1张牌。 获得2层污染。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 4,
+      "id": "BLOODLETTING",
+      "name": "放血",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去3点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 获得2层污染。"
+     },
+     {
+      "slot": 5,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 8,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "SHRUG_IT_OFF",
+    "card_name": "耸肩无视+",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1334,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 46,
+     "max_hp": 74,
+     "block": 19,
+     "status": {
+      "TAINTED_POWER": 6
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 112,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "17",
+        "description": "这个敌人将要攻击造成17点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 3,
+      "id": "BLOODLETTING",
+      "name": "放血",
+      "cost": "0",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "失去3点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 获得2层污染。"
+     },
+     {
+      "slot": 4,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     },
+     {
+      "slot": 5,
+      "id": "UPPERCUT",
+      "name": "上勾拳",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予1层虚弱。 给予1层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "BLOODLETTING",
+    "card_name": "放血",
+    "target": null
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1431,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 43,
+     "max_hp": 74,
+     "block": 19,
+     "status": {
+      "TAINTED_POWER": 8
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 112,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 3,
+      "id": "BREAKTHROUGH",
+      "name": "突破+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "失去1点生命。 对所有敌人造成13点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "UPPERCUT",
+      "name": "上勾拳",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予1层虚弱。 给予1层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "BREAKTHROUGH",
+    "card_name": "突破+",
+    "target": null
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1401,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 74,
+     "block": 19,
+     "status": {
+      "TAINTED_POWER": 8
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 93,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "19",
+        "description": "这个敌人将要攻击造成19点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 3,
+      "id": "UPPERCUT",
+      "name": "上勾拳",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予1层虚弱。 给予1层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 3,
+    "card_id": "UPPERCUT",
+    "card_name": "上勾拳",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1484,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "elite",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 74,
+     "block": 19,
+     "status": {
+      "TAINTED_POWER": 8
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 74,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 3,
+       "WEAK_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "14",
+        "description": "这个敌人将要攻击造成14点伤害。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御+",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得8点格挡。 获得2层污染。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 47,
+    "ms": 4550,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 74,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 68,
+      "max_hp": 161,
+      "block": 11,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "5×3",
+        "description": "这个敌人将要攻击造成5点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEADBUTT",
+      "name": "头槌+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。"
+     },
+     {
+      "slot": 1,
+      "id": "COLOSSUS",
+      "name": "巨像",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。 获得2层污染。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "COLOSSUS",
+    "card_name": "巨像",
+    "target": null
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1517,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 74,
+     "block": 5,
+     "status": {
+      "COLOSSUS_POWER": 1,
+      "TAINTED_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 68,
+      "max_hp": 161,
+      "block": 11,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×3",
+        "description": "这个敌人将要攻击造成3点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEADBUTT",
+      "name": "头槌+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1233,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 14,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 74,
+     "block": 5,
+     "status": {
+      "COLOSSUS_POWER": 1,
+      "TAINTED_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 68,
+      "max_hp": 161,
+      "block": 2,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×3",
+        "description": "这个敌人将要攻击造成3点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEADBUTT",
+      "name": "头槌+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。"
+     },
+     {
+      "slot": 1,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "HEADBUTT",
+    "card_name": "头槌+",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1153,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 15,
+   "obs": {
+    "state_type": "card_select",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 74,
+     "block": 5,
+     "status": {
+      "COLOSSUS_POWER": 1,
+      "TAINTED_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": {
+     "kind": "card_select",
+     "prompt": "选择一张牌放到你的抽牌堆顶。",
+     "can_confirm": false,
+     "can_cancel": false,
+     "selected": null,
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "MANGLE",
+       "name": "凌虐",
+       "cost": "3",
+       "type": "Attack",
+       "rarity": "Rare",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成15点伤害。 敌人在本回合失去10点力量。"
+      },
+      {
+       "slot": 1,
+       "id": "DEFEND_IRONCLAD",
+       "name": "防御",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Basic",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得5点格挡。 获得2层污染。"
+      },
+      {
+       "slot": 2,
+       "id": "DEFEND_IRONCLAD",
+       "name": "防御",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Basic",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得5点格挡。 获得2层污染。"
+      },
+      {
+       "slot": 3,
+       "id": "HEMOKINESIS",
+       "name": "御血术",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Uncommon",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "失去2点生命。 造成15点伤害。"
+      },
+      {
+       "slot": 4,
+       "id": "DEFEND_IRONCLAD",
+       "name": "防御",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Basic",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得5点格挡。 获得2层污染。"
+      },
+      {
+       "slot": 5,
+       "id": "TAUNT",
+       "name": "挑衅+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Uncommon",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得8点格挡。 给予2层易伤。 获得2层污染。"
+      },
+      {
+       "slot": 6,
+       "id": "POMMEL_STRIKE",
+       "name": "剑柄打击",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Common",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成9点伤害。 抽1张牌。"
+      },
+      {
+       "slot": 7,
+       "id": "BRIGHTEST_FLAME",
+       "name": "至亮之焰",
+       "cost": "0",
+       "type": "Skill",
+       "rarity": "Ancient",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 抽2张牌。 失去1点最大生命。 获得2层污染。"
+      },
+      {
+       "slot": 8,
+       "id": "STRIKE_IRONCLAD",
+       "name": "打击",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Basic",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成6点伤害。"
+      },
+      {
+       "slot": 9,
+       "id": "BULLY",
+       "name": "欺凌",
+       "cost": "0",
+       "type": "Attack",
+       "rarity": "Uncommon",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+      },
+      {
+       "slot": 10,
+       "id": "SHRUG_IT_OFF",
+       "name": "耸肩无视+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Common",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得11点格挡。 抽1张牌。 获得2层污染。"
+      },
+      {
+       "slot": 11,
+       "id": "BLOODLETTING",
+       "name": "放血",
+       "cost": "0",
+       "type": "Skill",
+       "rarity": "Common",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "失去3点生命。 获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。 获得2层污染。"
+      },
+      {
+       "slot": 12,
+       "id": "BREAKTHROUGH",
+       "name": "突破+",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Common",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "失去1点生命。 对所有敌人造成13点伤害。"
+      },
+      {
+       "slot": 13,
+       "id": "UPPERCUT",
+       "name": "上勾拳",
+       "cost": "2",
+       "type": "Attack",
+       "rarity": "Uncommon",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成13点伤害。 给予1层虚弱。 给予1层易伤。"
+      },
+      {
+       "slot": 14,
+       "id": "PYRE",
+       "name": "薪火之源+",
+       "cost": "2",
+       "type": "Power",
+       "rarity": "Rare",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+      },
+      {
+       "slot": 15,
+       "id": "STRIKE_IRONCLAD",
+       "name": "打击",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Basic",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成6点伤害。"
+      },
+      {
+       "slot": 16,
+       "id": "DEFEND_IRONCLAD",
+       "name": "防御+",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Basic",
+       "upgraded": true,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得8点格挡。 获得2层污染。"
+      },
+      {
+       "slot": 17,
+       "id": "COLOSSUS",
+       "name": "巨像",
+       "cost": "1",
+       "type": "Skill",
+       "rarity": "Uncommon",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "获得5点格挡。 在本回合中，有易伤状态的敌人对你造成的伤害降低50%。 获得2层污染。"
+      },
+      {
+       "slot": 18,
+       "id": "STRIKE_IRONCLAD",
+       "name": "打击",
+       "cost": "1",
+       "type": "Attack",
+       "rarity": "Basic",
+       "upgraded": false,
+       "can_play": null,
+       "target_type": null,
+       "description": "造成6点伤害。"
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "select_card",
+    "slot": 0
+   },
+   "settle": {
+    "polls": 11,
+    "ms": 1014,
+    "unstable": false,
+    "intermediate_differs": false
+   }
+  },
+  {
+   "i": 16,
+   "obs": {
+    "state_type": "elite",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 74,
+     "block": 5,
+     "status": {
+      "COLOSSUS_POWER": 1,
+      "TAINTED_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 52,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 2
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "3×3",
+        "description": "这个敌人将要攻击造成3点伤害3次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击+",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予3层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 3,
+    "draw": [
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     }
+    ],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 59,
+    "ms": 5716,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 17,
+   "obs": {
+    "state_type": "elite",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 38,
+     "max_hp": 74,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 52,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "8",
+        "description": "这个敌人将要攻击造成8点伤害。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "MANGLE",
+      "name": "凌虐",
+      "cost": "3",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成15点伤害。 敌人在本回合失去10点力量。"
+     },
+     {
+      "slot": 1,
+      "id": "VICIOUS",
+      "name": "凶恶+",
+      "cost": "1",
+      "type": "Power",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "每当你给予易伤时，抽2张牌。"
+     },
+     {
+      "slot": 2,
+      "id": "NOT_YET",
+      "name": "时候未到",
+      "cost": "2",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "回复10点生命。 获得2层污染。 消耗。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 4,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 19,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "MANGLE",
+    "card_name": "凌虐",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1448,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 18,
+   "obs": {
+    "state_type": "elite",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 38,
+     "max_hp": 74,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 30,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 2,
+       "VULNERABLE_POWER": 1,
+       "STRENGTH_POWER": -10,
+       "MANGLE_POWER": 10
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "0",
+        "description": "这个敌人将要攻击造成0点伤害。"
+       },
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "VICIOUS",
+      "name": "凶恶+",
+      "cost": "1",
+      "type": "Power",
+      "rarity": "Uncommon",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "每当你给予易伤时，抽2张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "NOT_YET",
+      "name": "时候未到",
+      "cost": "2",
+      "type": "Skill",
+      "rarity": "Rare",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "回复10点生命。 获得2层污染。 消耗。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。 获得2层污染。"
+     },
+     {
+      "slot": 3,
+      "id": "PYRE",
+      "name": "薪火之源+",
+      "cost": "2",
+      "type": "Power",
+      "rarity": "Rare",
+      "upgraded": true,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "在回合开始时，获得[ironclad_energy_icon.png][ironclad_energy_icon.png]。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 19,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "头槌+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 50,
+    "ms": 4835,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 19,
+   "obs": {
+    "state_type": "elite",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 38,
+     "max_hp": 74,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 30,
+      "max_hp": 161,
+      "block": 20,
+      "status": {
+       "VITAL_SPARK_POWER": 4
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "UPPERCUT",
+      "name": "上勾拳",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予1层虚弱。 给予1层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "HEADBUTT",
+      "name": "头槌+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "VULNERABLE_POTION",
+      "name": "易伤药水",
+      "description": "给予3层易伤。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "use_potion",
+    "slot": 1,
+    "potion_id": "VULNERABLE_POTION",
+    "potion_name": "易伤药水",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1468,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 20,
+   "obs": {
+    "state_type": "elite",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 38,
+     "max_hp": 74,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 30,
+      "max_hp": 161,
+      "block": 20,
+      "status": {
+       "VITAL_SPARK_POWER": 4,
+       "VULNERABLE_POWER": 3
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "15",
+        "description": "这个敌人将要攻击造成15点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "UPPERCUT",
+      "name": "上勾拳",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成13点伤害。 给予1层虚弱。 给予1层易伤。"
+     },
+     {
+      "slot": 2,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "HEADBUTT",
+      "name": "头槌+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "UPPERCUT",
+    "card_name": "上勾拳",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 17,
+    "ms": 1600,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 21,
+   "obs": {
+    "state_type": "elite",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 38,
+     "max_hp": 74,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 30,
+      "max_hp": 161,
+      "block": 1,
+      "status": {
+       "VITAL_SPARK_POWER": 4,
+       "VULNERABLE_POWER": 4,
+       "WEAK_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "BULLY",
+      "name": "欺凌",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成4点伤害。 该敌人身上每有一层易伤就额外造成2点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "HEADBUTT",
+      "name": "头槌+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "BULLY",
+    "card_name": "欺凌",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1201,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 22,
+   "obs": {
+    "state_type": "elite",
+    "round": 5,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 38,
+     "max_hp": 74,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "INFESTED_PRISM_0",
+      "name": "感染棱柱",
+      "hp": 13,
+      "max_hp": 161,
+      "block": 0,
+      "status": {
+       "VITAL_SPARK_POWER": 4,
+       "VULNERABLE_POWER": 4,
+       "WEAK_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "HEADBUTT",
+      "name": "头槌+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成12点伤害。 将你弃牌堆中的一张牌放到抽牌堆顶部。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击+",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御+",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "放血",
+      "cost": "0"
+     },
+     {
+      "name": "突破+",
+      "cost": "1"
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视+",
+      "cost": "1"
+     },
+     {
+      "name": "巨像",
+      "cost": "1"
+     },
+     {
+      "name": "御血术",
+      "cost": "1"
+     },
+     {
+      "name": "挑衅+",
+      "cost": "1"
+     },
+     {
+      "name": "至亮之焰",
+      "cost": "0"
+     }
+    ],
+    "discard": [
+     {
+      "name": "凌虐",
+      "cost": "3"
+     },
+     {
+      "name": "凶恶+",
+      "cost": "1"
+     },
+     {
+      "name": "时候未到",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "薪火之源+",
+      "cost": "2"
+     },
+     {
+      "name": "上勾拳",
+      "cost": "2"
+     },
+     {
+      "name": "欺凌",
+      "cost": "0"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "HEADBUTT",
+    "card_name": "头槌+",
+    "target": "INFESTED_PRISM_0"
+   },
+   "settle": {
+    "polls": 18,
+    "ms": 1686,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 23,
+   "obs": {
+    "state_type": "card_reward",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 44,
+     "max_hp": 74,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     },
+     {
+      "slot": 1,
+      "id": "DEXTERITY_POTION",
+      "name": "敏捷药水",
+      "description": "获得2点敏捷。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "ARCANE_SCROLL",
+      "name": "奥术卷轴",
+      "counter": null
+     },
+     {
+      "id": "WAR_PAINT",
+      "name": "战纹涂料",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "MEAL_TICKET",
+      "name": "餐券",
+      "counter": null
+     },
+     {
+      "id": "PARRYING_SHIELD",
+      "name": "招架盾",
+      "counter": null
+     },
+     {
+      "id": "CENTENNIAL_PUZZLE",
+      "name": "百年积木",
+      "counter": null
+     },
+     {
+      "id": "STORYBOOK",
+      "name": "故事书",
+      "counter": null
+     },
+     {
+      "id": "FAKE_VENERABLE_TEA_SET",
+      "name": "古茶具套装？？？",
+      "counter": null
+     },
+     {
+      "id": "FAKE_ANCHOR",
+      "name": "锚？？？",
+      "counter": null
+     },
+     {
+      "id": "BRONZE_SCALES",
+      "name": "铜质鳞片",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": "第2幕第24层 精英 感染棱柱 161血（活力火花2：我所有技能牌都带污染2）。我 47/75 进场，血线偏低。\n偏离求解线，两个理由都是L2的已知盲区：(1)污染——我每打一张技能牌+2层，让我这回合挨的每一击+2，而威胁是同步那刻冻住的标签，求解器系统性高估技能牌；(2)凌虐的-10力量会把它这一击从15削到5，而\"改敌人这一手打多少\"在这一层是空操作（和虚弱药水同一条）。所以凌虐这张在这场里等于\"15点伤害+挡10点+不吃污染\"，求解器只看得见那15点。\n这条线里有4张技能牌=8层污染，来袭会从11涨到19，而它给的格挡也正好19 —— 求解器看不见污染那一半，所以这一手是\"刚好打平\"而不是它以为的\"稳0\"。照打，但盯着最后的格挡数。\n印证内核文档那条：打出挑衅+（技能）之后意图标签当场 11 -> 13，污染是**含在标签里**的。所以只要每打一张牌就重跑一次求解，那个高估就基本被抵消掉——偏差只存在于\"一条计划好的线\"内部。\n放血是技能牌，打出后来袭会从17涨到19，正好等于我的19格挡 —— 打平，可以打。\n这回合意图是5×3三段，污染按\"每段+2\"结算，所以一张技能牌=+6来袭，技能的门槛比上回合高三倍。巨像仍然值：它自己+2/段，但把每段砍半（棱柱带易伤2），净下来还是省。\n头槌+ 把 凌虐 放回牌堆顶：这场里它是最强的一张（攻击牌不吃污染，15点伤害之外还把它那一手削10）。\n又一次偏离：求解线是 时候未到(回10)+防御，但那是两张技能=+4来袭，实际净收益只有3点血；凌虐把它这一手8点直接削成0，还打15。它看不见的还是那两条（污染在标签里冻住 + 减力量在这一层是空操作）。\n易伤药水报\"省21血\"——它把三张攻击全部×1.5，够穿透那20点格挡把30血打完。活力火花涨到4之后技能牌一张=+4来袭，这回合纯攻击。"
+}

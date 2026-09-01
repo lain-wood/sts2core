@@ -1,0 +1,137 @@
+{
+ "version": 1,
+ "recorded_at": "2026-08-14T00:00:00+08:00",
+ "run": { "act": 1, "floor": 1, "ascension": 0, "character": "铁甲战士", "room_type": "monster" },
+ "settle": { "poll_interval_ms": 40, "stable_polls": 3, "timeout_ms": 4000 },
+ "notes": "手工合成的冒烟 trace，不是实录。用来验证 verify 这条命令本身能跑通：出牌帧、结束回合帧、未知牌帧、未映射 status 各一。",
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster", "round": 1, "side": "player", "is_play_phase": true,
+    "energy": 3, "max_energy": 3,
+    "player": { "hp": 70, "max_hp": 70, "block": 0, "status": {} },
+    "enemies": {
+     "7": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 22, "max_hp": 22,
+            "block": 0, "status": {}, "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [
+     { "slot": 0, "id": "strike", "name": "打击", "cost": "1", "type": "Attack",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "SingleEnemy", "description": "造成6点伤害。" },
+     { "slot": 1, "id": "defend", "name": "防御", "cost": "1", "type": "Skill",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "None", "description": "获得5点格挡。" },
+     { "slot": 2, "id": "not_implemented_yet", "name": "还没实现的牌", "cost": "2",
+       "type": "Skill", "rarity": "Rare", "upgraded": false, "can_play": true,
+       "target_type": "None", "description": "每当你打出一张攻击牌，抽1张牌。" }
+    ],
+    "draw_count": 4, "discard": [], "exhaust": [], "pending": null
+   },
+   "action": { "kind": "play_card", "slot": 0, "card_id": "strike",
+               "card_name": "打击", "target": "dummy_0" },
+   "settle": { "polls": 3, "ms": 118, "unstable": false, "intermediate_differs": false }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster", "round": 1, "side": "player", "is_play_phase": true,
+    "energy": 2, "max_energy": 3,
+    "player": { "hp": 70, "max_hp": 70, "block": 0, "status": {} },
+    "enemies": {
+     "7": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 16, "max_hp": 22,
+            "block": 0, "status": {}, "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [
+     { "slot": 0, "id": "defend", "name": "防御", "cost": "1", "type": "Skill",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "None", "description": "获得5点格挡。" },
+     { "slot": 1, "id": "not_implemented_yet", "name": "还没实现的牌", "cost": "2",
+       "type": "Skill", "rarity": "Rare", "upgraded": false, "can_play": true,
+       "target_type": "None", "description": "每当你打出一张攻击牌，抽1张牌。" }
+    ],
+    "draw_count": 4, "discard": [ { "name": "打击", "cost": "1" } ],
+    "exhaust": [], "pending": null
+   },
+   "action": { "kind": "play_card", "slot": 0, "card_id": "defend",
+               "card_name": "防御", "target": null },
+   "settle": { "polls": 4, "ms": 205, "unstable": false, "intermediate_differs": true }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster", "round": 1, "side": "player", "is_play_phase": true,
+    "energy": 1, "max_energy": 3,
+    "player": { "hp": 70, "max_hp": 70, "block": 5, "status": {} },
+    "enemies": {
+     "7": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 16, "max_hp": 22,
+            "block": 0, "status": { "some_unmapped_power": 3 },
+            "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [
+     { "slot": 0, "id": "not_implemented_yet", "name": "还没实现的牌", "cost": "2",
+       "type": "Skill", "rarity": "Rare", "upgraded": false, "can_play": true,
+       "target_type": "None", "description": "每当你打出一张攻击牌，抽1张牌。" }
+    ],
+    "draw_count": 4,
+    "discard": [ { "name": "打击", "cost": "1" }, { "name": "防御", "cost": "1" } ],
+    "exhaust": [], "pending": null
+   },
+   "action": { "kind": "play_card", "slot": 0, "card_id": "not_implemented_yet",
+               "card_name": "还没实现的牌", "target": null },
+   "settle": { "polls": 3, "ms": 96, "unstable": false, "intermediate_differs": false }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster", "round": 1, "side": "player", "is_play_phase": true,
+    "energy": 0, "max_energy": 3,
+    "player": { "hp": 70, "max_hp": 70, "block": 5, "status": {} },
+    "enemies": {
+     "7": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 16, "max_hp": 22,
+            "block": 0, "status": { "some_unmapped_power": 3 },
+            "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [],
+    "draw_count": 4,
+    "discard": [ { "name": "打击", "cost": "1" }, { "name": "防御", "cost": "1" },
+                 { "name": "还没实现的牌", "cost": "2" } ],
+    "exhaust": [], "pending": null
+   },
+   "action": { "kind": "end_turn" },
+   "settle": { "polls": 6, "ms": 1240, "unstable": false, "intermediate_differs": true }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster", "round": 2, "side": "player", "is_play_phase": true,
+    "energy": 3, "max_energy": 3,
+    "player": { "hp": 63, "max_hp": 70, "block": 0, "status": {} },
+    "enemies": {
+     "7": { "entity_id": "dummy_0", "name": "<合成:沙包>", "hp": 16, "max_hp": 22,
+            "block": 0, "status": { "some_unmapped_power": 3 },
+            "intents": [ { "type": "Attack", "label": "12" } ] }
+    },
+    "hand": [
+     { "slot": 0, "id": "strike", "name": "打击", "cost": "1", "type": "Attack",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "SingleEnemy", "description": "造成6点伤害。" },
+     { "slot": 1, "id": "strike", "name": "打击", "cost": "1", "type": "Attack",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "SingleEnemy", "description": "造成6点伤害。" },
+     { "slot": 2, "id": "defend", "name": "防御", "cost": "1", "type": "Skill",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "None", "description": "获得5点格挡。" },
+     { "slot": 3, "id": "defend", "name": "防御", "cost": "1", "type": "Skill",
+       "rarity": "Basic", "upgraded": false, "can_play": true,
+       "target_type": "None", "description": "获得5点格挡。" }
+    ],
+    "draw_count": 0,
+    "discard": [ { "name": "打击", "cost": "1" }, { "name": "防御", "cost": "1" },
+                 { "name": "还没实现的牌", "cost": "2" } ],
+    "exhaust": [], "pending": null
+   },
+   "action": null
+  }
+ ]
+}
