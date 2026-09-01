@@ -1,6 +1,6 @@
-# sts2core — 《杀戮尖塔 2》高性能模拟内核与跨回合 AI 求解器
+# sts2core — 《杀戮尖塔 2》高性能模拟内核与跨回合 A求解器（适用于v1.07版本）
 
-零依赖、极致性能的 **Slay the Spire 2** 纯函数 Rust 规则模拟内核与局内 Expectimax 求解器。
+零依赖、极致性能的 **Slay the Spire 2** 纯函数 Rust 规则模拟内核与局内 Expectimax 求解器。卡牌构筑还在做。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-1.80%2B-orange.svg)](https://www.rust-lang.org/)
