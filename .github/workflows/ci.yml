@@ -1,0 +1,112 @@
+name: CI
+
+# 这个仓库的价值在「全套跑一遍」，而语料就在仓库里，所以 CI 能跑真验收
+# 而不只是编译。分成两类：
+#   * 硬门     —— 今天是绿的，红了就是回归
+#   * 已知红   —— 今天就是红的（各自在 README「现在真实的样子」里点了名），
+#                 CI 守的是**不许变多**，而不是假装它绿
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  acceptance:
+    name: 构建 + 全套对拍验收
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 工具链版本（读数要可归因）
+        run: |
+          rustc --version
+          cargo --version
+
+      - name: 构建
+        run: cargo build --release --all-targets
+
+      # ------------------------------------------------------------------
+      # 硬门：今天是绿的，红了就是回归
+      # ------------------------------------------------------------------
+      - name: 单元测试
+        run: cargo test --release
+
+      - name: 敌人出招预测
+        run: cargo run --release --bin verify -- traces/act*.json traces/synthetic_*.json --predict-enemy
+
+      - name: L2 自洽性（实战线不许赢过穷尽搜索）
+        run: cargo run --release --bin solve -- traces/act*.json
+
+      - name: 跨回合验收 · solver 策略
+        run: cargo run --release --bin rollout -- traces/act*.json
+
+      # ------------------------------------------------------------------
+      # 已知红：只守「不许变多」
+      #
+      # 基线是 2026-09-02 实测的。**修好了就把基线往下调**，别让它一直挂在
+      # 那儿当装饰 —— 这个仓库栽过两次"注释声称有测试守着而那条测试够不到"。
+      # 好转时 CI 会主动提醒（::notice::）。
+      # ------------------------------------------------------------------
+      - name: 一步预测 / 整回合（已知红，守不许变多）
+        shell: bash
+        run: |
+          BASE_ONE=5     # 4 帧在第3幕Boss复活窗口 + 1 帧在附魔补丁之前录的老 trace
+          BASE_TURN=2
+
+          # verify 有不一致时退出码是 1，所以整条都要 || true；
+          # 全绿时 grep 抓不到东西，输出为空 -> 后面兜底成 0
+          ONE=$( { cargo run --release --bin verify -q -- traces/act*.json traces/synthetic_*.json 2>&1 || true; } \
+                 | grep -oE '[0-9]+ 帧不一致' | grep -oE '[0-9]+' | tail -1 || true )
+          TURN=$( { cargo run --release --bin verify -q -- traces/act*.json traces/synthetic_*.json --per-turn 2>&1 || true; } \
+                 | grep -oE '[0-9]+ 帧不一致' | grep -oE '[0-9]+' | tail -1 || true )
+          ONE=${ONE:-0}
+          TURN=${TURN:-0}
+          echo "一步预测 $ONE 帧（基线 $BASE_ONE） / 整回合 $TURN 帧（基线 $BASE_TURN）"
+
+          fail=0
+          if [ "$ONE" -gt "$BASE_ONE" ]; then
+            echo "::error::一步预测不一致帧数 $ONE > 基线 $BASE_ONE"
+            fail=1
+          elif [ "$ONE" -lt "$BASE_ONE" ]; then
+            echo "::notice::一步预测好转（$ONE < $BASE_ONE）—— 把 BASE_ONE 调下来"
+          fi
+          if [ "$TURN" -gt "$BASE_TURN" ]; then
+            echo "::error::整回合不一致帧数 $TURN > 基线 $BASE_TURN"
+            fail=1
+          elif [ "$TURN" -lt "$BASE_TURN" ]; then
+            echo "::notice::整回合好转（$TURN < $BASE_TURN）—— 把 BASE_TURN 调下来"
+          fi
+          exit "$fail"
+
+      - name: 跨回合验收 · fast 策略（已知红，守不许变多）
+        shell: bash
+        run: |
+          BASE_TRUNC=1   # 生产口径（30 回合上限）下被截断的推演条数
+          OUT=$( cargo run --release --bin rollout -q -- traces/act*.json --policy fast 2>&1 || true )
+          echo "$OUT" | tail -30
+
+          TRUNC=$( echo "$OUT" | grep -oE '有 [0-9]+/[0-9]+ 条推演没打完' | grep -oE '[0-9]+' | head -1 || true )
+          TRUNC=${TRUNC:-0}
+          echo "被截断 $TRUNC 条（基线 $BASE_TRUNC）"
+
+          if [ "$TRUNC" -gt "$BASE_TRUNC" ]; then
+            echo "::error::截断条数 $TRUNC > 基线 $BASE_TRUNC"
+            exit 1
+          elif [ "$TRUNC" -lt "$BASE_TRUNC" ]; then
+            echo "::notice::好转（$TRUNC < $BASE_TRUNC）—— 把 BASE_TRUNC 调下来"
+          fi
+          exit 0
+
+  planner:
+    # 约 2 分半，只有动了跨回合 planner 才需要。手动触发或打 tag 时跑。
+    name: 跨回合 planner D=2（慢，按需）
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo build --release --all-targets
+      - run: cargo run --release --bin rollout -- traces/act*.json --policy plan --plan-depth 2 --depth-sweep 1
