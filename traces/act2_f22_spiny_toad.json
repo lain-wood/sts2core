@@ -1,0 +1,260 @@
+{
+ "version": 1,
+ "recorded_at": "2026-09-02T23:54:43+08:00",
+ "run": {
+  "act": 2,
+  "floor": 22,
+  "ascension": 2,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 70,
+     "max_hp": 87,
+     "block": 0,
+     "status": {
+      "PLATING_POWER": 4
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SPINY_TOAD_0",
+      "name": "棘刺蟾蜍",
+      "hp": 118,
+      "max_hp": 118,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BODY_SLAM",
+      "name": "全身撞击+",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": true,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成你当前格挡值的伤害。 （造成0点伤害）"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击+",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": true,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "SHRUG_IT_OFF",
+      "name": "耸肩无视",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Common",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得8点格挡。 抽1张牌。"
+     },
+     {
+      "slot": 4,
+      "id": "SPOILS_MAP",
+      "name": "藏宝图",
+      "cost": "0",
+      "type": "Quest",
+      "rarity": "Quest",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+     },
+     {
+      "slot": 5,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "DROPLET_OF_PRECOGNITION",
+      "name": "预知之滴",
+      "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "NEOWS_TORMENT",
+      "name": "涅奥的苦痛",
+      "counter": null
+     },
+     {
+      "id": "AMETHYST_AUBERGINE",
+      "name": "紫水晶茄子",
+      "counter": null
+     },
+     {
+      "id": "GORGET",
+      "name": "护喉甲",
+      "counter": null
+     },
+     {
+      "id": "WHETSTONE",
+      "name": "磨刀石",
+      "counter": null
+     },
+     {
+      "id": "STRAWBERRY",
+      "name": "草莓",
+      "counter": null
+     },
+     {
+      "id": "PAELS_BLOOD",
+      "name": "佩尔之血",
+      "counter": null
+     }
+    ],
+    "draw_count": 14,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击+",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "余烬",
+      "cost": "2"
+     },
+     {
+      "name": "完美打击",
+      "cost": "2"
+     },
+     {
+      "name": "剑柄打击+",
+      "cost": "1"
+     },
+     {
+      "name": "耸肩无视",
+      "cost": "1"
+     },
+     {
+      "name": "岩石铠甲+",
+      "cost": "1"
+     },
+     {
+      "name": "焚烧",
+      "cost": "1"
+     },
+     {
+      "name": "添柴+",
+      "cost": "1"
+     },
+     {
+      "name": "涅奥之怒+",
+      "cost": "1"
+     }
+    ],
+    "draw_order": [
+     "防御",
+     "余烬",
+     "防御",
+     "打击+",
+     "完美打击",
+     "涅奥之怒+",
+     "添柴+",
+     "痛击",
+     "剑柄打击+",
+     "岩石铠甲+",
+     "打击",
+     "打击",
+     "焚烧",
+     "耸肩无视"
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": ""
+}

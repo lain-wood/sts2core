@@ -1,0 +1,3246 @@
+{
+  "version": 1,
+  "recorded_at": "2026-09-02T23:45:23+08:00",
+  "run": {
+    "act": 2,
+    "floor": 21,
+    "ascension": 2,
+    "character": "铁甲战士",
+    "room_type": "monster"
+  },
+  "settle": {
+    "poll_interval_ms": 50,
+    "stable_polls": 11,
+    "timeout_ms": 6000
+  },
+  "frames": [
+    {
+      "i": 0,
+      "obs": {
+        "state_type": "monster",
+        "round": 1,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 3,
+        "max_energy": 3,
+        "player": {
+          "hp": 76,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 4
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "1": {
+            "entity_id": "BOWLBUG_ROCK_0",
+            "name": "盛碗虫（石）",
+            "hp": 47,
+            "max_hp": 47,
+            "block": 0,
+            "status": {
+              "IMBALANCED_POWER": 1
+            },
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "15",
+                "description": "这个敌人将要攻击造成15点伤害。"
+              }
+            ]
+          },
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 21,
+            "max_hp": 21,
+            "block": 0,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成9点伤害。"
+          },
+          {
+            "slot": 1,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 2,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 3,
+            "id": "NEOWS_FURY",
+            "name": "涅奥之怒+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Ancient",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成14点伤害。 将你弃牌堆中的至多3张牌放入你的手牌。 消耗。"
+          },
+          {
+            "slot": 4,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 5,
+            "id": "STONE_ARMOR",
+            "name": "岩石铠甲+",
+            "cost": "1",
+            "type": "Power",
+            "rarity": "Uncommon",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得6层覆甲。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 13,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "draw_order": [
+          "藏宝图",
+          "余烬",
+          "打击",
+          "完美打击",
+          "痛击",
+          "全身撞击+",
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [],
+        "exhaust": [],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 0,
+        "card_id": "STRIKE_IRONCLAD",
+        "card_name": "打击+",
+        "target": "BOWLBUG_ROCK_0"
+      },
+      "settle": {
+        "polls": 13,
+        "ms": 1172,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 1,
+      "obs": {
+        "state_type": "monster",
+        "round": 1,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 2,
+        "max_energy": 3,
+        "player": {
+          "hp": 76,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 4
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "1": {
+            "entity_id": "BOWLBUG_ROCK_0",
+            "name": "盛碗虫（石）",
+            "hp": 38,
+            "max_hp": 47,
+            "block": 0,
+            "status": {
+              "IMBALANCED_POWER": 1
+            },
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "15",
+                "description": "这个敌人将要攻击造成15点伤害。"
+              }
+            ]
+          },
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 21,
+            "max_hp": 21,
+            "block": 0,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 1,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 2,
+            "id": "NEOWS_FURY",
+            "name": "涅奥之怒+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Ancient",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成14点伤害。 将你弃牌堆中的至多3张牌放入你的手牌。 消耗。"
+          },
+          {
+            "slot": 3,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 4,
+            "id": "STONE_ARMOR",
+            "name": "岩石铠甲+",
+            "cost": "1",
+            "type": "Power",
+            "rarity": "Uncommon",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得6层覆甲。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 13,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "draw_order": [
+          "藏宝图",
+          "余烬",
+          "打击",
+          "完美打击",
+          "痛击",
+          "全身撞击+",
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [
+          {
+            "name": "打击+",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 4,
+        "card_id": "STONE_ARMOR",
+        "card_name": "岩石铠甲+",
+        "target": null
+      },
+      "settle": {
+        "polls": 15,
+        "ms": 1413,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 2,
+      "obs": {
+        "state_type": "monster",
+        "round": 1,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 1,
+        "max_energy": 3,
+        "player": {
+          "hp": 76,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 10
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "1": {
+            "entity_id": "BOWLBUG_ROCK_0",
+            "name": "盛碗虫（石）",
+            "hp": 38,
+            "max_hp": 47,
+            "block": 0,
+            "status": {
+              "IMBALANCED_POWER": 1
+            },
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "15",
+                "description": "这个敌人将要攻击造成15点伤害。"
+              }
+            ]
+          },
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 21,
+            "max_hp": 21,
+            "block": 0,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 1,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 2,
+            "id": "NEOWS_FURY",
+            "name": "涅奥之怒+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Ancient",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成14点伤害。 将你弃牌堆中的至多3张牌放入你的手牌。 消耗。"
+          },
+          {
+            "slot": 3,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 13,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "draw_order": [
+          "藏宝图",
+          "余烬",
+          "打击",
+          "完美打击",
+          "痛击",
+          "全身撞击+",
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [
+          {
+            "name": "打击+",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 2,
+        "card_id": "NEOWS_FURY",
+        "card_name": "涅奥之怒+",
+        "target": "BOWLBUG_ROCK_0"
+      },
+      "settle": {
+        "polls": 13,
+        "ms": 1214,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 3,
+      "obs": {
+        "state_type": "card_select",
+        "round": null,
+        "side": null,
+        "is_play_phase": null,
+        "energy": 0,
+        "max_energy": 3,
+        "player": {
+          "hp": 76,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 10
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {},
+        "hand": [
+          {
+            "slot": 0,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 1,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 2,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 13,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "draw_order": [
+          "藏宝图",
+          "余烬",
+          "打击",
+          "完美打击",
+          "痛击",
+          "全身撞击+",
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [
+          {
+            "name": "打击+",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [],
+        "pending": {
+          "kind": "card_select",
+          "prompt": "选择至多3张牌放入你的手牌。",
+          "can_confirm": true,
+          "can_cancel": false,
+          "selected": null,
+          "candidates": [
+            {
+              "slot": 0,
+              "id": "STRIKE_IRONCLAD",
+              "name": "打击+",
+              "cost": "1",
+              "type": "Attack",
+              "rarity": "Basic",
+              "upgraded": true,
+              "enchantment": null,
+              "can_play": null,
+              "target_type": null,
+              "description": "造成9点伤害。"
+            }
+          ]
+        }
+      },
+      "action": {
+        "kind": "select_card",
+        "slot": 0
+      },
+      "settle": {
+        "polls": 11,
+        "ms": 1113,
+        "unstable": false,
+        "intermediate_differs": false
+      }
+    },
+    {
+      "i": 4,
+      "obs": {
+        "state_type": "card_select",
+        "round": null,
+        "side": null,
+        "is_play_phase": null,
+        "energy": 0,
+        "max_energy": 3,
+        "player": {
+          "hp": 76,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 10
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {},
+        "hand": [
+          {
+            "slot": 0,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 1,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 2,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 13,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "draw_order": [
+          "藏宝图",
+          "余烬",
+          "打击",
+          "完美打击",
+          "痛击",
+          "全身撞击+",
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [
+          {
+            "name": "打击+",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [],
+        "pending": {
+          "kind": "card_select",
+          "prompt": "选择至多3张牌放入你的手牌。",
+          "can_confirm": true,
+          "can_cancel": false,
+          "selected": null,
+          "candidates": [
+            {
+              "slot": 0,
+              "id": "STRIKE_IRONCLAD",
+              "name": "打击+",
+              "cost": "1",
+              "type": "Attack",
+              "rarity": "Basic",
+              "upgraded": true,
+              "enchantment": null,
+              "can_play": null,
+              "target_type": null,
+              "description": "造成9点伤害。"
+            }
+          ]
+        }
+      },
+      "action": {
+        "kind": "confirm_selection"
+      },
+      "settle": {
+        "polls": 12,
+        "ms": 1135,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 5,
+      "obs": {
+        "state_type": "monster",
+        "round": 1,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 0,
+        "max_energy": 3,
+        "player": {
+          "hp": 76,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 10
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "1": {
+            "entity_id": "BOWLBUG_ROCK_0",
+            "name": "盛碗虫（石）",
+            "hp": 24,
+            "max_hp": 47,
+            "block": 0,
+            "status": {
+              "IMBALANCED_POWER": 1
+            },
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "15",
+                "description": "这个敌人将要攻击造成15点伤害。"
+              }
+            ]
+          },
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 21,
+            "max_hp": 21,
+            "block": 0,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 1,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 2,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 3,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成9点伤害。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 13,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "draw_order": [
+          "藏宝图",
+          "余烬",
+          "打击",
+          "完美打击",
+          "痛击",
+          "全身撞击+",
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [],
+        "exhaust": [
+          {
+            "name": "涅奥之怒+",
+            "cost": "1"
+          }
+        ],
+        "pending": null
+      },
+      "action": {
+        "kind": "end_turn"
+      },
+      "settle": {
+        "polls": 53,
+        "ms": 4945,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 6,
+      "obs": {
+        "state_type": "monster",
+        "round": 2,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 3,
+        "max_energy": 3,
+        "player": {
+          "hp": 64,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 9
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "1": {
+            "entity_id": "BOWLBUG_ROCK_0",
+            "name": "盛碗虫（石）",
+            "hp": 24,
+            "max_hp": 47,
+            "block": 0,
+            "status": {
+              "IMBALANCED_POWER": 1
+            },
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "15",
+                "description": "这个敌人将要攻击造成15点伤害。"
+              }
+            ]
+          },
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 21,
+            "max_hp": 21,
+            "block": 7,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "SPOILS_MAP",
+            "name": "藏宝图",
+            "cost": "0",
+            "type": "Quest",
+            "rarity": "Quest",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "Self",
+            "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+          },
+          {
+            "slot": 1,
+            "id": "CINDER",
+            "name": "余烬",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成18点伤害。 随机消耗1张牌。"
+          },
+          {
+            "slot": 2,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成6点伤害。"
+          },
+          {
+            "slot": 3,
+            "id": "PERFECTED_STRIKE",
+            "name": "完美打击",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成20点伤害。 你每有一张名字中含有“打击”的牌，伤害+2。"
+          },
+          {
+            "slot": 4,
+            "id": "BASH",
+            "name": "痛击",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成8点伤害。 给予2层易伤。"
+          },
+          {
+            "slot": 5,
+            "id": "BODY_SLAM",
+            "name": "全身撞击+",
+            "cost": "0",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成你当前格挡值的伤害。 （造成0点伤害）"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 7,
+        "draw": [
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          }
+        ],
+        "draw_order": [
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [
+          {
+            "name": "涅奥之怒+",
+            "cost": "1"
+          }
+        ],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 2,
+        "card_id": "STRIKE_IRONCLAD",
+        "card_name": "打击",
+        "target": "BOWLBUG_ROCK_0"
+      },
+      "settle": {
+        "polls": 13,
+        "ms": 1247,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 7,
+      "obs": {
+        "state_type": "monster",
+        "round": 2,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 2,
+        "max_energy": 3,
+        "player": {
+          "hp": 64,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 9
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "1": {
+            "entity_id": "BOWLBUG_ROCK_0",
+            "name": "盛碗虫（石）",
+            "hp": 18,
+            "max_hp": 47,
+            "block": 0,
+            "status": {
+              "IMBALANCED_POWER": 1
+            },
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "15",
+                "description": "这个敌人将要攻击造成15点伤害。"
+              }
+            ]
+          },
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 21,
+            "max_hp": 21,
+            "block": 7,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "SPOILS_MAP",
+            "name": "藏宝图",
+            "cost": "0",
+            "type": "Quest",
+            "rarity": "Quest",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "Self",
+            "description": "不能被打出。 在下一阶段的地图上，标记一个有600额外金币的地点。"
+          },
+          {
+            "slot": 1,
+            "id": "CINDER",
+            "name": "余烬",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成18点伤害。 随机消耗1张牌。"
+          },
+          {
+            "slot": 2,
+            "id": "PERFECTED_STRIKE",
+            "name": "完美打击",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成20点伤害。 你每有一张名字中含有“打击”的牌，伤害+2。"
+          },
+          {
+            "slot": 3,
+            "id": "BASH",
+            "name": "痛击",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成8点伤害。 给予2层易伤。"
+          },
+          {
+            "slot": 4,
+            "id": "BODY_SLAM",
+            "name": "全身撞击+",
+            "cost": "0",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成你当前格挡值的伤害。 （造成0点伤害）"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 7,
+        "draw": [
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          }
+        ],
+        "draw_order": [
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [
+          {
+            "name": "涅奥之怒+",
+            "cost": "1"
+          }
+        ],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 1,
+        "card_id": "CINDER",
+        "card_name": "余烬",
+        "target": "BOWLBUG_ROCK_0"
+      },
+      "settle": {
+        "polls": 16,
+        "ms": 1517,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 8,
+      "obs": {
+        "state_type": "monster",
+        "round": 2,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 0,
+        "max_energy": 3,
+        "player": {
+          "hp": 64,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 9
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 21,
+            "max_hp": 21,
+            "block": 7,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "PERFECTED_STRIKE",
+            "name": "完美打击",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成20点伤害。 你每有一张名字中含有“打击”的牌，伤害+2。"
+          },
+          {
+            "slot": 1,
+            "id": "BASH",
+            "name": "痛击",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成8点伤害。 给予2层易伤。"
+          },
+          {
+            "slot": 2,
+            "id": "BODY_SLAM",
+            "name": "全身撞击+",
+            "cost": "0",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成你当前格挡值的伤害。 （造成0点伤害）"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 7,
+        "draw": [
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          }
+        ],
+        "draw_order": [
+          "打击+",
+          "防御",
+          "耸肩无视",
+          "焚烧",
+          "剑柄打击+",
+          "添柴+",
+          "防御"
+        ],
+        "discard": [
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          }
+        ],
+        "exhaust": [
+          {
+            "name": "涅奥之怒+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "pending": null
+      },
+      "action": {
+        "kind": "end_turn"
+      },
+      "settle": {
+        "polls": 43,
+        "ms": 4101,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 9,
+      "obs": {
+        "state_type": "monster",
+        "round": 3,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 3,
+        "max_energy": 3,
+        "player": {
+          "hp": 64,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 8
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 21,
+            "max_hp": 21,
+            "block": 7,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成9点伤害。"
+          },
+          {
+            "slot": 1,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 2,
+            "id": "SHRUG_IT_OFF",
+            "name": "耸肩无视",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Common",
+            "upgraded": false,
+            "enchantment": {
+              "id": "NIMBLE",
+              "name": "灵巧",
+              "amount": 2
+            },
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得10点格挡。 抽1张牌。"
+          },
+          {
+            "slot": 3,
+            "id": "CONFLAGRATION",
+            "name": "焚烧",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Rare",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AllEnemies",
+            "description": "对所有敌人造成2点伤害4次。"
+          },
+          {
+            "slot": 4,
+            "id": "POMMEL_STRIKE",
+            "name": "剑柄打击+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成10点伤害。 抽2张牌。"
+          },
+          {
+            "slot": 5,
+            "id": "STOKE",
+            "name": "添柴+",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Rare",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 1,
+        "draw": [
+          {
+            "name": "防御",
+            "cost": "1"
+          }
+        ],
+        "draw_order": [
+          "防御"
+        ],
+        "discard": [
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          },
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          }
+        ],
+        "exhaust": [
+          {
+            "name": "涅奥之怒+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 4,
+        "card_id": "POMMEL_STRIKE",
+        "card_name": "剑柄打击+",
+        "target": "BOWLBUG_EGG_0"
+      },
+      "settle": {
+        "polls": 23,
+        "ms": 2233,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 10,
+      "obs": {
+        "state_type": "monster",
+        "round": 3,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 2,
+        "max_energy": 3,
+        "player": {
+          "hp": 64,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 8
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 18,
+            "max_hp": 21,
+            "block": 0,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "STRIKE_IRONCLAD",
+            "name": "打击+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Basic",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成9点伤害。"
+          },
+          {
+            "slot": 1,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 2,
+            "id": "SHRUG_IT_OFF",
+            "name": "耸肩无视",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Common",
+            "upgraded": false,
+            "enchantment": {
+              "id": "NIMBLE",
+              "name": "灵巧",
+              "amount": 2
+            },
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得10点格挡。 抽1张牌。"
+          },
+          {
+            "slot": 3,
+            "id": "CONFLAGRATION",
+            "name": "焚烧",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Rare",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AllEnemies",
+            "description": "对所有敌人造成2点伤害4次。"
+          },
+          {
+            "slot": 4,
+            "id": "STOKE",
+            "name": "添柴+",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Rare",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "消耗所有手牌。 每消耗一张牌，将1张随机已升级的牌加入你的手牌。"
+          },
+          {
+            "slot": 5,
+            "id": "DEFEND_IRONCLAD",
+            "name": "防御",
+            "cost": "1",
+            "type": "Skill",
+            "rarity": "Basic",
+            "upgraded": false,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "获得5点格挡。"
+          },
+          {
+            "slot": 6,
+            "id": "BODY_SLAM",
+            "name": "全身撞击+",
+            "cost": "0",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成你当前格挡值的伤害。 （造成0点伤害）"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 8,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          }
+        ],
+        "draw_order": [
+          "痛击",
+          "余烬",
+          "打击+",
+          "打击",
+          "打击",
+          "防御",
+          "完美打击",
+          "打击"
+        ],
+        "discard": [
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [
+          {
+            "name": "涅奥之怒+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          }
+        ],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 4,
+        "card_id": "STOKE",
+        "card_name": "添柴+",
+        "target": null
+      },
+      "settle": {
+        "polls": 34,
+        "ms": 3332,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 11,
+      "obs": {
+        "state_type": "monster",
+        "round": 3,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 1,
+        "max_energy": 3,
+        "player": {
+          "hp": 64,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 8
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 18,
+            "max_hp": 21,
+            "block": 0,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "HAVOC",
+            "name": "破灭+",
+            "cost": "0",
+            "type": "Skill",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "打出抽牌堆顶部的牌并将其消耗。"
+          },
+          {
+            "slot": 1,
+            "id": "UNRELENTING",
+            "name": "无情猛攻+",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Uncommon",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成20点伤害。 你打出的下一张攻击牌耗能变为0[ironclad_energy_icon.png]。"
+          },
+          {
+            "slot": 2,
+            "id": "SETUP_STRIKE",
+            "name": "预备打击+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成9点伤害。 在本回合内获得3点力量。"
+          },
+          {
+            "slot": 3,
+            "id": "BREAKTHROUGH",
+            "name": "突破+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AllEnemies",
+            "description": "失去1点生命。 对所有敌人造成13点伤害。"
+          },
+          {
+            "slot": 4,
+            "id": "DISMANTLE",
+            "name": "拆卸+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Uncommon",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "AnyEnemy",
+            "description": "造成10点伤害。 如果该敌人有易伤状态，则攻击两次。"
+          },
+          {
+            "slot": 5,
+            "id": "UNMOVABLE",
+            "name": "坚定不移+",
+            "cost": "1",
+            "type": "Power",
+            "rarity": "Rare",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "翻倍你每回合第一次从卡牌中获得的格挡。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 8,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          }
+        ],
+        "draw_order": [
+          "痛击",
+          "余烬",
+          "打击+",
+          "打击",
+          "打击",
+          "防御",
+          "完美打击",
+          "打击"
+        ],
+        "discard": [
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [
+          {
+            "name": "涅奥之怒+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          }
+        ],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 4,
+        "card_id": "DISMANTLE",
+        "card_name": "拆卸+",
+        "target": "BOWLBUG_EGG_0"
+      },
+      "settle": {
+        "polls": 13,
+        "ms": 1265,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 12,
+      "obs": {
+        "state_type": "monster",
+        "round": 3,
+        "side": "player",
+        "is_play_phase": true,
+        "energy": 0,
+        "max_energy": 3,
+        "player": {
+          "hp": 64,
+          "max_hp": 87,
+          "block": 0,
+          "status": {
+            "PLATING_POWER": 8
+          },
+          "max_potion_slots": 3
+        },
+        "enemies": {
+          "2": {
+            "entity_id": "BOWLBUG_EGG_0",
+            "name": "盛碗虫（卵）",
+            "hp": 8,
+            "max_hp": 21,
+            "block": 0,
+            "status": {},
+            "intents": [
+              {
+                "type": "Attack",
+                "label": "7",
+                "description": "这个敌人将要攻击造成7点伤害。"
+              },
+              {
+                "type": "Defend",
+                "label": "",
+                "description": "这个敌人将会在其回合获得格挡。"
+              }
+            ]
+          }
+        },
+        "hand": [
+          {
+            "slot": 0,
+            "id": "HAVOC",
+            "name": "破灭+",
+            "cost": "0",
+            "type": "Skill",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": true,
+            "target_type": "Self",
+            "description": "打出抽牌堆顶部的牌并将其消耗。"
+          },
+          {
+            "slot": 1,
+            "id": "UNRELENTING",
+            "name": "无情猛攻+",
+            "cost": "2",
+            "type": "Attack",
+            "rarity": "Uncommon",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成20点伤害。 你打出的下一张攻击牌耗能变为0[ironclad_energy_icon.png]。"
+          },
+          {
+            "slot": 2,
+            "id": "SETUP_STRIKE",
+            "name": "预备打击+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AnyEnemy",
+            "description": "造成9点伤害。 在本回合内获得3点力量。"
+          },
+          {
+            "slot": 3,
+            "id": "BREAKTHROUGH",
+            "name": "突破+",
+            "cost": "1",
+            "type": "Attack",
+            "rarity": "Common",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "AllEnemies",
+            "description": "失去1点生命。 对所有敌人造成13点伤害。"
+          },
+          {
+            "slot": 4,
+            "id": "UNMOVABLE",
+            "name": "坚定不移+",
+            "cost": "1",
+            "type": "Power",
+            "rarity": "Rare",
+            "upgraded": true,
+            "enchantment": null,
+            "can_play": false,
+            "target_type": "Self",
+            "description": "翻倍你每回合第一次从卡牌中获得的格挡。"
+          }
+        ],
+        "potions": [
+          {
+            "slot": 0,
+            "id": "DROPLET_OF_PRECOGNITION",
+            "name": "预知之滴",
+            "description": "选择你抽牌堆中的一张牌加入你的手牌。"
+          }
+        ],
+        "relics": [
+          {
+            "id": "BURNING_BLOOD",
+            "name": "燃烧之血",
+            "counter": null
+          },
+          {
+            "id": "NEOWS_TORMENT",
+            "name": "涅奥的苦痛",
+            "counter": null
+          },
+          {
+            "id": "AMETHYST_AUBERGINE",
+            "name": "紫水晶茄子",
+            "counter": null
+          },
+          {
+            "id": "GORGET",
+            "name": "护喉甲",
+            "counter": null
+          },
+          {
+            "id": "WHETSTONE",
+            "name": "磨刀石",
+            "counter": null
+          },
+          {
+            "id": "STRAWBERRY",
+            "name": "草莓",
+            "counter": null
+          },
+          {
+            "id": "PAELS_BLOOD",
+            "name": "佩尔之血",
+            "counter": null
+          }
+        ],
+        "draw_count": 8,
+        "draw": [
+          {
+            "name": "痛击",
+            "cost": "2"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "打击",
+            "cost": "1"
+          },
+          {
+            "name": "余烬",
+            "cost": "2"
+          },
+          {
+            "name": "完美打击",
+            "cost": "2"
+          }
+        ],
+        "draw_order": [
+          "痛击",
+          "余烬",
+          "打击+",
+          "打击",
+          "打击",
+          "防御",
+          "完美打击",
+          "打击"
+        ],
+        "discard": [
+          {
+            "name": "剑柄打击+",
+            "cost": "1"
+          },
+          {
+            "name": "添柴+",
+            "cost": "1"
+          },
+          {
+            "name": "拆卸+",
+            "cost": "1"
+          }
+        ],
+        "exhaust": [
+          {
+            "name": "涅奥之怒+",
+            "cost": "1"
+          },
+          {
+            "name": "藏宝图",
+            "cost": "0"
+          },
+          {
+            "name": "打击+",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "耸肩无视",
+            "cost": "1"
+          },
+          {
+            "name": "焚烧",
+            "cost": "1"
+          },
+          {
+            "name": "防御",
+            "cost": "1"
+          },
+          {
+            "name": "全身撞击+",
+            "cost": "0"
+          }
+        ],
+        "pending": null
+      },
+      "action": {
+        "kind": "play_card",
+        "slot": 0,
+        "card_id": "HAVOC",
+        "card_name": "破灭+",
+        "target": null
+      },
+      "settle": {
+        "polls": 27,
+        "ms": 2585,
+        "unstable": false,
+        "intermediate_differs": true
+      }
+    },
+    {
+      "i": 13,
+      "obs": {
+        "state_type": "rewards",
+        "combat_over": true
+      },
+      "action": null
+    }
+  ],
+  "notes": ""
+}
