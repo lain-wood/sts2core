@@ -6876,6 +6876,35 @@ mod tests {
         }
     }
 
+    /// 给下面两条守卫用的场景：两只敌人，血量各自指定，外加一个能力配置。
+    fn two_enemy_scene(vh: i32, oh: i32, setup: fn(&mut State)) -> State {
+        let mut s = State::new(80, 21);
+        s.add_enemy(enemy::DUMMY, 600);
+        s.add_enemy(enemy::DUMMY, 600);
+        for _ in 0..6 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        for _ in 0..4 {
+            s.add_card(card::DEFEND, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        s.enemies[0].hp = vh;
+        s.enemies[1].hp = oh;
+        setup(&mut s);
+        s
+    }
+
+    /// 四种能力配置。`none` 是对照 —— 它红了说明问题不在能力项。
+    const POWER_CONFIGS: [(&str, fn(&mut State)); 4] = [
+        ("none", |_s: &mut State| {}),
+        ("boulder10", |s: &mut State| s.player.set(St::RollingBoulder, 10)),
+        ("demon2", |s: &mut State| s.player.set(St::DemonForm, 2)),
+        ("pyre2", |s: &mut State| {
+            s.player.set(St::Pyre, 2);
+            s.base_energy = crate::solver::BASE_ENERGY + 2;
+        }),
+    ];
+
     /// **收掉一只敌人永远不该让叶分数变低。**
     ///
     /// 这是 `power_horizon_value` 第三项（滚石）2026-09-02 修掉的那个 bug 的
@@ -6887,49 +6916,34 @@ mod tests {
     ///
     /// 一只 1 血的怪只值 `1×75 = 75` 分的"还活着"惩罚，却扛着一整份未来滚石
     /// 收益 —— 而那份收益根本兑现不了，它只剩 1 血可挨。于是**收人头是亏的**：
-    /// 实测同一个局面（一只 1 血 + 一只 300 血，`h` 全程 8）无能力 +75、
-    /// 滚石 10 **−16425**。**病根是 `n_alive` 不是 `h`** —— 三种配置下 `h`
-    /// 一个字没动，所以"把 h 换成静态常数"治不了这条。
+    /// 实测同一个局面（一只 1 血 + 一只 300 血，`h` 全程 8 没动）无能力 **+75**、
+    /// 滚石 10 **−16425**。**主犯是 `n_alive` 而不是 `h`** —— 那三行 `h` 一个字
+    /// 没动，所以"把 h 换成静态常数"治不了这条。
     ///
-    /// 逐只封顶之后不变量是可证明的：敌人剩 R 血，收掉它 `eval` 白赚
-    /// `R × w.enemy_hp`，而封顶后的滚石损失 ≤ `R × w.enemy_hp`。
+    /// # 三项各自靠什么守住斜率
     ///
-    /// **坏掉的样子**：把第三项改回 `n_alive × total`，滚石那几行当场红。
+    /// 判据是 `power_horizon_value` 文档里那条「斜率契约」：
+    /// `∂P/∂(敌人血) ≤ w.enemy_hp`。三项各走两种合法形态之一 ——
+    /// 薪火之源和滚石**用敌人血当单位再封顶**（滚石是逐只），
+    /// 恶魔形态**把地平线夹在斜率界以内**，而地平线本身换成了定点，
+    /// 免得 `ceil` 在边界上给出无穷大的斜率。
+    ///
+    /// > 2026-09-02 有过一版中间状态：只修了滚石，这张表对 demon2/pyre2
+    /// > 在「`h` 变了」的格子上明确豁免（当时最多亏 −525 / −825）。
+    /// > **豁免已经删掉了**，现在整表 100 格无条件成立。
     #[test]
     fn killing_an_enemy_never_lowers_the_leaf_score() {
         use crate::solver::{eval, horizon, Weights};
-        // 四种能力配置。`none` 是对照 —— 它红了说明问题不在能力项。
-        let configs: [(&str, fn(&mut State)); 4] = [
-            ("none", |_s: &mut State| {}),
-            ("boulder10", |s: &mut State| s.player.set(St::RollingBoulder, 10)),
-            ("demon2", |s: &mut State| s.player.set(St::DemonForm, 2)),
-            ("pyre2", |s: &mut State| {
-                s.player.set(St::Pyre, 2);
-                s.base_energy = crate::solver::BASE_ENERGY + 2;
-            }),
-        ];
         // 被收的那只 × 留下的那只。**两边都要扫** —— `h` 由血墙算出来，
         // 只固定一个血量的话扫不到 `h` 会变的那几档。
-        let victim_hps = [1, 4, 12, 40, 120];
-        let other_hps = [1, 30, 120, 300, 600];
-        for (name, setup) in configs {
-            for &vh in &victim_hps {
-                for &oh in &other_hps {
-                    let mut s = State::new(80, 21);
-                    s.add_enemy(enemy::DUMMY, vh.max(oh));
-                    s.add_enemy(enemy::DUMMY, vh.max(oh));
-                    for _ in 0..6 {
-                        s.add_card(card::STRIKE, 0, 0);
-                    }
-                    for _ in 0..4 {
-                        s.add_card(card::DEFEND, 0, 0);
-                    }
-                    let mut alive = begin_combat(s);
-                    alive.enemies[0].hp = vh;
-                    alive.enemies[1].hp = oh;
-                    setup(&mut alive);
+        let mut checked = 0;
+        for (name, setup) in POWER_CONFIGS {
+            for &vh in &[1, 4, 12, 40, 120] {
+                for &oh in &[1, 30, 120, 300, 600] {
+                    let alive = two_enemy_scene(vh, oh, setup);
                     let mut dead = alive;
                     dead.enemies[0].hp = 0;
+                    checked += 1;
                     let a = eval(&alive, &Weights::LEAF);
                     let d = eval(&dead, &Weights::LEAF);
                     assert!(
@@ -6943,46 +6957,239 @@ mod tests {
                 }
             }
         }
+        assert_eq!(checked, 100, "表没扫全，只检了 {checked} 格");
     }
 
-    /// 上面那条的**方向对照**：收人头不但不该亏，还该实实在在地赚。
+    /// **打掉敌人的血，叶分数永远不该变低** —— 沿着**整条**掉血路径，
+    /// 不只是"收人头"那一下。
     ///
-    /// 只断言"不降"的话，一个把整个能力项砍成 0 的实现也能过 —— 那就把
-    /// `leaf_eval_sees_pyre` 那条修复退回去了。所以这里另外钉住：
-    /// 带滚石时收人头**严格赚**，而且赚的数就是那只敌人的血价
-    /// （`R × w.enemy_hp`，因为封顶让滚石那一项跌得正好是 `min(total, R)`）。
+    /// 上一条是固定的 100 格表；这一条是随机猎杀，专门去找能分开假设的样本
+    /// （本仓库的老规矩：「和所有已知数据一致」不等于对）。它同时覆盖两件事：
+    ///
+    /// * **连续那一半**（41 -> 40 血）—— 守的是斜率界。`ceil` 的地平线在这里
+    ///   会给出无穷大的斜率，而恶魔形态没有敌人血单位可以封顶。
+    /// * **离散那一半**（1 -> 0 血，敌人真的死掉）—— 守的是封顶。
+    ///
+    /// 参数空间比那张表宽得多：1~4 只敌人 × 血量 1~500 × 牌组 1~9 张打击
+    /// （改 `optimistic_damage`）× 力量 0~14 × 四种能力配置。
+    ///
+    /// **坏掉的样子（三种，各验过一次）**：地平线退回 `ceil` / 第一项去掉
+    /// 按敌人血封顶 / 第二项去掉斜率界，任意一条都会让它当场红。
     #[test]
-    fn killing_an_enemy_is_strictly_worth_it_under_a_boulder() {
+    fn leaf_score_never_drops_as_i_damage_an_enemy() {
         use crate::solver::{eval, Weights};
+        let mut seed = 0xC0FFEE_u64;
+        let mut next = |n: u64| {
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+            (seed >> 33) % n
+        };
+        for _ in 0..20000 {
+            let n_en = 1 + next(4) as usize;
+            let mut s = State::new(80, next(1000));
+            for _ in 0..n_en {
+                s.add_enemy(enemy::DUMMY, 600);
+            }
+            for _ in 0..(1 + next(9)) {
+                s.add_card(card::STRIKE, 0, 0);
+            }
+            for _ in 0..next(6) {
+                s.add_card(card::DEFEND, 0, 0);
+            }
+            let mut base = begin_combat(s);
+            for e in 0..n_en {
+                base.enemies[e].hp = 1 + next(500) as i32;
+            }
+            base.player.set(St::Strength, next(15) as i32);
+            // **三种能力独立掷，所以会同时挂上两三个。**
+            // 这一条必须扫到：三项各自的斜率都 ≤ w.enemy_hp，可是
+            // `eval` 的敌人项只赚一次 —— 叠起来会不会超预算，只能量。
+            let cfg = next(8);
+            if cfg & 1 != 0 {
+                base.player.set(St::RollingBoulder, 5 + next(30) as i32);
+            }
+            if cfg & 2 != 0 {
+                base.player.set(St::DemonForm, 1 + next(5) as i32);
+            }
+            if cfg & 4 != 0 {
+                let e = 1 + next(3) as i32;
+                base.player.set(St::Pyre, e);
+                base.base_energy = crate::solver::BASE_ENERGY + e;
+            }
+            // 挑一只敌人，把它的血一路打下去（含打到 0）
+            let victim = next(n_en as u64) as usize;
+            let hp0 = base.enemies[victim].hp;
+            let mut prev = eval(&base, &Weights::LEAF);
+            let mut cur = hp0;
+            while cur > 0 {
+                // 步长也随机 —— 固定步长会系统性地跳过某些 `ceil` 边界
+                cur = (cur - 1 - next(7) as i32).max(0);
+                let mut hit = base;
+                hit.enemies[victim].hp = cur;
+                let now = eval(&hit, &Weights::LEAF);
+                assert!(
+                    now >= prev,
+                    "cfg={cfg} 敌人数={n_en}：把 {victim} 号从上一档打到 {cur} 血，\
+                     叶分数掉了 {} 分（{prev} -> {now}）",
+                    prev - now,
+                );
+                prev = now;
+            }
+        }
+    }
+
+    /// **滚石那一项逐只敌人算地平线，所以收人头无条件划算。**
+    ///
+    /// 上面那条对 `h` 会变的格子网开一面（前两项还欠着），滚石这一项**不欠** ——
+    /// 它是这次真正修好的那一项，所以在整张表上无条件成立。
+    ///
+    /// 证明：`h_e` 和 `R_e` 都只看**这只**敌人自己，收掉 v 之后活下来那几只的
+    /// 项逐字不变；v 自己那项跌 `min(total(h_e), R_v)·w ≤ R_v·w`，
+    /// 而 `eval` 的敌人项白赚 `R_v·w` ⇒ 净收益恒 ≥ 0。
+    ///
+    /// **坏掉的样子（两种，各验过一次）**：
+    /// * 第三项改回 `n_alive × total` ⇒ 大面积红（`h` 不变的格子也红）；
+    /// * 只留封顶、把 `h_e` 换回整场的 `h` ⇒ `h` 会变的格子红。
+    #[test]
+    fn boulder_horizon_is_measured_per_enemy() {
+        use crate::solver::{eval, horizon, Weights};
+        let boulder = POWER_CONFIGS[1].1;
+        for &vh in &[1, 4, 12, 40, 120] {
+            for &oh in &[1, 30, 120, 300, 600] {
+                let alive = two_enemy_scene(vh, oh, boulder);
+                let mut dead = alive;
+                dead.enemies[0].hp = 0;
+                let a = eval(&alive, &Weights::LEAF);
+                let d = eval(&dead, &Weights::LEAF);
+                assert!(
+                    d >= a,
+                    "滚石: 收掉一只 {vh} 血的敌人（场上另有 {oh} 血）让叶分数掉了 {} 分 \
+                     —— 活着 {a} / 收掉 {d}（h: {} -> {}）",
+                    a - d,
+                    horizon(&alive),
+                    horizon(&dead),
+                );
+            }
+        }
+        // **方向对照**：只断言"不降"的话，把整个能力项砍成 0 也能过 ——
+        // 那就把 `leaf_eval_sees_pyre` 那条修复退回去了。
+        // 一只血厚到滚石打不穿的敌人，收掉它必须**严格**赚。
+        let alive = two_enemy_scene(120, 300, boulder);
+        let mut dead = alive;
+        dead.enemies[0].hp = 0;
+        assert!(
+            eval(&dead, &Weights::LEAF) > eval(&alive, &Weights::LEAF),
+            "收掉一只 120 血的敌人在滚石下居然不赚"
+        );
+    }
+
+    /// 第 3 幕 Boss 实验体在某个形态、某个血量上的局面。
+    ///
+    /// `max_hp` 就是形态：100 / 200 / 300（`TEST_SUBJECT_FORM_HP`）。
+    /// 形态 3 上适生力已经掉光了 —— 这正是 `remaining_hp_including_revives`
+    /// 读的那个条件。
+    fn test_subject_at(form_max_hp: i32, hp: i32, strength: i32) -> State {
         let mut s = State::new(80, 21);
-        s.add_enemy(enemy::DUMMY, 300);
-        s.add_enemy(enemy::DUMMY, 300);
+        s.add_enemy(enemy::TEST_SUBJECT_BOSS, form_max_hp);
         for _ in 0..6 {
             s.add_card(card::STRIKE, 0, 0);
         }
         for _ in 0..4 {
             s.add_card(card::DEFEND, 0, 0);
         }
-        let mut alive = begin_combat(s);
-        alive.enemies[0].hp = 1;
-        alive.enemies[1].hp = 300;
-        alive.player.set(St::RollingBoulder, 10);
-        let mut dead = alive;
-        dead.enemies[0].hp = 0;
-        let gain = eval(&dead, &Weights::LEAF) - eval(&alive, &Weights::LEAF);
-        // 1 血的怪：`eval` 白赚 1×75，滚石那一项跌 min(total,1)×75 = 75，
-        // 而 `w.power = 100` ⇒ 净 75 - 75 = 0？不是 —— 能力项还要过
-        // `× w.power / 100`，LEAF 是 100，所以净收益正好是 0。
-        // **真正该断言的是"至少不亏"，严格赚要看 h 有没有跟着变。**
-        // 这里 h 两边都是 8（血墙 301 -> 300），所以净收益 = 0。
-        assert!(gain >= 0, "收人头在滚石下亏了 {} 分", -gain);
-        // 对照：换一只血厚到滚石打不穿的敌人，收它必须**严格**赚。
-        let mut alive2 = alive;
-        alive2.enemies[0].hp = 120;
-        let mut dead2 = alive2;
-        dead2.enemies[0].hp = 0;
-        let gain2 = eval(&dead2, &Weights::LEAF) - eval(&alive2, &Weights::LEAF);
-        assert!(gain2 > 0, "收掉一只 120 血的敌人在滚石下居然不赚：{gain2}");
+        let mut s = begin_combat(s);
+        s.enemies[0].max_hp = form_max_hp;
+        s.enemies[0].hp = hp;
+        if form_max_hp >= crate::content::TEST_SUBJECT_FORM_HP[2] {
+            s.enemies[0].set(St::Adaptable, 0); // 最后一个形态，不再复活
+        }
+        // 抬高 `optimistic_damage`，好让地平线落在闸（8）**下面** ——
+        // 两边都顶到 8 的话这条测试是空的。
+        s.player.set(St::Strength, strength);
+        s
+    }
+
+    /// **多形态 Boss 上，`horizon` 不因为形态切换而阶跃。**
+    ///
+    /// `horizon` 答的是「这场仗还要打几个我的回合」，而后面的形态是**必然
+    /// 要来的**。2026-09-02 之前它读 `enemy_wall`（只算当前形态），于是
+    /// 形态 1 打到剩 1 血时 `h = 1`、复活成形态 2 满血那一帧 `h = 7` ——
+    /// 所有正比于 `h` 的能力项在那一帧翻七倍，决策跟着震荡。
+    ///
+    /// **坏掉的样子**：`horizon` 改回 `enemy_wall`，下面第二段断言当场红。
+    /// 第一段（`assert!(steps_with_current_form)`）是**反vacuous 检查** ——
+    /// 它保证这个局面真的分得开两种口径，不然这条测试立不住。
+    #[test]
+    fn horizon_does_not_step_when_a_boss_changes_form() {
+        use crate::solver::{enemy_wall, horizon, optimistic_damage, HORIZON_CAP};
+        // 2026-09-02 之前的 `horizon` **逐字抄在这里** —— 要的是"独立算一遍
+        // 旧口径"，不是调用现在的实现。
+        let old_horizon = |s: &State| {
+            let dpt = optimistic_damage(s).max(1);
+            ((enemy_wall(s) + dpt - 1) / dpt).clamp(1, HORIZON_CAP)
+        };
+        const STR: i32 = 20;
+        // 一整场：形态 1 从满血打到 1 血，复活成形态 2，再打到形态 3。
+        let path = [
+            (crate::content::TEST_SUBJECT_FORM_HP[0], 100),
+            (crate::content::TEST_SUBJECT_FORM_HP[0], 40),
+            (crate::content::TEST_SUBJECT_FORM_HP[0], 1),
+            (crate::content::TEST_SUBJECT_FORM_HP[1], 200),
+            (crate::content::TEST_SUBJECT_FORM_HP[1], 40),
+            (crate::content::TEST_SUBJECT_FORM_HP[1], 1),
+            (crate::content::TEST_SUBJECT_FORM_HP[2], 300),
+            (crate::content::TEST_SUBJECT_FORM_HP[2], 40),
+            (crate::content::TEST_SUBJECT_FORM_HP[2], 1),
+        ];
+        let states: Vec<State> = path.iter().map(|&(m, h)| test_subject_at(m, h, STR)).collect();
+
+        // 反 vacuous：旧口径（只算当前形态）在这条路上**必须**阶跃，
+        // 否则这个局面分不开两种口径，测试白写。
+        let old: Vec<i32> = states.iter().map(old_horizon).collect();
+        assert!(
+            old.windows(2).any(|w| w[1] > w[0]),
+            "旧口径在这条路上没有阶跃，这个局面分不开两种口径：{old:?}"
+        );
+
+        // 新口径：地平线沿着"我打掉血"这条路**单调不增**。
+        let new: Vec<i32> = states.iter().map(horizon).collect();
+        for (i, w) in new.windows(2).enumerate() {
+            assert!(
+                w[1] <= w[0],
+                "形态 {:?} -> {:?} 那一步地平线从 {} 跳到 {}：整条路 {new:?}",
+                path[i],
+                path[i + 1],
+                w[0],
+                w[1],
+            );
+        }
+        // 而且不能是"全顶到闸上"那种平凡的不阶跃。
+        assert!(
+            new.iter().any(|&h| h < crate::solver::HORIZON_CAP),
+            "整条路的地平线都顶在闸上（{new:?}），这条测试是空的"
+        );
+    }
+
+    /// **斩杀延伸仍然按「当前形态」判，不跟着 `horizon` 换口径。**
+    ///
+    /// 两处口径是**故意不同**的：延伸划算的唯一理由是"多搜一层能把估值变成
+    /// 事实"，而过一层之后成为事实的是「这一形态死没死」。改成整场（含后面
+    /// 的形态）之后，多形态 Boss 上斩杀延伸**永远不会触发** ——
+    /// 那正好把实测唯一划算的那条延伸关掉了。
+    ///
+    /// **坏掉的样子**：`want_extension` 改用 `enemy_wall_all_forms`，这条当场红。
+    #[test]
+    fn lethal_extension_still_looks_at_the_current_form_only() {
+        use crate::plan::{want_extension, Ext, Plan};
+        // 形态 1 剩 1 血：这一形态一击就死，但整场还剩 501 血。
+        let s = test_subject_at(crate::content::TEST_SUBJECT_FORM_HP[0], 1, 20);
+        let leaf = crate::step::end_turn_before_draw(s);
+        let mut cfg = Plan::default();
+        cfg.ext_spike = false;
+        cfg.ext_boundary = false;
+        assert!(
+            matches!(want_extension(&leaf, &cfg), Some(Ext::Lethal)),
+            "形态 1 只剩 1 血，斩杀延伸居然没上膛 —— 多半是跟着 horizon 换成了整场口径"
+        );
     }
 
     /// 地平线必须**随敌人血量变长、随我的输出变短**，并且被闸夹住。
@@ -7099,6 +7306,148 @@ mod tests {
             assert_eq!(o.final_hp, end.player.hp, "seed {seed}：终局血量对不上");
             assert_eq!(o.won, end.combat_over && !end.player_dead, "seed {seed}：胜负对不上");
         }
+    }
+
+    /// 造一个「抽牌堆凑不齐一手、必须洗弃牌堆」的回合起点。
+    ///
+    /// 手牌清空、抽牌堆 `n_draw` 张、弃牌堆 `n_disc` 张，牌**必须是混的** ——
+    /// 一副全打击的牌洗成什么样抽出来都一样，那种局面测不出种子有没有进播种。
+    fn short_draw_pile_scene(n_draw: usize, n_disc: usize) -> State {
+        let kinds = [card::STRIKE, card::DEFEND, card::BASH];
+        let mut s = State::new(80, 21);
+        s.add_enemy(enemy::DUMMY, 100);
+        let ix: Vec<u8> =
+            (0..n_draw + n_disc).map(|i| s.add_card(kinds[i % kinds.len()], 0, 0)).collect();
+        let mut s = begin_combat(s);
+        s.n_hand = 0;
+        s.n_draw = n_draw as u8;
+        for i in 0..n_draw {
+            s.draw[i] = ix[i];
+        }
+        s.n_draw_known = 0;
+        s.n_disc = n_disc as u8;
+        for i in 0..n_disc {
+            s.disc[i] = ix[n_draw + i];
+        }
+        crate::step::end_turn_before_draw(s)
+    }
+
+    /// 一个孩子的手牌指纹（多重集，排过序）。
+    fn hand_ids(s: &State) -> Vec<u16> {
+        let mut v: Vec<u16> = (0..s.n_hand as usize).map(|i| s.cards[s.hand[i] as usize].id).collect();
+        v.sort_unstable();
+        v
+    }
+
+    /// **抽牌堆凑不齐一手时，机会节点必须真的采样，而且要读 `Plan::seed`。**
+    ///
+    /// 2026-09-02 之前 `chance_children` 开头是
+    /// `if r == 0 || n < WANT { ... return vec![Draw { p: 1.0 }] }` ——
+    /// **把两种完全不同的情况合并了**：
+    /// * `r == 0`（前 5 张全是已知前缀）确实确定，`p = 1.0` 是对的；
+    /// * `n < 5` **必须洗弃牌堆才凑得齐一手**，整个弃牌堆洗回来是那一刻的
+    ///   主导不确定性，却既不枚举也不采样。
+    ///
+    /// 最要命的一层：那条路径**不读 `cfg.seed`**（洗牌用状态自带的
+    /// `rng.shuffle`），于是 `tools/plan_seed_sweep.py` 把这些回合一律记成
+    /// "换种子不变" —— **可重复性指标恰好在不确定性最大的那四分之一回合上是瞎的**。
+    /// [实测] 60 条实录的 230 个 `end_turn` 帧里 57 个 `draw_count < 5` = 25%。
+    ///
+    /// **坏掉的样子**：把两条分支合回一个 `if`，(a)(b) 两条断言当场红。
+    #[test]
+    fn a_short_draw_pile_is_sampled_and_reads_the_seed() {
+        use crate::plan::{chance_children, Plan};
+        let s = short_draw_pile_scene(3, 6);
+        assert!(s.n_draw < 5 && s.n_disc > 0, "场景立不住：{}/{}", s.n_draw, s.n_disc);
+
+        // (a) 必须多于一个孩子，而且权重和仍然是 1
+        let cfg = Plan::default();
+        let kids = chance_children(&s, &cfg, 1);
+        assert!(kids.len() > 1, "抽牌堆只剩 {} 张、弃牌堆 {} 张，机会节点却只给了 1 个孩子", s.n_draw, s.n_disc);
+        let total: f64 = kids.iter().map(|k| k.p).sum();
+        assert!((total - 1.0).abs() < 1e-9, "权重和是 {total}，不是 1");
+        for k in &kids {
+            assert_eq!(k.state.n_hand, 5, "有个孩子没抽满 5 张");
+        }
+        // 采样是有意义的：w 个样本不该全是同一手牌
+        let distinct: std::collections::BTreeSet<Vec<u16>> =
+            kids.iter().map(|k| hand_ids(&k.state)).collect();
+        assert!(distinct.len() > 1, "{} 个样本抽出来是同一手牌 —— 洗牌没被播种", kids.len());
+
+        // (b) 换 `Plan::seed` 结果必须变
+        let mut other = Plan::default();
+        other.seed = 0xA5A5_1234;
+        let kids2 = chance_children(&s, &other, 1);
+        let a: Vec<Vec<u16>> = kids.iter().map(|k| hand_ids(&k.state)).collect();
+        let b: Vec<Vec<u16>> = kids2.iter().map(|k| hand_ids(&k.state)).collect();
+        assert_ne!(a, b, "换了 Plan::seed，采到的还是同一批手牌 —— 这条路径没读种子");
+
+        // CRN 的前提照旧：同一个局面 + 同一个种子 + 同一层 ⇒ 同一批样本
+        let again: Vec<Vec<u16>> = chance_children(&s, &cfg, 1).iter().map(|k| hand_ids(&k.state)).collect();
+        assert_eq!(a, again, "同种子同深度采到了两批不同的样本");
+    }
+
+    /// 反过来的两条：**该确定的时候仍然只给一个 `p = 1.0` 的孩子。**
+    ///
+    /// 拆分支很容易顺手把这两种也拖进采样，那就是花 `width` 倍的钱买 w 份
+    /// 一模一样的孩子。
+    #[test]
+    fn a_determinate_draw_still_collapses_to_one_child() {
+        use crate::plan::{chance_children, Plan};
+        let cfg = Plan::default();
+
+        // 1. 抽牌堆不够、但**弃牌堆是空的** —— 剩下几张全抽走，没别的可能
+        let dry = short_draw_pile_scene(3, 0);
+        assert_eq!(dry.n_disc, 0);
+        let kids = chance_children(&dry, &cfg, 1);
+        assert_eq!(kids.len(), 1, "弃牌堆空的时候不该采样");
+        assert!((kids[0].p - 1.0).abs() < 1e-9);
+
+        // 2. 已知前缀 ≥ 5 张 —— 前 5 张身份明确，抽到什么是定死的
+        let mut known = short_draw_pile_scene(8, 4);
+        known.n_draw_known = known.n_draw;
+        let kids = chance_children(&known, &cfg, 1);
+        assert_eq!(kids.len(), 1, "已知前缀盖满 5 张时不该采样");
+        assert!((kids[0].p - 1.0).abs() < 1e-9);
+    }
+
+    /// **机会节点不许偷看真实的下一手。**
+    ///
+    /// 2026-09-02 发现的、比"不读种子"更重的一层：`chance_children` 拿到的局面
+    /// 正是 `end_turn_before_draw` 的输出，也就是 `step(EndTurn)` **马上就要
+    /// `open_hand` 的那个局面**（敌人那一手已经打完了）。旧分支在这个局面上
+    /// 直接 `open_hand` 并把它当成唯一的孩子 —— 那**逐字节就是真实的下一手**。
+    ///
+    /// 于是在 25% 的回合边界上，planner 是**带着答案在搜**。
+    /// 这解释了修好之后 P5 均值从 +4.2 掉到 +3.8：**掉的是作弊分**。
+    /// （敌人流和洗牌流是分开的 —— 不变量 4 —— 所以敌人那一手不会扰动抽牌。）
+    #[test]
+    fn the_chance_node_does_not_peek_at_the_real_next_hand() {
+        use crate::plan::{chance_children, Plan};
+        // 和 `short_draw_pile_scene` 同一副牌，但从**回合边界之前**出发，
+        // 这样才走得到 `step(EndTurn)` 那条真路径。
+        let kinds = [card::STRIKE, card::DEFEND, card::BASH];
+        let mut pre = State::new(80, 21);
+        pre.add_enemy(enemy::DUMMY, 100);
+        let ix: Vec<u8> = (0..9).map(|i| pre.add_card(kinds[i % 3], 0, 0)).collect();
+        let mut pre = begin_combat(pre);
+        pre.n_hand = 0;
+        pre.n_draw = 3;
+        for i in 0..3 {
+            pre.draw[i] = ix[i];
+        }
+        pre.n_draw_known = 0;
+        pre.n_disc = 6;
+        for i in 0..6 {
+            pre.disc[i] = ix[3 + i];
+        }
+        let truth = hand_ids(&step(pre, Action::EndTurn));
+        let boundary = crate::step::end_turn_before_draw(pre);
+        let kids = chance_children(&boundary, &Plan::default(), 1);
+        assert!(
+            kids.iter().any(|k| hand_ids(&k.state) != truth),
+            "机会节点采出来的每一手都等于真实的下一手 —— planner 在偷看"
+        );
     }
 
     /// 机会节点：**枚举出来的概率必须加起来等于 1**。
@@ -7358,5 +7707,56 @@ mod tests {
         let s = begin_combat(s);
         let leaf = crate::step::end_turn_before_draw(s);
         assert!(want_extension(&leaf, &cfg).is_none(), "全关了还触发");
+    }
+
+    /// 战鼓：自身被消耗时获得 2 能量（升级 3 能量）。
+    #[test]
+    fn drum_of_battle_grants_energy_on_exhaust() {
+        let mut s = State::new(80, 77);
+        s.add_enemy(enemy::DUMMY, 100);
+        let drum = s.add_card(card::DRUM_OF_BATTLE, 0, 0);
+        let drum_upg = s.add_card(card::DRUM_OF_BATTLE, F_UPGRADED, 0);
+        for _ in 0..8 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        s.energy = 0;
+        exhaust_card(&mut s, drum);
+        assert_eq!(s.energy, 2, "战鼓消耗给 2 能量");
+
+        exhaust_card(&mut s, drum_upg);
+        assert_eq!(s.energy, 5, "战鼓+ 消耗给 3 能量");
+    }
+
+    /// 地道虫：钻地保留格挡，且破盾时被打进眩晕并清除钻地。
+    #[test]
+    fn tunneler_burrow_retains_block_and_break_stuns() {
+        let mut s = State::new(80, 99);
+        s.add_enemy(enemy::TUNNELER, 87);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        s.enemies[0].block = 32;
+        s.enemies[0].set(St::Burrowed, 1);
+        s.enemy_move[0] = 2; // Move 2: 地底突袭
+
+        // 回合结束，敌人回合开始时格挡不清零
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[0].block, 32, "钻地期间敌人回合开始格挡不清零");
+
+        // 我方打 6 点，格挡 32 -> 26，未破盾
+        s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.enemies[0].block, 26);
+        assert_eq!(s.enemies[0].get(St::Burrowed), 1);
+        assert_eq!(s.enemy_move[0], 2);
+
+        // 人工把格挡设为 5，再打 6 点击破格挡
+        s.enemies[0].block = 5;
+        s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.enemies[0].block, 0);
+        assert_eq!(s.enemies[0].get(St::Burrowed), 0, "破盾清除钻地");
+        assert_eq!(s.enemy_move[0], 3, "破盾被打进眩晕（move 3）");
+        assert_eq!(s.enemies[0].get(St::MoveForcedThisTurn), 1);
     }
 }
