@@ -386,6 +386,7 @@ fn hit_enemy_with(s: &mut State, tgt: usize, face: i32, powered: bool) {
     if powered {
         fire_ctx(s, Hook::EnemyAttacked, 0, tgt);
     }
+    let prev_block = s.enemies[tgt].block;
     let through = absorb(&mut s.enemies[tgt], d);
     // 狂宴读这个。放在 `absorb` 之后、触发钩子之前 —— 钩子里可能再打死别人，
     // 那不该算成"这一下打死的"。
@@ -394,6 +395,13 @@ fn hit_enemy_with(s: &mut State, tgt: usize, face: i32, powered: bool) {
     // （蜷身给的 14 点格挡没能吃掉触发它的那 7 点）。
     // 打死了就不触发：给尸体加格挡没有意义，也免得多一层无谓的钩子递归。
     if s.enemies[tgt].alive() {
+        // 钻地（[源码] `BurrowedPower.AfterBlockBroken`）：攻击破盾时被打进眩晕
+        if prev_block > 0 && s.enemies[tgt].block == 0 && s.enemies[tgt].get(St::Burrowed) > 0 {
+            s.enemies[tgt].set(St::Burrowed, 0);
+            s.enemy_move[tgt] = 3;
+            s.enemies[tgt].set(St::MoveForcedThisTurn, 1);
+            s.enemy_hist[tgt] = [u8::MAX; crate::state::ENEMY_HIST];
+        }
         // 胆小（[源码] `SkittishPower`）：受到未被格挡的卡牌攻击时，本回合第一次获得 6 点格挡
         if powered
             && through > 0
@@ -1010,8 +1018,12 @@ fn spawn_card(s: &mut State, id: u16) -> Option<u8> {
 
 /// 消耗一张牌。**所有**进消耗堆的路径都必须走这里，否则
 /// 无惧疼痛/黑暗之拥 会漏触发。
-fn exhaust_card(s: &mut State, c: u8) {
+pub(crate) fn exhaust_card(s: &mut State, c: u8) {
     s.to_exhaust(c);
+    // 战鼓（[源码] `DrumOfBattle.AfterCardExhausted`）：自身被消耗时获得 2 能量（升级 3 能量）
+    if s.cards[c as usize].id == crate::content::card::DRUM_OF_BATTLE {
+        s.energy += if s.cards[c as usize].upgraded() { 3 } else { 2 };
+    }
     fire(s, Hook::CardExhausted, 0);
 }
 
@@ -1939,12 +1951,14 @@ pub(crate) fn take_attack_hit(s: &mut State, attacker: usize, d: i32) {
     fire_ctx(s, Hook::Attacked, 0, attacker);
 }
 
-/// 敌人回合开始：格挡在**拥有者**的回合开始时清空。
+/// 敌人回合开始：格挡在**拥有者**的回合开始时清空（持有钻地 BurrowedPower 时不清空）。
 ///
 /// 两条敌人回合的路径共用它，见 [`take_attack_hit`]。
 fn begin_enemy_turn(s: &mut State) {
     for e in 0..s.n_enemies as usize {
-        s.enemies[e].block = 0;
+        if s.enemies[e].get(St::Burrowed) == 0 {
+            s.enemies[e].block = 0;
+        }
     }
 }
 

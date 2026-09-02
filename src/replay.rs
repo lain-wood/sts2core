@@ -551,6 +551,7 @@ pub fn map_status(id: &str) -> Option<St> {
         "smoggy" | "smog" | "侵蚀" | "烟雾" => St::Smoggy,
         "skittish" | "胆小" => St::Skittish,
         "steam_eruption" | "蒸汽喷发" => St::SteamEruption,
+        "burrowed" | "钻地" => St::Burrowed,
         _ => return None,
     })
 }
@@ -657,7 +658,7 @@ pub fn combat_over_obs(o: &Obs) -> bool {
 /// 推出来/造出来的，拿去比只会得到一列恒定的假不一致：
 /// * [`St::SlowSource`]：谁带缓慢是从敌人身上推的
 /// * [`St::VambraceCharge`]：臂甲这场用没用过，观测里根本没有这个字段
-pub(crate) const ALL_ST: [St; 59] = [
+pub(crate) const ALL_ST: [St; 60] = [
     St::Strength,
     St::Dexterity,
     St::Vulnerable,
@@ -753,10 +754,12 @@ pub(crate) const ALL_ST: [St; 59] = [
     St::Smoggy,
     St::Skittish,
     St::SteamEruption,
+    St::Burrowed,
 ];
 
 fn st_name(s: St) -> &'static str {
     match s {
+        St::Burrowed => "钻地",
         St::SteamEruption => "蒸汽喷发",
         St::Skittish => "胆小",
         St::SkittishTriggered => "胆小·已触发",
@@ -1063,6 +1066,7 @@ fn enemy_id(name: &str) -> Option<u16> {
         "knowledge_demon" | "knowledge-demon" | "知识恶魔" => "知识恶魔",
         "soul_nexus" | "soul-nexus" | "灵魂枢纽" => "灵魂枢纽",
         "test_subject" | "test_subject_0" | "test-subject" | "实验体" => "实验体",
+        "tunneler" | "tunneler_0" | "tunneler-0" | "地道虫" => "地道虫",
         _ => return None,
     };
     crate::content::ENEMIES.iter().position(|d| d.name == alias).map(|i| i as u16)

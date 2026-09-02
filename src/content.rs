@@ -152,6 +152,8 @@ pub mod card {
     pub const WHISTLE: u16 = 111;
     /// 涅奥之怒。遗物「涅奥的苦痛」拾起时塞进牌组的那张（2026-08-31 首见）
     pub const NEOW_WRATH: u16 = 112;
+    /// 战鼓（[源码] `DrumOfBattle`）。消耗时获得能量
+    pub const DRUM_OF_BATTLE: u16 = 113;
 }
 
 /// **不可打出的牌。** 判据是 [源码] `CardKeyword.Unplayable`
@@ -1635,6 +1637,16 @@ pub static CARDS: &[CardDef] = &[
         ops_upg: &[],
         cost_upg: 1,
     },
+    // 113 [源码] 战鼓「抽2张牌。当这张牌被消耗时，获得2能量。」升级「获得3能量。」
+    // [源码] `DrumOfBattle`：1 费 Skill，`CardPileCmd.Draw(2)`。
+    // 打出自身不消耗（`exhausts: false`）。被消耗时的给能规则在 `step::exhaust_card` 里。
+    CardDef {
+        name: "战鼓", cost: 1, kind: Kind::Skill, targeted: false, exhausts: false,
+        cost_minus_attacks: false,
+        ops: &[Op::Draw(2)],
+        ops_upg: &[Op::Draw(2)],
+        cost_upg: 1,
+    },
 ];
 
 // ---------------- powers（触发式能力）----------------
@@ -2568,6 +2580,7 @@ pub static GEN_POOL: &[u16] = &[
     card::PRIMAL_FORCE,        // 原始力量
     card::WHIRLWIND,           // 旋风斩
     card::CASCADE,             // 倾泻
+    card::DRUM_OF_BATTLE,      // 战鼓
 ];
 
 /// 从生成池里随机取一张。`attack_only` 给地狱之刃用。
@@ -2684,6 +2697,8 @@ pub static RULE_MODIFIERS: &[St] = &[
     St::SkittishTriggered,
     // 蒸汽喷发（瀑布巨兽计数器）
     St::SteamEruption,
+    // 钻地（地道虫）：敌人回合开始格挡不清零，格挡被破时眩晕。消费点在 `step.rs::begin_enemy_turn` / `step.rs::hit_enemy_with`
+    St::Burrowed,
 ];
 
 /// **伤害管线读的 status**：乘区、上限、朝向、格挡翻倍。
@@ -3563,6 +3578,8 @@ pub mod enemy {
     pub const PHANTASMAL_GARDENER: u16 = 68;
     /// 瀑布巨兽（第 1 幕 Boss）
     pub const WATERFALL_GIANT: u16 = 69;
+    /// 地道虫（第 2 幕杂兵）
+    pub const TUNNELER: u16 = 70;
 }
 
 // ===========================================================================
@@ -4147,6 +4164,20 @@ static M_WATERFALL_GIANT: Machine = Machine {
         Next::Go(4), // 3: 虹吸 -> 4: 高压枪
         Next::Go(5), // 4: 高压枪 -> 5: 升压
         Next::Go(1), // 5: 升压 -> 1: 重踏
+    ],
+};
+
+/// 地道虫 [源码] `Tunneler.GenerateMoveStateMachine`：
+/// 0: 咬击 (13点) -> 1: 钻地 (Buff+Defend: 格挡32 + 钻地1) -> 2: 地底突袭 (23点) -> 2: 地底突袭 ...
+/// 3: 眩晕 (Stun) -> 0: 咬击
+/// 当钻地格挡被破时被打进 3: 眩晕
+static M_TUNNELER: Machine = Machine {
+    start: Next::Go(0),
+    after: &[
+        Next::Go(1), // 0: 咬击 -> 1: 钻地
+        Next::Go(2), // 1: 钻地 -> 2: 地底突袭
+        Next::Go(2), // 2: 地底突袭 -> 2: 地底突袭
+        Next::Go(0), // 3: 眩晕 -> 0: 咬击
     ],
 };
 
@@ -5411,6 +5442,24 @@ pub static ENEMIES: &[EnemyDef] = &[
             EnemyMove { name: "虹吸", intent: "Heal", ops: &[EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
             EnemyMove { name: "高压枪", intent: "Attack", ops: &[EOp::Attack { base: 20, hits: 1 }, EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
             EnemyMove { name: "升压", intent: "Attack", ops: &[EOp::Attack { base: 13, hits: 1 }, EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
+        ],
+    },
+    // 70 [源码+实测] 地道虫 `Tunneler`（第 2 幕杂兵）
+    //
+    // A0/A2：血量 87（进阶 ToughEnemies 92）。
+    // 出招：
+    // 0: 咬击：13 点伤害
+    // 1: 钻地：Buff+Defend，获得 32 点格挡并附加 1 层钻地（BurrowedPower）
+    // 2: 地底突袭：23 点伤害（持续自循环）
+    // 3: 眩晕：被破盾打进眩晕后空过一回合，随后回到 0: 咬击
+    EnemyDef {
+        name: "地道虫", max_hp: 87, start_status: &[], loop_from: 0,
+        machine: Some(&M_TUNNELER),
+        moves: &[
+            EnemyMove { name: "咬击", intent: "Attack", ops: &[EOp::Attack { base: 13, hits: 1 }] },
+            EnemyMove { name: "钻地", intent: "Buff", ops: &[EOp::Block(32), EOp::SelfStatus { st: St::Burrowed, amt: 1 }] },
+            EnemyMove { name: "地底突袭", intent: "Attack", ops: &[EOp::Attack { base: 23, hits: 1 }] },
+            EnemyMove { name: "眩晕", intent: "Stun", ops: &[EOp::Nothing] },
         ],
     },
 ];

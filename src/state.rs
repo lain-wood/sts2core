@@ -32,7 +32,8 @@ pub const ENEMY_HIST: usize = 4;
 /// 一次多给 16 个槽，免得每加一张能力牌都要动这里。
 /// 代价照规矩实测记在 CLAUDE.md 的「当前状态」里（`StatusVal = i16`，
 /// 每多一个槽是 2 字节 × 6 个 Entity = 12 字节）。
-pub const N_STATUS: usize = 112;
+/// **112 → 128（2026-09-02）**：加地道虫钻地等状态扩容到 128。
+pub const N_STATUS: usize = 128;
 
 /// Status / power slots. Indexed into `Entity::status`.
 ///
@@ -638,6 +639,9 @@ pub enum St {
     SkittishTriggered,
     /// 蒸汽喷发（[源码] `SteamEruptionPower`，瀑布巨兽的压力计数器）。
     SteamEruption,
+    /// 钻地（[源码] `BurrowedPower`，地道虫持有）。
+    /// 钻地期间敌人回合开始格挡不清零，受到攻击且格挡被击破时被打进眩晕并移除自身。
+    Burrowed,
     /// **我这一回合改过这只敌人的出招指针**（`TOp::OwnerForceMove` 置位）。
     ///
     /// 消费点只有一处：`step::injected_enemy_turn`。注入的伤害来自
