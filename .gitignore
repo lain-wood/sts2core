@@ -7,10 +7,38 @@ target/
 __pycache__/
 *.pyc
 
-# 调试与临时文件
-traces/_live.json
-traces/_plan.txt.tmp
-traces/raw_*/
+# 反编译产物（可再生：从 sts2.dll 反编译）
 decompiled/
+
+# 编辑器
 .idea/
 .vscode/
+
+# ---------------------------------------------------------------------------
+# traces/ 里混着三类东西，只有第一类该进仓库：
+#   1. 对拍语料      act*.json / synthetic_*.json / passive_*.json  ← 不可再生，必须跟踪
+#   2. 权威数据表    *_catalog.json / enemies_wiki.json             ← 可重导，但当前仍跟踪
+#   3. 配置与生成物  下面这些                                        ← 不跟踪
+# ---------------------------------------------------------------------------
+
+# 两个录制器的配置文件。录制器跑完会自动把动作行注释掉，
+# 跟踪它等于每录一场就产生一次 diff 噪音。
+traces/_plan.txt
+traces/_plan.txt.tmp
+traces/_watch.txt
+
+# 生成物
+traces/_live.json
+traces/_seed_sweep.json
+traces/_t5.json
+traces/raw_*/
+
+# sts2.wiki 的抓取缓存（tools/dump_bestiary.py 用）。
+# 可再生，而且是**别人网站的内容** —— 不该装在一个 MIT 仓库里重新分发。
+traces/.wiki_cache/
+
+# 会话记录 / 草稿。**永远不要提交** ——
+# 2026-09-02 发现 scratch_agent.txt + scratch_user.txt 从 `Initial commit` 起
+# 就在公开仓库里，里面有 prompt 原文和 29 处 harness 元数据（时间戳、模型选择）。
+# 已经改写历史清掉了，别再让它们回来。
+scratch_*.txt
