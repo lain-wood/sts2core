@@ -474,20 +474,52 @@ pub fn distinct_hands(s: &State, r: usize) -> usize {
 ///    兄弟动作比较用同一组手牌，方差抵消；同一个节点重访拿到同一批样本，
 ///    置换表里存的采样估计才自洽。
 ///
-/// 抽牌堆不够 `want` 张时，剩下的从弃牌堆洗回来 —— 那一段的随机性
-/// 这一版**没有单独建模**（直接交给内核自己洗），因为这时抽牌堆里的牌
-/// 是全都要抽走的（不构成选择），只有弃牌堆那部分是真随机。
-/// 这是 S0 已知的一处近似，写在这里免得以后当成 bug 查。
+/// 抽牌堆不够 `want` 张时，剩下的从弃牌堆洗回来。抽牌堆里那几张是**全都要
+/// 抽走**的（不构成选择），真正的随机在弃牌堆那次洗牌上 —— 所以这种情况
+/// **走采样分支**（`cfg.width(depth)` 个样本，每个 `p = 1/w`）。
+///
+/// > 2026-09-02 之前它和「已知前缀就是全部」合在一个 `if` 里，一起返回单个
+/// > `p = 1.0` 的孩子，而且**不读 `cfg.seed`**。那是错的，理由和实测读数
+/// > 写在 [`chance_children`] 里那个分支上。
 pub fn chance_children(s: &State, cfg: &Plan, depth: usize) -> Vec<Draw> {
     const WANT: usize = 5;
     let n = s.n_draw as usize;
     let known = (s.n_draw_known as usize).min(n).min(WANT);
     let r = WANT - known;
-    // 未知区抽不出这么多（要洗牌）：交给内核自己抽，只给一个孩子
-    if r == 0 || n < WANT {
+
+    // **1. 前 5 张全是已知前缀 ⇒ 真的确定，`p = 1.0` 就是对的。**
+    // （`r == 0` 蕴含 `known == 5`，也就蕴含 `n >= 5`，和下面那条不重叠。）
+    if r == 0 {
         let mut st = *s;
         crate::step::open_hand(&mut st);
         return vec![Draw { state: st, p: 1.0 }];
+    }
+
+    // **2. 抽牌堆凑不齐一手 ⇒ 要洗弃牌堆。**
+    //
+    // 这一条 2026-09-02 之前和上面那条合在一个 `if` 里、一起返回单个
+    // `p = 1.0` 的孩子。**两种情况完全不同**：上面那条确实确定，这一条里
+    // 「整个弃牌堆洗回来洗成什么样」是那一刻的**主导**不确定性，
+    // 却既不枚举也不采样。
+    //
+    // 最要命的是那条路径**不读 `cfg.seed`**（洗牌用的是状态自带的
+    // `rng.shuffle`）—— 于是 `tools/plan_seed_sweep.py` 把这些回合一律
+    // 记成"换种子不变"，**那个可重复性指标恰好在不确定性最大的回合上是瞎的**。
+    // [实测] 2026-09-02：`n_draw=3` + 弃牌堆 6 张，孩子数 1、`p=1.00`、
+    // 手牌里有 2 张是洗回来的，换 5 个 `Plan::seed` 结果逐字相同。
+    // 发生频率：60 条实录的 230 个 `end_turn` 帧里 **57 个** `draw_count < 5`
+    // （其中 54 个弃牌堆非空、真要洗）= **25% 的回合边界**。
+    //
+    // 弃牌堆是空的时候它**仍然是确定的**（把抽牌堆剩下的全抽走，没别的可能），
+    // 那种情况照旧给一个 `p = 1.0` 的孩子 —— 采 12 个一模一样的样本
+    // 只是白花 12 倍的钱。
+    if n < WANT {
+        if s.n_disc == 0 {
+            let mut st = *s;
+            crate::step::open_hand(&mut st);
+            return vec![Draw { state: st, p: 1.0 }];
+        }
+        return sample_children(s, cfg, depth);
     }
 
     let region: Vec<u8> = s.draw[..n - (s.n_draw_known as usize).min(n)].to_vec();
@@ -529,30 +561,50 @@ pub fn chance_children(s: &State, cfg: &Plan, depth: usize) -> Vec<Draw> {
         return out;
     }
 
-    // 采样。**CRN：种子只由深度决定，故意不含这个节点自己的牌堆。**
-    //
-    // 原来这里是 `draw_multiset_key(s) ^ cfg.seed ^ depth`，注释也写着 CRN ——
-    // 但那样**恰恰破坏了要配对的那一层**：根回合的几条候选线打的牌不同，
-    // 留下的牌堆就不同，于是每条候选各抽各的样本，兄弟之间的比较是**独立**的，
-    // 排序里混进了整整一份采样噪声。
-    //
-    // [实测] 2026-08-27 第 2 幕精英那一帧（`traces/act2_f24_elite_prism.json` 帧17）：
-    // 「凌虐」根分最高（−600），深层估值 103512，输给冠军线 **182 分（0.18%）**；
-    // **换 8 个种子，8 个都选凌虐** —— 也就是说那次落选完全是采样噪声。
-    //
-    // 改成只由深度播种之后，同一层的所有节点共用一条随机流：牌堆不同 ⇒ 抽到的牌
-    // 当然不同，但"运气"是同一份，差值里那部分方差被抵消掉。
-    // 这就是配对随机数（common random numbers）本来的样子。
-    //
-    // **置换表仍然稳**：种子不再依赖状态，同一个状态在同一层永远采到同一批样本
-    // （比原来更强的性质，原来还要求牌堆多重集相同）。
+    sample_children(s, cfg, depth)
+}
+
+/// 机会节点的**采样**分支。两个入口共用（未知区太大枚举不动 / 抽牌堆凑不齐
+/// 一手要洗弃牌堆），**播种规则因此只有一处定义**。
+///
+/// **CRN：种子只由深度决定，故意不含这个节点自己的牌堆。**
+///
+/// 原来这里是 `draw_multiset_key(s) ^ cfg.seed ^ depth`，注释也写着 CRN ——
+/// 但那样**恰恰破坏了要配对的那一层**：根回合的几条候选线打的牌不同，
+/// 留下的牌堆就不同，于是每条候选各抽各的样本，兄弟之间的比较是**独立**的，
+/// 排序里混进了整整一份采样噪声。
+///
+/// [实测] 2026-08-27 第 2 幕精英那一帧（`traces/act2_f24_elite_prism.json` 帧17）：
+/// 「凌虐」根分最高（−600），深层估值 103512，输给冠军线 **182 分（0.18%）**；
+/// **换 8 个种子，8 个都选凌虐** —— 也就是说那次落选完全是采样噪声。
+///
+/// 改成只由深度播种之后，同一层的所有节点共用一条随机流：牌堆不同 ⇒ 抽到的牌
+/// 当然不同，但"运气"是同一份，差值里那部分方差被抵消掉。
+/// 这就是配对随机数（common random numbers）本来的样子。
+///
+/// **置换表仍然稳**：种子不再依赖状态，同一个状态在同一层永远采到同一批样本
+/// （比原来更强的性质，原来还要求牌堆多重集相同）。
+fn sample_children(s: &State, cfg: &Plan, depth: usize) -> Vec<Draw> {
+    const WANT: usize = 5;
     let w = cfg.width(depth).max(1);
     let mut seed = cfg.seed ^ ((depth as u64) << 56);
+    // **抽牌堆凑不齐一手时，随机性在弃牌堆那次洗牌里，不在抽牌堆里。**
+    // `shuffle_unknown` 只动抽牌堆的未知区；那次洗牌发生在
+    // `open_hand -> draw_one -> reshuffle_discard_into_draw` 里，用的是**状态
+    // 自带**的 `rng.shuffle`。不把它也从样本流里播一次，w 个样本会逐字相同。
+    //
+    // **只在真要洗牌时动它。** 抽牌堆够抽的时候这一手已经被 `shuffle_unknown`
+    // 定死了，`rng.shuffle` 只影响**更深层**的抽牌 —— 顺手改掉它就等于
+    // 悄悄改了原有那条采样路径的行为（和这次要修的东西无关）。
+    let needs_reshuffle = (s.n_draw as usize) < WANT;
     let mut out = Vec::with_capacity(w);
     let p = 1.0 / w as f64;
     for _ in 0..w {
         let mut st = *s;
         shuffle_unknown(&mut st, &mut seed);
+        if needs_reshuffle {
+            st.rng.shuffle = crate::state::next_u64(&mut seed);
+        }
         crate::step::open_hand(&mut st);
         out.push(Draw { state: st, p });
     }
@@ -808,6 +860,14 @@ fn next_spike(s: &State) -> i32 {
 pub(crate) fn want_extension(s: &State, cfg: &Plan) -> Option<Ext> {
     // 1. 斩杀：乐观界够得着敌人的血墙 ⇒ 别在"连招中间"评估，
     //    多搜一层把"到底杀不杀得掉"落实。
+    //
+    //    **这里用 `enemy_wall`（只算当前形态），不是 `enemy_wall_all_forms`。**
+    //    延伸划算的判据是一句话：**只有在能把"估值"变成"事实"的时候才划算** ——
+    //    多搜那一层过后，「这一形态死没死」由 `combat_over` / 复活规则说了算，
+    //    估值里最大的一块不确定当场塌缩。而「整场（含后面几个形态）打不打得完」
+    //    多搜一层根本落实不了，拿它当条件只会让延伸在多形态 Boss 上永不触发。
+    //    `horizon` 要的是另一个口径，两者**故意不同**，见
+    //    [`solver::enemy_wall`](crate::solver::enemy_wall) 上的那张表。
     if cfg.ext_lethal && optimistic_damage(s) >= enemy_wall(s) {
         return Some(Ext::Lethal);
     }

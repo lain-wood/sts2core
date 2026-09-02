@@ -383,6 +383,14 @@ pub(crate) fn enemy_wall(s: &State) -> i32 {
         .sum()
 }
 
+/// 场上还活着的敌人的总血量（含还没出场的形态，含格挡）。
+pub(crate) fn enemy_wall_all_forms(s: &State) -> i32 {
+    (0..s.n_enemies as usize)
+        .filter(|&e| s.enemies[e].alive() || s.enemies[e].get(crate::state::St::Adaptable) > 0)
+        .map(|e| crate::content::remaining_hp_including_revives(&s.enemies[e]) + s.enemies[e].block)
+        .sum()
+}
+
 /// 铁甲战士的基础能量。
 ///
 /// > **不要拿 `base_energy - BASE_ENERGY` 反推"这是薪火之源给的"。**
@@ -437,9 +445,46 @@ pub const HORIZON_CAP: i32 = 8;
 /// 这正是想要的那一边 —— 高估能力牌比低估更危险（会去打一张这场仗根本
 /// 兑现不了的能力牌）。
 pub fn horizon(s: &State) -> i32 {
-    let dpt = optimistic_damage(s).max(1);
-    let wall = enemy_wall(s);
-    ((wall + dpt - 1) / dpt).clamp(1, HORIZON_CAP)
+    Horizon::of(enemy_wall_all_forms(s), optimistic_damage(s)).turns()
+}
+
+/// 地平线的**精确有理表示**：`num / den` 个回合，恒在 `[1, HORIZON_CAP]`。
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct Horizon {
+    num: i64,
+    den: i64,
+}
+
+impl Horizon {
+    pub(crate) fn of(wall: i32, dpt: i32) -> Horizon {
+        let w = wall.max(0) as i64;
+        let d = dpt.max(1) as i64;
+        if w <= d {
+            return Horizon { num: 1, den: 1 };
+        }
+        if w >= HORIZON_CAP as i64 * d {
+            return Horizon { num: HORIZON_CAP as i64, den: 1 };
+        }
+        Horizon { num: w, den: d }
+    }
+
+    fn cap_at(self, num: i64, den: i64) -> Horizon {
+        debug_assert!(den > 0);
+        let (num, den) = if num < 0 { (0, 1) } else { (num, den) };
+        if num * self.den < self.num * den {
+            if num <= den {
+                Horizon { num: 1, den: 1 }
+            } else {
+                Horizon { num, den }
+            }
+        } else {
+            self
+        }
+    }
+
+    pub(crate) fn turns(self) -> i32 {
+        ((self.num + self.den - 1) / self.den) as i32
+    }
 }
 
 /// **这副牌一点能量能换几点伤害。**
@@ -494,112 +539,61 @@ fn damage_per_energy(s: &State) -> i32 {
 
 /// **能力状态的跨回合价值**，换算进 [`Weights`] 已有的币值。返回的是**未打折**
 /// 的原值，折扣由 `Weights::power` 施加（见 [`eval`]）。
-///
-/// # 为什么叶评估非要有这一项
-///
-/// `eval` 数的五样东西里**没有一样看得见能力状态**：挂着薪火之源和没挂，
-/// 叶分数逐字相同。而能力牌的定义就是"当回合 0 伤害 0 格挡、后面每回合产出"，
-/// 于是跨回合搜索里打能力牌的那条线**在叶子上拿不到任何优势**。
-///
-/// # 只计价三样，其余**明确拒绝**
-///
-/// 判据是一句话：**这一项在叶子上是不是determinate（不依赖我接下来抽到什么、
-/// 打出什么）**。是才计价，不是就留空 —— 本仓库"欠定就留空，别挑一组自洽的解"
-/// 的老规矩。
-///
-/// | 计价 | 为什么算得出来 |
-/// |---|---|
-/// | 额外的最大能量（薪火之源）| `Op::GainMaxEnergy` **永久**改 `base_energy`，不衰减不带条件 |
-/// | 每回合无条件 +力量（恶魔形态）| `Hook::TurnStart` 无 `If`，且力量**累加**，总量是 H(H+1)/2 |
-/// | 每回合无条件群伤（滚石）| 同上，外加 `TOp::GrowSelf(5)` 那个确定的成长 |
-///
-/// **拒绝计价的那几类，各有各的理由：**
-///
-/// * **每回合给格挡的**（绯红披风 / 玩家持有的覆甲）—— 它的价值是
-///   `min(格挡, 来袭)`，而 `score::leaf` 的签名是 `fn(&State) -> i32`，
-///   **拿不到来袭**。按面板值计价就是把 8 点格挡当 8 点血，
-///   在不挨打的回合里高估得离谱 —— 正是模块头那条
-///   "格挡按它真正挡下的伤害计价，不按面板值"禁止的事。
-///   **这是目前最大的一个缺口**（当前这局的绯红披风构筑正好踩在上面），
-///   要补得靠"叶子换成短 rollout 推到底"那条路，不是靠再加一个常数。
-/// * **会衰减的**（再生 / 玩家持有的覆甲每回合 `GrowSelf(-1)`）——
-///   它们不是"每回合恒定产出"，总量要按等差数列算，而衰减到 0 之前还能不能
-///   活到那时候又是另一回事。
-/// * **触发式的**（黑暗之拥 / 无惧疼痛 / 撕裂 / 凶恶 / 狂怒 / 势不可当）——
-///   每回合触发几次**完全取决于我接下来抽到什么、打出什么**，叶子上不可知。
-///   给一个自信的估计比不给更危险。
-///
-/// # 单位
-///
-/// 全部换算成 `Weights` 的币值（基准"我的 1 点 HP = 100"），所以这一项和
-/// `eval` 的其余各项可以直接相加。
 pub fn power_horizon_value(s: &State, w: &Weights) -> i32 {
     use crate::state::St;
 
-    // **只算归因得到薪火之源的那部分**，不是 `base_energy` 的裸盈余 ——
-    // 理由（以及拿裸盈余会怎么坏）在 [`pyre_energy`]。
     let extra_energy = pyre_energy(s);
     let ramp = s.player.get(St::DemonForm);
     let boulder = s.player.get(St::RollingBoulder);
-    // **绝大多数局面在这里就返回了**，一次 `horizon` 都不算。
-    // `optimistic_damage` 要扫整个牌堆还要排序，比一个搜索节点贵得多，
-    // 不早退的话每个叶子都要付这笔钱。
     if extra_energy <= 0 && ramp == 0 && boulder == 0 {
         return 0;
     }
 
-    let h = horizon(s);
+    let dpt = optimistic_damage(s);
+    let h = Horizon::of(enemy_wall_all_forms(s), dpt);
+    let n_active = (extra_energy > 0) as i64 + (ramp > 0) as i64 + (boulder > 0) as i64;
+    let safe_hp = (w.enemy_hp as i64 * 99) / 100;
     let mut v = 0;
 
-    // 1. 额外能量：**一点能量买这副牌多少伤害**，乘上还要打几个回合。
-    //
-    //    第一版拿的是 `optimistic_damage / 5`（最狠 5 张的均值），量出来中位
-    //    2100 分 ≈ 21 点血 —— 一张薪火之源在两回合的仗里值 21 血是荒唐的。
-    //    根因是那个界按"正好抽到最狠的 5 张、不看费用"取，拿它当"一张平均牌"
-    //    高估了一大截。换成 `damage_per_energy`：牌组里带伤害的牌，
-    //    **面板伤害总和 ÷ 费用总和**。打击 6 伤害 1 费 ⇒ 6，量纲直接就是
-    //    "一点能量换几点敌人血"。
-    //
-    //    **付出去的那 2 费不用在这里扣**：打了薪火之源就少打别的牌，
-    //    那个代价已经落在叶子的血量和敌人血量里了。这一项只算**将来**的收益。
+    // 1. 额外能量
     if extra_energy > 0 {
-        v += extra_energy * damage_per_energy(s) * w.enemy_hp * h;
+        let rate = (extra_energy as i64 * damage_per_energy(s) as i64)
+            .min((dpt.max(1) as i64 * 99 / 100) / n_active);
+        let total = rate * h.num * safe_hp / h.den;
+        let share = enemy_hp_left(s) as i64 * safe_hp / n_active;
+        v += total.min(share) as i32;
     }
 
-    // 2. 力量爬坡：第 t 个回合身上多 `ramp × t` 点力量，H 个回合的总和
-    //    是 `ramp × H(H+1)/2`。**这是唯一一个二次项**，也正是恶魔形态
-    //    在长仗里滚雪球的那部分。
+    // 2. 力量爬坡
     if ramp > 0 {
-        v += ramp * h * (h + 1) / 2 * w.strength;
+        let h2 = if w.strength > 0 {
+            h.cap_at(
+                2 * dpt.max(1) as i64 * safe_hp
+                    - n_active * ramp as i64 * w.strength as i64,
+                2 * n_active * ramp as i64 * w.strength as i64,
+            )
+        } else {
+            h
+        };
+        v += (ramp as i64 * h2.num * (h2.num + h2.den) * w.strength as i64
+            / (2 * h2.den * h2.den)) as i32;
     }
 
-    // 3. 滚石：每回合对**所有**敌人打 `stacks`，且 stacks 每回合 +5
-    //    （`TOp::GrowSelf(5)`，是表里写死的确定量，不是猜的）。
-    //    H 个回合的总伤害 = `stacks×H + 5×H(H−1)/2`。
-    //
-    //    **逐只封顶，不能乘「还活着几只」。** 一只 1 血的怪只能再挨 1 点滚石
-    //    伤害，把整份 `total` 记到它头上就是凭空造一笔兑现不了的收益 ——
-    //    而那笔收益会在我收人头的那一刻整个消失。
-    //    [实测] 2026-09-02（`Weights::LEAF`，场上一只 1 血 + 一只 300 血，
-    //    `h` 全程 8 没动）：无能力时收人头净赚 **+75**，而滚石 10 时
-    //    **−16425** —— 求解器宁可不收。**病根是 `n_alive` 不是 `h`。**
-    //
-    //    封顶自带一条可证明的不变量：敌人剩 R 血时收掉它，`eval` 那一项
-    //    白赚 `R × w.enemy_hp`，而这一项最多跌
-    //    `min(total, R) × w.enemy_hp ≤ R × w.enemy_hp` ⇒ **净收益恒 ≥ 0**。
-    //    `killing_an_enemy_never_lowers_the_leaf_score` 钉着这一条。
-    //
-    //    剩余血量用 `remaining_hp_including_revives`，和 `eval` 同口径 ——
-    //    用当前血量的话，会复活的敌人身上封顶会把后面形态要挨的那几百点
-    //    滚石伤害一起砍掉。
+    // 3. 滚石
     if boulder > 0 {
-        let total = boulder * h + 5 * h * (h - 1) / 2;
         for e in 0..s.n_enemies as usize {
             let en = &s.enemies[e];
             if !en.alive() {
                 continue;
             }
-            v += total.min(crate::content::remaining_hp_including_revives(en)) * w.enemy_hp;
+            let left = crate::content::remaining_hp_including_revives(en);
+            let he = Horizon::of(left + en.block, dpt)
+                .cap_at(2 * dpt as i64 * 99 / 100 - n_active * (2 * boulder as i64 - 5), 10 * n_active);
+            let val = (2 * boulder as i64 * he.num * he.den + 5 * he.num * (he.num - he.den))
+                * safe_hp
+                / (2 * he.den * he.den);
+            let share = left as i64 * safe_hp / n_active;
+            v += val.min(share) as i32;
         }
     }
 
