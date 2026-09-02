@@ -539,6 +539,80 @@ fn damage_per_energy(s: &State) -> i32 {
 
 /// **能力状态的跨回合价值**，换算进 [`Weights`] 已有的币值。返回的是**未打折**
 /// 的原值，折扣由 `Weights::power` 施加（见 [`eval`]）。
+///
+/// # 为什么叶评估非要有这一项
+///
+/// `eval` 数的东西里**没有一样看得见能力状态**：挂着薪火之源和没挂，叶分数逐字
+/// 相同。而能力牌的定义就是"当回合 0 伤害 0 格挡、后面每回合产出"，于是跨回合
+/// 搜索里打能力牌的那条线**在叶子上拿不到任何优势**。
+///
+/// # 只计价三样，其余**明确拒绝**
+///
+/// 判据是一句话：**这一项在叶子上是不是 determinate**（不依赖我接下来抽到什么、
+/// 打出什么）。是才计价，不是就留空 —— 本仓库"欠定就留空"的老规矩。
+///
+/// | 计价 | 为什么算得出来 |
+/// |---|---|
+/// | 额外最大能量（薪火之源）| `Op::GainMaxEnergy` **永久**改 `base_energy`，不衰减不带条件 |
+/// | 每回合无条件 +力量（恶魔形态）| `Hook::TurnStart` 无 `If`，力量**累加**，总量 H(H+1)/2 |
+/// | 每回合无条件群伤（滚石）| 同上，外加 `TOp::GrowSelf(5)` 那个表里写死的成长 |
+///
+/// **拒绝计价**：每回合给格挡的（价值是 `min(格挡, 来袭)`，而 `fn(&State)->i32`
+/// **拿不到来袭**）· 会衰减的 · 触发式的（每回合触发几次取决于抽到什么）。
+///
+/// # 斜率契约：**加任何一项之前先读这一条**
+///
+/// `eval` 的敌人侧是 `−W·w.enemy_hp + P(W)`（`W` = 场上剩余敌人血），所以
+///
+/// ```text
+/// 「打掉敌人的血永远不亏」 ⟺ ∂P/∂W ≤ w.enemy_hp
+/// ```
+///
+/// **这是这个函数的头号不变量**，而且它被违反过四次，每次的样子都不一样：
+///
+/// | 违反 | 斜率坏在哪 | 症状 |
+/// |---|---|---|
+/// | 拿 `base_energy` 裸盈余当薪火之源（2026-09-01 修）| 掺进了不属于 `P` 的量 | 捡到 +1 能量遗物就开始奖励留人 |
+/// | 滚石乘 `n_alive`（2026-09-02 修）| 一只怪死掉就跌整份 `total` | **收人头净亏 16425 分** |
+/// | 三项都正比于 `ceil` 的地平线（2026-09-02 修）| 阶梯 ⇒ 边界上斜率无穷大 | 净亏 525 / 825 / 1125 分 |
+/// | 三项各自够、**叠起来**超预算（2026-09-02 修）| `eval` 的敌人项只赚一次 | 净亏 6 分 |
+///
+/// **合法的形态只有两种**，加新项时二选一：
+///
+/// 1. **用敌人血当单位，再按剩余血封顶** —— `min(A(W), W)` 的斜率恒 ≤ 1。
+///    薪火之源（全场封顶）和滚石（**逐只**封顶）走这条。
+/// 2. **把地平线夹在斜率界以内** —— 换算不成敌人血的项（恶魔形态是力量单位）
+///    只能走这条：超过 `∂P/∂W = w.enemy_hp` 那个 H 就把 H 冻住。
+///    界由 `w.enemy_hp / w.strength` 和 `dpt` 推出来，**不许发明常数**。
+///
+/// 外加两条全局的：地平线保持**精确有理数**（见 [`Horizon`]，`ceil` 会制造
+/// 无穷大斜率），以及**斜率预算在同时挂着的几项之间按 `n_active` 分摊**。
+///
+/// # 唯一还允许的残差：整数截断，**每项 1 分**
+///
+/// 上面四条管的是**斜率**，它们把实数意义上的 `∂P/∂W` 压到了 `w.enemy_hp`
+/// 以内。剩下的只有整数运算本身：**三项各做一次整除**，每项最多多跌 1 分
+/// （1 分 = 1/75 点血），同时挂着几项就是几分（`n_active`）。
+/// `leaf_score_never_drops_as_i_damage_an_enemy` 就按这个额度断言。
+///
+/// [实测] 2026-09-02，1260 万步扫描（三种能力独立掷、会叠加）：
+/// 违反 8832 步 = 0.070%，**最坏 −1 分 = 0.013 点血**。
+///
+/// > **不要拿比例余量去盖它。** 一度用过 `w.enemy_hp * 99 / 100`（币值 75 -> 74），
+/// > 同一份扫描下确实 0 违反，但：
+/// > ① 平均要花掉 **100 分**（能力项均值 10017 分），**是它防的东西的 100 倍**；
+/// > ② 量纲不对 —— 误差是**常数**（每项 1 分）、余量是**比例**，项值小到
+/// >    ~120 分时余量薄到刚好等于误差，**最不管用的地方恰好是最该管用的地方**；
+/// > ③ 它让能力项用 74 而 `eval` 的敌人项用 75，**两边不同币**。
+/// >
+/// > 真要做到 0，得让三项在公共分母上累加、**只除一次**（一次整除的
+/// > `floor(x)−floor(y) ≤ x−y` 对整数步长是紧的）。那要么上 i128、要么逐只敌人
+/// > 通分，对一个每个叶子都要调用的函数不划算。**故意不做，写在这里免得再被当成 bug 查。**
+///
+/// # 单位
+///
+/// 全部换算成 `Weights` 的币值（基准"我的 1 点 HP = 100"），所以这一项和
+/// `eval` 的其余各项可以直接相加。
 pub fn power_horizon_value(s: &State, w: &Weights) -> i32 {
     use crate::state::St;
 
@@ -552,15 +626,15 @@ pub fn power_horizon_value(s: &State, w: &Weights) -> i32 {
     let dpt = optimistic_damage(s);
     let h = Horizon::of(enemy_wall_all_forms(s), dpt);
     let n_active = (extra_energy > 0) as i64 + (ramp > 0) as i64 + (boulder > 0) as i64;
-    let safe_hp = (w.enemy_hp as i64 * 99) / 100;
+    let hp_price = w.enemy_hp as i64;
     let mut v = 0;
 
     // 1. 额外能量
     if extra_energy > 0 {
         let rate = (extra_energy as i64 * damage_per_energy(s) as i64)
-            .min((dpt.max(1) as i64 * 99 / 100) / n_active);
-        let total = rate * h.num * safe_hp / h.den;
-        let share = enemy_hp_left(s) as i64 * safe_hp / n_active;
+            .min(dpt.max(1) as i64 / n_active);
+        let total = rate * h.num * hp_price / h.den;
+        let share = enemy_hp_left(s) as i64 * hp_price / n_active;
         v += total.min(share) as i32;
     }
 
@@ -568,7 +642,7 @@ pub fn power_horizon_value(s: &State, w: &Weights) -> i32 {
     if ramp > 0 {
         let h2 = if w.strength > 0 {
             h.cap_at(
-                2 * dpt.max(1) as i64 * safe_hp
+                2 * dpt.max(1) as i64 * hp_price
                     - n_active * ramp as i64 * w.strength as i64,
                 2 * n_active * ramp as i64 * w.strength as i64,
             )
@@ -588,11 +662,11 @@ pub fn power_horizon_value(s: &State, w: &Weights) -> i32 {
             }
             let left = crate::content::remaining_hp_including_revives(en);
             let he = Horizon::of(left + en.block, dpt)
-                .cap_at(2 * dpt as i64 * 99 / 100 - n_active * (2 * boulder as i64 - 5), 10 * n_active);
+                .cap_at(2 * dpt as i64 - n_active * (2 * boulder as i64 - 5), 10 * n_active);
             let val = (2 * boulder as i64 * he.num * he.den + 5 * he.num * (he.num - he.den))
-                * safe_hp
+                * hp_price
                 / (2 * he.den * he.den);
-            let share = left as i64 * safe_hp / n_active;
+            let share = left as i64 * hp_price / n_active;
             v += val.min(share) as i32;
         }
     }
