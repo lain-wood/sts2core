@@ -8034,3 +8034,158 @@ fight_eval 截断 0/5056 且**死亡 533/5056** —— 最后那个数要跑 505
   撤临时改动要用"反向编辑"，不要用 git。
 * **这个仓库上一次提交是 09-03，而 09-03 之后的九天里改了 20 个文件。**
   这次能恢复靠的是会话记录这个外部备份，下一次不一定有。
+
+
+---
+
+## L3 阶段 4：MCP 接线（2026-09-12 下午）
+
+八个 `sts2-advisor` 工具的内部实现全部换成 sts2core 的 L3。
+**工具名和签名一个没动**（父目录 CLAUDE.md 的实战流程不用改），
+新增的是三个可选参数（`rooms` 加在末尾）。三段：
+
+```
+游戏 ──HTTP──► tools/advise_core.py ──JSON/stdin──► target/release/advise ──► 报告
+               （脏活）                             （evaluate_act / evaluate + 配对）
+                        ▲ sts2sim/advisor/server.py（八个工具，只做映射）
+```
+
+### 内核侧只加了两个「不用就不生效」的口子
+
+| 加了什么 | 谁要它 | 守着它的测试 |
+|---|---|---|
+| `ActPlan::pin_boss` / `pin_second_boss` | 实战里 Boss 是**已知量**（地图屏 `map.boss.id`），掷一个均匀的等于把已知信息换成方差 | `pinning_the_boss_uses_it_and_leaves_the_rest_of_the_sequence_alone`（钉了要用、而且不许把杂兵/精英那两串抽漂）· `pinning_a_boss_from_another_act_refuses_instead_of_rolling_one` |
+| `paired_act_delta_across_routes` | 「走不走精英」**只能**由两条不同的 `rooms` 表达，而 `paired_act_delta` 按设计挡住路线不同的一对 | `comparing_two_routes_needs_the_other_entry_point` |
+
+`paired_act_delta` 现在是"查完路线就调那个函数"，逻辑只有一份。
+`ActPlan` 多了两个字段，所以全部构造点改走 `ActPlan::new`（默认不钉、不双 Boss）。
+
+### 九条验收：判红的两条都退 0，默认路径**逐字复现**
+
+```
+cargo test      lib 套件 399 通过（+3，见上表）
+verify          1 帧不一致（老账：act1_f8 那张带灵巧的耸肩无视）
+verify --per-turn   2 帧（同一件事）
+verify --predict-enemy  340/407 = 83% · 0 只对不齐/未知
+                        **允许集合平均 1.13 手/次 · 9 例落在集合外**
+solve           294 个回合：一致 68 / 并列 27 / 换序 0 / 另选 199 · 0 例实战线赢过穷尽搜索
+rollout solver  P1 196/200 · P4 0/20672
+rollout fast    P1 196/200 · P4 0/20672
+synth_audit     81 条：逐字段一致 79 · 有差 0 · 跳过 2 · 缺口只剩石化蟾蜍 2 条
+fight_eval      79 场 × 64：截断 0，退 0
+act_eval        78 副 × 64 = 4992 条：**截断 0/4992** · 死 3152/4992 = 63%
+                回溯检验 p10–p90 42/70 · **每场偏 +6.9 血**
+```
+
+**`act_eval` 那四个数和阶段 3 那轮逐字相同** —— 这正是"不用就不生效"该有的样子
+（`pin_boss` 不给时 `draw_sequence` 一个骰子都没多掷、也没少掷）。
+
+**一处和上一版记的数对不上，先说清楚不是这次改的**：`--predict-enemy` 的
+允许集合平均今天 **1.13 / 9 例集合外**，而 09-10 那份读数写的是 1.11 / 8 例。
+这一轮 `git diff --stat` 只有 `synth/act.rs`、`bin/act_eval.rs` 和 `lib.rs` 的测试，
+`verify` 那条路一行没碰 ⇒ 差出来的是 **09-12 上午那两条 L1 修复**
+（势不可当归属 · 触发器伤害的层数）带来的，它们会改触发链而允许集合读
+`enemy_hist`。上一版"前八条一个数都没动"那句话**在这一栏上没核到**。
+
+### 四个决策收敛成一个概念：候选
+
+拿牌 / 移除 / 升级 / 走不走精英，在 L3 眼里是同一件事 ——
+**一副基准牌组 + 若干个改动，在同一批随机上配对比**。
+候选按**下标**寻址（三张打击里带附魔的是哪一张，名字答不了）。
+候选自己知道的毛病（下标越界 / 已经升过了 / 内核不认识这张牌）**整条不评分**，
+理由和药水拒绝定价同一条：给一个"改了等于没改"的差值比不给更糟。
+
+### 主信号是 0 的时候另开一栏（这一栏当场兑现了一次）
+
+死亡率是判决量，而**基准必死**的牌组上它恒等于 0 ——
+那正是旧 advisor「ΔHP 在死亡处被截断」那条老毛病换了个地方犯。
+出路不是把两个量混成一个分数（那就是老毛病本身），是另开一栏，
+**只在主信号是 0 的时候印**：整幕看"谁死得更靠后"，单场看"谁把敌人打得更残"。
+
+冒烟时的读数：起手牌组（11 张）打 `SoulFyshBoss`，两臂都是 **64/64 死**，
+而「基础打击全升」在 **63/64** 条配对样本上把敌人剩血压低了 **21 点**。
+主信号一个字都说不出来的地方，这一栏说得出方向。
+
+### Python 侧两件内核办不到的事
+
+* **认这是哪一幕**：`run.act` 只有 1/2/3，而第 1 幕有两个（Overgrowth /
+  Underdocks 同序号）。唯一分得开的是 `map.boss.id`，而卡牌奖励屏上**没有地图块**。
+  缓存在 `traces/_advise_ctx.json`，**换幕或楼层倒退**（新开一局）就作废；
+  两个都没有就**拒绝作答**并说清怎么办（到地图屏上再调一次）。
+  离线冒烟验过两条路径：没缓存时报"认不出"，看过地图之后报 Underdocks。
+* **数还剩几间房**：`boss.row − 当前 row`（一行一间），再拿默认那条路线截尾。
+  **它是个 `[判断]`**，连同"它是怎么来的"一起印在报告最上面。
+
+### 离线冒烟怎么做的（游戏没开）
+
+手搓两份实况 JSON（地图屏 / 卡牌奖励屏，含 `player.deck` 那个补丁字段），
+`advise_core.py --state <文件>` 跑完三个问法和四个决策，外加直接喂
+`advise.exe` 请求文件验三条拒绝路径：钉错幕的 Boss（退 1）·
+下标越界的候选（不评分）· 内核不认识的敌人（拒绝作答）。
+### 实况那一半也碰过了（同一天，开着游戏跑的）
+
+存档续上是**第 1 幕第 17 层、A3、13/77 血、15 张牌、6 件遗物**，停在战利品屏。
+`advise_core.py deck` 一次跑通，三个数是它的判决：
+
+* **15 张真牌名全认得**（打击 ×3 · 防御 ×3 · 剑柄打击 · 劫掠 · 地狱之刃 · 头槌 ·
+  旋风斩+ · 无惧疼痛 · 燃烧 · 痛击 · 耸肩无视），0 张落成未知牌；
+* **6 件真遗物 id 全认得**（`BURNING_BLOOD` / `LEAFY_POULTICE` / `CHOSEN_CHEESE` /
+  `BRONZE_SCALES` / `CLOAK_CLASP` / `HORN_CLEAT`），**构造器一条缺口都没报**；
+* **一瓶药水内核不认得：`GLOWWATER_POTION`（发光水，"消耗你的手牌。抽10张牌。"）**
+  —— 它不在 `ops.rs::POTIONS` 也不在 `replay::map_potion`。
+  报告把它和空槽**分开印**（"内核不认得「GLOWWATER_POTION」"），
+  这正是那一栏存在的理由：`potion_def(UNKNOWN)` 会退回 0 号，名字叫「无」，
+  照它印的话"认不得"和"空槽"长得一模一样。**没顺手加**：加一瓶药水是加一行表，
+  但要走内容那条路（含九条验收），和这次的接线分开做。
+
+`act` 那一问在这个屏上**按设计拒绝作答**（战利品屏没有地图块 ⇒ 第 1 幕的
+Overgrowth / Underdocks 分不开），消息里写着怎么办。显式传 `--act Underdocks
+--rooms RB` 之后整条链跑通（128 条链，死 41/128）。
+
+**仍然没被实况碰过的那一半**：地图屏上的 `boss.id` / `current_position`
+（这一局停在战利品屏，而**推进房间是局外决策，不归我**）——
+也就是说"自动认幕 + 钉 Boss + 数还剩几间"这三条今天只有离线冒烟证。
+下次走到地图屏时调一次 `snapshot_deck` 就能补上。
+
+
+## 旧 Python 模拟器退役（2026-09-12 晚，接线之后）
+
+L3 接完线，`sts2sim/` 里那 3000 行模拟器一个调用者都没有了，删掉。
+**删之前逐个查了引用**（`grep` 全树）：只有它自己的 `smoke_test.py`、
+`advisor/recorder.py` 和 README 在 import 它，sts2core 和 STS2MCP 一处都没有。
+
+删掉的：`sts2sim/` 整个包（cards / combat / deck / enemy / evaluate / route /
+search）· `smoke_test.py` · `advisor/bestiary.py` · `advisor/recorder.py` ·
+`advisor/cards_seen.json`。留下的：`advisor/server.py`（八个 MCP 工具名的映射）·
+`pyproject.toml`（`packages` 改成只有 `advisor`，`httpx` 去掉 —— HTTP 那一份在
+`record_trace.py`，只用标准库）· `uv.lock` · `.venv`（所有 Python 工具的解释器）。
+
+### 一样东西不能删，搬走了
+
+`advisor/bestiary.json` 是**观测**不是代码：2026-08-14 那一局边打边记的敌人
+最大血量（旧 advisor 的两个只读工具每次读状态都记一笔）。
+逐只对过 `traces/enemies_observed.json`：**35 只里 22 只那边没有** ——
+对拍语料 08-16 才开始，而那一局打到了第 3 幕。第 3 幕的 Boss 和精英
+（女王 400 · 火炬头聚合体 199 · 机甲骑士 300 · 连枷骑士 101 · 幽灵骑士 93 ·
+魔法骑士 82 · 青蛙骑士 191 · 虔诚雕刻师 162 · 史莱姆狂战士 261 ·
+实验体 #C8 的一段形态 100）几乎只在这里有实测血量。
+
+**实测不可再生**（只能重新打一场），所以进了
+`data/enemies_observed_legacy.json`，连同出处和四条注意事项：
+进阶不明（旧 advisor 不记进阶，而 A8 改血量）· 幕和种类是旧 advisor 按
+`state_type` 分的不是遭遇表的口径 · 名字带局内后缀（`实验体 #C8`，那个编号
+每局都变）· `damage_samples` 是意图标签上的数（含双方乘区，不是面板基础值）。
+
+**重叠的那 13 只两边对得上、但不逐字相同**（缩小甲虫 39 vs 40 · 毛绒伏地虫
+55 vs 56 · 盛碗虫（石）48 vs 45 · 飞蝇菌子 49 vs 47…）——
+那不是矛盾，血量本来就是**区间**里掷出来的（`asc::hp_range`），
+两次观测落在不同点上正是那个区间存在的证据。
+
+### 验证
+
+`uv run --directory sts2sim python -c "import advisor.server"` 之后
+`mcp.list_tools()` 仍然是八个工具名 —— `pyproject` 的 `packages` 少了一项、
+少了一个依赖，uv 重新同步没出问题。
+
+> **`.claude/settings.local.json` 里还留着一条指向 `smoke_test.py` 的权限白名单** ——
+> 那是 harness 的配置不是这个仓库的，而且是惰性的（命令不存在就跑不起来），没动。

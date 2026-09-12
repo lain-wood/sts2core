@@ -258,7 +258,7 @@ fn run(
                 let relics = ex.relic_specs();
                 let hp = corrected_hp(&ex, seed);
                 let spec = FightSpec { hp, ..ex.fight_spec(&relics, seed) };
-                let plan = ActPlan { act: &a, rooms, double_boss: false };
+                let plan = ActPlan::new(&a, rooms);
                 let ev = evaluate_act(&spec, &plan, table, acfg);
                 if upgrade_check && ev.refused.is_none() {
                     let upg = upgrade_basics(&ex.deck);

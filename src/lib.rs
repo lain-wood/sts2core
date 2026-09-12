@@ -10151,7 +10151,7 @@ mod tests {
         let Some(t) = act_table() else { return };
         use crate::synth::act::{evaluate_act, parse_rooms, ActCfg, ActPlan};
         let rooms = parse_rooms("MMEB").unwrap();
-        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let plan = ActPlan::new("Underdocks", &rooms);
         let cfg = ActCfg { samples: 12, ..ActCfg::default() };
         let a = eval_deck(10);
         let b = eval_deck(16); // 多六张牌
@@ -10178,7 +10178,7 @@ mod tests {
         let Some(t) = act_table() else { return };
         use crate::synth::act::{evaluate_act, parse_rooms, ActCfg, ActPlan};
         let rooms = parse_rooms("MMMMB").unwrap();
-        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let plan = ActPlan::new("Underdocks", &rooms);
         let cfg = ActCfg { samples: 8, ..ActCfg::default() };
         let deck = eval_deck(10);
         let enemies: [crate::synth::EnemySpec; 0] = [];
@@ -10209,7 +10209,7 @@ mod tests {
         let deck = eval_deck(10);
         let enemies: [crate::synth::EnemySpec; 0] = [];
         let spec = crate::synth::FightSpec::new(&deck, 80, &enemies, 5);
-        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let plan = ActPlan::new("Underdocks", &rooms);
         let a = evaluate_act(&spec, &plan, &t, &cfg);
         // 自己和自己：逐样本差必须全是 0
         let b = evaluate_act(&spec, &plan, &t, &cfg);
@@ -10248,7 +10248,7 @@ mod tests {
             evaluate_act, paired_act_delta, parse_rooms, upgrade_basics, ActCfg, ActPlan,
         };
         let rooms = parse_rooms("MMRMB").unwrap();
-        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let plan = ActPlan::new("Underdocks", &rooms);
         let cfg = ActCfg { samples: 24, ..ActCfg::default() };
         let base = eval_deck(12);
         let upg = upgrade_basics(&base);
@@ -10276,7 +10276,7 @@ mod tests {
         let Some(t) = act_table() else { return };
         use crate::synth::act::{evaluate_act, parse_rooms, rest_heal, ActCfg, ActPlan};
         let rooms = parse_rooms("RR").unwrap();
-        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let plan = ActPlan::new("Underdocks", &rooms);
         let cfg = ActCfg { samples: 4, ..ActCfg::default() };
         let deck = eval_deck(10);
         let enemies: [crate::synth::EnemySpec; 0] = [];
@@ -10290,5 +10290,89 @@ mod tests {
         let full = crate::synth::FightSpec { hp: 78, ..spec };
         let ev = evaluate_act(&full, &plan, &t, &cfg);
         assert_eq!(ev.hp_end.max, 80, "封顶在上限");
+    }
+
+    /// **钉死的 Boss 真的被钉住了，而且不扰动这条链的其余部分。**
+    ///
+    /// 两半缺一不可：钉了要用那一只（不然报告里那句"钉死为 X"是假的），
+    /// 而杂兵/精英那两串必须**逐字不变** —— 抽 Boss 原来要掷一次骰子，
+    /// 跳过它却让后面的抽牌漂掉的话，"钉 Boss"就顺手换了整幕的遭遇，
+    /// 而两个候选之间的 CRN 正是靠这一维。
+    #[test]
+    fn pinning_the_boss_uses_it_and_leaves_the_rest_of_the_sequence_alone() {
+        let Some(t) = act_table() else { return };
+        use crate::synth::act::{draw_sequence, parse_rooms, ActPlan};
+        let rooms = parse_rooms("MEB").unwrap();
+        let act = t.act_by_name("Underdocks").expect("表里有这一幕");
+        let free = ActPlan::new("Underdocks", &rooms);
+        let pinned = ActPlan { pin_boss: Some("WaterfallGiantBoss"), ..free };
+        for seed in [1u64, 2, 3, 99, 12345] {
+            let a = draw_sequence(&t, act, &free, seed);
+            let b = draw_sequence(&t, act, &pinned, seed);
+            assert_eq!(b.boss.as_deref(), Some("WaterfallGiantBoss"), "钉了却没用");
+            assert_eq!(a.normals, b.normals, "种子 {seed}：钉 Boss 把杂兵那一串抽漂了");
+            assert_eq!(a.elites, b.elites, "种子 {seed}：钉 Boss 把精英那一串抽漂了");
+        }
+    }
+
+    /// **钉错幕的 Boss 整个拒绝作答**，不退回去掷一个。
+    ///
+    /// 悄悄掷一个的话，报出来的数会像是"按你说的那只 Boss 算的" ——
+    /// 这正是本仓库最忌讳的"自信地算错"。
+    #[test]
+    fn pinning_a_boss_from_another_act_refuses_instead_of_rolling_one() {
+        let Some(t) = act_table() else { return };
+        use crate::synth::act::{evaluate_act, parse_rooms, ActCfg, ActPlan, ActRefusal};
+        let rooms = parse_rooms("B").unwrap();
+        let cfg = ActCfg { samples: 4, ..ActCfg::default() };
+        let deck = eval_deck(10);
+        let enemies: [crate::synth::EnemySpec; 0] = [];
+        let spec = crate::synth::FightSpec::new(&deck, 80, &enemies, 7);
+        // 无厌沙虫是第 2 幕（Hive）的 Boss
+        let plan = ActPlan {
+            pin_boss: Some("TheInsatiableBoss"),
+            ..ActPlan::new("Underdocks", &rooms)
+        };
+        let ev = evaluate_act(&spec, &plan, &t, &cfg);
+        match ev.refused {
+            Some(ActRefusal::NoSuchBoss { .. }) => {}
+            other => panic!("钉错幕的 Boss 没被拒：{other:?}"),
+        }
+    }
+
+    /// **换路线的那一对走另一个入口。**
+    ///
+    /// `paired_act_delta` 挡住路线不同的一对（比牌组时路线必须固定），
+    /// 而"走不走精英"这个决策**只能**由两条不同的路线表达 ——
+    /// 所以另开一个口子，并在那边的文档里写清 CRN 共享到哪为止。
+    #[test]
+    fn comparing_two_routes_needs_the_other_entry_point() {
+        let Some(t) = act_table() else { return };
+        use crate::synth::act::{
+            evaluate_act, paired_act_delta, paired_act_delta_across_routes, parse_rooms, ActCfg,
+            ActPlan,
+        };
+        let with_elite = parse_rooms("EMB").unwrap();
+        let without = parse_rooms("MMB").unwrap();
+        let cfg = ActCfg { samples: 8, ..ActCfg::default() };
+        let deck = eval_deck(10);
+        let enemies: [crate::synth::EnemySpec; 0] = [];
+        let spec = crate::synth::FightSpec::new(&deck, 80, &enemies, 11);
+        let a = evaluate_act(&spec, &ActPlan::new("Underdocks", &with_elite), &t, &cfg);
+        let b = evaluate_act(&spec, &ActPlan::new("Underdocks", &without), &t, &cfg);
+        assert!(paired_act_delta(&a, &b).is_none(), "路线不同，这个入口必须拒绝");
+        let d = paired_act_delta_across_routes(&a, &b).expect("换路线的那个入口要收");
+        assert!(d.pairs > 0);
+        // 种子基不同那一条**两个入口都要挡**
+        let other_seed = evaluate_act(
+            &crate::synth::FightSpec { seed: 12, ..spec },
+            &ActPlan::new("Underdocks", &without),
+            &t,
+            &cfg,
+        );
+        assert!(
+            paired_act_delta_across_routes(&a, &other_seed).is_none(),
+            "种子基不同就不是配对比较了"
+        );
     }
 }

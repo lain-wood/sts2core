@@ -1,0 +1,295 @@
+{
+ "note": "**[实测] 敌人最大血量，来自旧 advisor 的 bestiary.json**（2026-09-12 迁进来的）。那份东西是 2026-08-14 那一局边打边记的：`snapshot_deck` / `inspect_fight` 每次读状态都把场上敌人的 max_hp 和意图伤害记一笔。L3 接线之后旧 advisor 整个退役，而**这些观测不可再生**（只能重新打一场），所以代码删掉、数据搬过来。",
+ "why_it_matters": "35 只里有 22 只在 `traces/enemies_observed.json` 里**没有** —— 那份是从对拍语料聚合的，而语料从 2026-08-16 才开始，08-14 那一局（打到第 3 幕）一帧都没录。第 3 幕的 Boss 和精英几乎只在这里有实测血量。用处有两个：`asc::hp_range` 那张 [源码] 档的表可以拿它对一对（今天 `synth_audit` 那一栏报的「没有区间」就是这一类欠账），补敌人内容时也有个实测的血量起点。",
+ "caveats": [
+  "**进阶不明**：旧 advisor 不记进阶等级，而 A8 会改血量。那一局大概率是低进阶，但没有证据。",
+  "**幕和种类是旧 advisor 自己分的**（state_type -> normal/elite/boss），不是遭遇表的口径。",
+  "**名字带局内后缀的照抄**（`实验体 #C8` —— 那个编号每一局都不一样）。",
+  "**`damage_samples` 是意图标签上的数**，含双方乘区，不是面板基础值。"
+ ],
+ "source": "sts2sim/advisor/bestiary.json（已删除）· 迁移日期 2026-09-12",
+ "also_in_traces": [
+  "同族信徒",
+  "同族神官",
+  "旧日雕像",
+  "树叶史莱姆（中）",
+  "树叶史莱姆（小）",
+  "树枝史莱姆（中）",
+  "树枝史莱姆（小）",
+  "毛绒伏地虫",
+  "盛碗虫（卵）",
+  "盛碗虫（石）",
+  "缩小甲虫",
+  "雾菇",
+  "飞蝇菌子"
+ ],
+ "acts": {
+  "3": {
+   "normal": {
+    "活体盾": {
+     "max_hp": 55,
+     "damage_samples": [
+      6
+     ]
+    },
+    "高塔炮手": {
+     "max_hp": 41,
+     "damage_samples": [
+      15
+     ]
+    },
+    "虔诚雕刻师": {
+     "max_hp": 162,
+     "damage_samples": [
+      0
+     ]
+    },
+    "史莱姆狂战士": {
+     "max_hp": 261,
+     "damage_samples": [
+      0
+     ]
+    },
+    "青蛙骑士": {
+     "max_hp": 191,
+     "damage_samples": [
+      9
+     ]
+    }
+   },
+   "boss": {
+    "火炬头聚合体": {
+     "max_hp": 199,
+     "damage_samples": [
+      13
+     ]
+    },
+    "女王": {
+     "max_hp": 400,
+     "damage_samples": [
+      0
+     ]
+    },
+    "实验体 #C8": {
+     "max_hp": 100,
+     "damage_samples": [
+      15,
+      15
+     ]
+    }
+   },
+   "elite": {
+    "连枷骑士": {
+     "max_hp": 101,
+     "damage_samples": [
+      11,
+      11
+     ]
+    },
+    "幽灵骑士": {
+     "max_hp": 93,
+     "damage_samples": [
+      0,
+      0
+     ]
+    },
+    "魔法骑士": {
+     "max_hp": 82,
+     "damage_samples": [
+      4,
+      4
+     ]
+    },
+    "机甲骑士": {
+     "max_hp": 300,
+     "damage_samples": [
+      25,
+      25
+     ]
+    }
+   }
+  },
+  "1": {
+   "normal": {
+    "缩小甲虫": {
+     "max_hp": 39,
+     "damage_samples": [
+      0,
+      0
+     ]
+    },
+    "毛绒伏地虫": {
+     "max_hp": 55,
+     "damage_samples": [
+      4,
+      4
+     ]
+    },
+    "树枝史莱姆（小）": {
+     "max_hp": 7,
+     "damage_samples": [
+      4,
+      4
+     ]
+    },
+    "树叶史莱姆（中）": {
+     "max_hp": 32,
+     "damage_samples": [
+      0,
+      0
+     ]
+    },
+    "树叶史莱姆（小）": {
+     "max_hp": 13,
+     "damage_samples": [
+      3,
+      3
+     ]
+    },
+    "蛮兽": {
+     "max_hp": 72,
+     "damage_samples": [
+      6,
+      6
+     ]
+    },
+    "树枝史莱姆（中）": {
+     "max_hp": 28,
+     "damage_samples": [
+      0,
+      0,
+      0
+     ]
+    },
+    "飞蝇菌子": {
+     "max_hp": 49,
+     "damage_samples": [
+      6,
+      6,
+      8
+     ]
+    },
+    "雾菇": {
+     "max_hp": 74,
+     "damage_samples": [
+      0
+     ]
+    }
+   },
+   "elite": {
+    "旧日雕像": {
+     "max_hp": 127,
+     "damage_samples": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "异蛙寄生虫": {
+     "max_hp": 62,
+     "damage_samples": [
+      0,
+      0
+     ]
+    }
+   },
+   "boss": {
+    "仪式兽": {
+     "max_hp": 252,
+     "damage_samples": [
+      0,
+      0
+     ]
+    },
+    "同族信徒": {
+     "max_hp": 59,
+     "damage_samples": [
+      0,
+      5
+     ]
+    },
+    "同族神官": {
+     "max_hp": 190,
+     "damage_samples": [
+      8
+     ]
+    }
+   }
+  },
+  "2": {
+   "normal": {
+    "地道虫": {
+     "max_hp": 87,
+     "damage_samples": [
+      9
+     ]
+    },
+    "外骨骼虫": {
+     "max_hp": 28,
+     "damage_samples": [
+      0,
+      6,
+      0,
+      0,
+      6,
+      0,
+      3,
+      8,
+      0
+     ]
+    },
+    "直飞产卵虫": {
+     "max_hp": 130,
+     "damage_samples": [
+      0,
+      0
+     ]
+    },
+    "盛碗虫（石）": {
+     "max_hp": 48,
+     "damage_samples": [
+      15,
+      15,
+      15
+     ]
+    },
+    "盛碗虫（卵）": {
+     "max_hp": 22,
+     "damage_samples": [
+      7,
+      7
+     ]
+    },
+    "盛碗虫（蜜）": {
+     "max_hp": 36,
+     "damage_samples": [
+      3
+     ]
+    },
+    "盛碗虫（丝）": {
+     "max_hp": 42,
+     "damage_samples": [
+      0
+     ]
+    }
+   },
+   "boss": {
+    "知识恶魔": {
+     "max_hp": 379,
+     "damage_samples": [
+      0
+     ]
+    }
+   },
+   "elite": {
+    "感染棱柱": {
+     "max_hp": 161,
+     "damage_samples": [
+      15
+     ]
+    }
+   }
+  }
+ }
+}

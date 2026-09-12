@@ -163,6 +163,28 @@ pub struct ActPlan<'a> {
     /// `i == State.Acts.Count - 1 && HasLevel(DoubleBoss)`）。
     /// 为真时第二间 Boss 房拉的是另一只 Boss。
     pub double_boss: bool,
+    /// **这一幕的 Boss 已经定下来了**（遭遇 key，`"SoulFyshBoss"`）。
+    ///
+    /// 实战里这是个**已知量**：地图屏一进去就报着这一幕的 Boss 是谁
+    /// （mod 的 `map.boss.id`，[源码] `ActModel.BossEncounter`）。
+    /// 给了就不掷 —— 掷一个均匀的 Boss 等于把一条已知信息换成方差，
+    /// 而 Boss 那一场是整幕死亡率里最大的一块。
+    ///
+    /// **这是阶段 1 那句「欠一个局外信息有时候等于欠一个参数」的第四条**
+    /// （前三条是 `after_rest` / `RelicSpec::counter` / `boss_room`）。
+    /// 给的 key 不在这一幕的 Boss 池里就**整个拒绝作答**
+    /// （[`ActRefusal::NoSuchBoss`]）：那时候悄悄退回去掷一个，
+    /// 报出来的数会像是"按你说的那只 Boss 算的"。
+    pub pin_boss: Option<&'a str>,
+    /// A10 第二个 Boss 的同一件事。`double_boss` 为假时它没有消费点。
+    pub pin_second_boss: Option<&'a str>,
+}
+
+impl<'a> ActPlan<'a> {
+    /// 最小构造：一幕 + 一条路线。Boss 掷、不是双 Boss。
+    pub fn new(act: &'a str, rooms: &'a [Room]) -> ActPlan<'a> {
+        ActPlan { act, rooms, double_boss: false, pin_boss: None, pin_second_boss: None }
+    }
 }
 
 /// 一幕抽出来的遭遇序列（[源码] `RoomSet` 的三份清单）。
@@ -239,8 +261,12 @@ fn draw_into(t: &Table, out: &mut Vec<String>, pool: &[&Encounter], n: usize, rn
     }
 }
 
-/// 抽这一幕的遭遇序列。**只吃种子和表，牌组进不来** —— 那是 CRN 的全部内容。
-pub fn draw_sequence(t: &Table, act: &Act, double_boss: bool, seed: u64) -> Sequence {
+/// 抽这一幕的遭遇序列。**只吃种子、表和路线，牌组进不来** —— 那是 CRN 的全部内容。
+///
+/// `plan` 进来只为了两样**局外已知**的东西：`double_boss` 和两个
+/// [`ActPlan::pin_boss`]。路线本身（走哪几间）在这一步没有用 ——
+/// 序列是先抽好的一份清单，走几间由 [`one_chain`] 去拉。
+pub fn draw_sequence(t: &Table, act: &Act, plan: &ActPlan, seed: u64) -> Sequence {
     let mut rng = seed;
     let mut out = Sequence::default();
 
@@ -261,17 +287,28 @@ pub fn draw_sequence(t: &Table, act: &Act, double_boss: bool, seed: u64) -> Sequ
     // **`ApplyDiscoveryOrderModifications` 没建**：它会在"这只 Boss 还没见过"时
     // 强制选它，而"见没见过"是存档进度，战斗观测里一个字都没有。
     // 欠一个拿不到的输入 ⇒ 留空（这里就是均匀抽），不挑一组自洽的解。
+    //
+    // **给了 `pin_boss` 就不掷**：那是局外已知量（地图屏上写着），
+    // 见 [`ActPlan::pin_boss`]。key 合不合法在 [`evaluate_act`] 里查过了，
+    // 这里只管用 —— 每条链各查一遍是把同一件事做 N 遍。
     let bosses = t.pool(act, Pool::Boss);
     if !bosses.is_empty() {
-        let b = bosses[next_below(&mut rng, bosses.len())];
-        out.boss = Some(b.key.clone());
-        if double_boss {
-            // [源码] `NextItem(AllBossEncounters.Where(e => e.Id != BossEncounter.Id))`
-            let others: Vec<&&Encounter> = bosses.iter().filter(|e| e.key != b.key).collect();
-            if !others.is_empty() {
-                out.second_boss = Some(others[next_below(&mut rng, others.len())].key.clone());
-            }
+        let b = match plan.pin_boss {
+            Some(k) => k.to_string(),
+            None => bosses[next_below(&mut rng, bosses.len())].key.clone(),
+        };
+        if plan.double_boss {
+            out.second_boss = match plan.pin_second_boss {
+                Some(k) => Some(k.to_string()),
+                // [源码] `NextItem(AllBossEncounters.Where(e => e.Id != BossEncounter.Id))`
+                None => {
+                    let others: Vec<&&Encounter> = bosses.iter().filter(|e| e.key != b).collect();
+                    (!others.is_empty())
+                        .then(|| others[next_below(&mut rng, others.len())].key.clone())
+                }
+            };
         }
+        out.boss = Some(b);
     }
     out
 }
@@ -315,6 +352,9 @@ pub enum ActRefusal {
     NoSuchAct(String),
     /// 这条路线上一场仗都开不出来（这一幕内核一场都不认识）
     NothingSimulable,
+    /// 调用方钉的那只 Boss 不在这一幕的 Boss 池里。
+    /// **退回去掷一个是错的** —— 报出来的数会像是"按你说的那只算的"
+    NoSuchBoss { act: String, key: String },
 }
 
 impl std::fmt::Display for ActRefusal {
@@ -323,6 +363,9 @@ impl std::fmt::Display for ActRefusal {
             ActRefusal::NoSuchAct(a) => write!(f, "遭遇表里没有「{a}」这一幕"),
             ActRefusal::NothingSimulable => {
                 write!(f, "这条路线上一场仗都开不出来 —— 这不是 0 分，是没有分")
+            }
+            ActRefusal::NoSuchBoss { act, key } => {
+                write!(f, "「{key}」不是「{act}」这一幕的 Boss —— 钉错了 Boss 的数比没有数更糟")
             }
         }
     }
@@ -543,6 +586,15 @@ pub fn evaluate_act(spec: &FightSpec, plan: &ActPlan, t: &Table, cfg: &ActCfg) -
         return out;
     };
     out.coverage = t.coverage(act);
+    // **钉的那只 Boss 必须真的是这一幕的。** 查一次（不是每条链各查一遍），
+    // 不合法就整个拒绝作答 —— 见 [`ActPlan::pin_boss`]。
+    for key in [plan.pin_boss, plan.pin_second_boss].into_iter().flatten() {
+        if !t.pool(act, Pool::Boss).iter().any(|e| e.key == key) {
+            out.refused =
+                Some(ActRefusal::NoSuchBoss { act: act.name.clone(), key: key.to_string() });
+            return out;
+        }
+    }
 
     // `crn_salt` 默认 0 ⇒ 基就是 `spec.seed`，两个候选逐字相同（CRN）。
     let base = spec.seed ^ cfg.crn_salt;
@@ -601,7 +653,7 @@ fn one_chain(
     base: u64,
     i: usize,
 ) -> (ActSample, Vec<Gap>, Vec<Skipped>) {
-    let seq = draw_sequence(t, act, plan.double_boss, seq_seed(base, i));
+    let seq = draw_sequence(t, act, plan, seq_seed(base, i));
     let mut gaps: Vec<Gap> = Vec::new();
     let mut skipped: Vec<Skipped> = Vec::new();
     let mut s = ActSample {
@@ -717,13 +769,29 @@ fn describe(u: &Unresolved) -> String {
 /// `a` / `b` 必须同种子基、同样本数、**同一条路线** —— 路线一换就不是
 /// 同一个问题了，那时的差值什么都不是。
 pub fn paired_act_delta(a: &ActEval, b: &ActEval) -> Option<ActDelta> {
-    if a.refused.is_some()
-        || b.refused.is_some()
-        || a.n != b.n
-        || a.n == 0
-        || a.seed != b.seed
-        || a.rooms != b.rooms
-    {
+    if a.rooms != b.rooms {
+        return None;
+    }
+    paired_act_delta_across_routes(a, b)
+}
+
+/// 同一副牌组、**两条不同路线**的配对差值（"走精英那条 vs 绕开那条"）。
+///
+/// [`paired_act_delta`] 挡住路线不同的那一对，理由是"路线一换就不是同一个问题了"
+/// —— 那条挡对绝大多数调用是对的（比牌组的时候路线必须固定）。
+/// **但"走哪条路"本身就是一个决策**，而它恰好只能由两条不同的 `rooms` 表达。
+///
+/// **这一对上 CRN 共享到哪为止，要知道**：
+///
+/// | 共享 | 不共享 |
+/// |---|---|
+/// | 这一幕**抽到哪几场遭遇**（[`seq_seed`] 只吃 `(base, i)`）| 第 k 间的敌人血量 —— [`fight_seed`] 吃 `k`，而**同一场仗在两条路线上的 k 不同** |
+///
+/// 所以它比"同路线换牌组"那一对**噪声大**：共享的那一维还在（两条路线面对的是
+/// 同一批遭遇，这正是要的），但逐场血量那一维在路线错位的那一刻就分岔了。
+/// 读它要看**一批起点上的方向**，别拿单次的正负当结论。
+pub fn paired_act_delta_across_routes(a: &ActEval, b: &ActEval) -> Option<ActDelta> {
+    if a.refused.is_some() || b.refused.is_some() || a.n != b.n || a.n == 0 || a.seed != b.seed {
         return None;
     }
     let mut d: Vec<i32> = Vec::new();

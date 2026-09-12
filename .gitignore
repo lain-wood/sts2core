@@ -29,6 +29,9 @@ traces/_watch.txt
 
 # 生成物
 traces/_live.json
+# L3 顾问的「这是哪一幕 / Boss 是谁」缓存（tools/advise_core.py 写）。
+# 它是**这一局**的状态，跟踪它等于把上一局的幕名提交进仓库。
+traces/_advise_ctx.json
 traces/_seed_sweep.json
 traces/_t5.json
 traces/raw_*/
