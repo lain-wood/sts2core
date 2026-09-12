@@ -36,7 +36,7 @@ pub struct CardObs {
     pub description: String,
     /// 附魔的 id（`NIMBLE` 那种），没有就是空串。mod 2026-09-01 才开始报。
     pub enchant_id: String,
-    /// 附魔的 `Amount`。怎么用取决于是哪一种附魔，见 `enchant_block_bonus`。
+    /// 附魔的 `Amount`。怎么用取决于是哪一种附魔，见 `content::ENCHANTS`。
     pub enchant_amount: i32,
 }
 
@@ -114,8 +114,23 @@ pub struct Obs {
     /// **内核的 `State::draw` 反过来，顶在末尾**（`pop_draw_top` 从末尾取），
     /// 所以填进去要反向。
     pub draw_order: Vec<String>,
+    /// 和 `draw_order` **逐位置配对**的附魔 `(id, amount)`，没附魔是 `("", 0)`。
+    ///
+    /// 来自 mod 的 `draw_pile_order_enchantments`（2026-09-03 本地补丁，
+    /// 和 `draw_pile_order` 同一批）。**空 = 拿不到**（老 trace / 没打这版补丁
+    /// 的 mod），那时抽到的牌一律按没附魔算 —— 那正是这个字段要补的洞：
+    /// 一张带灵巧的耸肩无视在手里给 10 点格挡，段内才抽出来的却按卡表算 8。
+    ///
+    /// 挂在 `draw_order` 上而不是 `draw` 上是**必须的**：后者被 mod 按稀有度+id
+    /// 重排过（约束 2），下标不再指向同一张实体牌。
+    pub draw_order_enchant: Vec<(String, i32)>,
     pub discard: Vec<String>,
+    /// 和 `discard` 逐位置配对的附魔，语义同 `draw_order_enchant`。
+    /// 弃牌堆没被重排，所以这里直接跟着 `discard` 走。
+    pub discard_enchant: Vec<(String, i32)>,
     pub exhaust: Vec<String>,
+    /// 和 `exhaust` 逐位置配对的附魔，语义同 `draw_order_enchant`。
+    pub exhaust_enchant: Vec<(String, i32)>,
     pub pending: bool,
     /// 身上的药水。**必须带槽位号**：喝掉中间一格之后观测数组会收缩
     /// （实测 `act1_f14`：喝掉 slot 2 后数组从 3 项变 2 项），
@@ -193,6 +208,12 @@ pub struct Frame {
 pub struct Trace {
     pub version: i64,
     pub run: String,
+    /// 这一局的进阶等级（`run.ascension`，缺就是 0）。
+    ///
+    /// `run` 那个字符串里也有它，但那是给人看的。**内核要的是数**：
+    /// `Replayer::for_trace` 把它灌进 `State::ascension`，
+    /// A8/A9 的敌人数值才生效（见 `asc`）。
+    pub ascension: u8,
     pub frames: Vec<Frame>,
 }
 
@@ -216,6 +237,17 @@ fn status_map(j: Option<&Json>) -> BTreeMap<String, i32> {
     out
 }
 
+/// 一个 `{"id","name","amount"}` 附魔对象 -> `(id, amount)`；`null`/缺失 -> `("", 0)`。
+fn parse_enchant(j: Option<&Json>) -> (String, i32) {
+    match j {
+        Some(e) => (
+            e.str("id").unwrap_or_default().to_string(),
+            e.i64("amount").unwrap_or(0) as i32,
+        ),
+        None => (String::new(), 0),
+    }
+}
+
 fn parse_card(j: &Json) -> CardObs {
     CardObs {
         slot: j.i64("slot").unwrap_or(0) as usize,
@@ -237,21 +269,139 @@ fn parse_card(j: &Json) -> CardObs {
     }
 }
 
-/// 附魔 -> **这一张实例的格挡加值**。
+/// 扯碎的段数：**从卡面文本反推**「本场挨穿过几次」（`State::hp_loss_hits`）。
 ///
-/// [源码] `EnchantmentModel` 的钩子面有五个（格挡加/乘、伤害加/乘、出牌次数），
-/// 这里**只认加法那一族里的格挡**，其余一律返回 0 并由调用方点名 ——
-/// 本仓库"欠定就留空"的老规矩：给一个自信的错数值比不给更危险。
+/// 那个计数器观测里没有，但游戏把**算好的段数**渲染进了这张牌的描述：
+/// `造成5点伤害。 在本场战斗中，…… （命中3次）`。段数 = 1 + 次数（[源码]
+/// `TearAsunder`），所以次数 = 括号里那个数 − 1。
 ///
-/// 已知：
-/// * `NIMBLE`（灵巧）—— [源码] `EnchantBlockAdditive => Amount`，直接就是加值。
+/// 这是「**观测到的数是权威**」那条老规矩的又一例（费用、附魔层数都是这么办的）：
+/// 内核自己那份计数只从同步的那一刻开始累加，而这张牌吃的是**整场**的历史。
 ///
-/// **没进这张表的附魔不是"没有效果"，是"还没建"**。`--live` 会把它们点名。
-pub fn enchant_block_bonus(id: &str, amount: i32) -> Option<i32> {
-    match id.to_ascii_uppercase().as_str() {
-        "NIMBLE" => Some(amount),
+/// **只认扯碎**：括号里的数是这张牌独有的（它唯一的 `CalculatedVar` 就是段数），
+/// 换张牌同样的括号可能是别的意思。取的是最后一对括号里第一串数字，
+/// 全角半角都认；**读不出来就返回 `None`**，不猜。
+fn observed_tear_hits(obs: &Obs) -> Option<u8> {
+    let c = obs
+        .hand
+        .iter()
+        .find(|c| c.id == "TEAR_ASUNDER" || lookup_card(&c.name) == Some(card::TEAR_ASUNDER))?;
+    // **切片要落在字符边界上**：`（` 是 3 个字节，`i + 1` 会切进它中间直接 panic。
+    // 从括号本身切起就行 —— 下面那个 `skip_while` 顺手把它跳掉。
+    let open = c.description.rfind(['（', '('])?;
+    let digits: String = c.description[open..]
+        .chars()
+        .skip_while(|ch| !ch.is_ascii_digit())
+        .take_while(|ch| ch.is_ascii_digit())
+        .collect();
+    let hits: i32 = digits.parse().ok()?;
+    // 段数至少是 1；再小说明这句话不是我以为的那句，宁可当读不出来。
+    if hits < 1 { None } else { Some((hits - 1).min(u8::MAX as i32) as u8) }
+}
+
+/// 痛殴这一张实例**攒下来的伤害加值**：从卡面文本反推。
+///
+/// `Op::ExhaustRandomAttackAddDamage` 把吃掉那张攻击牌的伤害**永久**写进
+/// `CardInst.bonus`，而 `bonus` 观测里没有 —— `sync` 每帧从观测重建手牌，
+/// 于是攒了一整场的痛殴每帧都被重置回卡表基础值。
+///
+/// 但游戏把**算好的伤害**渲染进了描述：`造成13点伤害两次`。
+/// 和 [`observed_tear_hits`] 是同一条老规矩（观测到的数是权威），
+/// 也共享同一处局限：**只有手牌看得见**，牌不在手上时加值是 0，方向是**低估**。
+///
+/// # 渲染的那个数是「过了攻击方乘区、没过防御方乘区」的值
+///
+/// **这一条是实测钉死的，不是推的** —— 第3幕第46层同一场两帧：
+///
+/// | 帧 | 渲染 | 我的 status | 敌人 status | 实打/次 |
+/// |---|---|---|---|---|
+/// | 3  | 7  | 力量1 | 易伤2 | 10 = ⌊7×1.5⌋ |
+/// | 29 | 13 | 力量1 虚弱1 | — | 13 |
+///
+/// 帧3 说明**易伤（防御方）没进渲染值**（否则会渲染 10）；
+/// 帧29 说明**虚弱（攻击方）进了**（`(6+B+1)×0.75 = 13` ⇒ B = 11，
+/// 而 `6+B+1 = 13` 会给出 B = 6，那样实打就该是 ⌊13×0.75⌋ = 9 而不是 13）。
+///
+/// # 怎么反推：**正着算一遍，试到相等为止**
+///
+/// 2026-09-06 之前这里是 `加值 = 渲染值 − 卡面 − 力量 − 活力`，**只在攻击方
+/// 一个乘区都没有时成立**，带虚弱就整帧放弃（`act3_f46` 帧29 那条红）。
+/// 除以 0.75 再取整确实不可逆 —— **但不需要除**：加值是个小非负整数，
+/// 拿同一条伤害管线**正着**算一遍，逐个试过去就行。
+///
+/// 好处不只是多修一帧：这样反推**永远和 `damage.rs` 同口径**。
+/// 将来再进来一个攻击方乘区（纸蛙那类），这里一个字都不用改；
+/// 而减法那版会静默地错。
+///
+/// `preview_double` 是钢笔尖：计数器到 9 时**手牌里的攻击牌渲染的就是翻倍后
+/// 的数**（[实测] 同一场帧31/32 的全身撞击+，同样 6 点格挡，渲染 5 -> 10）。
+/// 它进 `apply_modifiers` 的方式和真打出去时一模一样（挂 `PenNibArmed`）。
+///
+/// **欠定时取最小的那个解**（`floor` 的原像最多两个整数）。方向是低估，
+/// 和这个函数其余每一处回退一致 —— 但它**不是"留空"**：0 是个更差的猜测，
+/// 而这里的候选集是穷举出来的、边界清楚。
+///
+/// **只认痛殴**：描述里第一个数字对别的牌可能是别的意思。读不出来返回 `None`，不猜。
+pub fn observed_thrash_bonus(
+    desc: &str,
+    upgraded: bool,
+    player: &Entity,
+    preview_double: bool,
+) -> Option<i16> {
+    let shown: i32 = desc
+        .chars()
+        .skip_while(|ch| !ch.is_ascii_digit())
+        .take_while(|ch| ch.is_ascii_digit())
+        .collect::<String>()
+        .parse()
+        .ok()?;
+    let def = card(card::THRASH);
+    let base = if upgraded { def.ops_upg } else { def.ops }.iter().find_map(|op| match op {
+        crate::ops::Op::Damage { base, .. } => Some(*base),
         _ => None,
+    })?;
+    // 攻击方 = 玩家本人（外加钢笔尖那个预览标记），防御方 = 一个**中性实体**。
+    // 中性那一半是关键：渲染值**不含防御方乘区**（帧3 实测，见上面那张表），
+    // 而全 0 的 `Entity` 在 `apply_modifiers` 里每一条防御方分支都是空操作。
+    let mut atk = *player;
+    atk.set(St::PenNibArmed, if preview_double { 1 } else { 0 });
+    let neutral = Entity::new(0);
+    let strength = player.get(St::Strength);
+    let vigor = player.get(St::Vigor);
+    // 加值是「吃掉的那些攻击牌的伤害之和」，一场仗攒不到 200。
+    // 找**第一个**算得出这个渲染值的加值：管线对加值单调不减，
+    // 所以第一个就是最小解。
+    for b in 0..=200 {
+        let face = crate::damage::card_face_damage(base, (1, 1), b, strength, vigor);
+        if crate::damage::apply_modifiers(face, &atk, &neutral) == shown {
+            return Some(b as i16);
+        }
     }
+    None
+}
+
+/// 观测里的附魔 -> `CardInst` 那两个字段 `(下标+1, Amount)`。
+///
+/// 表里没有这个 id 就返回 `(0, 0)`（当没附魔算，方向是**低估**，
+/// 和 `draw_order` 缺失时的回退同一个处置），并由调用方点名。
+/// 规则本身一条都不在这里 —— 全在 `content::ENCHANTS` 那张表里。
+pub fn lookup_enchant(id: &str, amount: i32) -> (u8, i32) {
+    if id.is_empty() {
+        return (0, 0);
+    }
+    match crate::content::enchant_by_id(&id.to_ascii_uppercase()) {
+        Some((ix, _)) => (ix, amount),
+        None => (0, 0),
+    }
+}
+
+/// 这个附魔内核**建全了没有**。没建全 = 这张牌会被算错。
+///
+/// 「表里没有」和「表里有但 `modelled: false`」对内核是同一件事，
+/// 所以两者都返回 false，一起进 `Report::unknown_enchantments` 点名。
+pub fn enchant_fully_modelled(id: &str) -> bool {
+    crate::content::enchant_by_id(&id.to_ascii_uppercase())
+        .map_or(false, |(_, def)| def.modelled)
 }
 
 /// 意图标签 -> `(每次伤害, 次数)`。见过的形式：`"11"`、`"6"`，以及多段的 `"3x4"`。
@@ -313,6 +463,18 @@ fn parse_obs(j: &Json) -> Obs {
             .map(|c| c.str("name").unwrap_or_default().to_string())
             .collect()
     };
+    // 牌堆的附魔，和上面的牌名逐位置配对。整堆一个都没有就返回空 vec ——
+    // 「一张都没附魔」和「这条 trace 根本没这个字段」在下游是同一个处置，
+    // 不值得为区分它俩多带一个 Option。
+    let pile_enchant = |key: &str| -> Vec<(String, i32)> {
+        let v: Vec<(String, i32)> = j
+            .arr(key)
+            .unwrap_or(&[])
+            .iter()
+            .map(|c| parse_enchant(c.get("enchantment")))
+            .collect();
+        if v.iter().all(|(id, _)| id.is_empty()) { Vec::new() } else { v }
+    };
     let potions = player
         .and_then(|p| p.arr("potions"))
         .or_else(|| j.arr("potions"))
@@ -363,8 +525,19 @@ fn parse_obs(j: &Json) -> Obs {
             .filter_map(|v| v.as_str())
             .map(|v| v.to_string())
             .collect(),
+        draw_order_enchant: {
+            let v: Vec<(String, i32)> = j
+                .arr("draw_order_enchant")
+                .unwrap_or(&[])
+                .iter()
+                .map(|e| parse_enchant(Some(e)))
+                .collect();
+            if v.iter().all(|(id, _)| id.is_empty()) { Vec::new() } else { v }
+        },
         discard: pile("discard"),
+        discard_enchant: pile_enchant("discard"),
         exhaust: pile("exhaust"),
+        exhaust_enchant: pile_enchant("exhaust"),
         pending: j.get("pending").is_some(),
         potions,
         max_potion_slots: player
@@ -405,6 +578,10 @@ pub fn parse_trace(src: &str) -> Result<Trace, String> {
     if version != 1 {
         return Err(format!("不支持的 trace 版本 {version}（本程序只认 1）"));
     }
+    // **数值那一份要单独取。** `run` 那个字符串是给人看的，
+    // 内核读的是 `Trace::ascension`（进 `State::ascension`，A8/A9 才生效）。
+    let ascension =
+        j.get("run").and_then(|r| r.i64("ascension")).unwrap_or(0).clamp(0, 10) as u8;
     let run = match j.get("run") {
         Some(r) => format!(
             "第{}幕 第{}层 A{} {}",
@@ -431,7 +608,7 @@ pub fn parse_trace(src: &str) -> Result<Trace, String> {
             }),
         });
     }
-    Ok(Trace { version, run, frames })
+    Ok(Trace { version, run, ascension, frames })
 }
 
 // --------------------------------------------------------------------------
@@ -492,6 +669,9 @@ pub fn map_status(id: &str) -> Option<St> {
         // 那 27 帧里这个字段**一个都没被检查过**。
         // 两个 key 都留着：真名在前，推的那个当别名。
         "plating" | "plated_armor" | "覆甲" => St::PlatedArmor,
+        // 贪食（噬尸蛞蝓）。**层数是观测量**（游戏面板报 `RAVENOUS_POWER`），
+        // 所以它也进 `ALL_ST` —— 规则那一半（同伴死 -> 加力量 + 击晕）在 POWERS。
+        "ravenous" | "贪食" => St::Ravenous,
         "rage" | "frenzy" | "狂怒" => St::Frenzy,
         "flame_barrier" | "火焰屏障" => St::FlameBarrier,
         "juggernaut" | "势不可当" => St::Juggernaut,
@@ -501,7 +681,16 @@ pub fn map_status(id: &str) -> Option<St> {
         "aggression" | "好勇斗狠" => St::Aggression,
         "colossus" | "巨像" => St::Colossus,
         "barricade" | "壁垒" => St::Barricade,
-        "entrench" | "均衡" => St::Entrench,
+        // 均衡。**游戏报的是 `RETAIN_HAND_POWER`** —— `entrench` 是当初照卡 id
+        // 推的，从没被观测确认过。和覆甲那次是**逐字同一个失效模式**：
+        // 2026-09-06 第3幕第42层第一次真打出均衡+，`verify` 当场报
+        // 「我方.均衡 游戏=0 内核=1」，而同一帧的报告里
+        // 「没映射的 status: RETAIN_HAND_POWER×3」就在下面两行。
+        // 真名在前，推的那个当别名 —— 处置和覆甲一致。
+        "retain_hand" | "entrench" | "均衡" => St::Entrench,
+        // 跃跃欲试自己给自己挂的「本回合不能再获得能量」。
+        // 和均衡是同一批：`act3_f46_elite_soul_nexus` 报「没映射」才发现的。
+        "no_energy_gain" => St::NoEnergyGain,
         "all_or_nothing" | "孤注一掷" => St::AllOrNothing,
         // 已知但内核不建模。映射它们是为了**别让整帧降级成 UNKNOWN**，
         // 那会连同一帧里的真错误一起藏掉。见 `St::Minion` / `St::Illusion`。
@@ -658,7 +847,7 @@ pub fn combat_over_obs(o: &Obs) -> bool {
 /// 推出来/造出来的，拿去比只会得到一列恒定的假不一致：
 /// * [`St::SlowSource`]：谁带缓慢是从敌人身上推的
 /// * [`St::VambraceCharge`]：臂甲这场用没用过，观测里根本没有这个字段
-pub(crate) const ALL_ST: [St; 60] = [
+pub(crate) const ALL_ST: [St; 62] = [
     St::Strength,
     St::Dexterity,
     St::Vulnerable,
@@ -683,6 +872,7 @@ pub(crate) const ALL_ST: [St; 60] = [
     St::FlameBarrier,
     St::Barricade,
     St::Entrench,
+    St::NoEnergyGain,
     St::AllOrNothing,
     St::Minion,
     St::Illusion,
@@ -744,6 +934,8 @@ pub(crate) const ALL_ST: [St; 60] = [
     // 它进来之后守的正是那一半：**每打一张牌该减 1、减到 0 该塞牌并归位 6**。
     // 当年那组读数（游戏 5/3/2/1，内核 6/4/3/2）现在就是判据。
     St::WitheringPresence,
+    // 游戏报 `RAVENOUS_POWER`（噬尸蛞蝓开局自带），层数是观测量
+    St::Ravenous,
     // **`UnmovableCharge` 故意不在这里** —— 那是内核私有的"本回合还剩几次"，
     // 游戏只报 `UNMOVABLE_POWER` 这个层数。拿私有量去 diff 只会得到一列假不一致，
     // 和 `VambraceCharge` / `SlowSource` 是同一条理由。
@@ -759,6 +951,21 @@ pub(crate) const ALL_ST: [St; 60] = [
 
 fn st_name(s: St) -> &'static str {
     match s {
+        // 钢笔尖的三个私有量（游戏显示在遗物上、不报成 status），名字只为 diff 可读
+        St::PenNib => "钢笔尖",
+        St::PenNibCount => "钢笔尖·攻击计数",
+        St::PenNibArmed => "钢笔尖·这一张翻倍",
+        St::ScreamingFlagon => "尖叫酒壶",
+        St::CloakClasp => "斗篷扣",
+        St::HornCleat => "号角靴钉",
+        St::RuinedHelmet => "损毁头盔",
+        St::TeaSet => "古茶具·武装",
+        St::Ravenous => "贪食",
+        St::UpgradeOpeningHand => "开局升级手牌",
+        St::JeweledMask => "宝石面具",
+        St::StoneCracker => "碎石者",
+        St::BloodVial => "小血瓶",
+        St::Pantograph => "缩放仪",
         St::Burrowed => "钻地",
         St::SteamEruption => "蒸汽喷发",
         St::Skittish => "胆小",
@@ -783,6 +990,7 @@ fn st_name(s: St) -> &'static str {
         St::HappyFlower => "开心小花",
         St::PollinousCore => "花粉核心",
         St::PaelsFlesh => "佩尔之肉",
+        St::PaelsBlood => "佩尔之血",
         St::Kunai => "苦无",
         St::Tender => "娇弱",
         St::Radiance => "光耀",
@@ -874,6 +1082,7 @@ fn st_name(s: St) -> &'static str {
         St::Aggression => "好勇斗狠",
         St::Barricade => "壁垒",
         St::Entrench => "均衡",
+        St::NoEnergyGain => "本回合不再获得能量",
         St::AllOrNothing => "孤注一掷",
         St::Minion => "爪牙",
         St::Illusion => "幻象",
@@ -1014,6 +1223,10 @@ pub const FAKE_UPGRADE_STEP: i16 = 3;
 pub fn lookup_card(name: &str) -> Option<u16> {
     let (name, _) = split_fake_upgrade(name);
     let base = name.trim_end_matches('+').trim();
+    let base = match base {
+        "撕成碎片" | "tear_asunder" => "扯碎",
+        b => b,
+    };
     crate::content::CARDS
         .iter()
         .position(|d| d.name == base)
@@ -1025,7 +1238,12 @@ fn lookup_enemy(name: &str) -> bool {
     enemy_id(name).is_some()
 }
 
-fn enemy_id(name: &str) -> Option<u16> {
+/// 敌人的**名字**（游戏报的中文名）-> `content::ENEMIES` 的下标。
+///
+/// **名字解析只有这一处实现**：直配 -> 截 `#` 编号后缀 -> 下面那张别名表。
+/// `tools/dump_encounters.py` 读的也是这张表（它明说了"只读不复制"），
+/// `synth::encounters` 走的是这个函数 —— 三处口径因此不可能长歪。
+pub fn enemy_id(name: &str) -> Option<u16> {
     let n = name.trim();
     // 优先直接匹配中文名
     if let Some(pos) = crate::content::ENEMIES.iter().position(|d| d.name == n) {
@@ -1060,7 +1278,7 @@ fn enemy_id(name: &str) -> Option<u16> {
         "louse_progenitor" | "louse-progenitor" | "始祖虱虫" => "始祖虱虫",
         "myte" | "螨虫" => "螨虫",
         "ovicopter" | "直升虫" => "直升虫",
-        "spiny_toad" | "spiny-toad" | "多刺蟾蜍" => "多刺蟾蜍",
+        "spiny_toad" | "spiny_toad_0" | "spiny-toad" | "spiny-toad-0" | "棘蟾" | "棘刺蟾蜍" | "多刺蟾蜍" => "棘蟾",
         "queen" | "蜂后" => "蜂后",
         "doormaker" | "造门者" => "造门者",
         "knowledge_demon" | "knowledge-demon" | "知识恶魔" => "知识恶魔",
@@ -1151,7 +1369,8 @@ pub struct Report {
     pub seen_intents: BTreeMap<String, std::collections::BTreeSet<String>>,
     /// 内核没有对应概念的 status id -> 出现次数。补 `map_status` 用。
     pub unmapped_status: BTreeMap<String, u32>,
-    /// **见过但没建模的附魔 id**。补 `enchant_block_bonus` 用。
+    /// **见过但没建全的附魔 id**（表里没有、或者有但 `modelled: false`）。
+    /// 补 `content::ENCHANTS` 用。
     ///
     /// 它不是装饰：一张带没建模附魔的牌，内核会照卡表的基础值算，
     /// 而游戏用的是改过的值 —— 差多少不知道，方向也不知道。
@@ -1232,9 +1451,12 @@ impl Replayer {
     /// 遗物那半没人管，臂甲就会每帧复活一次。
     fn save_carry(&mut self, s: &State) {
         self.counters = TurnCounters::save_from(s);
+        // 整场累计，**不跟着回合清零** —— 和 `relic_carry` 同一档作用域。
+        self.hp_loss_hits = s.hp_loss_hits;
         for (st, v) in self.relic_carry.iter_mut() {
             *v = s.player.get(*st);
         }
+        self.pending = s.pending;
     }
 }
 
@@ -1269,6 +1491,21 @@ impl TurnCounters {
     }
 }
 
+/// 往 `relic_carry` 里加一条：**同一个 status 已经在里面就相加**。
+///
+/// 原来这里是无脑 `push`，而下面那个循环是逐条 `set` —— 于是**两件遗物给同一个
+/// status 时后一条把前一条盖掉**。真的会发生：锚（10）+ 假锚（4）同时在身上。
+/// [实测] 2026-09-09 `act3_f46_soul_nexus` 第 0 帧玩家格挡是 **14**，
+/// 正是 10+4；`bin/synth_audit` 就是拿这个把两条路的分歧比出来的
+/// （合成路径走 `step::grant_relic`，那边一直是 `add`）。
+fn push_carry(carry: &mut Vec<(St, i32)>, st: St, v: i32) {
+    if let Some(slot) = carry.iter_mut().find(|(s, _)| *s == st) {
+        slot.1 += v;
+    } else {
+        carry.push((st, v));
+    }
+}
+
 /// 把观测同步成内核状态的那一半对拍器。
 ///
 /// L2 的验收（`bin/solve.rs`）复用它，理由和 `verify` 一样：**观测怎么变成
@@ -1289,6 +1526,40 @@ pub struct Replayer {
     /// 这个是**一整场战斗**。
     relic_carry: Vec<(St, i32)>,
     relic_init: bool,
+    /// 本场战斗里我挨穿过几次（`State::hp_loss_hits`）。观测里没有这个量，
+    /// 所以和 `relic_carry` 一样由内核自己带着 —— 区别是它**还有一个观测来源**
+    /// （扯碎的卡面，见 `observed_tear_hits`），而观测赢过携带值。
+    ///
+    /// 携带值本身只是**下界**：它只数得到内核自己模拟过的那些帧。
+    hp_loss_hits: u8,
+    /// 每个槽位**上一次被观测到时**身上的适生力层数。
+    ///
+    /// 观测层根本表达不了「死着等复活」：实验体被砍掉一条命之后整个我方回合
+    /// 都不在 `enemies` 里（[实测] 那几帧 `enemies: []`），和"已经没了"长得
+    /// 一模一样。`sync` 每帧从观测重建，于是适生力一丢内核当场判战斗结束 ——
+    /// 后面的出牌全被 `legal_actions` 拒掉、`EndTurn` 变成空操作（能量不回满、
+    /// 格挡不清零），还会白结算一次胜利遗物。
+    ///
+    /// 所以这一栏和 `relic_carry` 同一个道理：**观测里没有、内核自己带着**。
+    /// 判据只有一条 —— 消失前身上有适生力就是"欠一次复活"，
+    /// 没有就是真死了（[源码] 第三形态不带适生力，砍掉就结束）。
+    /// 复活之后它自己会带着适生力回到观测里，这一栏跟着覆盖。
+    revive_owed: [i32; MAX_ENEMIES],
+    /// 同上，但记的是**幻象**（`St::Illusion`，寄生惧魔 / 利齿之眼）。
+    ///
+    /// **和适生力分开存，因为放回去的是不同的 status** —— 合成一栏就得再记
+    /// "当时是哪一种"，那还是两个数。
+    ///
+    /// [实测] `act1_f15_ninth` 帧5 打死利齿之眼，帧6/7 观测里**整只消失**，
+    /// 帧8 它 6/6 回来 —— 和实验体那几帧是同一个观测形状。
+    illusion_owed: [i32; MAX_ENEMIES],
+    /// 跨帧携带的选牌状态（Op 产生的 Pending）。
+    pending: Pending,
+    /// 这一局的进阶等级，每帧灌进 `State::ascension`。
+    ///
+    /// **观测里没有这个量** —— 它在 trace 的 `run` 里，是一局的常数，
+    /// 所以和 `relic_carry` 一样由 `Replayer` 带着。
+    ascension: u8,
     report: Report,
 }
 
@@ -1303,8 +1574,24 @@ impl Replayer {
             last_round: -1,
             relic_carry: Vec::new(),
             relic_init: false,
+            hp_loss_hits: 0,
+            revive_owed: [0; MAX_ENEMIES],
+            illusion_owed: [0; MAX_ENEMIES],
+            pending: Pending::None,
+            ascension: 0,
             report,
         }
+    }
+
+    /// 从一条 trace 建 —— **比 [`Replayer::new`] 多带一个进阶等级**。
+    ///
+    /// 凡是手上有 `Trace` 的调用方都该走这一个。走 `new(&t.run)` 会拿到
+    /// `ascension = 0`，于是 A8/A9 的敌人数值**静默地**不生效
+    /// （今天全部语料都是 A1/A2，看不出差别 —— 正因如此才容易漏）。
+    pub fn for_trace(t: &Trace) -> Replayer {
+        let mut r = Replayer::new(&t.run);
+        r.ascension = t.ascension;
+        r
     }
 
     /// 某个 `combat_id` 已经分到的槽位（**不**分配新的）。
@@ -1328,6 +1615,8 @@ impl Replayer {
     pub fn sync(&mut self, obs: &Obs) -> Synced {
         let mut unmapped: Vec<String> = Vec::new();
         let mut s = State::new(obs.hp, 0);
+        // 一局的常数，观测里没有，`Replayer` 带着（见 `Replayer::for_trace`）
+        s.ascension = self.ascension;
         s.player.max_hp = obs.max_hp;
         s.player.block = obs.block;
         for (id, amt) in &obs.status {
@@ -1404,6 +1693,10 @@ impl Replayer {
             }
             s.enemy_def[slot] = enemy::UNKNOWN;
             n_slots = n_slots.max(slot + 1);
+            // 看得见它的时候记下适生力，看不见的时候才知道它是"欠一次复活"
+            // 还是真死了。见 `revive_owed`。
+            self.revive_owed[slot] = s.enemies[slot].get(St::Adaptable);
+            self.illusion_owed[slot] = s.enemies[slot].get(St::Illusion);
             if !lookup_enemy(&e.name) {
                 self.report.missing_enemies.insert(e.name.clone(), e.max_hp);
             }
@@ -1416,43 +1709,81 @@ impl Replayer {
             if !obs.enemies.iter().any(|e| self.slots.get(&e.combat_id) == Some(&slot)) {
                 s.enemies[slot] = Entity { hp: 0, max_hp: 0, block: 0, status: [0; N_STATUS] };
                 s.enemy_def[slot] = enemy::UNKNOWN;
+                // **「还在场上」不等于「活着」**（`State::any_enemy_present`）。
+                // 血留 0：它确实打不到、也不该被当成攻击目标；只把适生力放回去，
+                // 战斗因此不结束。回满血是它自己回合的事（`TOp::OwnerHealToFull`），
+                // 而下一帧的观测本来就把复活后的血量报出来了。
+                if self.revive_owed[slot] > 0 {
+                    s.enemies[slot].set(St::Adaptable, self.revive_owed[slot]);
+                }
+                // 幻象走的是同一条路，但**不进 `any_enemy_present`** ——
+                // 它是爪牙，主人死了它就该跟着消失（`step::no_master_left`）。
+                // 放回这个标记只是为了让它自己回合开始那条回满血的规则还在。
+                if self.illusion_owed[slot] > 0 {
+                    s.enemies[slot].set(St::Illusion, self.illusion_owed[slot]);
+                    s.enemies[slot].set(St::Minion, 1);
+                }
             }
         }
         s.n_enemies = n_slots as u8;
 
         // 牌区
         let mut names: Vec<String> = Vec::new();
+        // `ench` 收的是 `(附魔下标+1, Amount)`，`(0, 0)` = 没附魔。
+        // **附魔会顺手改 flags**（王室认证给固有+保留），所以它必须在这里
+        // 落地而不是在调用点 —— 四个牌区共用这一个入口。
         let push = |s: &mut State,
                     names: &mut Vec<String>,
                     id: u16,
                     upg: bool,
                     name: &str,
-                    block_bonus: i8|
+                    ench: (u8, i32)|
          -> u8 {
             let ix = s.n_cards;
             // 假升级（`凋萎+1`）进 `bonus`。**观测到的牌名是权威的另一半** ——
             // 和费用那条同一个道理：层数是游戏当场报出来的，内核不用自己数
             // Boss 用过几次剧烈增强。
             let bonus = split_fake_upgrade(name).1 as i16 * FAKE_UPGRADE_STEP;
-            s.cards[ix as usize] =
-                CardInst { id, flags: if upg { F_UPGRADED } else { 0 }, bonus, cost_delta: 0, block_bonus };
+            let mut flags = if upg { F_UPGRADED } else { 0 };
+            if let Some(def) = crate::content::ENCHANTS.get(ench.0.wrapping_sub(1) as usize) {
+                if ench.0 != 0 {
+                    flags |= def.keywords;
+                }
+            }
+            s.cards[ix as usize] = CardInst {
+                id,
+                flags,
+                bonus,
+                cost_delta: 0,
+                ench: ench.0,
+                ench_amt: ench.1.clamp(-127, 127) as i8,
+            };
             s.n_cards += 1;
             names.push(name.to_string());
             ix
         };
 
+        // 钢笔尖的**预览**：计数器到 9 时手牌里攻击牌渲染的是翻倍后的数。
+        // 只有痛殴的加值反推读卡面文本，所以这里只为它算一次。
+        //
+        // **不能从 `s.player` 读** —— 遗物那一段（`relic_carry`）在本函数**末尾**
+        // 才跑，这会儿 `PenNibCount` 还是 0。观测里那个计数器是权威，直接读它。
+        let pen_nib_preview_double = obs.relics.iter().any(|r| {
+            r.id == "PEN_NIB" && r.counter.map_or(false, |c| c.rem_euclid(10) == 9)
+        });
         for c in &obs.hand {
             if s.n_cards as usize >= MAX_CARDS {
                 break;
             }
             let id = lookup_card(&c.name).unwrap_or(card::UNKNOWN);
-            // **附魔只有手牌看得见**：牌堆里的牌是弱身份（约束 3，连 id 和升级位
-            // 都没有），所以那几处只能传 0。这不是漏，是观测本来就没给。
-            let eb = enchant_block_bonus(&c.enchant_id, c.enchant_amount);
-            if !c.enchant_id.is_empty() && eb.is_none() {
+            // 附魔：查 `content::ENCHANTS`。表里没有、或者有但 `modelled: false`，
+            // 都进 `unknown_enchantments` 点名 —— **这两件事对内核是同一件**：
+            // 这张牌会被算错，而内核知道自己在算错。
+            let eb = lookup_enchant(&c.enchant_id, c.enchant_amount);
+            if !c.enchant_id.is_empty() && !enchant_fully_modelled(&c.enchant_id) {
                 self.report.unknown_enchantments.insert(c.enchant_id.clone());
             }
-            let ix = push(&mut s, &mut names, id, c.upgraded, &c.name, eb.unwrap_or(0) as i8);
+            let ix = push(&mut s, &mut names, id, c.upgraded, &c.name, eb);
             // **观测到的费用是权威。** 这张实例显示 0 费、而内容表说它要钱、
             // 又不是内核自己算得出的减费（见 `kernel_can_explain_zero_cost`）
             // —— 那就是内核看不见的某种「本回合免费」，目前已知的来源是技能药水
@@ -1481,6 +1812,17 @@ impl Replayer {
                     s.cards[ix as usize].cost_delta = (cost - want).clamp(-100, 100) as i8;
                 }
             }
+            // 痛殴攒下来的伤害加值只有卡面文本知道，见 `observed_thrash_bonus`。
+            if id == card::THRASH {
+                if let Some(b) = observed_thrash_bonus(
+                    &c.description,
+                    c.upgraded,
+                    &s.player,
+                    pen_nib_preview_double,
+                ) {
+                    s.cards[ix as usize].bonus = b;
+                }
+            }
             s.hand[s.n_hand as usize] = ix;
             s.n_hand += 1;
         }
@@ -1490,21 +1832,33 @@ impl Replayer {
         // 原来这里一律传 `false`，于是弃牌堆里的 `拆卸+` 被当成 `拆卸`。
         // 一步对拍看不出来（那边只比名字多重集），但**从弃牌堆取牌的牌
         //（头槌 / 好勇斗狠）会取回一张没升级的**，rollout 更是整堆都矮一截。
-        for name in &obs.discard {
+        // 牌堆里那一张的附魔加值。**牌堆的附魔和手牌的是同一件事** ——
+        // 一张带灵巧的耸肩无视不会因为躺在牌堆里就变回 8 点格挡。
+        // 拿不到（老 trace / 老 mod）就是 0，那时它被系统性低估。
+        //
+        // 不认识的附魔照旧当没附魔算（`lookup_enchant` 返回 `(0, 0)`），
+        // 但**牌堆这边不进 `unknown_enchantments`**：那一栏是给"该补哪条映射"
+        // 看的，手牌那边每帧都会报同一个 id，重复计数没有信息。
+        let pile_bonus = |ench: &[(String, i32)], i: usize| -> (u8, i32) {
+            ench.get(i).map_or((0, 0), |(id, amt)| lookup_enchant(id, *amt))
+        };
+        for (i, name) in obs.discard.iter().enumerate() {
             if s.n_cards as usize >= MAX_CARDS {
                 break;
             }
             let id = lookup_card(name).unwrap_or(card::UNKNOWN);
-            let ix = push(&mut s, &mut names, id, name.ends_with('+'), name, 0);
+            let eb = pile_bonus(&obs.discard_enchant, i);
+            let ix = push(&mut s, &mut names, id, name.ends_with('+'), name, eb);
             s.disc[s.n_disc as usize] = ix;
             s.n_disc += 1;
         }
-        for name in &obs.exhaust {
+        for (i, name) in obs.exhaust.iter().enumerate() {
             if s.n_cards as usize >= MAX_CARDS {
                 break;
             }
             let id = lookup_card(name).unwrap_or(card::UNKNOWN);
-            let ix = push(&mut s, &mut names, id, name.ends_with('+'), name, 0);
+            let eb = pile_bonus(&obs.exhaust_enchant, i);
+            let ix = push(&mut s, &mut names, id, name.ends_with('+'), name, eb);
             s.exh[s.n_exh as usize] = ix;
             s.n_exh += 1;
         }
@@ -1526,12 +1880,18 @@ impl Replayer {
             //（`pop_draw_top` 从末尾取）。写正了会让"下一张抽什么"整个反过来，
             // 而且不会报错 —— 只会让 planner 一直信一个反着的前缀。
             // `sync_puts_the_real_draw_order_top_last` 钉着这条。
-            for name in obs.draw_order.iter().rev() {
+            //
+            // 附魔跟着**原下标**走（`draw_order_enchant` 是和 `draw_order`
+            // 逐位置配对的），所以反向遍历时要把下标换算回去，
+            // 不能拿 `rev()` 的计数当下标。
+            let n_order = obs.draw_order.len();
+            for (k, name) in obs.draw_order.iter().rev().enumerate() {
                 if s.n_cards as usize >= MAX_CARDS {
                     break;
                 }
                 let id = lookup_card(name).unwrap_or(card::UNKNOWN);
-                let ix = push(&mut s, &mut names, id, name.ends_with('+'), name, 0);
+                let eb = pile_bonus(&obs.draw_order_enchant, n_order - 1 - k);
+                let ix = push(&mut s, &mut names, id, name.ends_with('+'), name, eb);
                 s.draw[s.n_draw as usize] = ix;
                 s.n_draw += 1;
             }
@@ -1541,7 +1901,7 @@ impl Replayer {
                 if s.n_cards as usize >= MAX_CARDS {
                     break;
                 }
-                let ix = push(&mut s, &mut names, card::UNKNOWN, false, DRAW_PLACEHOLDER, 0);
+                let ix = push(&mut s, &mut names, card::UNKNOWN, false, DRAW_PLACEHOLDER, (0, 0));
                 s.draw[s.n_draw as usize] = ix;
                 s.n_draw += 1;
             }
@@ -1551,7 +1911,7 @@ impl Replayer {
                     break;
                 }
                 let id = lookup_card(name).unwrap_or(card::UNKNOWN);
-                let ix = push(&mut s, &mut names, id, name.ends_with('+'), name, 0);
+                let ix = push(&mut s, &mut names, id, name.ends_with('+'), name, (0, 0));
                 s.draw[s.n_draw as usize] = ix;
                 s.n_draw += 1;
             }
@@ -1573,29 +1933,74 @@ impl Replayer {
         // 因为「臂甲这场用过没有」游戏根本不报，每帧重新初始化的话，
         // 内核会以为每一帧都还能翻倍，整场战斗的格挡全部算高。
         //
-        // **`round > 1` 时不初始化**：那说明我们是从战斗中途接进来的，
-        // 前面很可能已经打过格挡牌了。宁可当作"已经用掉"（低估自己），
-        // 也不要凭空给玩家一次翻倍 —— 本仓库一贯选不高估的那边。
+        // **从战斗中途接进来时（`round > 1`）只跳过一场用一次的那些。**
+        //
+        // 原来这里是整块跳过，理由写着"前面很可能已经打过格挡牌了，宁可当作
+        // 已经用掉"。**那个理由只管得住臂甲那一类**，而它顺手把「我身上有这件
+        // 遗物」这种常数标记也一起扔了 —— 于是 `solve --live` 在第 2 回合之后
+        // **一件遗物都看不见**（燃烧之血、锚、红面具、招架盾、钢笔尖……全没有），
+        // 而实战驱动恰恰全是中途调用。2026-09-06 拆开：
+        //
+        // * 一场只用一次的（`content::spent_once_per_combat`，判据是它自己的
+        //   规则会不会 `ClearSelf`）—— 中途接入时**当成已经用掉**，照旧低估自己
+        // * 其余私有量 —— 常数，任何时候恢复都对
+        // * `counter_to` —— **观测量**（游戏把它显示在遗物上），任何时候都对
+        //
+        // 对拍语料一个字节都没变：trace 的第一帧本来就是 `round == 1`。
         if !self.relic_init {
             self.relic_init = true;
-            if obs.round <= 1 {
-                for r in &obs.relics {
-                    if let Some(def) = crate::content::relic_by_id(&r.id) {
-                        for (st, amt) in def.private_status {
-                            self.relic_carry.push((*st, *amt));
+            let mid_fight = obs.round > 1;
+            for r in &obs.relics {
+                if let Some(def) = crate::content::relic_by_id(&r.id) {
+                    for (st, amt) in def.private_status {
+                        if mid_fight && crate::content::spent_once_per_combat(*st) {
+                            continue;
                         }
-                        // 跨战斗保留的计数器：从观测灌，**不假设从 0 开始**。
-                        // 观测里没有（老 trace / 游戏没给）就退回 0 并且
-                        // 不声张 —— 这一条只影响摆动球的相位。
-                        if let Some(st) = def.counter_to {
-                            self.relic_carry.push((st, r.counter.unwrap_or(0)));
-                        }
+                        push_carry(&mut self.relic_carry, *st, *amt);
+                    }
+                    // 跨战斗保留的计数器：从观测灌，**不假设从 0 开始**。
+                    // 观测里没有（老 trace / 游戏没给）就退回 0 并且不声张。
+                    //
+                    // **回合相位要把这一场已经走过的回合减回去。**
+                    // [源码] 摆动球是 `AfterPlayerTurnStart` 里
+                    // `TurnsSeen = (TurnsSeen + 1) % 3`，所以观测到的那个数
+                    // 是**加过 `round` 次之后**的；而 `TCond::EveryNTurns`
+                    // 算的是 `phase + turn`，要的是战斗开始那一刻的相位。
+                    // 不减的话整条相位**早一个回合**：
+                    // [实测] 2026-09-06 `act3_f46_elite_soul_nexus` 观测到的计数器
+                    // 逐回合是 0,1,2,0,1,2,0（第 1/4/7 回合抽牌），
+                    // 而内核抽在第 3/6 回合 —— 三处「回合开始手牌张数」的软差异
+                    // 里有两处是这么来的。**佩尔之血补上之后它才露出来**：
+                    // 在那之前内核每回合少一张，两个错互相盖住了。
+                    //
+                    // 钢笔尖那种和回合数无关的计数器**原样灌**，判据走
+                    // `content::is_turn_phase`（数据，不是名单）。
+                    if let Some(st) = def.counter_to {
+                        let raw = r.counter.unwrap_or(0);
+                        let v = if crate::content::is_turn_phase(st) { raw - obs.round } else { raw };
+                        push_carry(&mut self.relic_carry, st, v);
                     }
                 }
             }
         }
         for (st, v) in &self.relic_carry {
             s.player.set(*st, *v);
+        }
+        // **开局赠予在第 0 帧之前就已经发生过了**（金刚杵的力量、护喉甲的覆甲…），
+        // 观测里那份力量就是它发生过的证据。**修饰器要跟着记成用过一次** ——
+        // 不消耗的话内核会以为这一场还能再翻一次倍（损毁头盔），那是**高估自己**。
+        //
+        // 走 `step` 那一个实现，判据不另抄一份；**返回值扔掉** ——
+        // 力量本身是观测量，上面已经从观测灌过了，这里只为了让修饰器掉一层。
+        // 幂等：第二次跑的时候标记已经是 0，什么都不会发生。
+        // [实测] 2026-09-09 `act3_f48_boss_aeonglass_2026-09-06` 第 0 帧
+        // 力量 2 = 金刚杵 1 × 损毁头盔 —— 头盔在那一刻就已经用掉了。
+        for r in &obs.relics {
+            if let Some(def) = crate::content::relic_by_id(&r.id) {
+                for (st, amt) in def.start_status {
+                    let _ = crate::step::modify_status_amount_received(&mut s, true, *st, *amt);
+                }
+            }
         }
 
         // 观测里没有的每回合计数器：回合一换就清零，否则沿用上一帧跑完的值。
@@ -1609,6 +2014,19 @@ impl Replayer {
         if let Some(n) = observed_free_attack(&obs.status) {
             s.free_attack = n;
             self.counters.free_attack = n;
+        }
+        // 扯碎的段数同理：卡面上那个「命中 N 次」是游戏算好的，比内核自己
+        // 从同步那一刻起数的靠谱。读不出来（牌不在手上 / 换了语言）就用携带值，
+        // 那是个**下界** —— 方向是低估，和本仓库其它拿不到数时的处置一致。
+        s.hp_loss_hits = observed_tear_hits(obs).unwrap_or(self.hp_loss_hits);
+        self.hp_loss_hits = s.hp_loss_hits;
+
+        // 跨帧携带的 Pending：观测开着选牌界面（obs.pending）且内核之前走进了 Pending 时沿用；
+        // 观测已经关闭选牌界面时清零。
+        if obs.pending && self.pending != Pending::None {
+            s.pending = self.pending;
+        } else if !obs.pending {
+            self.pending = Pending::None;
         }
 
         unmapped.sort();
@@ -1651,7 +2069,8 @@ fn infer_facing(r: &Replayer, s: &mut State, obs: &Obs) {
                 }
             }
             let want = observed_signature(e);
-            if (0..n_moves).any(|m| move_signature(def_id, m, &ent, &player) == want) {
+            if (0..n_moves).any(|m| move_signature(def_id, m, &ent, &player, s.ascension) == want)
+            {
                 exact += 1;
             }
         }
@@ -1734,10 +2153,10 @@ impl Replayer {
             let want = observed_signature(e);
             // 先要求逐字相等，退而求其次只对意图类型（玩家带易伤时数字会差）
             let m = (0..n_moves)
-                .find(|&m| move_signature(def_id, m, &ent, &player) == want)
+                .find(|&m| move_signature(def_id, m, &ent, &player, s.ascension) == want)
                 .or_else(|| {
                     (0..n_moves).find(|&m| {
-                        same_kinds(&move_signature(def_id, m, &ent, &player), &want)
+                        same_kinds(&move_signature(def_id, m, &ent, &player, s.ascension), &want)
                     })
                 });
             if let Some(m) = m {
@@ -1773,7 +2192,7 @@ impl Replayer {
 /// 历史帧数为 0 表示只有一帧、没有历史可带 —— 调用方应当把这件事说出来。
 pub fn sync_latest(t: &Trace) -> Option<(Replayer, Synced, usize)> {
     let last = t.frames.len().checked_sub(1)?;
-    let mut r = Replayer::new(&t.run);
+    let mut r = Replayer::for_trace(t);
     let mut used = 0usize;
     for i in 0..last {
         if r.advance(&t.frames[i]) {
@@ -1847,7 +2266,26 @@ impl Replayer {
                 self.last_round = end.turn;
                 true
             }
-            Act::SelectCard { .. } | Act::Confirm => false,
+            Act::SelectCard { slot } => {
+                let st = sy.state;
+                if st.pending == Pending::None {
+                    return false;
+                }
+                let next_st = step(st, Action::Choose { hand: *slot as u8 });
+                if next_st == st {
+                    return false;
+                }
+                self.save_carry(&next_st);
+                true
+            }
+            Act::Confirm => {
+                let mut st = sy.state;
+                if st.pending != Pending::None {
+                    st.pending = Pending::None;
+                    self.save_carry(&st);
+                }
+                true
+            }
         }
     }
 }
@@ -1927,7 +2365,24 @@ pub fn current_card_name(names: &[String], cards: &[CardInst], ix: usize) -> Str
     //
     // 这类牌的身份**只能**来自内容表：观测里没有它们（生成发生在这一帧内），
     // 而内核是自己造的，知道 id。所以越界不是要兜底的异常，是另一个合法来源。
-    let base = match names.get(ix) {
+    // **身份被就地改写过的牌，快照就不再是它了。**
+    //
+    // `Op::TransformAttacksInHand`（原始力量）是内核里唯一一个**改 `CardInst.id`**
+    // 的 op —— 扯碎/暴走/痛殴改的都是 `bonus`，所以它们碰不到这里。
+    // 判据是「快照那个名字当初同步成了哪个 id」和「现在是哪个 id」：
+    // 不一样就说明这一帧被改写过，得改用内容表的名字。
+    //
+    // 这一条**必须收在名字层，不能靠 `names` 跟着改**：`names` 是按 `s.cards`
+    // 下标的快照，`step` 不该知道验证器的存在（L1 不认识对拍）。
+    //
+    // 2026-09-06 第3幕第46层第一次打出原始力量+ 抓到的：游戏 3 张巨石+，
+    // 内核报的还是 `完美打击+,彼岸咆哮+,灰烬打击+` —— **假红**，
+    // 内核的 `id` 其实已经是巨石了。
+    let rewritten = names
+        .get(ix)
+        .map(|n| lookup_card(n.trim_end_matches('+')).unwrap_or(card::UNKNOWN) != cards[ix].id)
+        .unwrap_or(false);
+    let base = match names.get(ix).filter(|_| !rewritten) {
         // 同步进来的牌：名字快照里已经带着假升级后缀了（`凋萎+1`），
         // 而 `trim_end_matches('+')` 只剥光秃秃的那个 `+`，动不到 `+1`。
         Some(n) => n.trim_end_matches('+').to_string(),
@@ -2373,7 +2828,13 @@ fn incoming_damage_note(prev: &Obs, next: &Obs) -> String {
 /// 拿它和 trace 里的 `raw_intents` 直接比。攻击的标签是**最终伤害值**
 /// （已实测：攻击方力量和防御方易伤都算进去了），所以这里必须走完整的
 /// `apply_modifiers`，不能只报基础值。
-fn move_signature(def_id: u16, mv: usize, enemy: &Entity, player: &Entity) -> Vec<(String, String)> {
+pub fn move_signature(
+    def_id: u16,
+    mv: usize,
+    enemy: &Entity,
+    player: &Entity,
+    asc: u8,
+) -> Vec<(String, String)> {
     let def = crate::content::enemy_def(def_id);
     if def.moves.is_empty() {
         return Vec::new();
@@ -2384,8 +2845,26 @@ fn move_signature(def_id: u16, mv: usize, enemy: &Entity, player: &Entity) -> Ve
     // 标签只从 ops 里算：攻击是最终伤害值，塞牌是张数，其余为空。
     let mut label = String::new();
     let mut extra = Vec::new();
-    for op in m.ops {
-        match *op {
+    // **塞牌的张数要把两条路加起来。** [源码] `TheInsatiable.LiquifyMove` 是
+    // 一个 `for (i < 6)` 循环，前 3 张进抽牌堆、后 3 张进弃牌堆，而游戏的
+    // `StatusIntent` 报的是**总张数 6**。内核把它建成了两条 op
+    // （`AddCardToDraw` + `AddCardToDiscard`），签名只数其中一条的话
+    // 标签就是 3，和观测差一半 —— `bin/synth_audit` 的开局第一手那一栏
+    // 2026-09-09 把它报成「类型对、数字不对」。
+    let status_cards: i32 = m
+        .ops
+        .iter()
+        .enumerate()
+        .map(|(oi, op)| match crate::asc::adjust(def_id, mv, oi, asc, *op) {
+            EOp::AddCardToDiscard { count, .. } | EOp::AddCardToDraw { count, .. } => count,
+            _ => 0,
+        })
+        .sum();
+    // 进阶收口，见 `asc::adjust` —— 游戏在 A8/A9 显示的意图标签本来就是缩放过的，
+    // 这里不缩放的话高进阶的每一手都会判成「不在允许集合里」。
+    for (oi, op) in m.ops.iter().enumerate() {
+        let op = crate::asc::adjust(def_id, mv, oi, asc, *op);
+        match op {
             EOp::Attack { base, hits } => {
                 let face = base + enemy.get(St::Strength);
                 let d = crate::damage::apply_modifiers(face, enemy, player);
@@ -2395,11 +2874,15 @@ fn move_signature(def_id: u16, mv: usize, enemy: &Entity, player: &Entity) -> Ve
             // 是**副作用**时（扭动虫的扭动 `Buff:, StatusCard:1`）另起一个意图。
             // 2026-08-22 实战抓到：少了下面那条，扭动虫的签名只有一个 `Buff:1`，
             // 观测判成「不在允许集合里」—— 那是本轮唯一一次真红的指标。
-            EOp::AddCardToDiscard { count, .. } if m.intent == "StatusCard" => {
-                label = format!("{count}")
+            // 两条塞牌 op 共用**同一个总数**（见上面 `status_cards`），
+            // 所以这里只认"有没有塞牌"，数字统一取那个和。
+            EOp::AddCardToDiscard { .. } | EOp::AddCardToDraw { .. }
+                if m.intent == "StatusCard" =>
+            {
+                label = format!("{status_cards}")
             }
-            EOp::AddCardToDiscard { count, .. } => {
-                extra.push(("StatusCard".to_string(), format!("{count}")))
+            EOp::AddCardToDiscard { .. } | EOp::AddCardToDraw { .. } => {
+                extra.push(("StatusCard".to_string(), format!("{status_cards}")))
             }
             // 一手里带了副作用时，游戏会**额外显示一个意图**。实测三种：
             //   劫掠者斧手  `Attack:5, Defend:`   攻击 + 加格挡
@@ -2413,8 +2896,13 @@ fn move_signature(def_id: u16, mv: usize, enemy: &Entity, player: &Entity) -> Ve
                 extra.push(("CardDebuff".to_string(), String::new()))
             }
             EOp::PlayerStatus { .. } if m.intent != "Debuff" && m.intent != "DebuffStrong" => {
-                let has_strong = m.ops.iter().any(|op| matches!(op, EOp::PlayerStatus { st: St::Vulnerable, amt } if *amt >= 2))
-                    && m.ops.iter().any(|op| matches!(op, EOp::PlayerStatus { st: St::Weak, .. }));
+                // 这两条也要过 `asc::adjust` —— 判据读的是 `amt >= 2`，
+                // 而 A9 会抬 debuff 的量，不缩放就会在高进阶上判错意图类型。
+                let adj = |i: usize| crate::asc::adjust(def_id, mv, i, asc, m.ops[i]);
+                let has_strong = (0..m.ops.len()).any(
+                    |i| matches!(adj(i), EOp::PlayerStatus { st: St::Vulnerable, amt } if amt >= 2),
+                ) && (0..m.ops.len())
+                    .any(|i| matches!(adj(i), EOp::PlayerStatus { st: St::Weak, .. }));
                 let debuff_name = if has_strong {
                     "DebuffStrong"
                 } else {
@@ -2425,7 +2913,14 @@ fn move_signature(def_id: u16, mv: usize, enemy: &Entity, player: &Entity) -> Ve
             EOp::Summon { .. } if m.intent != "Summon" => {
                 extra.push(("Summon".to_string(), String::new()))
             }
-            EOp::SelfStatus { .. } if m.intent != "Buff" => {
+            EOp::SelfStatus { amt, .. } if amt > 0 && m.intent != "Buff" => {
+                extra.push(("Buff".to_string(), String::new()))
+            }
+            // 给全队加 buff 和给自己加 buff 在意图面上是同一件事。
+            // **今天这条臂打不到**（唯一的消费者胧光怪的哀嚎本来就是 `Buff`），
+            // 留着是因为 `_ => {}` 那个兜底是静默的：漏一个 EOp 的后果是
+            // 整只敌人「对不齐」，而这一臂和上面那条逐字同构，没有新判断。
+            EOp::TeamStatus { amt, .. } if amt > 0 && m.intent != "Buff" => {
                 extra.push(("Buff".to_string(), String::new()))
             }
             // 偷牌：游戏额外显示一个 `CardDebuff:`（偷窃草蜢的「偷盗」是
@@ -2452,7 +2947,12 @@ fn move_signature(def_id: u16, mv: usize, enemy: &Entity, player: &Entity) -> Ve
 }
 
 /// 观测到的意图，规整成和 [`move_signature`] 同样的形状。
-fn observed_signature(e: &EnemyObs) -> Vec<(String, String)> {
+///
+/// 和上面那个一起 `pub`：`bin/synth_audit` 要问「构造器开局挑的那一手，
+/// 和游戏开局真的出的那一手一样吗」，而**那件事既有验收一条都答不了** ——
+/// `verify --predict-enemy` 是先拿观测到的第一个意图去**对齐**指针，
+/// 再验后面几手，开局那一手本身从来没被验过。
+pub fn observed_signature(e: &EnemyObs) -> Vec<(String, String)> {
     e.raw_intents.iter().map(|(t, l)| (t.clone(), l.trim().to_string())).collect()
 }
 
@@ -2575,10 +3075,15 @@ pub fn verify_enemy_ai(t: &Trace) -> EnemyAiReport {
         // 对齐：第一次见到它时的意图对应哪一手
         let want = observed_signature(first);
         let start = (0..n_moves)
-            .find(|&m| move_signature(def_id, m, &entity_of(first), &player) == want)
+            .find(|&m| move_signature(def_id, m, &entity_of(first), &player, t.ascension) == want)
             .or_else(|| {
                 (0..n_moves)
-                    .find(|&m| same_kinds(&move_signature(def_id, m, &entity_of(first), &player), &want))
+                    .find(|&m| {
+                        same_kinds(
+                            &move_signature(def_id, m, &entity_of(first), &player, t.ascension),
+                            &want,
+                        )
+                    })
             });
         let Some(start) = start else {
             row.no_alignment = true;
@@ -2634,7 +3139,7 @@ pub fn verify_enemy_ai(t: &Trace) -> EnemyAiReport {
                 if allowed & (1 << m) == 0 {
                     continue;
                 }
-                let pred = move_signature(def_id, m, &entity_of(o), &player);
+                let pred = move_signature(def_id, m, &entity_of(o), &player, t.ascension);
                 if pred == seen {
                     exact_hit = Some(m);
                     break;
@@ -2675,7 +3180,10 @@ pub fn verify_enemy_ai(t: &Trace) -> EnemyAiReport {
                     }
                     // 认不出来就整表找一手最像的，好让指针能接着走
                     (0..n_moves).find(|&m| {
-                        same_kinds(&move_signature(def_id, m, &entity_of(o), &player), &seen)
+                        same_kinds(
+                            &move_signature(def_id, m, &entity_of(o), &player, t.ascension),
+                            &seen,
+                        )
                     })
                 }
             };
@@ -2711,7 +3219,7 @@ fn o_round(_list: &[EnemyObs], k: usize) -> usize {
 pub fn verify_per_turn(t: &Trace) -> Report {
     // 走 `Replayer::new`，别手写构造 —— 每加一个跨帧带的字段就要改一处，
     // 手写的地方一定会漏（`relic_carry` 就漏过）。
-    let mut r = Replayer::new(&t.run);
+    let mut r = Replayer::for_trace(t);
 
     let n = t.frames.len();
     let mut i = 0usize;
@@ -2864,7 +3372,7 @@ fn same_observation(a: &Obs, b: &Obs) -> bool {
 pub fn verify(t: &Trace) -> Report {
     // 走 `Replayer::new`，别手写构造 —— 每加一个跨帧带的字段就要改一处，
     // 手写的地方一定会漏（`relic_carry` 就漏过）。
-    let mut r = Replayer::new(&t.run);
+    let mut r = Replayer::for_trace(t);
 
     for f in &t.frames {
         for e in &f.obs.enemies {
@@ -2875,9 +3383,41 @@ pub fn verify(t: &Trace) -> Report {
     }
 
     for i in 0..t.frames.len().saturating_sub(1) {
-        let f = &t.frames[i];
-        let next = &t.frames[i + 1].obs;
-        let Some(act) = &f.action else { continue };
+        if let Some(res) = verify_step(&mut r, t, i) {
+            r.report.results.push(res);
+        }
+    }
+
+    r.report
+}
+
+/// 只验证 trace 的最新一步（倒数第 2 帧 -> 最后一帧）。
+/// 前置帧只跑 advance 维护跨帧携带的计数器与遗物状态。
+pub fn verify_last(t: &Trace) -> Option<FrameResult> {
+    if t.frames.len() < 2 {
+        return None;
+    }
+    let mut r = Replayer::for_trace(t);
+    for f in &t.frames {
+        for e in &f.obs.enemies {
+            for (ty, label) in &e.raw_intents {
+                r.report.seen_intents.entry(ty.clone()).or_default().insert(label.clone());
+            }
+        }
+    }
+    let last_idx = t.frames.len() - 2;
+    for k in 0..last_idx {
+        r.advance(&t.frames[k]);
+    }
+    verify_step(&mut r, t, last_idx)
+}
+
+/// 验证 trace 中的单步（第 i 帧动作 -> 第 i+1 帧观测）。
+/// 若第 i 帧没有动作，返回 None。
+pub fn verify_step(r: &mut Replayer, t: &Trace, i: usize) -> Option<FrameResult> {
+    let f = &t.frames[i];
+    let next = &t.frames[i + 1].obs;
+    let act = f.action.as_ref()?;
 
         if let Some(sv) = f.settle {
             if sv.unstable {
@@ -2914,8 +3454,7 @@ pub fn verify(t: &Trace) -> Report {
                     "重复记录的 end_turn（和上一帧观测逐字相同）—— 录制器重试留下的伪影，                     这一帧不判"
                         .to_string(),
                 );
-                r.report.results.push(res);
-                continue;
+                return Some(res);
             }
         }
 
@@ -3082,8 +3621,7 @@ pub fn verify(t: &Trace) -> Report {
                 let Some(c) = f.obs.hand.iter().find(|c| c.slot == *slot) else {
                     res.verdict = Verdict::Skipped;
                     res.notes.push(format!("trace 损坏：手牌里没有第 {slot} 位"));
-                    r.report.results.push(res);
-                    continue;
+                    return Some(res);
                 };
                 if !card_id.is_empty() && &c.id != card_id {
                     res.verdict = Verdict::Skipped;
@@ -3091,8 +3629,7 @@ pub fn verify(t: &Trace) -> Report {
                         "trace 损坏：第 {slot} 位记的是 {card_id}，实际是 {}",
                         c.id
                     ));
-                    r.report.results.push(res);
-                    continue;
+                    return Some(res);
                 }
 
                 match lookup_card(&c.name) {
@@ -3227,15 +3764,216 @@ pub fn verify(t: &Trace) -> Report {
                 }
             }
         }
-        r.report.results.push(res);
-    }
-
-    r.report
+    Some(res)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// **复活窗口：观测里没有它，不等于战斗结束。**
+    ///
+    /// 实验体被砍掉一条命之后整个我方回合都不在 `enemies` 里（[实测]
+    /// act3_f48 帧11~13 是 `enemies: []`），和"已经打完了"在观测层长得一样。
+    /// `sync` 每帧从观测重建，所以只能靠 `revive_owed` 记住"消失前它带着适生力"。
+    ///
+    /// 丢了这一条不会报错，会**静悄悄地**判战斗结束：后面的出牌全被判非法、
+    /// `EndTurn` 变空操作（能量不回满、格挡不清零）、还白结算一次胜利遗物。
+    #[test]
+    fn sync_keeps_a_vanished_adaptable_enemy_on_the_field() {
+        fn frame(enemies: &str) -> String {
+            format!(
+                r#"{{
+  "version": 1,
+  "run": {{ "act": 3, "floor": 48, "ascension": 1, "character": "铁甲战士" }},
+  "frames": [
+    {{ "i": 0,
+      "obs": {{
+        "state_type": "boss", "round": 2, "is_play_phase": true,
+        "energy": 3, "max_energy": 3,
+        "player": {{ "hp": 60, "max_hp": 80, "block": 0, "status": {{}} }},
+        "enemies": {enemies},
+        "hand": [], "draw_count": 0, "draw": [], "discard": [], "exhaust": [],
+        "pending": null
+      }},
+      "action": null,
+      "settle": {{ "polls": 1, "ms": 0, "unstable": false, "intermediate_differs": false }} }}
+  ]
+}}"#
+            )
+        }
+
+        let alive = frame(
+            r#"{ "1": { "entity_id": "test_subject_0", "name": "实验体 #C10",
+                        "hp": 4, "max_hp": 100, "block": 0,
+                        "status": { "ADAPTABLE_POWER": 1 }, "intents": [] } }"#,
+        );
+        let gone = frame("{}");
+
+        let mut r = Replayer::new("");
+        let s = r.sync(&parse_trace(&alive).unwrap().frames[0].obs).state;
+        assert!(s.any_enemy_present(), "看得见的时候当然在场");
+
+        // 下一帧它从观测里消失 —— 但这是"死着等复活"，不是打完了
+        let s = r.sync(&parse_trace(&gone).unwrap().frames[0].obs).state;
+        assert!(!s.enemies[0].alive(), "血量确实是 0，它这一手打不到人");
+        assert!(s.any_enemy_present(), "带着适生力消失 = 欠一次复活，战斗不结束");
+
+        // 对照：第三形态不带适生力，砍掉就是真结束
+        let last_form = frame(
+            r#"{ "1": { "entity_id": "test_subject_0", "name": "实验体 #C10",
+                        "hp": 5, "max_hp": 300, "block": 0,
+                        "status": { "NEMESIS_POWER": 1 }, "intents": [] } }"#,
+        );
+        let mut r2 = Replayer::new("");
+        r2.sync(&parse_trace(&last_form).unwrap().frames[0].obs);
+        let s = r2.sync(&parse_trace(&gone).unwrap().frames[0].obs).state;
+        assert!(!s.any_enemy_present(), "没有适生力就是真死了，别把战斗吊着");
+    }
+
+    /// **扯碎的段数从卡面反推。**
+    ///
+    /// `hp_loss_hits`（本场挨穿过几次）观测里没有，内核自己那份只从同步那一刻
+    /// 起累加 —— 而这张牌吃的是整场历史。游戏把算好的段数渲染进了卡面
+    /// （`（命中3次）`），段数 = 1 + 次数，所以次数 = 3 − 1 = 2。
+    ///
+    /// [实测] `act2_f28_decimillipede` 帧31 就是这句话，而在那之前只有一个
+    /// 回合边界掉过血（55 → 44）—— 那一手是多段攻击，**两段打穿了 8 点格挡**。
+    /// 逐帧数"掉血的回合"会得到 1，那是错的：数的是**伤害次数**。
+    #[test]
+    fn sync_reads_tear_asunder_hit_count_off_the_card_text() {
+        fn frame(hand: &str) -> String {
+            format!(
+                r#"{{
+  "version": 1,
+  "run": {{ "act": 2, "floor": 28, "ascension": 2, "character": "铁甲战士" }},
+  "frames": [
+    {{ "i": 0,
+      "obs": {{
+        "state_type": "monster", "round": 5, "is_play_phase": true,
+        "energy": 3, "max_energy": 3,
+        "player": {{ "hp": 44, "max_hp": 80, "block": 0, "status": {{}} }},
+        "enemies": {{ "7": {{ "entity_id": "worm_0", "name": "<合成:沙包>",
+                            "hp": 90, "max_hp": 90, "block": 0, "status": {{}}, "intents": [] }} }},
+        "hand": {hand},
+        "draw_count": 0, "draw": [], "discard": [], "exhaust": [], "pending": null
+      }},
+      "action": null,
+      "settle": {{ "polls": 1, "ms": 0, "unstable": false, "intermediate_differs": false }} }}
+  ]
+}}"#
+            )
+        }
+
+        let tear = r#"[{ "slot": 0, "id": "TEAR_ASUNDER", "name": "扯碎+", "cost": 2,
+                         "type": "Attack", "upgraded": true, "can_play": true,
+                         "description": "造成7点伤害。 在本场战斗中，你每失去过一次生命值，这张牌就额外造成一次伤害。 （命中3次）" }]"#;
+        let t = parse_trace(&frame(tear)).expect("trace 解析失败");
+        let mut r = Replayer::new("");
+        let s = r.sync(&t.frames[0].obs).state;
+        assert_eq!(s.hp_loss_hits, 2, "段数 3 ⇒ 挨穿过 2 次");
+
+        // 牌不在手上：读不出来就用携带值（这里是 0），**不猜**
+        let t = parse_trace(&frame("[]")).expect("trace 解析失败");
+        let mut r2 = Replayer::new("");
+        assert_eq!(r2.sync(&t.frames[0].obs).state.hp_loss_hits, 0);
+
+        // 括号里没有数字（换了语言 / 换了措辞）：同样按读不出来处理
+        let odd = r#"[{ "slot": 0, "id": "TEAR_ASUNDER", "name": "扯碎", "cost": 2,
+                        "type": "Attack", "upgraded": false, "can_play": true,
+                        "description": "Deal 5 damage." }]"#;
+        let t = parse_trace(&frame(odd)).expect("trace 解析失败");
+        let mut r3 = Replayer::new("");
+        assert_eq!(r3.sync(&t.frames[0].obs).state.hp_loss_hits, 0);
+    }
+
+    /// **牌堆里的附魔和手牌里的是同一件事。**
+    ///
+    /// 带灵巧的耸肩无视在手上给 10 点格挡；它躺在抽牌堆里的时候观测不带附魔，
+    /// 于是段内才抽出来的那一张按卡表算 8 —— `act1_f14_phantasmal_gardeners`
+    /// 的整回合对拍就是这么红的（游戏 15 / 内核 13，差的正好是灵巧那 2 点）。
+    ///
+    /// 顺带钉住**下标换算**：`draw_order_enchant` 和 `draw_order` 逐位置配对，
+    /// 而内核 `draw[]` 是反着填的。拿 `rev()` 的计数当下标不会报错，
+    /// 只会把附魔安到另一张牌头上 —— 所以这里故意把附魔放在中间那一张。
+    #[test]
+    fn sync_carries_enchantments_on_cards_still_in_the_draw_pile() {
+        let src = r#"{
+  "version": 1,
+  "run": { "act": 1, "floor": 14, "ascension": 2, "character": "铁甲战士" },
+  "frames": [
+    { "i": 0,
+      "obs": {
+        "state_type": "monster", "round": 1, "is_play_phase": true,
+        "energy": 3, "max_energy": 3,
+        "player": { "hp": 57, "max_hp": 80, "block": 0, "status": {} },
+        "enemies": { "7": { "entity_id": "worm_0", "name": "<合成:沙包>",
+                            "hp": 22, "max_hp": 22, "block": 0, "status": {}, "intents": [] } },
+        "hand": [],
+        "draw_count": 3,
+        "draw": [ { "name": "防御" }, { "name": "打击" }, { "name": "耸肩无视" } ],
+        "draw_order": [ "打击", "耸肩无视", "防御" ],
+        "draw_order_enchant": [ null, { "id": "NIMBLE", "name": "灵巧", "amount": 2 }, null ],
+        "discard": [], "exhaust": [], "pending": null
+      },
+      "action": null,
+      "settle": { "polls": 1, "ms": 0, "unstable": false, "intermediate_differs": false } }
+  ]
+}"#;
+        let t = parse_trace(src).expect("trace 解析失败");
+        let mut r = Replayer::new("");
+        let mut s = r.sync(&t.frames[0].obs).state;
+
+        let first = s.pop_draw_top().expect("抽牌堆非空");
+        assert_eq!(crate::content::card(s.cards[first as usize].id).name, "打击");
+        assert_eq!(s.cards[first as usize].ench, 0, "附魔不该串到邻座");
+
+        let shrug = s.pop_draw_top().expect("还有牌");
+        assert_eq!(crate::content::card(s.cards[shrug as usize].id).name, "耸肩无视");
+        assert_eq!(
+            crate::content::ench_block_add(&s.cards[shrug as usize]),
+            2,
+            "灵巧 +2 跟着这一张实例"
+        );
+
+        // 端到端：真打出去就该是 10 点，不是卡表的 8
+        s.to_hand(shrug);
+        s.energy = 3;
+        let i = (s.n_hand - 1) as u8;
+        let after = crate::step::step(s, crate::Action::PlayCard { hand: i, target: 0 });
+        assert_eq!(after.player.block, 10, "8 + 灵巧 2");
+    }
+
+    /// 没有 `draw_order_enchant`（老 trace / 没打这版补丁的 mod）时照旧按 0 算 ——
+    /// 这个洞是**已知的、方向是低估**，不许因为字段缺失就去猜一个值。
+    #[test]
+    fn sync_without_pile_enchantments_falls_back_to_no_bonus() {
+        let src = r#"{
+  "version": 1,
+  "run": { "act": 1, "floor": 14, "ascension": 2, "character": "铁甲战士" },
+  "frames": [
+    { "i": 0,
+      "obs": {
+        "state_type": "monster", "round": 1, "is_play_phase": true,
+        "energy": 3, "max_energy": 3,
+        "player": { "hp": 57, "max_hp": 80, "block": 0, "status": {} },
+        "enemies": { "7": { "entity_id": "worm_0", "name": "<合成:沙包>",
+                            "hp": 22, "max_hp": 22, "block": 0, "status": {}, "intents": [] } },
+        "hand": [], "draw_count": 1,
+        "draw": [ { "name": "耸肩无视" } ],
+        "draw_order": [ "耸肩无视" ],
+        "discard": [], "exhaust": [], "pending": null
+      },
+      "action": null,
+      "settle": { "polls": 1, "ms": 0, "unstable": false, "intermediate_differs": false } }
+  ]
+}"#;
+        let t = parse_trace(src).expect("trace 解析失败");
+        let mut r = Replayer::new("");
+        let mut s = r.sync(&t.frames[0].obs).state;
+        let ix = s.pop_draw_top().expect("抽牌堆非空");
+        assert_eq!(s.cards[ix as usize].ench, 0);
+    }
 
     /// **真实牌序的方向**：观测下标 0 是牌堆顶，内核 `draw[]` 顶在末尾。
     ///

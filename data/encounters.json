@@ -1,0 +1,3393 @@
+{
+ "note": "[源码] 从 decompiled/ 解析。别手改，跑 tools/dump_encounters.py。",
+ "source": {
+  "acts": "decompiled/MegaCrit.Sts2.Core.Models.Acts",
+  "encounters": "decompiled/MegaCrit.Sts2.Core.Models.Encounters",
+  "monsters": "decompiled/MegaCrit.Sts2.Core.Models.Monsters"
+ },
+ "ascension_levels": {
+  "1": "SwarmingElites",
+  "2": "WearyTraveler",
+  "3": "Poverty",
+  "4": "TightBelt",
+  "5": "AscendersBane",
+  "6": "Inflation",
+  "7": "Scarcity",
+  "8": "ToughEnemies",
+  "9": "DeadlyEnemies",
+  "10": "DoubleBoss"
+ },
+ "ascension_note": "序号即进阶数，`HasLevel => _level >= (int)level`。A8 ToughEnemies 抬敌人耐久 · A9 DeadlyEnemies 抬敌人输出 · A10 DoubleBoss **只给最后一幕**加第二个 Boss（[源码] RunManager：`i == State.Acts.Count - 1`）。逐条数值见 data/ascension.json。",
+ "room_generation": "[源码] ActModel.GenerateRooms：前 weak_encounters 场从 AllWeakEncounters 抽，其余抽到 base_rooms 场；精英预抽 15 场；Boss 在 AllBossEncounters 里均匀取一个。抽取用 GrabBag（抽完才补袋）且 AddWithoutRepeatingTags 禁止相邻同 tag。",
+ "overrides": "data/encounters_overrides.json（手写，解析器放弃的那几场；这次并入 4 条）",
+ "acts": {
+  "Glory": {
+   "index": 2,
+   "is_default": true,
+   "weak_encounters": 2,
+   "weak_encounters_source": "override",
+   "base_rooms": 13,
+   "unlock": "return true;",
+   "boss_discovery_order": [
+    "QueenBoss",
+    "TestSubjectBoss",
+    "AeonglassBoss"
+   ],
+   "encounters": [
+    "AxebotsNormal",
+    "ConstructMenagerieNormal",
+    "DevotedSculptorWeak",
+    "AeonglassBoss",
+    "FabricatorNormal",
+    "FrogKnightNormal",
+    "GlobeHeadNormal",
+    "KnightsElite",
+    "MechaKnightElite",
+    "OwlMagistrateNormal",
+    "QueenBoss",
+    "ScrollsOfBitingNormal",
+    "ScrollsOfBitingWeak",
+    "SlimedBerserkerNormal",
+    "SoulNexusElite",
+    "TestSubjectBoss",
+    "TheLostAndForgottenNormal",
+    "TurretOperatorWeak"
+   ]
+  },
+  "Hive": {
+   "index": 1,
+   "is_default": true,
+   "weak_encounters": 2,
+   "weak_encounters_source": "override",
+   "base_rooms": 14,
+   "unlock": "return true;",
+   "boss_discovery_order": [
+    "TheInsatiableBoss",
+    "KnowledgeDemonBoss",
+    "KaiserCrabBoss"
+   ],
+   "encounters": [
+    "BowlbugsNormal",
+    "BowlbugsWeak",
+    "ChompersNormal",
+    "DecimillipedeElite",
+    "EntomancerElite",
+    "ExoskeletonsNormal",
+    "ExoskeletonsWeak",
+    "HunterKillerNormal",
+    "KaiserCrabBoss",
+    "InfestedPrismsElite",
+    "KnowledgeDemonBoss",
+    "LouseProgenitorNormal",
+    "MytesNormal",
+    "OvicopterNormal",
+    "SlumberingBeetleNormal",
+    "SpinyToadNormal",
+    "TheInsatiableBoss",
+    "TheObscuraNormal",
+    "ThievingHopperWeak",
+    "TunnelerWeak"
+   ]
+  },
+  "Overgrowth": {
+   "index": 0,
+   "is_default": true,
+   "weak_encounters": 3,
+   "weak_encounters_source": "override",
+   "base_rooms": 15,
+   "unlock": "return true;",
+   "boss_discovery_order": [
+    "VantomBoss",
+    "CeremonialBeastBoss",
+    "TheKinBoss"
+   ],
+   "encounters": [
+    "BygoneEffigyElite",
+    "ByrdonisElite",
+    "CeremonialBeastBoss",
+    "CubexConstructNormal",
+    "FlyconidNormal",
+    "FogmogNormal",
+    "FuzzyWurmCrawlerWeak",
+    "InkletsNormal",
+    "MawlerNormal",
+    "NibbitsNormal",
+    "NibbitsWeak",
+    "OvergrowthCrawlers",
+    "PhrogParasiteElite",
+    "RubyRaidersNormal",
+    "ShrinkerBeetleWeak",
+    "SlimesNormal",
+    "SlimesWeak",
+    "SlitheringStranglerNormal",
+    "SnappingJaxfruitNormal",
+    "TheKinBoss",
+    "VantomBoss",
+    "VineShamblerNormal"
+   ]
+  },
+  "Underdocks": {
+   "index": 0,
+   "is_default": false,
+   "weak_encounters": 3,
+   "weak_encounters_source": "override",
+   "base_rooms": 15,
+   "unlock": "return unlockState.IsEpochRevealed<UnderdocksEpoch>();",
+   "boss_discovery_order": [
+    "WaterfallGiantBoss",
+    "SoulFyshBoss",
+    "LagavulinMatriarchBoss"
+   ],
+   "encounters": [
+    "CorpseSlugsNormal",
+    "CorpseSlugsWeak",
+    "CultistsNormal",
+    "FossilStalkerNormal",
+    "GremlinMercNormal",
+    "HauntedShipNormal",
+    "LagavulinMatriarchBoss",
+    "LivingFogNormal",
+    "PhantasmalGardenersElite",
+    "PunchConstructNormal",
+    "SeapunkNormal",
+    "SeapunkWeak",
+    "SewerClamNormal",
+    "SkulkingColonyElite",
+    "SludgeSpinnerWeak",
+    "SoulFyshBoss",
+    "TerrorEelElite",
+    "ToadpolesWeak",
+    "TwoTailedRatsNormal",
+    "WaterfallGiantBoss"
+   ]
+  }
+ },
+ "encounters": {
+  "AeonglassBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Aeonglass"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Aeonglass"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "AxebotsNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Axebot"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Axebot"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "BattlewornDummyEventEncounter": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "一项里出现多个 `ModelDb.Monster<>`",
+   "all_possible": [
+    "BattleFriendV1",
+    "BattleFriendV2",
+    "BattleFriendV3"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "BowlbugsNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Workers"
+   ],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "BowlbugRock"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {
+    "_workerValidCounts": [
+     "BowlbugEgg",
+     "BowlbugSilk",
+     "BowlbugNectar"
+    ]
+   }
+  },
+  "BowlbugsWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Workers"
+   ],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "BowlbugRock"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "BygoneEffigyElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "BygoneEffigy"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "BygoneEffigy"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "ByrdonisElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Byrdonis"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Byrdonis"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "CeremonialBeastBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "CeremonialBeast"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "CeremonialBeast"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "ChompersNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Chomper"
+   ],
+   "monsters": [
+    "Chomper",
+    "Chomper"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Chomper"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "ConstructMenagerieNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "PunchConstruct",
+    "CubexConstruct",
+    "CubexConstruct"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "CubexConstruct",
+    "PunchConstruct"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "CorpseSlugsNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Slugs"
+   ],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "CorpseSlug"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "CorpseSlugsWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Slugs"
+   ],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "CorpseSlug"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "CubexConstructNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "CubexConstruct"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "CubexConstruct"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "CultistsNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "CalcifiedCultist",
+    "DampCultist"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "CalcifiedCultist",
+    "DampCultist"
+   ],
+   "all_possible_note": "从字段 _cultists 解出来的（属性本身是间接引用）",
+   "choice_fields": {}
+  },
+  "DecimillipedeElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "DecimillipedeSegmentFront",
+    "DecimillipedeSegmentMiddle",
+    "DecimillipedeSegmentBack"
+   ],
+   "exact": true,
+   "source": "override",
+   "note": "[源码] 三节恒定；随机的只有 `StarterMoveIdx = Rng.NextInt(3)`，三节按 num / num+1 / num+2 错开起手。**注意**：内核今天让所有敌人从第 0 手起，这一场的起手相位是随机且错开的 —— 那是 L1 的欠账，不是构成的不确定。",
+   "all_possible": [
+    "DecimillipedeSegmentBack",
+    "DecimillipedeSegmentFront",
+    "DecimillipedeSegmentMiddle"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {},
+   "note_decompiled": "构成含随机（`Rng`）"
+  },
+  "DenseVegetationEventEncounter": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含循环",
+   "all_possible": [
+    "Wriggler"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "DevotedSculptorWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [],
+   "monsters": [
+    "DevotedSculptor"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "DevotedSculptor"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "EntomancerElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Entomancer"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Entomancer"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "ExoskeletonsNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Exoskeletons"
+   ],
+   "monsters": [
+    "Exoskeleton",
+    "Exoskeleton",
+    "Exoskeleton",
+    "Exoskeleton"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Exoskeleton"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "ExoskeletonsWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Exoskeletons"
+   ],
+   "monsters": [
+    "Exoskeleton",
+    "Exoskeleton",
+    "Exoskeleton"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Exoskeleton"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "FabricatorNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Fabricator"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Fabricator"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "FakeMerchantEventEncounter": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "FakeMerchantMonster"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "FakeMerchantMonster"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "FlyconidNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Mushroom",
+    "Slimes"
+   ],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "Flyconid"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {
+    "_mediumSlimes": [
+     "LeafSlimeM",
+     "TwigSlimeM"
+    ]
+   }
+  },
+  "FogmogNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Fogmog"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "EyeWithTeeth",
+    "Fogmog"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "FossilStalkerNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "FossilStalker"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "FossilStalker"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "FrogKnightNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "FrogKnight"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "FrogKnight"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "FuzzyWurmCrawlerWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Crawler"
+   ],
+   "monsters": [
+    "FuzzyWurmCrawler"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "FuzzyWurmCrawler"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "GlobeHeadNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "GlobeHead"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "GlobeHead"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "GremlinMercNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "GremlinMerc"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "FatGremlin",
+    "GremlinMerc",
+    "SneakyGremlin"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "HauntedShipNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "HauntedShip"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "HauntedShip"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "HunterKillerNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "HunterKiller"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "HunterKiller"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "InfestedPrismsElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "InfestedPrism"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "InfestedPrism"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "InkletsNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Inklet",
+    "Inklet",
+    "Inklet"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Inklet"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "KaiserCrabBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Crusher",
+    "Rocket"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Crusher",
+    "Rocket"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "KnightsElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [
+    "Knights"
+   ],
+   "monsters": [
+    "FlailKnight",
+    "SpectralKnight",
+    "MagiKnight"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "FlailKnight",
+    "MagiKnight",
+    "SpectralKnight"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "KnowledgeDemonBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "KnowledgeDemon"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "KnowledgeDemon"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "LagavulinMatriarchBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "LagavulinMatriarch"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "LagavulinMatriarch"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "LivingFogNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "LivingFog"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "GasBomb",
+    "LivingFog"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "LouseProgenitorNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "LouseProgenitor"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "LouseProgenitor"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "MawlerNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Mawler"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Mawler"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "MechaKnightElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "MechaKnight"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "MechaKnight"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "MysteriousKnightEventEncounter": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "MysteriousKnight"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "MysteriousKnight"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "MytesNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Myte",
+    "Myte"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Myte"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "NibbitsNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Nibbit",
+    "Nibbit"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Nibbit"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "NibbitsWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Nibbit"
+   ],
+   "monsters": [
+    "Nibbit"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Nibbit"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "OvergrowthCrawlers": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Shrinker",
+    "Crawler"
+   ],
+   "monsters": [
+    "ShrinkerBeetle",
+    "FuzzyWurmCrawler"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "FuzzyWurmCrawler",
+    "ShrinkerBeetle"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "OvicopterNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Ovicopter"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Ovicopter",
+    "ToughEgg"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "OwlMagistrateNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "OwlMagistrate"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "OwlMagistrate"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "PhantasmalGardenersElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "PhantasmalGardener",
+    "PhantasmalGardener",
+    "PhantasmalGardener",
+    "PhantasmalGardener"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "PhantasmalGardener"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "PhrogParasiteElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "PhrogParasite"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "PhrogParasite",
+    "Wriggler"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "PunchConstructNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "PunchConstruct"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "PunchConstruct"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "PunchOffEventEncounter": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "PunchConstruct"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "QueenBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "TorchHeadAmalgam",
+    "Queen"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Queen",
+    "TorchHeadAmalgam"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "RubyRaidersNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "AssassinRubyRaider",
+    "AxeRubyRaider",
+    "BruteRubyRaider",
+    "CrossbowRubyRaider",
+    "TrackerRubyRaider"
+   ],
+   "all_possible_note": "从字段 _raiderValidCounts 解出来的（属性本身是间接引用）",
+   "choice_fields": {
+    "_raiderValidCounts": [
+     "AxeRubyRaider",
+     "AssassinRubyRaider",
+     "BruteRubyRaider",
+     "CrossbowRubyRaider",
+     "TrackerRubyRaider"
+    ]
+   }
+  },
+  "ScrollsOfBitingNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Scrolls"
+   ],
+   "monsters": [
+    "ScrollOfBiting",
+    "ScrollOfBiting",
+    "ScrollOfBiting",
+    "ScrollOfBiting"
+   ],
+   "exact": true,
+   "source": "override",
+   "note": "[源码] 四卷恒定；随机的只有前三卷的 `StarterMoveIdx`（num / num+1 / num+2），**第四卷写死 2**。起手相位同上，是 L1 的欠账。",
+   "all_possible": [
+    "ScrollOfBiting"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {},
+   "note_decompiled": "构成含随机（`Rng`）"
+  },
+  "ScrollsOfBitingWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Scrolls"
+   ],
+   "monsters": [
+    "ScrollOfBiting",
+    "ScrollOfBiting",
+    "ScrollOfBiting"
+   ],
+   "exact": true,
+   "source": "override",
+   "note": "[源码] 三卷恒定；随机的只有 `StarterMoveIdx` 错开。",
+   "all_possible": [
+    "ScrollOfBiting"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {},
+   "note_decompiled": "构成含随机（`Rng`）"
+  },
+  "SeapunkNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Seapunk"
+   ],
+   "monsters": [
+    "CalcifiedCultist",
+    "Seapunk"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "CalcifiedCultist",
+    "Seapunk"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SeapunkWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Seapunk"
+   ],
+   "monsters": [
+    "Seapunk"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Seapunk"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SewerClamNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "SewerClam"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "SewerClam"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "ShrinkerBeetleWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Shrinker"
+   ],
+   "monsters": [
+    "ShrinkerBeetle"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "ShrinkerBeetle"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SkulkingColonyElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "SkulkingColony"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "SkulkingColony"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SlimedBerserkerNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "SlimedBerserker"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "SlimedBerserker"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SlimesNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Slimes"
+   ],
+   "monsters": [
+    "TwigSlimeM",
+    "LeafSlimeM",
+    "LeafSlimeS",
+    "TwigSlimeS"
+   ],
+   "exact": true,
+   "source": "override",
+   "note": "[源码] `Rng.NextBool()` 只决定两只**小**史莱姆谁站前谁站后（flag 三元式交换的是 monsterModel/monsterModel2 的赋值），四只怪本身恒定。多重集确定，位置不确定。",
+   "all_possible": [
+    "LeafSlimeM",
+    "LeafSlimeS",
+    "TwigSlimeM",
+    "TwigSlimeS"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {},
+   "note_decompiled": "构成含随机（`Rng`）"
+  },
+  "SlimesWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Slimes"
+   ],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "LeafSlimeM",
+    "LeafSlimeS",
+    "TwigSlimeM",
+    "TwigSlimeS"
+   ],
+   "all_possible_note": "从字段 _smallSlimes/_mediumSlimes 解出来的（属性本身是间接引用）",
+   "choice_fields": {
+    "_smallSlimes": [
+     "LeafSlimeS",
+     "TwigSlimeS"
+    ],
+    "_mediumSlimes": [
+     "LeafSlimeM",
+     "TwigSlimeM"
+    ]
+   }
+  },
+  "SlitheringStranglerNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "SlitheringStrangler",
+    "SnappingJaxfruit"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {
+    "_smallSlimes": [
+     "LeafSlimeS",
+     "TwigSlimeS"
+    ],
+    "_mediumSlimes": [
+     "LeafSlimeM",
+     "TwigSlimeM"
+    ]
+   }
+  },
+  "SludgeSpinnerWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [],
+   "monsters": [
+    "SludgeSpinner"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "SludgeSpinner"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SlumberingBeetleNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Workers"
+   ],
+   "monsters": [
+    "BowlbugRock",
+    "BowlbugSilk",
+    "SlumberingBeetle"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "BowlbugRock",
+    "BowlbugSilk",
+    "SlumberingBeetle"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SnappingJaxfruitNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Mushroom"
+   ],
+   "monsters": [
+    "SnappingJaxfruit",
+    "Flyconid"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Flyconid",
+    "SnappingJaxfruit"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SoulFyshBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "SoulFysh"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "SoulFysh"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SoulNexusElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "SoulNexus"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "SoulNexus"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "SpinyToadNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "SpinyToad"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "SpinyToad"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TerrorEelElite": {
+   "room_type": "Elite",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "TerrorEel"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "TerrorEel"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TestSubjectBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "TestSubject"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "TestSubject"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TheArchitectEventEncounter": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Architect"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Architect"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TheInsatiableBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "TheInsatiable"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "TheInsatiable"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TheKinBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "KinFollower",
+    "KinFollower",
+    "KinPriest"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "KinFollower",
+    "KinPriest"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TheLostAndForgottenNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "TheLost",
+    "TheForgotten"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "TheForgotten",
+    "TheLost"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TheObscuraNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "TheObscura"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Parafright",
+    "TheObscura"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "ThievingHopperWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Thieves"
+   ],
+   "monsters": [
+    "ThievingHopper"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "ThievingHopper"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "ToadpolesWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [],
+   "monsters": [
+    "Toadpole",
+    "Toadpole"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Toadpole"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TunnelerNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [
+    "Burrower",
+    "Chomper"
+   ],
+   "monsters": [
+    "Chomper",
+    "Tunneler"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Chomper",
+    "Tunneler"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TunnelerWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [
+    "Burrower"
+   ],
+   "monsters": [
+    "Tunneler"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Tunneler"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TurretOperatorWeak": {
+   "room_type": "Monster",
+   "is_weak": true,
+   "tags": [],
+   "monsters": [
+    "LivingShield",
+    "TurretOperator"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "LivingShield",
+    "TurretOperator"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "TwoTailedRatsNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": null,
+   "exact": false,
+   "source": null,
+   "note": "构成含随机（`Rng`）",
+   "all_possible": [
+    "TwoTailedRat"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "VantomBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "Vantom"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "Vantom"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "VineShamblerNormal": {
+   "room_type": "Monster",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "VineShambler"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "VineShambler"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  },
+  "WaterfallGiantBoss": {
+   "room_type": "Boss",
+   "is_weak": false,
+   "tags": [],
+   "monsters": [
+    "WaterfallGiant"
+   ],
+   "exact": true,
+   "source": "decompiled",
+   "note": null,
+   "all_possible": [
+    "WaterfallGiant"
+   ],
+   "all_possible_note": null,
+   "choice_fields": {}
+  }
+ },
+ "monsters": {
+  "Aeonglass": {
+   "key": "AEONGLASS",
+   "min_initial_hp": {
+    "low": 512,
+    "high": 535,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 512,
+    "high": 535,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Architect": {
+   "key": "ARCHITECT",
+   "min_initial_hp": {
+    "low": 9999,
+    "high": 9999,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 9999,
+    "high": 9999,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "AssassinRubyRaider": {
+   "key": "ASSASSIN_RUBY_RAIDER",
+   "min_initial_hp": {
+    "low": 18,
+    "high": 19,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 23,
+    "high": 24,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "AxeRubyRaider": {
+   "key": "AXE_RUBY_RAIDER",
+   "min_initial_hp": {
+    "low": 20,
+    "high": 21,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 22,
+    "high": 23,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Axebot": {
+   "key": "AXEBOT",
+   "min_initial_hp": {
+    "low": 70,
+    "high": 76,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 78,
+    "high": 86,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "BattleFriendV1": {
+   "key": "BATTLE_FRIEND_V1",
+   "min_initial_hp": {
+    "low": 75,
+    "high": 75,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 75,
+    "high": 75,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "BattleFriendV2": {
+   "key": "BATTLE_FRIEND_V2",
+   "min_initial_hp": {
+    "low": 150,
+    "high": 150,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 150,
+    "high": 150,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "BattleFriendV3": {
+   "key": "BATTLE_FRIEND_V3",
+   "min_initial_hp": {
+    "low": 300,
+    "high": 300,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 300,
+    "high": 300,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "BigDummy": {
+   "key": "BIG_DUMMY",
+   "min_initial_hp": {
+    "low": 9999,
+    "high": 9999,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 9999,
+    "high": 9999,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "BowlbugEgg": {
+   "key": "BOWLBUG_EGG",
+   "min_initial_hp": {
+    "low": 21,
+    "high": 23,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 22,
+    "high": 24,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "BowlbugNectar": {
+   "key": "BOWLBUG_NECTAR",
+   "min_initial_hp": {
+    "low": 35,
+    "high": 36,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 38,
+    "high": 39,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "BowlbugRock": {
+   "key": "BOWLBUG_ROCK",
+   "min_initial_hp": {
+    "low": 45,
+    "high": 46,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 48,
+    "high": 49,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "BowlbugSilk": {
+   "key": "BOWLBUG_SILK",
+   "min_initial_hp": {
+    "low": 40,
+    "high": 41,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 43,
+    "high": 44,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "BruteRubyRaider": {
+   "key": "BRUTE_RUBY_RAIDER",
+   "min_initial_hp": {
+    "low": 30,
+    "high": 31,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 33,
+    "high": 34,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "BygoneEffigy": {
+   "key": "BYGONE_EFFIGY",
+   "min_initial_hp": {
+    "low": 127,
+    "high": 132,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 127,
+    "high": 132,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Byrdonis": {
+   "key": "BYRDONIS",
+   "min_initial_hp": {
+    "low": 81,
+    "high": 90,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 84,
+    "high": 90,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Byrdpip": {
+   "key": "BYRDPIP",
+   "min_initial_hp": {
+    "low": 9999,
+    "high": 9999,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 9999,
+    "high": 9999,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "CalcifiedCultist": {
+   "key": "CALCIFIED_CULTIST",
+   "min_initial_hp": {
+    "low": 38,
+    "high": 39,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 41,
+    "high": 42,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "CeremonialBeast": {
+   "key": "CEREMONIAL_BEAST",
+   "min_initial_hp": {
+    "low": 252,
+    "high": 262,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 252,
+    "high": 262,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Chomper": {
+   "key": "CHOMPER",
+   "min_initial_hp": {
+    "low": 60,
+    "high": 63,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 64,
+    "high": 67,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "CorpseSlug": {
+   "key": "CORPSE_SLUG",
+   "min_initial_hp": {
+    "low": 25,
+    "high": 27,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 27,
+    "high": 29,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "CrossbowRubyRaider": {
+   "key": "CROSSBOW_RUBY_RAIDER",
+   "min_initial_hp": {
+    "low": 18,
+    "high": 19,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 21,
+    "high": 22,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Crusher": {
+   "key": "CRUSHER",
+   "min_initial_hp": {
+    "low": 209,
+    "high": 219,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 209,
+    "high": 219,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "CubexConstruct": {
+   "key": "CUBEX_CONSTRUCT",
+   "min_initial_hp": {
+    "low": 65,
+    "high": 70,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 65,
+    "high": 70,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "DampCultist": {
+   "key": "DAMP_CULTIST",
+   "min_initial_hp": {
+    "low": 51,
+    "high": 52,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 53,
+    "high": 54,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "DecimillipedeSegment": {
+   "key": "DECIMILLIPEDE_SEGMENT",
+   "min_initial_hp": {
+    "low": 40,
+    "high": 46,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 46,
+    "high": 52,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "DecimillipedeSegmentBack": {
+   "key": "DECIMILLIPEDE_SEGMENT_BACK",
+   "min_initial_hp": {
+    "low": 40,
+    "high": 46,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 46,
+    "high": 52,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": "血量继承自基类 DecimillipedeSegment"
+  },
+  "DecimillipedeSegmentFront": {
+   "key": "DECIMILLIPEDE_SEGMENT_FRONT",
+   "min_initial_hp": {
+    "low": 40,
+    "high": 46,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 46,
+    "high": 52,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": "血量继承自基类 DecimillipedeSegment"
+  },
+  "DecimillipedeSegmentMiddle": {
+   "key": "DECIMILLIPEDE_SEGMENT_MIDDLE",
+   "min_initial_hp": {
+    "low": 40,
+    "high": 46,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 46,
+    "high": 52,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": "血量继承自基类 DecimillipedeSegment"
+  },
+  "DeprecatedMonster": {
+   "key": "DEPRECATED_MONSTER",
+   "min_initial_hp": {
+    "low": 0,
+    "high": 0,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 0,
+    "high": 0,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "DevotedSculptor": {
+   "key": "DEVOTED_SCULPTOR",
+   "min_initial_hp": {
+    "low": 162,
+    "high": 172,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 162,
+    "high": 172,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Entomancer": {
+   "key": "ENTOMANCER",
+   "min_initial_hp": {
+    "low": 145,
+    "high": 155,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 145,
+    "high": 155,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Exoskeleton": {
+   "key": "EXOSKELETON",
+   "min_initial_hp": {
+    "low": 24,
+    "high": 25,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 28,
+    "high": 29,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "EyeWithTeeth": {
+   "key": "EYE_WITH_TEETH",
+   "min_initial_hp": {
+    "low": 6,
+    "high": 6,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 6,
+    "high": 6,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "Fabricator": {
+   "key": "FABRICATOR",
+   "min_initial_hp": {
+    "low": 150,
+    "high": 155,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 150,
+    "high": 155,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "FakeMerchantMonster": {
+   "key": "FAKE_MERCHANT_MONSTER",
+   "min_initial_hp": {
+    "low": 165,
+    "high": 175,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 165,
+    "high": 175,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "FatGremlin": {
+   "key": "FAT_GREMLIN",
+   "min_initial_hp": {
+    "low": 13,
+    "high": 14,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 17,
+    "high": 18,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "FlailKnight": {
+   "key": "FLAIL_KNIGHT",
+   "min_initial_hp": {
+    "low": 101,
+    "high": 108,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 101,
+    "high": 108,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Flyconid": {
+   "key": "FLYCONID",
+   "min_initial_hp": {
+    "low": 47,
+    "high": 51,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 49,
+    "high": 53,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Fogmog": {
+   "key": "FOGMOG",
+   "min_initial_hp": {
+    "low": 74,
+    "high": 78,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 74,
+    "high": 78,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "FossilStalker": {
+   "key": "FOSSIL_STALKER",
+   "min_initial_hp": {
+    "low": 51,
+    "high": 54,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 53,
+    "high": 56,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "FrogKnight": {
+   "key": "FROG_KNIGHT",
+   "min_initial_hp": {
+    "low": 191,
+    "high": 199,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 191,
+    "high": 199,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "FuzzyWurmCrawler": {
+   "key": "FUZZY_WURM_CRAWLER",
+   "min_initial_hp": {
+    "low": 55,
+    "high": 58,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 57,
+    "high": 59,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "GasBomb": {
+   "key": "GAS_BOMB",
+   "min_initial_hp": {
+    "low": 7,
+    "high": 8,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 7,
+    "high": 8,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "GlobeHead": {
+   "key": "GLOBE_HEAD",
+   "min_initial_hp": {
+    "low": 148,
+    "high": 158,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 148,
+    "high": 158,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "GremlinMerc": {
+   "key": "GREMLIN_MERC",
+   "min_initial_hp": {
+    "low": 47,
+    "high": 51,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 49,
+    "high": 53,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Guardbot": {
+   "key": "GUARDBOT",
+   "min_initial_hp": {
+    "low": 16,
+    "high": 17,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 20,
+    "high": 21,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "HauntedShip": {
+   "key": "HAUNTED_SHIP",
+   "min_initial_hp": {
+    "low": 63,
+    "high": 67,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 63,
+    "high": 67,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "HunterKiller": {
+   "key": "HUNTER_KILLER",
+   "min_initial_hp": {
+    "low": 121,
+    "high": 126,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 121,
+    "high": 126,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "InfestedPrism": {
+   "key": "INFESTED_PRISM",
+   "min_initial_hp": {
+    "low": 161,
+    "high": 171,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 161,
+    "high": 171,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Inklet": {
+   "key": "INKLET",
+   "min_initial_hp": {
+    "low": 11,
+    "high": 12,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 17,
+    "high": 18,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "KinFollower": {
+   "key": "KIN_FOLLOWER",
+   "min_initial_hp": {
+    "low": 58,
+    "high": 62,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 59,
+    "high": 63,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "KinPriest": {
+   "key": "KIN_PRIEST",
+   "min_initial_hp": {
+    "low": 190,
+    "high": 199,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 190,
+    "high": 199,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "KnowledgeDemon": {
+   "key": "KNOWLEDGE_DEMON",
+   "min_initial_hp": {
+    "low": 379,
+    "high": 399,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 379,
+    "high": 399,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "LagavulinMatriarch": {
+   "key": "LAGAVULIN_MATRIARCH",
+   "min_initial_hp": {
+    "low": 222,
+    "high": 233,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 222,
+    "high": 233,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "LeafSlimeM": {
+   "key": "LEAF_SLIME_M",
+   "min_initial_hp": {
+    "low": 32,
+    "high": 33,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 35,
+    "high": 36,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "LeafSlimeS": {
+   "key": "LEAF_SLIME_S",
+   "min_initial_hp": {
+    "low": 11,
+    "high": 12,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 15,
+    "high": 16,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "LivingFog": {
+   "key": "LIVING_FOG",
+   "min_initial_hp": {
+    "low": 80,
+    "high": 82,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 80,
+    "high": 82,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "LivingShield": {
+   "key": "LIVING_SHIELD",
+   "min_initial_hp": {
+    "low": 55,
+    "high": 65,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 55,
+    "high": 65,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "LouseProgenitor": {
+   "key": "LOUSE_PROGENITOR",
+   "min_initial_hp": {
+    "low": 134,
+    "high": 138,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 136,
+    "high": 141,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "MagiKnight": {
+   "key": "MAGI_KNIGHT",
+   "min_initial_hp": {
+    "low": 82,
+    "high": 89,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 82,
+    "high": 89,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Mawler": {
+   "key": "MAWLER",
+   "min_initial_hp": {
+    "low": 72,
+    "high": 76,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 72,
+    "high": 76,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "MechaKnight": {
+   "key": "MECHA_KNIGHT",
+   "min_initial_hp": {
+    "low": 300,
+    "high": 320,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 300,
+    "high": 320,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "MultiAttackMoveMonster": {
+   "key": "MULTI_ATTACK_MOVE_MONSTER",
+   "min_initial_hp": {
+    "low": 999,
+    "high": 999,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 999,
+    "high": 999,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "MysteriousKnight": {
+   "key": "MYSTERIOUS_KNIGHT",
+   "min_initial_hp": {
+    "low": 101,
+    "high": 108,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 101,
+    "high": 108,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": "血量继承自基类 FlailKnight"
+  },
+  "Myte": {
+   "key": "MYTE",
+   "min_initial_hp": {
+    "low": 61,
+    "high": 64,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 67,
+    "high": 69,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Nibbit": {
+   "key": "NIBBIT",
+   "min_initial_hp": {
+    "low": 42,
+    "high": 44,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 46,
+    "high": 48,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Noisebot": {
+   "key": "NOISEBOT",
+   "min_initial_hp": {
+    "low": 18,
+    "high": 19,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 23,
+    "high": 24,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "OneHpMonster": {
+   "key": "ONE_HP_MONSTER",
+   "min_initial_hp": {
+    "low": 1,
+    "high": 1,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 1,
+    "high": 1,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "Osty": {
+   "key": "OSTY",
+   "min_initial_hp": {
+    "low": 1,
+    "high": 1,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 1,
+    "high": 1,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "Ovicopter": {
+   "key": "OVICOPTER",
+   "min_initial_hp": {
+    "low": 124,
+    "high": 126,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 130,
+    "high": 132,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "OwlMagistrate": {
+   "key": "OWL_MAGISTRATE",
+   "min_initial_hp": {
+    "low": 231,
+    "high": 247,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 231,
+    "high": 247,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "PaelsLegion": {
+   "key": "PAELS_LEGION",
+   "min_initial_hp": {
+    "low": 9999,
+    "high": 9999,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 9999,
+    "high": 9999,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "Parafright": {
+   "key": "PARAFRIGHT",
+   "min_initial_hp": {
+    "low": 21,
+    "high": 21,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 21,
+    "high": 21,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "PhantasmalGardener": {
+   "key": "PHANTASMAL_GARDENER",
+   "min_initial_hp": {
+    "low": 26,
+    "high": 27,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 31,
+    "high": 32,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "PhrogParasite": {
+   "key": "PHROG_PARASITE",
+   "min_initial_hp": {
+    "low": 61,
+    "high": 66,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 64,
+    "high": 68,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "PunchConstruct": {
+   "key": "PUNCH_CONSTRUCT",
+   "min_initial_hp": {
+    "low": 55,
+    "high": 60,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 55,
+    "high": 60,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Queen": {
+   "key": "QUEEN",
+   "min_initial_hp": {
+    "low": 400,
+    "high": 419,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 400,
+    "high": 419,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Rocket": {
+   "key": "ROCKET",
+   "min_initial_hp": {
+    "low": 199,
+    "high": 209,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 199,
+    "high": 209,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "ScrollOfBiting": {
+   "key": "SCROLL_OF_BITING",
+   "min_initial_hp": {
+    "low": 30,
+    "high": 33,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 37,
+    "high": 39,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Seapunk": {
+   "key": "SEAPUNK",
+   "min_initial_hp": {
+    "low": 44,
+    "high": 47,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 46,
+    "high": 49,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SewerClam": {
+   "key": "SEWER_CLAM",
+   "min_initial_hp": {
+    "low": 56,
+    "high": 58,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 56,
+    "high": 58,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "ShrinkerBeetle": {
+   "key": "SHRINKER_BEETLE",
+   "min_initial_hp": {
+    "low": 38,
+    "high": 40,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 40,
+    "high": 42,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SingleAttackMoveMonster": {
+   "key": "SINGLE_ATTACK_MOVE_MONSTER",
+   "min_initial_hp": {
+    "low": 999,
+    "high": 999,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 999,
+    "high": 999,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "SkulkingColony": {
+   "key": "SKULKING_COLONY",
+   "min_initial_hp": {
+    "low": 75,
+    "high": 80,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 75,
+    "high": 80,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SlimedBerserker": {
+   "key": "SLIMED_BERSERKER",
+   "min_initial_hp": {
+    "low": 261,
+    "high": 281,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 261,
+    "high": 281,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SlitheringStrangler": {
+   "key": "SLITHERING_STRANGLER",
+   "min_initial_hp": {
+    "low": 53,
+    "high": 54,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 55,
+    "high": 56,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SludgeSpinner": {
+   "key": "SLUDGE_SPINNER",
+   "min_initial_hp": {
+    "low": 37,
+    "high": 41,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 39,
+    "high": 42,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SlumberingBeetle": {
+   "key": "SLUMBERING_BEETLE",
+   "min_initial_hp": {
+    "low": 86,
+    "high": 89,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 86,
+    "high": 89,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SnappingJaxfruit": {
+   "key": "SNAPPING_JAXFRUIT",
+   "min_initial_hp": {
+    "low": 31,
+    "high": 34,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 33,
+    "high": 36,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SneakyGremlin": {
+   "key": "SNEAKY_GREMLIN",
+   "min_initial_hp": {
+    "low": 10,
+    "high": 11,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 14,
+    "high": 15,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SoulFysh": {
+   "key": "SOUL_FYSH",
+   "min_initial_hp": {
+    "low": 211,
+    "high": 221,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 211,
+    "high": 221,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SoulNexus": {
+   "key": "SOUL_NEXUS",
+   "min_initial_hp": {
+    "low": 234,
+    "high": 254,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 234,
+    "high": 254,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SpectralKnight": {
+   "key": "SPECTRAL_KNIGHT",
+   "min_initial_hp": {
+    "low": 93,
+    "high": 97,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 93,
+    "high": 97,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "SpinyToad": {
+   "key": "SPINY_TOAD",
+   "min_initial_hp": {
+    "low": 116,
+    "high": 121,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 119,
+    "high": 124,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Stabbot": {
+   "key": "STABBOT",
+   "min_initial_hp": {
+    "low": 18,
+    "high": 19,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 23,
+    "high": 24,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TenHpMonster": {
+   "key": "TEN_HP_MONSTER",
+   "min_initial_hp": {
+    "low": 10,
+    "high": 10,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 10,
+    "high": 10,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "TerrorEel": {
+   "key": "TERROR_EEL",
+   "min_initial_hp": {
+    "low": 140,
+    "high": 150,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 140,
+    "high": 150,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TestSubject": {
+   "key": "TEST_SUBJECT",
+   "min_initial_hp": null,
+   "max_initial_hp": null,
+   "hp_note": "血量属性没解析出来（继承或计算得来）"
+  },
+  "TheAdversaryMkOne": {
+   "key": "THE_ADVERSARY_MK_ONE",
+   "min_initial_hp": {
+    "low": 100,
+    "high": 100,
+    "gate": null
+   },
+   "max_initial_hp": {
+    "low": 100,
+    "high": 100,
+    "gate": null
+   },
+   "hp_note": null
+  },
+  "TheAdversaryMkThree": {
+   "key": "THE_ADVERSARY_MK_THREE",
+   "min_initial_hp": {
+    "low": 300,
+    "high": 300,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 300,
+    "high": 300,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TheAdversaryMkTwo": {
+   "key": "THE_ADVERSARY_MK_TWO",
+   "min_initial_hp": {
+    "low": 200,
+    "high": 200,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 200,
+    "high": 200,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TheForgotten": {
+   "key": "THE_FORGOTTEN",
+   "min_initial_hp": {
+    "low": 106,
+    "high": 111,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 106,
+    "high": 111,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TheInsatiable": {
+   "key": "THE_INSATIABLE",
+   "min_initial_hp": {
+    "low": 321,
+    "high": 341,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 321,
+    "high": 341,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TheLost": {
+   "key": "THE_LOST",
+   "min_initial_hp": {
+    "low": 93,
+    "high": 99,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 93,
+    "high": 99,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TheObscura": {
+   "key": "THE_OBSCURA",
+   "min_initial_hp": {
+    "low": 123,
+    "high": 129,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 123,
+    "high": 129,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "ThievingHopper": {
+   "key": "THIEVING_HOPPER",
+   "min_initial_hp": {
+    "low": 79,
+    "high": 84,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 79,
+    "high": 84,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Toadpole": {
+   "key": "TOADPOLE",
+   "min_initial_hp": {
+    "low": 21,
+    "high": 22,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 25,
+    "high": 26,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TorchHeadAmalgam": {
+   "key": "TORCH_HEAD_AMALGAM",
+   "min_initial_hp": {
+    "low": 199,
+    "high": 211,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 199,
+    "high": 211,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "ToughEgg": {
+   "key": "TOUGH_EGG",
+   "min_initial_hp": {
+    "low": 14,
+    "high": 15,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 18,
+    "high": 19,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TrackerRubyRaider": {
+   "key": "TRACKER_RUBY_RAIDER",
+   "min_initial_hp": {
+    "low": 21,
+    "high": 22,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 25,
+    "high": 26,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Tunneler": {
+   "key": "TUNNELER",
+   "min_initial_hp": {
+    "low": 87,
+    "high": 92,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 87,
+    "high": 92,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TurretOperator": {
+   "key": "TURRET_OPERATOR",
+   "min_initial_hp": {
+    "low": 41,
+    "high": 51,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 41,
+    "high": 51,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TwigSlimeM": {
+   "key": "TWIG_SLIME_M",
+   "min_initial_hp": {
+    "low": 26,
+    "high": 27,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 28,
+    "high": 29,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TwigSlimeS": {
+   "key": "TWIG_SLIME_S",
+   "min_initial_hp": {
+    "low": 7,
+    "high": 8,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 11,
+    "high": 12,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "TwoTailedRat": {
+   "key": "TWO_TAILED_RAT",
+   "min_initial_hp": {
+    "low": 17,
+    "high": 18,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 21,
+    "high": 22,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Vantom": {
+   "key": "VANTOM",
+   "min_initial_hp": {
+    "low": 173,
+    "high": 183,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 173,
+    "high": 183,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "VineShambler": {
+   "key": "VINE_SHAMBLER",
+   "min_initial_hp": {
+    "low": 61,
+    "high": 64,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 61,
+    "high": 64,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "WaterfallGiant": {
+   "key": "WATERFALL_GIANT",
+   "min_initial_hp": {
+    "low": 240,
+    "high": 250,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 240,
+    "high": 250,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Wriggler": {
+   "key": "WRIGGLER",
+   "min_initial_hp": {
+    "low": 17,
+    "high": 18,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 21,
+    "high": 22,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  },
+  "Zapbot": {
+   "key": "ZAPBOT",
+   "min_initial_hp": {
+    "low": 18,
+    "high": 19,
+    "gate": "ToughEnemies"
+   },
+   "max_initial_hp": {
+    "low": 23,
+    "high": 24,
+    "gate": "ToughEnemies"
+   },
+   "hp_note": null
+  }
+ }
+}

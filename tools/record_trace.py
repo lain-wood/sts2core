@@ -57,6 +57,7 @@ import datetime as _dt
 import json
 import os
 import shlex
+import subprocess
 import sys
 import time
 import urllib.error
@@ -68,6 +69,56 @@ SP_URL = BASE_URL + "/api/v1/singleplayer"
 # 所有相对路径都锚在 sts2core/ 上，而不是当前工作目录——固定命令行的前提是
 # 命令里不带路径，那路径就不能依赖「从哪儿调用的」。
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def run_verify_last(trace_path: str | None, mode: str = "driven") -> None:
+    """在线对拍钩子：每步落盘后调用 verify.exe --last 校验最新一帧。
+    耗时约 30ms，若发现不一致当场标红报警。
+    mode: 'driven'（主动录制，动作绝对精确）或 'inferred'（被动反推，动作可能反推错）
+    """
+    if not trace_path or not os.path.exists(trace_path):
+        return
+
+    verify_exe = os.path.join(ROOT, "target", "release", "verify.exe")
+    if not os.path.exists(verify_exe):
+        verify_exe = os.path.join(ROOT, "target", "release", "verify")
+    if not os.path.exists(verify_exe):
+        verify_exe = os.path.join(ROOT, "target", "debug", "verify.exe")
+    if not os.path.exists(verify_exe):
+        return
+
+    try:
+        res = subprocess.run(
+            [verify_exe, trace_path, "--last"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=5.0,
+        )
+        if res.returncode != 0:
+            RED = "\033[1;31m"
+            YELLOW = "\033[1;33m"
+            RESET = "\033[0m"
+            print(f"\n{RED}{'='*65}{RESET}")
+            if mode == "driven":
+                print(f"{RED}[!] 【在线对拍报警 [x] driven】动作精确已知，规则必定算错！{RESET}")
+            else:
+                print(f"{YELLOW}[!] 【在线对拍报警 [x] inferred】动作系反推，“读它的红先怀疑动作”{RESET}")
+            print(f"{RED}{'='*65}{RESET}")
+            if res.stdout.strip():
+                print(res.stdout.strip())
+            if res.stderr.strip():
+                print(res.stderr.strip())
+            print(f"{RED}{'='*65}{RESET}\n")
+            sys.stdout.flush()
+        else:
+            out = res.stdout.strip()
+            if out:
+                print(f"  [对拍] {out}")
+                sys.stdout.flush()
+    except Exception:
+        pass
 PLAN_PATH = os.path.join(ROOT, "traces", "_plan.txt")
 
 
@@ -184,8 +235,11 @@ def _hand_card(c: dict) -> dict:
 
 
 def _pile_card(c: dict) -> dict:
-    # 牌堆里的牌没有 id / is_upgraded（见 trace-format.md 约束 3），弱身份
-    return {"name": c.get("name"), "cost": c.get("cost")}
+    # 牌堆里的牌没有 id / is_upgraded（见 trace-format.md 约束 3），弱身份。
+    # **附魔是例外**：它是逐实例的、名字里看不出来（带灵巧的耸肩无视给 10 点
+    # 而卡表说 8），所以牌堆里也要留着 —— 从弃牌堆捞牌的头槌/好勇斗狠不留它
+    # 就会捞回一张没附魔的。老 mod 没这个键，留 None。
+    return {"name": c.get("name"), "cost": c.get("cost"), "enchantment": c.get("enchantment")}
 
 
 def _pending(raw: dict) -> dict | None:
@@ -281,6 +335,10 @@ def normalize(raw: dict) -> dict:
         # 拿到它，内核最大的结构性不确定（"抽牌只猜顺序"）对**已知前缀**消失。
         # 老 mod / 老 trace 没有这个键 —— 那时是 `None`，内核退回原来的行为。
         "draw_order": player.get("draw_pile_order"),
+        # 和 `draw_order` **逐位置配对**的附魔（同长度、同下标，没附魔是 null）。
+        # 挂在 `draw_order` 上而不是 `draw` 上，因为后者被 mod 按稀有度+id 重排过
+        # （约束 2），下标已经不指向同一张实体牌了。老 mod / 老 trace 是 None。
+        "draw_order_enchant": player.get("draw_pile_order_enchantments"),
         "discard": [_pile_card(c) for c in (player.get("discard_pile") or [])],
         "exhaust": [_pile_card(c) for c in (player.get("exhaust_pile") or [])],
         "pending": _pending(raw),
@@ -778,6 +836,7 @@ def exec_step(ctx: Ctx, args) -> None:
         raise SystemExit(f"未知步骤 {cmd}")
 
     ctx.save()
+    run_verify_last(ctx.trace_path, mode="driven")
     show(obs)
 
 

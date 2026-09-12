@@ -11,7 +11,7 @@
 use std::process::ExitCode;
 
 use sts2core::replay::{
-    parse_trace, verify, verify_enemy_ai, verify_per_turn, EnemyAiReport, Report, Verdict,
+    parse_trace, verify, verify_enemy_ai, verify_last, verify_per_turn, EnemyAiReport, Report, Verdict,
 };
 
 /// 敌人 AI 对拍的报告。四种结局分得很开，因为它们要修的地方完全不同：
@@ -57,6 +57,7 @@ fn main() -> ExitCode {
         eprintln!("  --all           列出每一帧，不止不一致的那些");
         eprintln!("  --per-turn      整回合预测：一段连续出牌只在开头同步一次，只比末态");
         eprintln!("  --predict-enemy 敌人 AI 对拍：用 EnemyDef 预测下一手意图，和观测比");
+        eprintln!("  --last          在线即时对拍：只验最新一帧，不一致时非零退出");
         return ExitCode::from(2);
     }
 
@@ -65,6 +66,7 @@ fn main() -> ExitCode {
     let mut show_all = false;
     let mut per_turn = false;
     let mut predict_enemy = false;
+    let mut last_only = false;
     let mut it = args.iter();
     while let Some(a) = it.next() {
         match a.as_str() {
@@ -78,8 +80,55 @@ fn main() -> ExitCode {
             "--all" => show_all = true,
             "--per-turn" => per_turn = true,
             "--predict-enemy" => predict_enemy = true,
+            "--last" => last_only = true,
             _ => paths.push(a.clone()),
         }
+    }
+
+    if last_only {
+        let mut had_mismatch = false;
+        for p in &paths {
+            let src = match std::fs::read_to_string(p) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("读不了 {p}: {e}");
+                    return ExitCode::from(2);
+                }
+            };
+            let t = match parse_trace(&src) {
+                Ok(t) => t,
+                Err(e) => {
+                    eprintln!("{p}: {e}");
+                    return ExitCode::from(2);
+                }
+            };
+            if let Some(res) = verify_last(&t) {
+                let tag = match res.verdict {
+                    Verdict::Match => "MATCH  ",
+                    Verdict::Partial => "PARTIAL",
+                    Verdict::Mismatch => "MISMATCH",
+                    Verdict::UnknownContent => "UNKNOWN",
+                    Verdict::Skipped => "SKIP   ",
+                };
+                let mark = if res.verdict == Verdict::Mismatch { "[x]" } else { "[OK]" };
+                println!("{mark} [{tag}] 帧{:<3} {}", res.i, res.action);
+                for n in &res.notes {
+                    println!("       · {n}");
+                }
+                for d in &res.diffs {
+                    let dmark = if d.hard { "x" } else { "~" };
+                    println!("       {dmark} {:<28} 游戏={:<18} 内核={}", d.field, d.game, d.kernel);
+                }
+                if res.verdict == Verdict::Mismatch {
+                    had_mismatch = true;
+                }
+            }
+        }
+        return if had_mismatch {
+            ExitCode::FAILURE
+        } else {
+            ExitCode::SUCCESS
+        };
     }
 
     // (完全一致, 只对上类型, 总预测数, 对不齐/未知的敌人数, 允许集合大小之和)
@@ -216,6 +265,13 @@ fn print_report(r: &Report, show_all: bool) {
         let names: Vec<String> =
             r.missing_potions.iter().map(|(n, c)| format!("{n}×{c}")).collect();
         println!("  用过的药水（内核无药水模型）: {}", names.join(" "));
+    }
+    // **没建全的附魔**。这一栏 2026-09-06 之前只往 `Report` 里写、没人印出来 ——
+    // 和「没映射的 status」是同一类静默洞：字段有、看不见。
+    if !r.unknown_enchantments.is_empty() {
+        let ids: Vec<&str> = r.unknown_enchantments.iter().map(|s| s.as_str()).collect();
+        println!("  没建全的附魔（这几张牌会被算错，补 content::ENCHANTS）:");
+        println!("    {}", ids.join(" "));
     }
     if !r.unmapped_status.is_empty() {
         let ids: Vec<String> =

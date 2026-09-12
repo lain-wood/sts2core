@@ -4,7 +4,7 @@ r"""从反编译源码里读出每件遗物的**钩子面**，用来判断内核
 和 `dump_relics.py` 的分工：那个导**权威静态表**（名字/稀有度/描述，来自
 跑着的游戏）；这个读**行为**（重写了哪些钩子、调了哪些 Cmd、卡面数值是多少），
 只有反编译源码给得了。两个都不做判断 —— 分类和结论在
-`docs/relic-audit.md`，那是判断，会过时，要人来维护。
+`docs/relic-hook-taxonomy.md`，那是判断，会过时，要人来维护。
 
 为什么要能重跑：遗物表**会变**。2026-05→06 一个月里游戏就新增了 8 件遗物
 （钓鱼竿 / 沉重石板 / 万花筒 / 涅奥骨骰 / 涅奥护符 / 药瓶皮套 / 柔顺发丝 /
@@ -65,7 +65,7 @@ def modelled_ids():
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     if not os.path.isdir(DEC):
-        sys.exit(f"没有反编译源码：{DEC}\n先跑 ilspycmd，命令见 docs/relic-audit.md")
+        sys.exit(f"没有反编译源码：{DEC}\n先跑 ilspycmd，命令见 docs/relic-hook-taxonomy.md")
 
     cat = json.load(open(CAT, encoding="utf-8"))["relics"]
     files = {f[:-3].lower(): f for f in os.listdir(DEC) if f.endswith(".cs")}

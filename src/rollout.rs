@@ -64,7 +64,7 @@ pub fn fast_play_turn(s: &mut State) {
 /// `DiscardToDrawTop { remaining: 1 }`（`n_hand=4 n_disc=7 n_draw=3`，
 /// 局面完全正常，就是 `combat_over` 已经是 true 了），
 /// 16 个样本 0.18 秒、64 个样本跑 4 分钟不出结果。
-pub(crate) fn close_pending(s: &mut State, rec: &mut Option<Vec<Action>>) {
+pub fn close_pending(s: &mut State, rec: &mut Option<Vec<Action>>) {
     // `!s.combat_over` 是**真正的那条**，理由见函数头。
     while s.pending != Pending::None && !s.combat_over {
         // **每一圈都必须真的推动局面。** 这条是兜底：`combat_over` 是已知的
@@ -141,9 +141,13 @@ pub fn fast_play_turn_rec(s: &mut State, rec: &mut Option<Vec<Action>>) {
             continue;
         }
         let def = enemy_def(s.enemy_def[e]);
-        let mv = &def.moves[crate::step::current_move_ix(def, s, e)];
-        for op in mv.ops {
-            if let EOp::Attack { base, hits } = *op {
+        let mi = crate::step::current_move_ix(def, s, e);
+        let mv = &def.moves[mi];
+        for (oi, op) in mv.ops.iter().enumerate() {
+            // 进阶收口，见 `asc::adjust`
+            if let EOp::Attack { base, hits } =
+                crate::asc::adjust(s.enemy_def[e], mi, oi, s.ascension, *op)
+            {
                 let face = base + s.enemies[e].get(St::Strength);
                 threat_incoming += face.max(0) * hits;
             }
@@ -350,8 +354,11 @@ pub fn predicted_threat(s: &State) -> Threat {
         let Some(mv) = def.moves.get(ix) else { continue };
         let mut hits = 0i32;
         let mut per_hit = 0i32;
-        for op in mv.ops {
-            if let EOp::Attack { base, hits: h } = *op {
+        for (oi, op) in mv.ops.iter().enumerate() {
+            // 进阶收口，见 `asc::adjust`
+            if let EOp::Attack { base, hits: h } =
+                crate::asc::adjust(s.enemy_def[e], ix, oi, s.ascension, *op)
+            {
                 // **给的是面板基础值，不在这里过乘区。**
                 //
                 // 以前这里先 `apply_modifiers` 再塞进 `Threat`，等于把"这一击打多少"
@@ -600,17 +607,29 @@ pub fn sample_outcomes(
     policy: Policy,
 ) -> Vec<Outcome> {
     const GOLDEN: u64 = 0x9E37_79B9_7F4A_7C15;
-    let one = |i: usize| {
+    par_map(n, |i| {
         let mut sim = *s;
         sim.rng.shuffle = seed ^ (i as u64).wrapping_mul(GOLDEN);
         sim.rng.enemy = seed ^ (i as u64 ^ 0xA5A5_A5A5).wrapping_mul(GOLDEN);
         rollout_outcome_with(sim, max_turns, policy)
-    };
+    })
+}
+
+/// **把 `0..n` 分给几个线程算，结果按下标写回原位。**
+///
+/// 从 [`sample_outcomes`] 里拆出来的（2026-09-10，L3 阶段 2 要用）——
+/// 那一层换种子推演，这一层**每个样本各搭一场仗**（`synth::eval`），
+/// 共用的只有"怎么并行"这一件事。两边各写一遍的话，
+/// "结果和串行逐字相同"这条性质就有两个地方会长歪。
+///
+/// **顺序不能松**：分位数是排序出来的，样本换个位置复现性就没了。
+/// 前提由调用方保证：`one(i)` 只依赖 `i`，样本之间不共享任何状态。
+pub fn par_map<T: Send>(n: usize, one: impl Fn(usize) -> T + Sync) -> Vec<T> {
     let threads = std::thread::available_parallelism().map(|p| p.get()).unwrap_or(1).min(n.max(1));
     if threads <= 1 || n <= 1 {
         return (0..n).map(one).collect();
     }
-    let mut out: Vec<Option<Outcome>> = vec![None; n];
+    let mut out: Vec<Option<T>> = (0..n).map(|_| None).collect();
     // 按 chunk 切，每个线程拿一段连续下标，写回自己那一段 —— 不用锁。
     let per = n.div_ceil(threads);
     std::thread::scope(|sc| {

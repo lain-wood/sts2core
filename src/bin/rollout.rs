@@ -154,6 +154,20 @@ fn main() -> ExitCode {
         eprintln!("  --max-turns 推演回合上限（默认 40）。撞上上限的推演会被 P4 判红");
         eprintln!("  --depth-sweep N  再拿**同一批种子**跑一遍 D=N 的 plan 策略，配对比较（P5）。");
         eprintln!("              配对比中位数敏感得多：同一手牌、同一条敌人随机流，差的只可能是深度");
+        eprintln!("  --set \"k=v,...\"  改**主策略**的配置（键同 --alt）。单独跑一遍量耗时用它 ——");
+        eprintln!("              一个 --alt 进程里两条 arm 的耗时是混在一起的，分不开");
+        eprintln!("  --alt \"k=v,...\"  **同深度 A/B**：对照策略从主策略的配置出发，只改点名的那几个键。");
+        eprintln!("              没有它，P5 只答得了「D=2 比 D=1 好多少」，答不了「新 D=2 比旧 D=2 好多少」。");
+        eprintln!("              键：depth / score / cand-score / deep-score / k / k-certain / tt /");
+        eprintln!("                  power-reserve / damage-reserve / budgets=a:b:c:d / widths=a:b:c:d /");
+        eprintln!("                  exact-threshold / ext=none|lethal+spike / ext-width / window=on|off|N /");
+        eprintln!("                  window-score /");
+        eprintln!("                  leaf=eval|rollout[:samples:turns] / seed");
+        eprintln!("              例：--alt \"deep-score=damage\"  = 退回 2026-09-04 之前的深层口径");
+        eprintln!("                  --alt \"window=off\"         = 退回 2026-09-05 之前（没有确定性窗口）");
+        eprintln!("                  --alt \"window-score=leaf\"   = 退回阶段 4 之前（窗口内不换目标函数）");
+        eprintln!("                  --alt \"cand-score=damage,k-certain=off,tt=off\"");
+        eprintln!("                                              = 退回阶段 3 之前（候选生成三步全关）");
         return ExitCode::from(2);
     }
 
@@ -173,6 +187,12 @@ fn main() -> ExitCode {
     let mut plan_depth = 2u8;
     // P5：跑完主策略再拿同一批种子跑一遍这个深度，配对比较
     let mut sweep_depth: Option<u8> = None;
+    // P5 的**同深度** A/B：对照策略从主策略配置出发，只改点名的键。见 `apply_alt`。
+    let mut alt_spec: Option<String> = None;
+    // **主策略**的覆盖键，语法和 `--alt` 一模一样（共用 `apply_alt`）。
+    // 没有它，任何配置只当得了对照 arm —— 而"新配置自己跑一遍要多久"
+    // 是个独立的问题（同一个 `--alt` 进程里两条 arm 的耗时是混在一起的）。
+    let mut set_spec: Option<String> = None;
     // 延伸开关，做消融用。`--ext none` / `--ext lethal,boundary` …
     let mut ext_spec: Option<String> = None;
     let mut ext_width: Option<u16> = None;
@@ -220,6 +240,20 @@ fn main() -> ExitCode {
             },
             "--plan-depth" => plan_depth = num!(u8),
             "--depth-sweep" => sweep_depth = Some(num!(u8)),
+            "--set" => match it.next() {
+                Some(v) => set_spec = Some(v.clone()),
+                None => {
+                    eprintln!("--set 后面要跟一串 key=value（逗号分隔），键和 --alt 一样");
+                    return ExitCode::from(2);
+                }
+            },
+            "--alt" => match it.next() {
+                Some(v) => alt_spec = Some(v.clone()),
+                None => {
+                    eprintln!("--alt 后面要跟一串 key=value（逗号分隔），见 --help");
+                    return ExitCode::from(2);
+                }
+            },
             "--ext-width" => ext_width = Some(num!(u16)),
             // 能力线保底名额。`--power-reserve 0` 就是 2026-08-31 之前的行为，
             // A/B 用它。
@@ -316,6 +350,13 @@ fn main() -> ExitCode {
         // （`Weights::LEAF`），见 `plan::Plan::leaf`。
         c.leaf = sts2core::plan::Leaf::Eval(sts2core::solver::score::leaf);
         apply_ext(&mut c);
+        // 主策略的覆盖**最后应用**，这样它盖得住上面每一个开关。
+        if let Some(spec) = &set_spec {
+            if let Err(e) = apply_alt(&mut c, spec) {
+                eprintln!("--set: {e}");
+                return ExitCode::from(2);
+            }
+        }
         policy = Policy::Plan(c);
     }
     let policy_name = match policy {
@@ -323,18 +364,7 @@ fn main() -> ExitCode {
         Policy::Solver { budget, .. } => format!(
             "solver（每回合 solve_turn，预算 {budget}，目标函数 {policy_score_name}）"
         ),
-        Policy::Plan(c) => format!(
-            "plan（限深 expectimax，D={}，K={}+{} 能力保底，宽度 {:?}，目标函数 {policy_score_name}，叶 {}）",
-            c.depth,
-            c.k,
-            c.power_reserve,
-            &c.widths[..(c.depth as usize).min(c.widths.len())],
-            match c.leaf {
-                sts2core::plan::Leaf::Eval(_) => "静态".to_string(),
-                sts2core::plan::Leaf::Rollout { samples, turns, .. } =>
-                    format!("推演 {samples}x{turns}回合"),
-            }
-        ),
+        Policy::Plan(c) => plan_name(&c, policy_score_name),
     };
     println!(
         "目标函数 {scorer_name} · 每个起点 {samples} 次采样（两条随机流各自换种子）· 种子 {seed}\n\
@@ -342,17 +372,47 @@ fn main() -> ExitCode {
          推演策略 {policy_name}\n"
     );
 
-    // 对照策略：**只改深度，别的一个字都不改** —— 差出来的才只可能是深度
-    let alt_policy = sweep_depth.map(|d| {
-        let mut c = sts2core::plan::Plan::default();
-        c.depth = d.max(1);
-        c.score = policy_score;
-        // 叶评估**不跟 `--policy-score` 走**：标定出来它该用自己那套权重
-        // （`Weights::LEAF`），见 `plan::Plan::leaf`。
-        c.leaf = sts2core::plan::Leaf::Eval(sts2core::solver::score::leaf);
-        apply_ext(&mut c);
-        Policy::Plan(c)
-    });
+    // 对照策略：**从主策略的配置出发，只改点名的那几个键** ——
+    // 没点名的键逐字相同，差出来的才只可能是点名的那几个。
+    //
+    // `--depth-sweep N` 是 `--alt "depth=N"` 的别名，两条路建出来的配置逐字节相同：
+    // 主策略本来就是 `Plan::default()` + `score` + `leaf` + `apply_ext`，
+    // 老代码那份"从 default 重建一次"和"拿主策略改掉 depth"是同一个东西。
+    // `--policy` 不是 plan 时没有主配置可继承，退回老路（从 default 建）。
+    let alt_base = |depth_override: Option<u8>| {
+        let mut c = match policy {
+            Policy::Plan(c) => c,
+            _ => {
+                let mut c = sts2core::plan::Plan::default();
+                c.depth = plan_depth.max(1);
+                c.score = policy_score;
+                // 叶评估**不跟 `--policy-score` 走**：标定出来它该用自己那套权重
+                // （`Weights::LEAF`），见 `plan::Plan::leaf`。
+                c.leaf = sts2core::plan::Leaf::Eval(sts2core::solver::score::leaf);
+                apply_ext(&mut c);
+                c
+            }
+        };
+        if let Some(d) = depth_override {
+            c.depth = d.max(1);
+        }
+        c
+    };
+    let alt_policy = if sweep_depth.is_some() || alt_spec.is_some() {
+        let mut c = alt_base(sweep_depth);
+        if let Some(spec) = &alt_spec {
+            if let Err(e) = apply_alt(&mut c, spec) {
+                eprintln!("--alt: {e}");
+                return ExitCode::from(2);
+            }
+        }
+        Some(Policy::Plan(c))
+    } else {
+        None
+    };
+    if let Some(Policy::Plan(c)) = alt_policy {
+        println!("对照策略 {}\n", plan_name(&c, policy_score_name));
+    }
 
     let mut rows = Vec::new();
     for p in &paths {
@@ -377,6 +437,23 @@ fn main() -> ExitCode {
 }
 
 // ---------------------------------------------------------------------------
+// 策略配置：命名和 `--alt` 覆盖
+// ---------------------------------------------------------------------------
+
+/// 一个 `Plan` 配置的一行说明，和 `--alt` 的键解析，**两个都住在库里**
+/// （`Plan::describe` / `Plan::apply`）—— `bin/plan_audit --set` 和
+/// `bin/solve` 要用同一份。各写一遍的话，"同一个 `--set` 字符串"在三条验收里
+/// 指的就不是同一个配置，而那种错**不报错，只是量的不是同一个东西**。
+fn plan_name(c: &sts2core::plan::Plan, policy_score_name: &str) -> String {
+    let _ = policy_score_name;
+    c.describe()
+}
+
+fn apply_alt(c: &mut sts2core::plan::Plan, spec: &str) -> Result<(), String> {
+    c.apply(spec)
+}
+
+// ---------------------------------------------------------------------------
 // 分析一条 trace
 // ---------------------------------------------------------------------------
 
@@ -397,7 +474,7 @@ fn analyse(
 ) -> TraceRow {
     let segs = turn_segments(t);
     let n_seg = segs.len();
-    let mut r = Replayer::new(&t.run);
+    let mut r = Replayer::for_trace(t);
     let mut turns: Vec<TurnRow> = Vec::new();
     let mut actual_hp = None;
     let mut reference_why = None;

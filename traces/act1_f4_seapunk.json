@@ -1,0 +1,3122 @@
+{
+ "version": 1,
+ "recorded_at": "2026-09-08T22:54:26+08:00",
+ "run": {
+  "act": 1,
+  "floor": 5,
+  "ascension": 3,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 50,
+  "stable_polls": 11,
+  "timeout_ms": 6000
+ },
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 69,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 46,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "INFERNAL_BLADE",
+      "name": "地狱之刃",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "将一张随机攻击牌加入你的手牌。那张牌在本回合内可以免费打出。 消耗。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "痛击",
+     "旋风斩",
+     "防御",
+     "防御",
+     "打击",
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "INFERNAL_BLADE",
+    "card_name": "地狱之刃",
+    "target": null
+   },
+   "settle": {
+    "polls": 12,
+    "ms": 1122,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 69,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 46,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 4,
+      "id": "TEAR_ASUNDER",
+      "name": "扯碎",
+      "cost": "0",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 在本场战斗中，你每失去过一次生命值，这张牌就额外造成一次伤害。 （命中1次）"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "痛击",
+     "旋风斩",
+     "防御",
+     "防御",
+     "打击",
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 4,
+    "card_id": "TEAR_ASUNDER",
+    "card_name": "扯碎",
+    "target": "SEAPUNK_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1132,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 69,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 41,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "痛击",
+     "旋风斩",
+     "防御",
+     "防御",
+     "打击",
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1099,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 3,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 69,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 41,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "痛击",
+     "旋风斩",
+     "防御",
+     "防御",
+     "打击",
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SEAPUNK_0"
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1147,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 4,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 48,
+     "max_hp": 69,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 35,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "11",
+        "description": "这个敌人将要攻击造成11点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "痛击",
+     "旋风斩",
+     "防御",
+     "防御",
+     "打击",
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 40,
+    "ms": 3380,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 5,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 35,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "2×4",
+        "description": "这个敌人将要攻击造成2点伤害4次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "WHIRLWIND",
+      "name": "旋风斩",
+      "cost": "X",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成5点伤害X次。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1034,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 6,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 5,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 35,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "2×4",
+        "description": "这个敌人将要攻击造成2点伤害4次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "WHIRLWIND",
+      "name": "旋风斩",
+      "cost": "X",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成5点伤害X次。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "DEFEND_IRONCLAD",
+    "card_name": "防御",
+    "target": null
+   },
+   "settle": {
+    "polls": 14,
+    "ms": 1099,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 7,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 10,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 35,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "2×4",
+        "description": "这个敌人将要攻击造成2点伤害4次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "WHIRLWIND",
+      "name": "旋风斩",
+      "cost": "X",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成5点伤害X次。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 2,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SEAPUNK_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1098,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 8,
+   "obs": {
+    "state_type": "monster",
+    "round": 2,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 10,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 29,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "2×4",
+        "description": "这个敌人将要攻击造成2点伤害4次。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。 给予2层易伤。"
+     },
+     {
+      "slot": 1,
+      "id": "WHIRLWIND",
+      "name": "旋风斩",
+      "cost": "X",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成5点伤害X次。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 2,
+    "draw": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "燃烧",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "剑柄打击",
+     "燃烧"
+    ],
+    "draw_order_enchant": [
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 55,
+    "ms": 4568,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 9,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 29,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "INFLAME",
+      "name": "燃烧",
+      "cost": "1",
+      "type": "Power",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得2点力量。"
+     },
+     {
+      "slot": 2,
+      "id": "TEAR_ASUNDER",
+      "name": "扯碎",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成5点伤害。 在本场战斗中，你每失去过一次生命值，这张牌就额外造成一次伤害。 （命中2次）"
+     },
+     {
+      "slot": 3,
+      "id": "WHIRLWIND",
+      "name": "旋风斩",
+      "cost": "X",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成5点伤害X次。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "痛击",
+     "打击",
+     "打击",
+     "打击",
+     "防御",
+     "防御",
+     "打击"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "INFLAME",
+    "card_name": "燃烧",
+    "target": null
+   },
+   "settle": {
+    "polls": 16,
+    "ms": 1336,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 10,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 29,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "POMMEL_STRIKE",
+      "name": "剑柄打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成11点伤害。 抽1张牌。"
+     },
+     {
+      "slot": 1,
+      "id": "TEAR_ASUNDER",
+      "name": "扯碎",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本场战斗中，你每失去过一次生命值，这张牌就额外造成一次伤害。 （命中2次）"
+     },
+     {
+      "slot": 2,
+      "id": "WHIRLWIND",
+      "name": "旋风斩",
+      "cost": "X",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成7点伤害X次。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 7,
+    "draw": [
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "痛击",
+     "打击",
+     "打击",
+     "打击",
+     "防御",
+     "防御",
+     "打击"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "POMMEL_STRIKE",
+    "card_name": "剑柄打击",
+    "target": "SEAPUNK_0"
+   },
+   "settle": {
+    "polls": 15,
+    "ms": 1232,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 11,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 18,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TEAR_ASUNDER",
+      "name": "扯碎",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本场战斗中，你每失去过一次生命值，这张牌就额外造成一次伤害。 （命中2次）"
+     },
+     {
+      "slot": 1,
+      "id": "WHIRLWIND",
+      "name": "旋风斩",
+      "cost": "X",
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AllEnemies",
+      "description": "对所有敌人造成7点伤害X次。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予2层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "打击",
+     "打击",
+     "打击",
+     "防御",
+     "防御",
+     "打击"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 1,
+    "card_id": "WHIRLWIND",
+    "card_name": "旋风斩",
+    "target": null
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1014,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 12,
+   "obs": {
+    "state_type": "monster",
+    "round": 3,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 0,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 11,
+      "max_hp": 46,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Buff",
+        "label": "",
+        "description": "这个敌人将要使用一个强化效果。"
+       },
+       {
+        "type": "Defend",
+        "label": "",
+        "description": "这个敌人将会在其回合获得格挡。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "TEAR_ASUNDER",
+      "name": "扯碎",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Rare",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成7点伤害。 在本场战斗中，你每失去过一次生命值，这张牌就额外造成一次伤害。 （命中2次）"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "BASH",
+      "name": "痛击",
+      "cost": "2",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": false,
+      "target_type": "AnyEnemy",
+      "description": "造成10点伤害。 给予2层易伤。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 6,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "打击",
+     "打击",
+     "打击",
+     "防御",
+     "防御",
+     "打击"
+    ],
+    "draw_order_enchant": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   },
+   "settle": {
+    "polls": 43,
+    "ms": 3749,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 13,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 11,
+      "max_hp": 46,
+      "block": 7,
+      "status": {
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 4,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "打击"
+    ],
+    "draw_order_enchant": [
+     null
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     },
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SEAPUNK_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1164,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 14,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 10,
+      "max_hp": 46,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 3,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "打击"
+    ],
+    "draw_order_enchant": [
+     null
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     },
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SEAPUNK_0"
+   },
+   "settle": {
+    "polls": 13,
+    "ms": 1160,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 15,
+   "obs": {
+    "state_type": "monster",
+    "round": 4,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 1,
+    "max_energy": 3,
+    "player": {
+     "hp": 42,
+     "max_hp": 69,
+     "block": 0,
+     "status": {
+      "STRENGTH_POWER": 2
+     },
+     "max_potion_slots": 3
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "SEAPUNK_0",
+      "name": "海洋混混",
+      "hp": 2,
+      "max_hp": 46,
+      "block": 0,
+      "status": {
+       "STRENGTH_POWER": 1
+      },
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "12",
+        "description": "这个敌人将要攻击造成12点伤害。"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成8点伤害。"
+     },
+     {
+      "slot": 1,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     },
+     {
+      "slot": 2,
+      "id": "DEFEND_IRONCLAD",
+      "name": "防御",
+      "cost": "1",
+      "type": "Skill",
+      "rarity": "Basic",
+      "upgraded": false,
+      "enchantment": null,
+      "can_play": true,
+      "target_type": "Self",
+      "description": "获得5点格挡。"
+     }
+    ],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "draw_order": [
+     "打击"
+    ],
+    "draw_order_enchant": [
+     null
+    ],
+    "discard": [
+     {
+      "name": "剑柄打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "旋风斩",
+      "cost": "X",
+      "enchantment": null
+     },
+     {
+      "name": "扯碎",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "防御",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "痛击",
+      "cost": "2",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     },
+     {
+      "name": "打击",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "exhaust": [
+     {
+      "name": "地狱之刃",
+      "cost": "1",
+      "enchantment": null
+     }
+    ],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "STRIKE_IRONCLAD",
+    "card_name": "打击",
+    "target": "SEAPUNK_0"
+   },
+   "settle": {
+    "polls": 19,
+    "ms": 1533,
+    "unstable": false,
+    "intermediate_differs": true
+   }
+  },
+  {
+   "i": 16,
+   "obs": {
+    "state_type": "rewards",
+    "round": null,
+    "side": null,
+    "is_play_phase": null,
+    "energy": null,
+    "max_energy": null,
+    "player": {
+     "hp": 49,
+     "max_hp": 70,
+     "block": 0,
+     "status": {},
+     "max_potion_slots": 3
+    },
+    "enemies": {},
+    "hand": [],
+    "potions": [
+     {
+      "slot": 0,
+      "id": "POWER_POTION",
+      "name": "能力药水",
+      "description": "从3张随机能力牌中选择1张加入你的手牌。这张牌在本回合可以免费打出。"
+     }
+    ],
+    "relics": [
+     {
+      "id": "BURNING_BLOOD",
+      "name": "燃烧之血",
+      "counter": null
+     },
+     {
+      "id": "LEAFY_POULTICE",
+      "name": "树叶药膏",
+      "counter": null
+     },
+     {
+      "id": "CHOSEN_CHEESE",
+      "name": "天选芝士",
+      "counter": null
+     }
+    ],
+    "draw_count": null,
+    "draw": [],
+    "draw_order": null,
+    "draw_order_enchant": null,
+    "discard": [],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": null
+  }
+ ],
+ "notes": ""
+}

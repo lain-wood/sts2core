@@ -31,11 +31,19 @@ use crate::state::{Entity, St};
 ///
 /// 调用方必须保证只在**有源攻击**上传非 0 的 `vigor`
 /// （`if (!props.IsPoweredAttack()) return 0m;`）—— 药水/遗物伤害传 0。
+/// `mul` 是**作用在基础值上、在力量之前**的那一档乘区：老的腐化 flag
+/// （`F_CORRUPT`）和附魔的 `EnchantDamageMultiplicative`（腐化 3/2、直觉 2/1）
+/// 走的是同一个口子。传 `(1, 1)` = 不乘。
+///
+/// 位置为什么在力量之前：[源码] `EnchantmentModel.EnchantDamageMultiplicative`
+/// 的文档写着 "This hook runs BEFORE all other damage modification hooks"，
+/// 而力量走的是普通的 `ModifyDamageAdditive`。腐化那一版本来就是这么建的
+/// （`CLAUDE.md` 伤害管线的第 2 步），这里只是把它从一个 `bool` 推广成一对整数。
 #[inline]
-pub fn card_face_damage(base: i32, corrupt: bool, bonus: i32, strength: i32, vigor: i32) -> i32 {
+pub fn card_face_damage(base: i32, mul: (i32, i32), bonus: i32, strength: i32, vigor: i32) -> i32 {
     let mut d = base;
-    if corrupt {
-        d = d * 3 / 2;
+    if mul != (1, 1) {
+        d = d * mul.0 / mul.1;
     }
     d + bonus + strength + vigor
 }
@@ -110,6 +118,20 @@ pub fn apply_modifiers(face: i32, attacker: &Entity, defender: &Entity) -> i32 {
     if attacker.get(St::Weak) > 0 {
         num *= 3;
         den *= 4;
+    }
+    // 钢笔尖：**这一次出牌是第 10 张攻击** ⇒ ×2。
+    //
+    // [源码] `PenNib.ModifyDamageMultiplicative => 2m`，带 `IsPoweredAttack()` 的门
+    // （所以它和上下这几条一样只在本函数里，药水/遗物那条路不吃）。
+    // 标记怎么上、什么时候摘，见 `St::PenNibArmed`。
+    //
+    // **它是个乘区，不是"打完再翻倍"** —— 和别的乘区一起累乘、最后只取整一次。
+    // [实测] 2026-09-06 `act3_f46_elite_soul_nexus` 帧32：格挡 6 + 力量 1 = 7，
+    // 带虚弱 ⇒ 7 × 3/4 × 2 = 10.5 -> **10**，游戏正是 10。
+    // （这一帧两种写法都给 10：⌊7×0.75⌋×2 也是 10。**分不开，照源码写。**
+    //   要分开需要一个 `base×0.75` 的小数部分 ≥ 0.5 的样本。）
+    if attacker.get(St::PenNibArmed) > 0 {
+        num *= 2;
     }
     if defender.get(St::Vulnerable) > 0 {
         num *= 3;

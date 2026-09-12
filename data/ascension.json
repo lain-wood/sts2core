@@ -1,0 +1,4931 @@
+{
+ "note": "[源码] 进阶数值。别手改，跑 tools/dump_ascension.py。",
+ "levels": {
+  "1": "SwarmingElites",
+  "2": "WearyTraveler",
+  "3": "Poverty",
+  "4": "TightBelt",
+  "5": "AscendersBane",
+  "6": "Inflation",
+  "7": "Scarcity",
+  "8": "ToughEnemies",
+  "9": "DeadlyEnemies",
+  "10": "DoubleBoss"
+ },
+ "combat_relevant": {
+  "ToughEnemies": 8,
+  "DeadlyEnemies": 9
+ },
+ "outside_combat": {
+  "1 SwarmingElites": "地图精英数 ×1.6（`MapPointTypeCounts.NumOfElites`）",
+  "2 WearyTraveler": "远古事件的回满血 ×0.8（`AncientEventModel`）",
+  "3 Poverty": "战斗金币奖励 ×0.75（`EncounterModel.Min/MaxGoldReward`）",
+  "4 TightBelt": "药水槽 −1（`AscensionManager.ApplyEffectsTo`）",
+  "5 AscendersBane": "开局往牌组塞一张升华诅咒（同上）",
+  "6 Inflation": "商店移除费 75->100，每次涨价 25->50",
+  "7 Scarcity": "卡牌稀有度与升级概率变差（`CardRarityOdds` / `CardFactory`）",
+  "10 DoubleBoss": "**只有最后一幕**加第二个 Boss（`RunManager`，`i == Acts.Count - 1`）"
+ },
+ "monsters": {
+  "Aeonglass": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     512,
+     512
+    ],
+    "high": [
+     535,
+     535
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "EbbDamage",
+     "gate": "DeadlyEnemies",
+     "low": 26,
+     "high": 32,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "EBB_MOVE"
+     ]
+    },
+    {
+     "prop": "EyeLasersDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 12,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "EYE_LASERS_MOVE"
+     ]
+    },
+    {
+     "prop": "IncreasingIntensityBaseStrength",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [],
+     "moves": []
+    },
+    {
+     "prop": "WitherAmount",
+     "gate": "DeadlyEnemies",
+     "low": 1,
+     "high": 2,
+     "kinds": [
+      "cards",
+      "status"
+     ],
+     "moves": [
+      "INCREASING_INTENSITY_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Architect": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "AssassinRubyRaider": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     18,
+     23
+    ],
+    "high": [
+     19,
+     24
+    ]
+   },
+   "values": [
+    {
+     "prop": "KillshotDamage",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "KILLSHOT_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "AxeRubyRaider": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     20,
+     22
+    ],
+    "high": [
+     21,
+     23
+    ]
+   },
+   "values": [
+    {
+     "prop": "SwingDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SWING_1",
+      "SWING_2"
+     ]
+    },
+    {
+     "prop": "SwingBlock",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "SWING_1",
+      "SWING_2"
+     ]
+    },
+    {
+     "prop": "BigSwingDamage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 13,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BIG_SWING"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Axebot": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     70,
+     78
+    ],
+    "high": [
+     76,
+     86
+    ]
+   },
+   "values": [
+    {
+     "prop": "BootUpBlock",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 15,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "BOOT_UP_MOVE"
+     ]
+    },
+    {
+     "prop": "OneTwoDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 10,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ONE_TWO_MOVE"
+     ]
+    },
+    {
+     "prop": "BootUpStrGain",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "BOOT_UP_MOVE"
+     ]
+    },
+    {
+     "prop": "HammerUppercutDamage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "HAMMER_UPPERCUT_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "BattleFriendV1": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "BattleFriendV2": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "BattleFriendV3": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "BigDummy": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "BowlbugEgg": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     21,
+     22
+    ],
+    "high": [
+     23,
+     24
+    ]
+   },
+   "values": [
+    {
+     "prop": "BiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BITE_MOVE"
+     ]
+    },
+    {
+     "prop": "ProtectBlock",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "BITE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "BowlbugNectar": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     35,
+     38
+    ],
+    "high": [
+     36,
+     39
+    ]
+   },
+   "values": [
+    {
+     "prop": "BuffStrengthGain",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 16,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "BUFF_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "BowlbugRock": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     45,
+     48
+    ],
+    "high": [
+     46,
+     49
+    ]
+   },
+   "values": [
+    {
+     "prop": "HeadbuttDamage",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "HEADBUTT_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "BowlbugSilk": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     40,
+     43
+    ],
+    "high": [
+     41,
+     44
+    ]
+   },
+   "values": [
+    {
+     "prop": "ThrashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "THRASH_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "BruteRubyRaider": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     30,
+     33
+    ],
+    "high": [
+     31,
+     34
+    ]
+   },
+   "values": [
+    {
+     "prop": "BeatDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BEAT_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "BygoneEffigy": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     127,
+     127
+    ],
+    "high": [
+     132,
+     132
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SlashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 15,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SLASHES_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Byrdonis": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     81,
+     84
+    ],
+    "high": [
+     90,
+     90
+    ]
+   },
+   "values": [
+    {
+     "prop": "PeckDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PECK_MOVE"
+     ]
+    },
+    {
+     "prop": "PeckRepeat",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 3,
+     "kinds": [
+      "hits"
+     ],
+     "moves": [
+      "PECK_MOVE"
+     ]
+    },
+    {
+     "prop": "SwoopDamage",
+     "gate": "DeadlyEnemies",
+     "low": 17,
+     "high": 19,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SWOOP_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Byrdpip": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "CalcifiedCultist": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     38,
+     41
+    ],
+    "high": [
+     39,
+     42
+    ]
+   },
+   "values": [
+    {
+     "prop": "DarkStrikeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DARK_STRIKE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "CeremonialBeast": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     252,
+     252
+    ],
+    "high": [
+     262,
+     262
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "PlowAmount",
+     "gate": "DeadlyEnemies",
+     "low": 150,
+     "high": 160,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "STAMP_MOVE"
+     ]
+    },
+    {
+     "prop": "PlowDamage",
+     "gate": "DeadlyEnemies",
+     "low": 18,
+     "high": 20,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PLOW_MOVE"
+     ]
+    },
+    {
+     "prop": "StompDamage",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "STOMP_MOVE"
+     ]
+    },
+    {
+     "prop": "CrushDamage",
+     "gate": "DeadlyEnemies",
+     "low": 17,
+     "high": 19,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CRUSH_MOVE"
+     ]
+    },
+    {
+     "prop": "CrushStrength",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "CRUSH_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Chomper": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     60,
+     64
+    ],
+    "high": [
+     63,
+     67
+    ]
+   },
+   "values": [
+    {
+     "prop": "ClampDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CLAMP_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "CorpseSlug": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     25,
+     27
+    ],
+    "high": [
+     27,
+     29
+    ]
+   },
+   "values": [
+    {
+     "prop": "GlompDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "GLOMP_MOVE"
+     ]
+    },
+    {
+     "prop": "RavenousStr",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "status"
+     ],
+     "moves": []
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "CrossbowRubyRaider": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     18,
+     21
+    ],
+    "high": [
+     19,
+     22
+    ]
+   },
+   "values": [
+    {
+     "prop": "FireDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "FIRE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Crusher": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     209,
+     209
+    ],
+    "high": [
+     219,
+     219
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "ThrashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "THRASH_MOVE"
+     ]
+    },
+    {
+     "prop": "EnlargingStrikeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ENLARGING_STRIKE_MOVE"
+     ]
+    },
+    {
+     "prop": "BugStingDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BUG_STING_MOVE"
+     ]
+    },
+    {
+     "prop": "AdaptStrengthGain",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "ADAPT_MOVE"
+     ]
+    },
+    {
+     "prop": "GuardedStrikeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "GUARDED_STRIKE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "CubexConstruct": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     65,
+     65
+    ],
+    "high": [
+     70,
+     70
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "BlastDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "REPEATER_BLAST_MOVE",
+      "REPEATER_BLAST_MOVE_2"
+     ]
+    },
+    {
+     "prop": "ExpelDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "EXPEL_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "DampCultist": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     51,
+     53
+    ],
+    "high": [
+     52,
+     54
+    ]
+   },
+   "values": [
+    {
+     "prop": "DarkStrikeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 1,
+     "high": 3,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DARK_STRIKE_MOVE"
+     ]
+    },
+    {
+     "prop": "IncantationAmount",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "INCANTATION_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "DecimillipedeSegment": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     40,
+     46
+    ],
+    "high": [
+     46,
+     52
+    ]
+   },
+   "values": [
+    {
+     "prop": "WritheDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "WRITHE_MOVE"
+     ]
+    },
+    {
+     "prop": "ConstrictDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CONSTRICT_MOVE"
+     ]
+    },
+    {
+     "prop": "BulkDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BULK_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "DecimillipedeSegmentBack": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     40,
+     46
+    ],
+    "high": [
+     46,
+     52
+    ],
+    "note": "血量继承自基类 DecimillipedeSegment"
+   },
+   "values": [],
+   "base": "DecimillipedeSegment"
+  },
+  "DecimillipedeSegmentFront": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     40,
+     46
+    ],
+    "high": [
+     46,
+     52
+    ],
+    "note": "血量继承自基类 DecimillipedeSegment"
+   },
+   "values": [],
+   "base": "DecimillipedeSegment"
+  },
+  "DecimillipedeSegmentMiddle": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     40,
+     46
+    ],
+    "high": [
+     46,
+     52
+    ],
+    "note": "血量继承自基类 DecimillipedeSegment"
+   },
+   "values": [],
+   "base": "DecimillipedeSegment"
+  },
+  "DeprecatedMonster": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "DevotedSculptor": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     162,
+     162
+    ],
+    "high": [
+     172,
+     172
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SavageDamage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 15,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SAVAGE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Entomancer": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     145,
+     145
+    ],
+    "high": [
+     155,
+     155
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SpearMoveDamage",
+     "gate": "DeadlyEnemies",
+     "low": 18,
+     "high": 20,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SPEAR_MOVE"
+     ]
+    },
+    {
+     "prop": "BeesRepeat",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "hits"
+     ],
+     "moves": [
+      "BEES_MOVE"
+     ]
+    },
+    {
+     "prop": "BeesDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 3,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BEES_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Exoskeleton": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     24,
+     28
+    ],
+    "high": [
+     25,
+     29
+    ]
+   },
+   "values": [
+    {
+     "prop": "SkitterRepeats",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "hits"
+     ],
+     "moves": [
+      "SKITTER_MOVE"
+     ]
+    },
+    {
+     "prop": "MandiblesDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "MANDIBLES_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "EyeWithTeeth": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "Fabricator": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     150,
+     150
+    ],
+    "high": [
+     155,
+     155
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "FabricatingStrikeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 18,
+     "high": 21,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "FABRICATING_STRIKE_MOVE"
+     ]
+    },
+    {
+     "prop": "DisintegrateDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 13,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DISINTEGRATE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "FakeMerchantMonster": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     165,
+     165
+    ],
+    "high": [
+     175,
+     175
+    ]
+   },
+   "values": [
+    {
+     "prop": "SwipeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 15,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SWIPE_MOVE"
+     ]
+    },
+    {
+     "prop": "ThrowRelicDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 10,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "THROW_RELIC_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "FatGremlin": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     13,
+     17
+    ],
+    "high": [
+     14,
+     18
+    ]
+   },
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "FlailKnight": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     101,
+     101
+    ],
+    "high": [
+     108,
+     108
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "FlailDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 10,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "FLAIL_MOVE"
+     ]
+    },
+    {
+     "prop": "RamDamage",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "RAM_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Flyconid": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     47,
+     49
+    ],
+    "high": [
+     51,
+     53
+    ]
+   },
+   "values": [
+    {
+     "prop": "SmashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 12,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SMASH_MOVE"
+     ]
+    },
+    {
+     "prop": "SporeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "FRAIL_SPORES_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Fogmog": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     74,
+     74
+    ],
+    "high": [
+     78,
+     78
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SwipeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SWIPE_MOVE",
+      "SWIPE_RANDOM_MOVE"
+     ]
+    },
+    {
+     "prop": "HeadbuttDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "HEADBUTT_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "FossilStalker": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     51,
+     53
+    ],
+    "high": [
+     54,
+     56
+    ]
+   },
+   "values": [
+    {
+     "prop": "TackleDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TACKLE_MOVE"
+     ]
+    },
+    {
+     "prop": "LatchDamage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "LATCH_MOVE"
+     ]
+    },
+    {
+     "prop": "LashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "LASH_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "FrogKnight": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     191,
+     191
+    ],
+    "high": [
+     199,
+     199
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "StrikeDownEvilDamage",
+     "gate": "DeadlyEnemies",
+     "low": 21,
+     "high": 23,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "STRIKE_DOWN_EVIL"
+     ]
+    },
+    {
+     "prop": "TongueLashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TONGUE_LASH"
+     ]
+    },
+    {
+     "prop": "BeetleChargeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 35,
+     "high": 40,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BEETLE_CHARGE"
+     ]
+    },
+    {
+     "prop": "PlatingAmount",
+     "gate": "ToughEnemies",
+     "low": 15,
+     "high": 19,
+     "kinds": [
+      "status"
+     ],
+     "moves": []
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "FuzzyWurmCrawler": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     55,
+     57
+    ],
+    "high": [
+     58,
+     59
+    ]
+   },
+   "values": [
+    {
+     "prop": "AcidGoopDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "FIRST_ACID_GOOP",
+      "ACID_GOOP"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "GasBomb": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     7,
+     7
+    ],
+    "high": [
+     8,
+     8
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "ExplodeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "EXPLODE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "GlobeHead": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     148,
+     148
+    ],
+    "high": [
+     158,
+     158
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "ThunderStrikeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "THUNDER_STRIKE"
+     ]
+    },
+    {
+     "prop": "ShockingSlapDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SHOCKING_SLAP"
+     ]
+    },
+    {
+     "prop": "GalvanicBurstDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "GALVANIC_BURST"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "GremlinMerc": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     47,
+     49
+    ],
+    "high": [
+     51,
+     53
+    ]
+   },
+   "values": [
+    {
+     "prop": "GimmeDamage",
+     "gate": "ToughEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "GIMME_MOVE"
+     ]
+    },
+    {
+     "prop": "DoubleSmashDamage",
+     "gate": "ToughEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DOUBLE_SMASH_MOVE"
+     ]
+    },
+    {
+     "prop": "HeheDamage",
+     "gate": "ToughEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "HEHE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Guardbot": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     16,
+     20
+    ],
+    "high": [
+     17,
+     21
+    ]
+   },
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "HauntedShip": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     63,
+     63
+    ],
+    "high": [
+     67,
+     67
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SwipeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SWIPE_MOVE"
+     ]
+    },
+    {
+     "prop": "StompDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "STOMP_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "HunterKiller": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     121,
+     121
+    ],
+    "high": [
+     126,
+     126
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "BiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 17,
+     "high": 19,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BITE_MOVE"
+     ]
+    },
+    {
+     "prop": "PunctureDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PUNCTURE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "InfestedPrism": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     161,
+     161
+    ],
+    "high": [
+     171,
+     171
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "JabDamage",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "JAB_MOVE"
+     ]
+    },
+    {
+     "prop": "VitalSparkAmount",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "PULSATE_MOVE"
+     ]
+    },
+    {
+     "prop": "PulsateDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 10,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PULSATE_MOVE"
+     ]
+    },
+    {
+     "prop": "PulsateBlock",
+     "gate": "ToughEnemies",
+     "low": 20,
+     "high": 22,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "PULSATE_MOVE"
+     ]
+    },
+    {
+     "prop": "RadiateDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 13,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "RADIATE_MOVE"
+     ]
+    },
+    {
+     "prop": "RadiateBlock",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 13,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "RADIATE_MOVE"
+     ]
+    },
+    {
+     "prop": "WhirlwindDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "WHIRLWIND_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Inklet": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     11,
+     17
+    ],
+    "high": [
+     12,
+     18
+    ]
+   },
+   "values": [
+    {
+     "prop": "JabDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "JAB_MOVE"
+     ]
+    },
+    {
+     "prop": "WhirlwindDamage",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "WHIRLWIND_MOVE"
+     ]
+    },
+    {
+     "prop": "PiercingGazeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PIERCING_GAZE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "KinFollower": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     58,
+     59
+    ],
+    "high": [
+     62,
+     63
+    ]
+   },
+   "values": [
+    {
+     "prop": "QuickSlashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "QUICK_SLASH_MOVE"
+     ]
+    },
+    {
+     "prop": "BoomerangDamage",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 2,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BOOMERANG_MOVE"
+     ]
+    },
+    {
+     "prop": "DanceStrength",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "POWER_DANCE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "KinPriest": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     190,
+     190
+    ],
+    "high": [
+     199,
+     199
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "OrbOfFrailtyDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ORB_OF_FRAILTY_MOVE"
+     ]
+    },
+    {
+     "prop": "OrbOfWeaknessDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ORB_OF_WEAKNESS_MOVE"
+     ]
+    },
+    {
+     "prop": "BeamDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 3,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BEAM_MOVE"
+     ]
+    },
+    {
+     "prop": "RitualStrength",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "RITUAL_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "KnowledgeDemon": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     379,
+     379
+    ],
+    "high": [
+     399,
+     399
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SlapDamage",
+     "gate": "DeadlyEnemies",
+     "low": 17,
+     "high": 18,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SLAP_MOVE"
+     ]
+    },
+    {
+     "prop": "PonderDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 13,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PONDER_MOVE"
+     ]
+    },
+    {
+     "prop": "KnowledgeOverwhelmingDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "KNOWLEDGE_OVERWHELMING_MOVE"
+     ]
+    },
+    {
+     "prop": "PonderStrength",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "PONDER_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "LagavulinMatriarch": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     222,
+     222
+    ],
+    "high": [
+     233,
+     233
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SlashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 19,
+     "high": 21,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SLASH_MOVE"
+     ]
+    },
+    {
+     "prop": "Slash2Damage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SLASH2_MOVE"
+     ]
+    },
+    {
+     "prop": "Slash2Block",
+     "gate": "ToughEnemies",
+     "low": 12,
+     "high": 14,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "SLASH2_MOVE"
+     ]
+    },
+    {
+     "prop": "DisembowelDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 10,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DISEMBOWEL_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "LeafSlimeM": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     32,
+     35
+    ],
+    "high": [
+     33,
+     36
+    ]
+   },
+   "values": [
+    {
+     "prop": "ClumpDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CLUMP_SHOT"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "LeafSlimeS": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     11,
+     15
+    ],
+    "high": [
+     12,
+     16
+    ]
+   },
+   "values": [
+    {
+     "prop": "TackleDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TACKLE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "LivingFog": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     80,
+     80
+    ],
+    "high": [
+     82,
+     82
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "AdvancedGasDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ADVANCED_GAS_MOVE"
+     ]
+    },
+    {
+     "prop": "BloatDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BLOAT_MOVE"
+     ]
+    },
+    {
+     "prop": "SuperGasBlastDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SUPER_GAS_BLAST_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "LivingShield": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     55,
+     55
+    ],
+    "high": [
+     65,
+     65
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SmashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 18,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SMASH_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "LouseProgenitor": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     134,
+     136
+    ],
+    "high": [
+     138,
+     141
+    ]
+   },
+   "values": [
+    {
+     "prop": "WebDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 10,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "WEB_CANNON_MOVE"
+     ]
+    },
+    {
+     "prop": "PounceDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "POUNCE_MOVE"
+     ]
+    },
+    {
+     "prop": "CurlBlock",
+     "gate": "ToughEnemies",
+     "low": 14,
+     "high": 18,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "CURL_AND_GROW_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "MagiKnight": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     82,
+     82
+    ],
+    "high": [
+     89,
+     89
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "PowerShieldDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "POWER_SHIELD_MOVE"
+     ]
+    },
+    {
+     "prop": "PowerShieldBlock",
+     "gate": "ToughEnemies",
+     "low": 5,
+     "high": 9,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "POWER_SHIELD_MOVE",
+      "PREP_MOVE"
+     ]
+    },
+    {
+     "prop": "SpearDamage",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "RAM_MOVE"
+     ]
+    },
+    {
+     "prop": "BombDamage",
+     "gate": "DeadlyEnemies",
+     "low": 35,
+     "high": 40,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "MAGIC_BOMB"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Mawler": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     72,
+     72
+    ],
+    "high": [
+     76,
+     76
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "RipAndTearDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "RIP_AND_TEAR_MOVE"
+     ]
+    },
+    {
+     "prop": "ClawDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CLAW_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "MechaKnight": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     300,
+     300
+    ],
+    "high": [
+     320,
+     320
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "ChargeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 25,
+     "high": 30,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CHARGE_MOVE"
+     ]
+    },
+    {
+     "prop": "HeavyCleaveDamage",
+     "gate": "DeadlyEnemies",
+     "low": 35,
+     "high": 40,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "HEAVY_CLEAVE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "MultiAttackMoveMonster": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "MysteriousKnight": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     101,
+     101
+    ],
+    "high": [
+     108,
+     108
+    ],
+    "note": "血量继承自基类 FlailKnight"
+   },
+   "values": [],
+   "base": "FlailKnight"
+  },
+  "Myte": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     61,
+     67
+    ],
+    "high": [
+     64,
+     69
+    ]
+   },
+   "values": [
+    {
+     "prop": "BiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 15,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BITE_MOVE"
+     ]
+    },
+    {
+     "prop": "SuckDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SUCK_MOVE"
+     ]
+    },
+    {
+     "prop": "SuckStrength",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "SUCK_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Nibbit": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     42,
+     46
+    ],
+    "high": [
+     44,
+     48
+    ]
+   },
+   "values": [
+    {
+     "prop": "ButtDamage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 13,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BUTT_MOVE"
+     ]
+    },
+    {
+     "prop": "SliceBlock",
+     "gate": "ToughEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "SLICE_MOVE"
+     ]
+    },
+    {
+     "prop": "SliceDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SLICE_MOVE"
+     ]
+    },
+    {
+     "prop": "HissStrengthGain",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "HISS_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Noisebot": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     18,
+     23
+    ],
+    "high": [
+     19,
+     24
+    ]
+   },
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "OneHpMonster": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "Osty": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "Ovicopter": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     124,
+     130
+    ],
+    "high": [
+     126,
+     132
+    ]
+   },
+   "values": [
+    {
+     "prop": "SmashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SMASH_MOVE"
+     ]
+    },
+    {
+     "prop": "TenderizerDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TENDERIZER_MOVE"
+     ]
+    },
+    {
+     "prop": "NutritionalPasteStrengthAmount",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "NUTRITIONAL_PASTE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "OwlMagistrate": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     231,
+     231
+    ],
+    "high": [
+     247,
+     247
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "VerdictDamage",
+     "gate": "DeadlyEnemies",
+     "low": 33,
+     "high": 36,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "VERDICT"
+     ]
+    },
+    {
+     "prop": "ScrutinyDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "MAGISTRATE_SCRUTINY"
+     ]
+    },
+    {
+     "prop": "PeckAssaultDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PECK_ASSAULT"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "PaelsLegion": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "Parafright": {
+   "hp": null,
+   "values": [
+    {
+     "prop": "SlamDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SLAM_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "PhantasmalGardener": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     26,
+     31
+    ],
+    "high": [
+     27,
+     32
+    ]
+   },
+   "values": [
+    {
+     "prop": "BiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BITE_MOVE"
+     ]
+    },
+    {
+     "prop": "LashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "LASH_MOVE"
+     ]
+    },
+    {
+     "prop": "FlailRepeat",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 3,
+     "kinds": [
+      "hits"
+     ],
+     "moves": [
+      "FLAIL_MOVE"
+     ]
+    },
+    {
+     "prop": "EnlargeStr",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "ENLARGE_MOVE"
+     ]
+    },
+    {
+     "prop": "SkittishAmount",
+     "gate": "ToughEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "status"
+     ],
+     "moves": []
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "PhrogParasite": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     61,
+     64
+    ],
+    "high": [
+     66,
+     68
+    ]
+   },
+   "values": [
+    {
+     "prop": "LashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "LASH_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "PunchConstruct": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     55,
+     55
+    ],
+    "high": [
+     60,
+     60
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "StrongPunchDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "STRONG_PUNCH_MOVE"
+     ]
+    },
+    {
+     "prop": "FastPunchDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "FAST_PUNCH_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Queen": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     400,
+     400
+    ],
+    "high": [
+     419,
+     419
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "OffWithYourHeadDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "OFF_WITH_YOUR_HEAD_MOVE"
+     ]
+    },
+    {
+     "prop": "ExecutionDamage",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 18,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "EXECUTION_MOVE"
+     ]
+    },
+    {
+     "prop": "strengthAmount",
+     "gate": "DeadlyEnemies",
+     "low": 1,
+     "high": 1,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "BURN_BRIGHT_FOR_ME_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Rocket": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     199,
+     199
+    ],
+    "high": [
+     209,
+     209
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "TargetingReticleDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TARGETING_RETICLE_MOVE"
+     ]
+    },
+    {
+     "prop": "PrecisionBeamDamage",
+     "gate": "DeadlyEnemies",
+     "low": 18,
+     "high": 20,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PRECISION_BEAM_MOVE"
+     ]
+    },
+    {
+     "prop": "LaserDamage",
+     "gate": "DeadlyEnemies",
+     "low": 31,
+     "high": 35,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "LASER_MOVE"
+     ]
+    },
+    {
+     "prop": "ChargeUpStrengthGain",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "CHARGE_UP_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "ScrollOfBiting": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     30,
+     37
+    ],
+    "high": [
+     33,
+     39
+    ]
+   },
+   "values": [
+    {
+     "prop": "ChompDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CHOMP"
+     ]
+    },
+    {
+     "prop": "ChewDamage",
+     "gate": "DeadlyEnemies",
+     "low": 5,
+     "high": 6,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CHEW"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Seapunk": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     44,
+     46
+    ],
+    "high": [
+     47,
+     49
+    ]
+   },
+   "values": [
+    {
+     "prop": "SeaKickDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 13,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SEA_KICK_MOVE"
+     ]
+    },
+    {
+     "prop": "BubbleBlock",
+     "gate": "ToughEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "BUBBLE_BURP_MOVE"
+     ]
+    },
+    {
+     "prop": "BubbleStr",
+     "gate": "DeadlyEnemies",
+     "low": 1,
+     "high": 2,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "BUBBLE_BURP_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SewerClam": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     56,
+     56
+    ],
+    "high": [
+     58,
+     58
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "JetDamage",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "JET_MOVE"
+     ]
+    },
+    {
+     "prop": "valueIfAscension",
+     "gate": "ToughEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "status"
+     ],
+     "moves": []
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "ShrinkerBeetle": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     38,
+     40
+    ],
+    "high": [
+     40,
+     42
+    ]
+   },
+   "values": [
+    {
+     "prop": "ChompDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CHOMP_MOVE"
+     ]
+    },
+    {
+     "prop": "StompDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "STOMP_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SingleAttackMoveMonster": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "SkulkingColony": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     75,
+     75
+    ],
+    "high": [
+     80,
+     80
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "InertiaDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "INERTIA_MOVE"
+     ]
+    },
+    {
+     "prop": "ZoomDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ZOOM_MOVE",
+      "ZOOM_MOVE_2"
+     ]
+    },
+    {
+     "prop": "PiercingStabsDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PIERCING_STABS_MOVE"
+     ]
+    },
+    {
+     "prop": "InertiaStrengthGain",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 4,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "INERTIA_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SlimedBerserker": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     261,
+     261
+    ],
+    "high": [
+     281,
+     281
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "PummelingDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "FURIOUS_PUMMELING_MOVE"
+     ]
+    },
+    {
+     "prop": "SmotherDamage",
+     "gate": "DeadlyEnemies",
+     "low": 30,
+     "high": 33,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SMOTHER_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SlitheringStrangler": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     53,
+     55
+    ],
+    "high": [
+     54,
+     56
+    ]
+   },
+   "values": [
+    {
+     "prop": "ThwackDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "THWACK"
+     ]
+    },
+    {
+     "prop": "LashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 12,
+     "high": 13,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "LASH"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SludgeSpinner": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     37,
+     39
+    ],
+    "high": [
+     41,
+     42
+    ]
+   },
+   "values": [
+    {
+     "prop": "OilSprayDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "OIL_SPRAY_MOVE"
+     ]
+    },
+    {
+     "prop": "SlamDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 12,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SLAM_MOVE"
+     ]
+    },
+    {
+     "prop": "RageDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "RAGE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SlumberingBeetle": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     86,
+     86
+    ],
+    "high": [
+     89,
+     89
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "RolloutDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 18,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ROLL_OUT_MOVE"
+     ]
+    },
+    {
+     "prop": "PlatingAmount",
+     "gate": "ToughEnemies",
+     "low": 15,
+     "high": 18,
+     "kinds": [
+      "status"
+     ],
+     "moves": []
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SnappingJaxfruit": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     31,
+     33
+    ],
+    "high": [
+     34,
+     36
+    ]
+   },
+   "values": [
+    {
+     "prop": "EnergyDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ENERGY_ORB_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SneakyGremlin": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     10,
+     14
+    ],
+    "high": [
+     11,
+     15
+    ]
+   },
+   "values": [
+    {
+     "prop": "TackleDamage",
+     "gate": "DeadlyEnemies",
+     "low": 9,
+     "high": 10,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TACKLE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SoulFysh": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     211,
+     211
+    ],
+    "high": [
+     221,
+     221
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "DeGasDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DE_GAS_MOVE"
+     ]
+    },
+    {
+     "prop": "ScreamDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 15,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SCREAM_MOVE"
+     ]
+    },
+    {
+     "prop": "GazeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "GAZE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SoulNexus": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     234,
+     234
+    ],
+    "high": [
+     254,
+     254
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SoulBurnDamage",
+     "gate": "DeadlyEnemies",
+     "low": 29,
+     "high": 31,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SOUL_BURN_MOVE"
+     ]
+    },
+    {
+     "prop": "MaelstromDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "MAELSTROM_MOVE"
+     ]
+    },
+    {
+     "prop": "MaelstromRepeat",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 4,
+     "kinds": [
+      "hits"
+     ],
+     "moves": [
+      "MAELSTROM_MOVE"
+     ]
+    },
+    {
+     "prop": "DrainLifeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 18,
+     "high": 19,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DRAIN_LIFE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SpectralKnight": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     93,
+     93
+    ],
+    "high": [
+     97,
+     97
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SoulSlashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 17,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SOUL_SLASH"
+     ]
+    },
+    {
+     "prop": "SoulFlameDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SOUL_FLAME"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "SpinyToad": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     116,
+     119
+    ],
+    "high": [
+     121,
+     124
+    ]
+   },
+   "values": [
+    {
+     "prop": "LashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 17,
+     "high": 19,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TONGUE_LASH_MOVE"
+     ]
+    },
+    {
+     "prop": "ExplosionDamage",
+     "gate": "DeadlyEnemies",
+     "low": 23,
+     "high": 25,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SPIKE_EXPLOSION_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Stabbot": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     18,
+     23
+    ],
+    "high": [
+     19,
+     24
+    ]
+   },
+   "values": [
+    {
+     "prop": "StabDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 12,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "STAB_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TenHpMonster": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "TerrorEel": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     140,
+     140
+    ],
+    "high": [
+     150,
+     150
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "ShriekAmount",
+     "gate": "ToughEnemies",
+     "low": 70,
+     "high": 75,
+     "kinds": [
+      "status"
+     ],
+     "moves": []
+    },
+    {
+     "prop": "CrashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 18,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CRASH_MOVE"
+     ]
+    },
+    {
+     "prop": "ThrashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "THRASH_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TestSubject": {
+   "hp": null,
+   "values": [
+    {
+     "prop": "FirstFormHp",
+     "gate": "ToughEnemies",
+     "low": 100,
+     "high": 111,
+     "kinds": [],
+     "moves": []
+    },
+    {
+     "prop": "SecondFormHp",
+     "gate": "ToughEnemies",
+     "low": 200,
+     "high": 212,
+     "kinds": [],
+     "moves": [
+      "RESPAWN_MOVE"
+     ]
+    },
+    {
+     "prop": "ThirdFormHp",
+     "gate": "ToughEnemies",
+     "low": 300,
+     "high": 313,
+     "kinds": [],
+     "moves": [
+      "RESPAWN_MOVE"
+     ]
+    },
+    {
+     "prop": "EnrageAmount",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": []
+    },
+    {
+     "prop": "BiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 20,
+     "high": 22,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BITE_MOVE"
+     ]
+    },
+    {
+     "prop": "SkullBashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SKULL_BASH_MOVE"
+     ]
+    },
+    {
+     "prop": "MultiClawDamage",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "MULTI_CLAW_MOVE"
+     ]
+    },
+    {
+     "prop": "Phase3LacerateDamage",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PHASE3_LACERATE_MOVE"
+     ]
+    },
+    {
+     "prop": "BurningGrowlBurnCount",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 5,
+     "kinds": [
+      "cards",
+      "status"
+     ],
+     "moves": [
+      "BURNING_GROWL_MOVE"
+     ]
+    },
+    {
+     "prop": "BurningGrowlStrengthGain",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "BURNING_GROWL_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TheAdversaryMkOne": {
+   "hp": null,
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "TheAdversaryMkThree": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     300,
+     300
+    ],
+    "high": [
+     300,
+     300
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "TheAdversaryMkTwo": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     200,
+     200
+    ],
+    "high": [
+     200,
+     200
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [],
+   "base": "MonsterModel"
+  },
+  "TheForgotten": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     106,
+     106
+    ],
+    "high": [
+     111,
+     111
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "valueIfAscension",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 15,
+     "kinds": [],
+     "moves": []
+    },
+    {
+     "prop": "DebilitatingSmogDexStealAmount",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 2,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "MIASMA"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TheInsatiable": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     321,
+     321
+    ],
+    "high": [
+     341,
+     341
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "ThrashDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "THRASH_MOVE",
+      "THRASH_MOVE_2"
+     ]
+    },
+    {
+     "prop": "BiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 28,
+     "high": 31,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "LUNGING_BITE_MOVE"
+     ]
+    },
+    {
+     "prop": "SalivateStrength",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 3,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "SALIVATE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TheLost": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     93,
+     93
+    ],
+    "high": [
+     99,
+     99
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "EyeLasersDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "EYE_LASERS"
+     ]
+    },
+    {
+     "prop": "DebilitatingSmogStrengthStealAmount",
+     "gate": "DeadlyEnemies",
+     "low": 2,
+     "high": 2,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "DEBILITATING_SMOG"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TheObscura": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     123,
+     123
+    ],
+    "high": [
+     129,
+     129
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "PiercingGazeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PIERCING_GAZE_MOVE"
+     ]
+    },
+    {
+     "prop": "HardeningStrikeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "HARDENING_STRIKE_MOVE"
+     ]
+    },
+    {
+     "prop": "HardeningStrikeBlock",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "HARDENING_STRIKE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "ThievingHopper": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     79,
+     79
+    ],
+    "high": [
+     84,
+     84
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "TheftDamage",
+     "gate": "DeadlyEnemies",
+     "low": 17,
+     "high": 19,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "THIEVERY_MOVE"
+     ]
+    },
+    {
+     "prop": "HatTrickDamage",
+     "gate": "DeadlyEnemies",
+     "low": 21,
+     "high": 23,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "HAT_TRICK_MOVE"
+     ]
+    },
+    {
+     "prop": "NabDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "NAB_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Toadpole": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     21,
+     25
+    ],
+    "high": [
+     22,
+     26
+    ]
+   },
+   "values": [
+    {
+     "prop": "SpikeSpitDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SPIKE_SPIT_MOVE"
+     ]
+    },
+    {
+     "prop": "WhirlDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "WHIRL_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TorchHeadAmalgam": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     199,
+     199
+    ],
+    "high": [
+     211,
+     211
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "TackleDamage",
+     "gate": "DeadlyEnemies",
+     "low": 18,
+     "high": 19,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TACKLE_MOVE",
+      "TACKLE_2_MOVE"
+     ]
+    },
+    {
+     "prop": "WeakTackleDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 15,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TACKLE_3_MOVE",
+      "TACKLE_4_MOVE"
+     ]
+    },
+    {
+     "prop": "SoulBeamDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BEAM_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "ToughEgg": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     14,
+     18
+    ],
+    "high": [
+     15,
+     19
+    ]
+   },
+   "values": [
+    {
+     "prop": "HatchlingMinHp",
+     "gate": "ToughEnemies",
+     "low": 19,
+     "high": 20,
+     "kinds": [],
+     "moves": []
+    },
+    {
+     "prop": "HatchlingMaxHp",
+     "gate": "ToughEnemies",
+     "low": 22,
+     "high": 23,
+     "kinds": [],
+     "moves": []
+    },
+    {
+     "prop": "NibbleDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "NIBBLE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TrackerRubyRaider": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     21,
+     25
+    ],
+    "high": [
+     22,
+     26
+    ]
+   },
+   "values": [
+    {
+     "prop": "HoundsDamage",
+     "gate": "DeadlyEnemies",
+     "low": 1,
+     "high": 1,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "HOUNDS_MOVE"
+     ]
+    },
+    {
+     "prop": "HoundsRepeat",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "hits"
+     ],
+     "moves": [
+      "HOUNDS_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Tunneler": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     87,
+     87
+    ],
+    "high": [
+     92,
+     92
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "BiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 15,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BITE_MOVE"
+     ]
+    },
+    {
+     "prop": "BlockGain",
+     "gate": "ToughEnemies",
+     "low": 32,
+     "high": 37,
+     "kinds": [
+      "block"
+     ],
+     "moves": [
+      "BURROW_MOVE"
+     ]
+    },
+    {
+     "prop": "BelowDamage",
+     "gate": "DeadlyEnemies",
+     "low": 23,
+     "high": 26,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "BELOW_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TurretOperator": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     41,
+     41
+    ],
+    "high": [
+     51,
+     51
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "FireDamage",
+     "gate": "DeadlyEnemies",
+     "low": 3,
+     "high": 4,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "UNLOAD_MOVE",
+      "UNLOAD_MOVE_2"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TwigSlimeM": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     26,
+     28
+    ],
+    "high": [
+     27,
+     29
+    ]
+   },
+   "values": [
+    {
+     "prop": "ClumpDamage",
+     "gate": "DeadlyEnemies",
+     "low": 11,
+     "high": 12,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "POKEY_POUNCE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TwigSlimeS": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     7,
+     11
+    ],
+    "high": [
+     8,
+     12
+    ]
+   },
+   "values": [
+    {
+     "prop": "TackleDamage",
+     "gate": "DeadlyEnemies",
+     "low": 4,
+     "high": 5,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "TACKLE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "TwoTailedRat": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     17,
+     21
+    ],
+    "high": [
+     18,
+     22
+    ]
+   },
+   "values": [
+    {
+     "prop": "ScratchDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SCRATCH_MOVE"
+     ]
+    },
+    {
+     "prop": "DiseaseBiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DISEASE_BITE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Vantom": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     173,
+     173
+    ],
+    "high": [
+     183,
+     183
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SlipperyAmt",
+     "gate": "ToughEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "status"
+     ],
+     "moves": []
+    },
+    {
+     "prop": "InkBlotDamage",
+     "gate": "DeadlyEnemies",
+     "low": 7,
+     "high": 8,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "INK_BLOT_MOVE"
+     ]
+    },
+    {
+     "prop": "InkyLanceDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "INKY_LANCE_MOVE"
+     ]
+    },
+    {
+     "prop": "DismemberDamage",
+     "gate": "DeadlyEnemies",
+     "low": 26,
+     "high": 30,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "DISMEMBER_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "VineShambler": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     61,
+     61
+    ],
+    "high": [
+     64,
+     64
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "GraspingVinesDamage",
+     "gate": "DeadlyEnemies",
+     "low": 8,
+     "high": 9,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "GRASPING_VINES_MOVE"
+     ]
+    },
+    {
+     "prop": "SwipeDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "SWIPE_MOVE"
+     ]
+    },
+    {
+     "prop": "ChompDamage",
+     "gate": "DeadlyEnemies",
+     "low": 16,
+     "high": 18,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "CHOMP_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "WaterfallGiant": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     240,
+     240
+    ],
+    "high": [
+     250,
+     250
+    ],
+    "note": "只有 MinInitialHp 被进阶门控"
+   },
+   "values": [
+    {
+     "prop": "SiphonHeal",
+     "gate": "ToughEnemies",
+     "low": 10,
+     "high": 15,
+     "kinds": [],
+     "moves": [
+      "SIPHON_MOVE"
+     ]
+    },
+    {
+     "prop": "PressurizeAmount",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 20,
+     "kinds": [
+      "status"
+     ],
+     "moves": [
+      "PRESSURIZE_MOVE"
+     ]
+    },
+    {
+     "prop": "StompDamage",
+     "gate": "DeadlyEnemies",
+     "low": 15,
+     "high": 16,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "STOMP_MOVE"
+     ]
+    },
+    {
+     "prop": "RamDamage",
+     "gate": "DeadlyEnemies",
+     "low": 10,
+     "high": 11,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "RAM_MOVE"
+     ]
+    },
+    {
+     "prop": "PressureUpDamage",
+     "gate": "DeadlyEnemies",
+     "low": 13,
+     "high": 14,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "PRESSURE_UP_MOVE"
+     ]
+    },
+    {
+     "prop": "BasePressureGunDamage",
+     "gate": "DeadlyEnemies",
+     "low": 20,
+     "high": 23,
+     "kinds": [],
+     "moves": []
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Wriggler": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     17,
+     21
+    ],
+    "high": [
+     18,
+     22
+    ]
+   },
+   "values": [
+    {
+     "prop": "BiteDamage",
+     "gate": "DeadlyEnemies",
+     "low": 6,
+     "high": 7,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "NASTY_BITE_MOVE"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  },
+  "Zapbot": {
+   "hp": {
+    "gate": "ToughEnemies",
+    "low": [
+     18,
+     23
+    ],
+    "high": [
+     19,
+     24
+    ]
+   },
+   "values": [
+    {
+     "prop": "ZapDamage",
+     "gate": "DeadlyEnemies",
+     "low": 14,
+     "high": 15,
+     "kinds": [
+      "damage"
+     ],
+     "moves": [
+      "ZAP"
+     ]
+    }
+   ],
+   "base": "MonsterModel"
+  }
+ },
+ "unmatched": [
+  {
+   "cls": "Aeonglass",
+   "kernel": "永世沙漏",
+   "prop": "IncreasingIntensityBaseStrength",
+   "why": "判不出种类",
+   "detail": ""
+  },
+  {
+   "cls": "Axebot",
+   "kernel": "巨斧机器人",
+   "prop": "BootUpStrGain",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 3"
+  },
+  {
+   "cls": "BowlbugSilk",
+   "kernel": "盛碗虫（丝）",
+   "prop": "ThrashDamage",
+   "why": "内核里找不到这个值",
+   "detail": "['damage'] = 4"
+  },
+  {
+   "cls": "CorpseSlug",
+   "kernel": "噬尸蛞蝓",
+   "prop": "RavenousStr",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 4"
+  },
+  {
+   "cls": "Crusher",
+   "kernel": "碾碎爪",
+   "prop": "ThrashDamage",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(0, 0), (4, 0)]"
+  },
+  {
+   "cls": "Crusher",
+   "kernel": "碾碎爪",
+   "prop": "AdaptStrengthGain",
+   "why": "3 个候选 / 源码 1 个用点",
+   "detail": "[(2, 1), (2, 2), (3, 0)]"
+  },
+  {
+   "cls": "Crusher",
+   "kernel": "碾碎爪",
+   "prop": "GuardedStrikeDamage",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(0, 0), (4, 0)]"
+  },
+  {
+   "cls": "FrogKnight",
+   "kernel": "青蛙骑士",
+   "prop": "PlatingAmount",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 15"
+  },
+  {
+   "cls": "FuzzyWurmCrawler",
+   "kernel": "毛绒伏地虫",
+   "prop": "AcidGoopDamage",
+   "why": "3 个候选 / 源码 2 个用点",
+   "detail": "[(0, 0), (2, 0), (3, 0)]"
+  },
+  {
+   "cls": "KinPriest",
+   "kernel": "同族神官",
+   "prop": "OrbOfFrailtyDamage",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(0, 0), (1, 0)]"
+  },
+  {
+   "cls": "KinPriest",
+   "kernel": "同族神官",
+   "prop": "OrbOfWeaknessDamage",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(0, 0), (1, 0)]"
+  },
+  {
+   "cls": "KnowledgeDemon",
+   "kernel": "知识恶魔",
+   "prop": "PonderStrength",
+   "why": "3 个候选 / 源码 1 个用点",
+   "detail": "[(0, 0), (0, 1), (3, 1)]"
+  },
+  {
+   "cls": "LivingFog",
+   "kernel": "活雾",
+   "prop": "AdvancedGasDamage",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(0, 0), (2, 0)]"
+  },
+  {
+   "cls": "LivingFog",
+   "kernel": "活雾",
+   "prop": "SuperGasBlastDamage",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(0, 0), (2, 0)]"
+  },
+  {
+   "cls": "Myte",
+   "kernel": "螨虫",
+   "prop": "SuckStrength",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(0, 0), (2, 1)]"
+  },
+  {
+   "cls": "PhantasmalGardener",
+   "kernel": "花园幽灵鳗",
+   "prop": "EnlargeStr",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 2"
+  },
+  {
+   "cls": "PhantasmalGardener",
+   "kernel": "花园幽灵鳗",
+   "prop": "SkittishAmount",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 6"
+  },
+  {
+   "cls": "SewerClam",
+   "kernel": "下水道蚌",
+   "prop": "valueIfAscension",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 8"
+  },
+  {
+   "cls": "TerrorEel",
+   "kernel": "骇鳗",
+   "prop": "ShriekAmount",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 70"
+  },
+  {
+   "cls": "TestSubject",
+   "kernel": "实验体",
+   "prop": "FirstFormHp",
+   "why": "判不出种类",
+   "detail": ""
+  },
+  {
+   "cls": "TestSubject",
+   "kernel": "实验体",
+   "prop": "SecondFormHp",
+   "why": "判不出种类",
+   "detail": ""
+  },
+  {
+   "cls": "TestSubject",
+   "kernel": "实验体",
+   "prop": "ThirdFormHp",
+   "why": "判不出种类",
+   "detail": ""
+  },
+  {
+   "cls": "TestSubject",
+   "kernel": "实验体",
+   "prop": "MultiClawDamage",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(3, 0), (4, 0)]"
+  },
+  {
+   "cls": "TestSubject",
+   "kernel": "实验体",
+   "prop": "Phase3LacerateDamage",
+   "why": "2 个候选 / 源码 1 个用点",
+   "detail": "[(3, 0), (4, 0)]"
+  },
+  {
+   "cls": "ToughEgg",
+   "kernel": "结实的卵",
+   "prop": "HatchlingMinHp",
+   "why": "判不出种类",
+   "detail": ""
+  },
+  {
+   "cls": "ToughEgg",
+   "kernel": "结实的卵",
+   "prop": "HatchlingMaxHp",
+   "why": "判不出种类",
+   "detail": ""
+  },
+  {
+   "cls": "WaterfallGiant",
+   "kernel": "瀑布巨兽",
+   "prop": "SiphonHeal",
+   "why": "判不出种类",
+   "detail": ""
+  },
+  {
+   "cls": "WaterfallGiant",
+   "kernel": "瀑布巨兽",
+   "prop": "BasePressureGunDamage",
+   "why": "判不出种类",
+   "detail": ""
+  }
+ ]
+}

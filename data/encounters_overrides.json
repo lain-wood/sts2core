@@ -1,0 +1,33 @@
+{
+ "note": "手写的遭遇构成，给 tools/dump_encounters.py 的解析器**放弃掉**的那几场用。规矩和内容编译器的 overrides 一样：解析器只认确定的形状，剩下的由人读一遍 [源码] 填进来，每条都要写清**为什么确定**。给一场解析器已经解出来的仗写 override 会被点名报出来。",
+ "rule": "只填**多重集确定**的（随机只影响站位或起手招式下标）。构成本身随机的（抽 3 只劫掠者、随机一只中史莱姆）**不填** —— 那是一个分布，不是一场仗，该由 L3 自己抽样，别在这里编一个代表值。",
+ "encounters": {
+  "SlimesNormal": {
+   "monsters": ["TwigSlimeM", "LeafSlimeM", "LeafSlimeS", "TwigSlimeS"],
+   "why": "[源码] `Rng.NextBool()` 只决定两只**小**史莱姆谁站前谁站后（flag 三元式交换的是 monsterModel/monsterModel2 的赋值），四只怪本身恒定。多重集确定，位置不确定。"
+  },
+  "DecimillipedeElite": {
+   "monsters": ["DecimillipedeSegmentFront", "DecimillipedeSegmentMiddle", "DecimillipedeSegmentBack"],
+   "why": "[源码] 三节恒定；随机的只有 `StarterMoveIdx = Rng.NextInt(3)`，三节按 num / num+1 / num+2 错开起手。**注意**：内核今天让所有敌人从第 0 手起，这一场的起手相位是随机且错开的 —— 那是 L1 的欠账，不是构成的不确定。"
+  },
+  "ScrollsOfBitingNormal": {
+   "monsters": ["ScrollOfBiting", "ScrollOfBiting", "ScrollOfBiting", "ScrollOfBiting"],
+   "why": "[源码] 四卷恒定；随机的只有前三卷的 `StarterMoveIdx`（num / num+1 / num+2），**第四卷写死 2**。起手相位同上，是 L1 的欠账。"
+  },
+  "ScrollsOfBitingWeak": {
+   "monsters": ["ScrollOfBiting", "ScrollOfBiting", "ScrollOfBiting"],
+   "why": "[源码] 三卷恒定；随机的只有 `StarterMoveIdx` 错开。"
+  }
+ },
+ "deliberately_not_overridden": {
+  "FlyconidNormal": "Flyconid + **随机一只**中史莱姆（`Rng.NextItem(_mediumSlimes)`）",
+  "SlimesWeak": "两只**互不相同**的小史莱姆（从 2 个的池里抽完就是全取）+ **随机一只**中史莱姆",
+  "RubyRaidersNormal": "从 5 种劫掠者里**抽 3 只**，每种有各自的上限（`_raiderValidCounts`）",
+  "SlitheringStranglerNormal": "先 `Rng.NextItem` 掷一个 `SecondaryEnemyType`（闪光贾克斯果 / 中史莱姆 / 两只小史莱姆），再在分支里各自随机",
+  "BowlbugsNormal": "盛碗虫（石）+ **抽 2 只**工蜂（`_workerValidCounts`）",
+  "BowlbugsWeak": "盛碗虫（石）+ **随机一只** `Bugs`",
+  "CorpseSlugsNormal": "Underdocks（备选幕，没解锁也没打过），先不读",
+  "CorpseSlugsWeak": "同上",
+  "TwoTailedRatsNormal": "同上"
+ }
+}

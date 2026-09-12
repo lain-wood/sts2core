@@ -70,7 +70,7 @@ markdown 渲染也没动，所以补丁只有 17 行、`git pull` 时好合。
 那次洗牌的结果内核仍然不可知（游戏的 `Rng.Shuffle` 状态没暴露）。
 所以确定的只有**当前这一堆**，不是整场战斗。
 
-### 3. 牌堆里的牌没有 `id` 和 `is_upgraded`
+### 3. 牌堆里的牌没有 `id` 和 `is_upgraded` ——「附魔」这一半 2026-09-03 补上了
 
 `BuildPileCardList` 只给 `name` / `cost` / `star_cost` / `description`
 （[McpMod.StateBuilder.cs:1303](../../STS2MCP/McpMod.StateBuilder.cs)）；
@@ -80,6 +80,28 @@ markdown 渲染也没动，所以补丁只有 17 行、`git pull` 时好合。
 （内核侧没有"显示费用"这个概念，比 cost 得先从 `CardDef` 反推，得不偿失）。
 手牌是强身份，走完整比较。这够抓住"该进消耗堆的进了弃牌堆"这类错误，
 抓不住升级态错误。够用。
+
+**但「弱身份」不该顺手把附魔一起丢掉。** 附魔是**逐实例**的，名字和升级态
+都表达不了它：一张带灵巧的耸肩无视给 10 点格挡而卡表说 8。手牌 2026-09-01
+就带上了 `enchantment`，牌堆那边没有 —— 于是**同一张牌在手里是 10、
+在牌堆里是 8**，段内才抽出来的那一张按 8 算。
+`act1_f14_phantasmal_gardeners` 的整回合对拍红了一帧（游戏 15 / 内核 13），
+差的正好是那 2 点。
+
+2026-09-03 的本地补丁（第三个）加了两处，**都只增字段**：
+
+| 键 | 是什么 |
+|---|---|
+| `draw_pile_order_enchantments` | 和 `draw_pile_order` **逐位置配对**的附魔数组，同长度、同下标，没附魔是 `null` |
+| `discard_pile[].enchantment` / `exhaust_pile[].enchantment` | `BuildPileCardList` 每张牌多一个字段（这两堆没被重排，位置本来就对得上） |
+
+**为什么抽牌堆的那份要挂在 `draw_pile_order` 上而不是 `draw_pile` 上**：
+后者被按稀有度+id 重排过（约束 2），下标已经不指向同一张实体牌了。
+按名字回配也不行 —— 牌组里有三张打击而只有一张带附魔时那是**欠定**的。
+
+trace 侧对应 `draw_order_enchant` / `discard`、`exhaust` 里的 `enchantment`。
+**老 trace / 没打这版补丁的 mod 一律按"没附魔"处理**，方向是低估，
+和 `draw_order` 缺失时的回退是同一个处置。
 
 ### 4. 敌人意图是文本标签，不是数字
 

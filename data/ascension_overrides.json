@@ -1,0 +1,6 @@
+{
+ "note": "手写的进阶数值映射，给 tools/dump_ascension.py 认不出来的那些用。生成器按 (种类, 低进阶值) 去认内核的 op；候选个数和 [源码] 的用点数对不上就整条跳过，跳过的全表在 data/ascension.json 的 `unmatched` 里。",
+ "format": "键是 `<MonsterClass>.<PropertyName>`（和 unmatched 里的 cls/prop 一致），值是一组目标：`{\"mv\": 招式下标, \"op\": 该招式 ops 里的下标, \"field\": \"value\" | \"hits\"}`。下标以 content.rs 的 ENEMIES 为准，写错了 `asc_table_indices_still_point_at_the_named_enemy` 和 `asc_ops_low_value_still_matches_the_kernel_op` 会红。",
+ "rule": "**只填能查清的**。「2 个候选」多半是内核里两手恰好同值，回 [源码] 看那个属性到底用在哪一手；「判不出种类」要先看它是不是根本不属于招式（实验体的三段形态血、结实的卵的孵化血都是血量，该走 ASC_HP 那条路而不是这里）。查不清就留着 —— 方向是低估敌人，比填错安全。",
+ "values": {}
+}

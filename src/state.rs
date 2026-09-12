@@ -33,7 +33,10 @@ pub const ENEMY_HIST: usize = 4;
 /// 代价照规矩实测记在 CLAUDE.md 的「当前状态」里（`StatusVal = i16`，
 /// 每多一个槽是 2 字节 × 6 个 Entity = 12 字节）。
 /// **112 → 128（2026-09-02）**：加地道虫钻地等状态扩容到 128。
-pub const N_STATUS: usize = 128;
+/// **128 → 144（2026-09-09）**：一天里加了 10 个（三批遗物 7 个 + 贪食 +
+/// 古茶具的武装标记 + 开局升级手牌），119 → 129 顶破了 128。
+/// 代价照规矩实测记在 CLAUDE.md 的「今天的读数」里。
+pub const N_STATUS: usize = 144;
 
 /// Status / power slots. Indexed into `Entity::status`.
 ///
@@ -349,19 +352,19 @@ pub enum St {
     DarkShackles,
     /// 沙坑（[源码] `SandpitPower`，第 2 幕 Boss 无厌沙虫开局给我挂 4 层）。
     ///
-    /// **已知但内核没建模。** 语义是一条**即死倒计时**：
-    /// 每个**敌人回合开始**减 1（`AfterSideTurnStartLate(Enemy)`），
-    /// 减到 0 时 `AfterRemoved` 走 `CreatureCmd.Kill(玩家, force: true)` —— 直接死，
-    /// 和血量无关。它塞给我的 6 张狂乱逃离打出去给它 +1。
+    /// 语义是一条**即死倒计时**：每个**敌人回合开始**减 1
+    /// （`AfterSideTurnStartLate(Enemy)`），减到 0 时 `AfterRemoved` 走
+    /// `CreatureCmd.Kill(玩家, force: true)` —— 直接死，和血量无关，
+    /// **`force: true` 还挡掉瓶中精灵**。它塞给我的 6 张狂乱逃离打出去给它 +1。
     ///
-    /// **没建的原因**：内核没有"敌人回合开始"这个钩子（现有的 `TurnStart` 是
-    /// **我的**回合开始），而为它加一个只有一个消费者的钩子、还要在 `check_over`
-    /// 之外再开一条死亡路径，是个真正的接口改动，不是一行表。
+    /// **2026-09-05 建全了**（规则在 `content::POWERS`，死亡走 `TOp::KillPlayer`）。
+    /// 在此之前只建了层数，后果是求解器**完全看不见这条时间线** ——
+    /// 同一天的 AI 驾驶第 8 回合被吞，全程没打过一张狂乱逃离。
     ///
-    /// **战术后果记在这里，因为求解器完全看不见这条时间线**：
+    /// 战术形状（叶评估的 `solver::clock_value` / `Weights::clock` 就是照这个写的）：
     /// 打这只 Boss 时"还剩几个回合"由它决定，而不是由血量决定；
     /// 狂乱逃离虽然是张状态牌，**打出去买一个回合几乎总是划算的**
-    /// （1 费换 3 费的行动量），实战就是靠这条赢的。
+    /// （1 费换一整个回合的行动量），实战就是靠这条赢的。
     Sandpit,
     /// 舵盘（[源码] `CaptainsWheel`）：第 3 个回合开始时获得 18 点格挡。
     /// 层数就是格挡值。**遗物私有量**，不进 `ALL_ST`。
@@ -479,6 +482,12 @@ pub enum St {
     PollinousCore,
     /// 佩尔之肉（[源码] `PaelsFlesh`，`TurnNumber >= 3` 起每回合 +1 能量）。
     PaelsFlesh,
+    /// 佩尔之血（[源码] `PaelsBlood.ModifyHandDraw => count + 1`）。
+    /// **每回合起手多抽 1 张，没有任何条件** —— 是这一族里最简单的一个。
+    ///
+    /// 层数 = 多抽几张。内核把它建成回合开始多抽，而不是"把 5 改成 6"：
+    /// 两者等价（都从牌堆顶取），而且和准备背包/花粉核心同一个形状。
+    PaelsBlood,
     /// 苦无（[源码] `Kunai`，同回合每 3 张攻击牌 +1 敏捷）。
     Kunai,
     /// 开信刀（[源码] `LetterOpener`）。**遗物私有量**，层数 = 伤害（5）。
@@ -637,6 +646,18 @@ pub enum St {
     Skittish,
     /// 胆小本回合是否已经触发过格挡（内核私有量，在 `TURN_SCOPED` 里）。
     SkittishTriggered,
+    /// **本回合不能再获得能量**（[源码] `NoEnergyGainPower`）。
+    ///
+    /// 跃跃欲试自己给自己挂的：卡面第二句是「你在本回合内不能再获得能量」，
+    /// 而**内核 2026-09-06 之前只建了第一句**（按手牌攻击牌数给能量）——
+    /// 方向是**乐观**：求解器以为可以先跃跃欲试再被遗忘的仪式，两笔能量都拿。
+    ///
+    /// [源码] `ModifyEnergyGain => 0m`，收口在 `step::gain_energy`；
+    /// `AfterSideTurnEnd` 移除自己 —— 内核放进 `TURN_SCOPED`（我的下一个回合
+    /// 开始时清），**对一切可观测的量等价**：敌人回合里没有任何东西给我能量，
+    /// 而回合开始的能量回满走的是 `s.energy = s.base_energy` 那条赋值，
+    /// 本来就不过 `gain_energy`。
+    NoEnergyGain,
     /// 蒸汽喷发（[源码] `SteamEruptionPower`，瀑布巨兽的压力计数器）。
     SteamEruption,
     /// 钻地（[源码] `BurrowedPower`，地道虫持有）。
@@ -652,12 +673,136 @@ pub enum St {
     /// 内核私有量，游戏不报 ⇒ **故意不在** `replay::ALL_ST` 里。
     /// 用完当帧就清（敌人整边行动完之后）。
     MoveForcedThisTurn,
+    // ---- 钢笔尖（`PEN_NIB`）。三个 status 分工不同，**缺一条都会静默算错**：
+    //      在场标记 / 跨战斗计数器 / 这一次出牌的翻倍标记。
+    //      都是内核私有量（游戏把它们显示在遗物上，不报成 status）⇒
+    //      **一律不在** `replay::ALL_ST` 里。
+    /// 钢笔尖**在场**（层数恒 1）。
+    ///
+    /// 单靠计数器分不出「没这件遗物」和「有、但计数是 0」——
+    /// 而那个区别决定了下面那个计数器要不要往上数。
+    PenNib,
+    /// 钢笔尖**打出过几张攻击牌**，`mod 10`（[源码] `PenNib.AttacksPlayed`
+    /// 的 setter 就是 `value % 10`）。
+    ///
+    /// **`[SavedProperty]`，跨战斗保留** —— 上一场打了几张攻击会带过来，
+    /// 假设它从 0 开始就会系统性错相位。所以走 `RelicDef::counter_to`
+    /// 从观测的遗物计数器灌（和摆动球同一条路）。
+    PenNibCount,
+    /// **这一次出牌是那第 10 张**（[源码] 里的 `AttackToDouble`）。
+    ///
+    /// `BeforeCardPlayed` 里计数归零的那一刻挂上，牌结算完当场摘掉，
+    /// `damage::apply_modifiers` 读它 ×2。做成标记而不是"计数器等于 9"，
+    /// 是因为游戏在**结算之前**就把计数器加过了 —— 结算那一刻它已经是 0。
+    PenNibArmed,
+    /// 尖叫酒壶（[源码] `ScreamingFlagon.BeforeSideTurnEnd`）。**遗物私有量**，
+    /// 层数 = 伤害（20）。游戏不把它报成 status ⇒ **不在** `replay::ALL_ST` 里。
+    ScreamingFlagon,
+    /// 斗篷扣（[源码] `CloakClasp.BeforeSideTurnEnd`）。**遗物私有量**，
+    /// 层数 = 每张手牌给几点格挡（1）。规则在 `POWERS` 的 `Hook::TurnEnd`。
+    CloakClasp,
+    /// 号角靴钉（[源码] `HornCleat.AfterBlockCleared` 且 `TurnNumber == 2`）。
+    /// **遗物私有量**，层数 = 格挡（14）。挂在**第 2 回合**开始（内核的
+    /// `Hook::TurnStart` 就在清完格挡之后，和源码那个时点同相）。
+    HornCleat,
+    /// 贪食（噬尸蛞蝓，[源码] `RavenousPower`）：**同伴死掉时**给自己加
+    /// N 点力量，并被自己的进食动作**击晕一回合**。层数 = 加多少力量。
+    Ravenous,
+    /// 风箱 / 骨茶（[源码] `Bellows` / `BoneTea`）：**开局把手牌全升级**。
+    ///
+    /// 两件用同一个 status，因为在战斗层它们**逐字同一件事**（`CardCmd.Upgrade(手牌)`
+    /// 且 `TurnNumber <= 1`）。差别全在**武装条件**：风箱在身上就永远有，
+    /// 骨茶有个 `[SavedProperty]` 的「还剩几场」——那是局外状态，
+    /// 走 `content::CONDITIONAL_START` 由调用方给。
+    ///
+    /// 规则挂在 `Hook::HandDrawn`（抽牌**之后**），不是 `TurnStart`。
+    UpgradeOpeningHand,
+    /// 宝石面具（[源码] `JeweledMask.BeforeHandDraw`）：开局从抽牌堆挑一张
+    /// **能力牌**进手牌，并让它**本回合免费**。挂在 `TurnStart`（抽牌之前）。
+    JeweledMask,
+    /// 碎石者（[源码] `StoneCracker.AfterRoomEntered`）：开局把抽牌堆里
+    /// 随机 2 张可升级的牌升级。层数 = 几张。
+    StoneCracker,
+    /// 小血瓶 / 假血瓶（[源码] `BloodVial.AfterPlayerTurnStartLate`）：
+    /// 开局回 N 点血（真品 2 / 假货 1）。层数 = 回多少。
+    BloodVial,
+    /// 缩放仪（[源码] `Pantograph.BeforeCombatStart`）：**Boss 房**开局回 25 血。
+    /// 「这一场是不是 Boss」是遭遇的属性，走 `content::CONDITIONAL_START`。
+    Pantograph,
+    /// 古茶具 / 假古茶具（[源码] `VenerableTeaSet`）：**上一个房间是休息处**时
+    /// 武装，本场第 1 回合能量回满之后再 +N（真品 2 / 假货 1）。
+    ///
+    /// 「上一个房间是不是休息处」是**局外状态**（源码里那个 `[SavedProperty]`
+    /// 布尔），战斗观测里根本没有 —— 所以这个 status **只有合成路径挂得上**
+    /// （`content::REST_ARMED` + `synth::FightSpec::after_rest`）。
+    /// 对拍路径不挂：那边 `energy` 直接从观测灌，再加一遍就是重复计数。
+    TeaSet,
+    /// 损毁头盔（[源码] `RuinedHelmet.TryModifyPowerAmountReceived`）：
+    /// **本场第一次**获得力量时把层数 ×2，然后一整场不再触发。
+    ///
+    /// 它是「改一个正在算的数值」那一族（`ModifyXxx`），不是触发器 ——
+    /// 消费点是 `step::apply_status` 里一个**只认 status 的**窄 `if`
+    /// （和臂甲/坚定不移同一类，登记在 `RULE_MODIFIERS`）。
+    /// 用完当场清零，`content::spent_once_per_combat` 认得它。
+    RuinedHelmet,
 }
 
 impl St {
     #[inline(always)]
     pub const fn ix(self) -> usize {
         self as usize
+    }
+
+    /// 全部变体，**按声明顺序**（下标就是 [`St::ix`]）。
+    ///
+    /// # 它只用来起名字，不用来遍历
+    ///
+    /// 唯一的消费者是诊断输出（`bin/synth_audit` 把两个 `[StatusVal; N_STATUS]`
+    /// 逐格比出来的差印成人看得懂的名字）。**比较本身走 `0..N_STATUS` 的下标**，
+    /// 不走这张表 —— 这个分工是刻意的：这张表漏一条的代价只是那一格印成
+    /// `status[87]`，而拿它当遍历清单的话，漏一条就是**一格静默不检查**。
+    ///
+    /// 加变体忘了加这里不会有任何东西变红（编译器数不了枚举的变体个数），
+    /// 所以上面那条分工就是它的安全网。`st_all_is_indexed_by_ix` 守着顺序。
+    pub const ALL: &'static [St] = &[
+        St::Strength, St::Dexterity, St::Vulnerable, St::Weak,
+        St::Frail, St::Artifact, St::Intangible, St::DemonForm,
+        St::Rage, St::Slow, St::DamageCap, St::Shrink,
+        St::SlowSource, St::TempStrength, St::Pyre, St::FeelNoPain,
+        St::DarkEmbrace, St::Rupture, St::CrimsonMantle, St::RollingBoulder,
+        St::Vicious, St::Regen, St::PlatedArmor, St::Frenzy,
+        St::FlameBarrier, St::Juggernaut, St::Colossus, St::Barricade,
+        St::Entrench, St::Stampede, St::OneTwoPunch, St::Juggling,
+        St::Aggression, St::NoDraw, St::AllOrNothing, St::Minion,
+        St::Illusion, St::VambraceCharge, St::CurlUp, St::Imbalanced,
+        St::Flutter, St::EscapeArtist, St::Swipe, St::Thorns,
+        St::OffBalance, St::BurningBlood, St::OrnamentalFan, St::MercuryHourglass,
+        St::Lantern, St::Pendulum, St::PendulumPhase, St::StoneCalendar,
+        St::Orichalcum, St::OrichalcumArmed, St::MeatOnTheBone, St::Plow,
+        St::Ringing, St::Infested, St::GremlinHorn, St::Constrict,
+        St::MrStruggles, St::PersonalHive, St::Tainted, St::VitalSpark,
+        St::DarkShackles, St::Sandpit, St::CaptainsWheel, St::Hatch,
+        St::Ritual, St::Rampart, St::Stock, St::Soar,
+        St::Vigor, St::Akabeko, St::HighVoltage, St::Territorial,
+        St::ParryingShield, St::Anchor, St::BagOfMarbles, St::RedMask,
+        St::BagOfPreparation, St::Candelabra, St::HappyFlower, St::PollinousCore,
+        St::PaelsFlesh, St::PaelsBlood, St::Kunai, St::LetterOpener,
+        St::Surrounded, St::BackAttackLeft, St::BackAttackRight, St::FacingRight,
+        St::CrabRage, St::Reattach, St::Radiance, St::Tender,
+        St::CentennialPuzzle, St::WitheringPresence, St::RitualArmed, St::Stunned,
+        St::FakeHappyFlower, St::Unmovable, St::UnmovableCharge, St::Adaptable,
+        St::PainfulStabs, St::Nemesis, St::ClawGrowth, St::Shriek,
+        St::Smoggy, St::Skittish, St::SkittishTriggered, St::NoEnergyGain,
+        St::SteamEruption, St::Burrowed, St::MoveForcedThisTurn, St::PenNib,
+        St::PenNibCount, St::PenNibArmed, St::ScreamingFlagon, St::CloakClasp,
+        St::HornCleat, St::Ravenous, St::UpgradeOpeningHand, St::JeweledMask, St::StoneCracker,
+        St::BloodVial, St::Pantograph, St::TeaSet, St::RuinedHelmet,
+    ];
+
+    /// 这个下标叫什么（`St` 自带的 `Debug` 名）。超出 [`St::ALL`] 就是 `None`，
+    /// 调用方印成下标。
+    pub fn name_of_ix(ix: usize) -> Option<String> {
+        Self::ALL.get(ix).map(|st| format!("{st:?}"))
     }
 }
 
@@ -667,7 +812,11 @@ impl St {
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct CardInst {
     pub id: u16,
-    pub flags: u16,
+    /// 关键字位（`F_*`）。**`u8` 是有意的**：今天只有 5 个位，而窄一个字节
+    /// 让 `CardInst` 保持 8 字节 —— 附魔那两个字段（`ench` / `ench_amt`）
+    /// 正好补进省下来的地方，`State` 因此**一个字节没涨**。
+    /// `solver::card_ident` 也依赖这一点（那里有一条编译期断言）。
+    pub flags: u8,
     /// Flat damage bonus from 锋利 (Sharp) style enchants.
     pub bonus: i16,
     /// **这一张实例的费用增量。** 内容表给的是牌名的基础费用，而游戏里有牌
@@ -680,27 +829,37 @@ pub struct CardInst {
     /// 不加这个字段的后果不是"少算一点"，是**内核会给出游戏不接受的线** ——
     /// 2026-08-22 无情猛攻那个 bug 就是这个形状（内核以为牌比实际便宜）。
     pub cost_delta: i8,
-    /// **这一张实例的格挡加值**，来自附魔（[源码] `EnchantmentModel.EnchantBlockAdditive`，
-    /// 「灵巧」`Nimble` 就是 `=> Amount`）。
+    /// **这一张实例带的附魔**：`content::ENCHANTS` 的下标 **+1**，`0` = 没附魔。
     ///
-    /// 为什么要独立一个字段、不复用 `bonus`：`bonus` 是**伤害**加值（锋利那一族），
-    /// 而一张既打伤害又给格挡的牌（铁斩波）可以只带灵巧 —— 合成一个字段会让它
-    /// 凭空多 2 点伤害。两族附魔的 `CanEnchant` 判据本来就不同
-    /// （灵巧要 `card.GainsBlock`，锋利要能打伤害）。
+    /// 一张牌至多带一个（[源码] `CardModel.Enchantment` 是单个引用，
+    /// `EnchantmentModel.CanEnchant` 里 `card.Enchantment != null` 直接拒绝）。
     ///
-    /// 取 `i8` 是为了塞进 `CardInst` 原有的填充字节里 —— **`State` 一个字节没涨**。
-    /// 附魔的 `Amount` 都是个位数，±127 绰绰有余。
+    /// 2026-09-06 从 `block_bonus: i8` 换过来的。原来那个字段只装得下「灵巧」
+    /// 那一个钩子（格挡加值），而附魔的钩子面有五个 —— 装不下的那几个
+    /// （伤害加/乘、关键字）当时一律当成"没有效果"，**方向不统一**：
+    /// 锋利是低估、腐化是低估、王室认证是把一张该保留的牌弃掉。
+    /// 存 id 而不是存算好的加值，是因为**同一个 Amount 在不同附魔上意思不同**。
+    pub ench: u8,
+    /// 附魔的 `Amount`（[源码] `EnchantmentModel.Amount`）。
     ///
-    /// 2026-09-01 加：在那之前一张带灵巧的耸肩无视在内核里是 8 点格挡、
-    /// 游戏里是 10 点，对拍当场红（骇鳗那一场帧 0）。
-    pub block_bonus: i8,
+    /// 怎么用取决于是哪一种附魔（灵巧 = 格挡加值、锋利 = 伤害加值、
+    /// 黏糊糊 = 格挡加值 −1），规则在 `content::ENCHANTS` 那张表里。
+    /// 见过的最大值是 3，`i8` 绰绰有余。
+    pub ench_amt: i8,
 }
 
-pub const F_UPGRADED: u16 = 1 << 0;
-pub const F_INNATE: u16 = 1 << 1;
-pub const F_RETAIN: u16 = 1 << 2;
+pub const F_UPGRADED: u8 = 1 << 0;
+/// 固有：战斗开始时必定在起手（内核的落地是「开局洗完把它挪到牌堆顶」，
+/// 见 `step::begin_combat`）。今天唯一的来源是「王室认证」附魔。
+pub const F_INNATE: u8 = 1 << 1;
+/// 保留：回合结束**不弃掉这张牌**（消费点在 `step::end_turn_impl` 那个弃手牌的
+/// 循环里）。今天的来源是「王室认证」和「沉稳」两个附魔。
+///
+/// 和均衡的 `St::Entrench` 不是一回事：那个保**整手牌**、只保一个回合，
+/// 是牌的效果；这个挂在**卡实例**上、一直有效。
+pub const F_RETAIN: u8 = 1 << 2;
 /// 腐化: this card deals +50% damage.
-pub const F_CORRUPT: u16 = 1 << 3;
+pub const F_CORRUPT: u8 = 1 << 3;
 /// **这一张实例本回合免费**（[源码] `CardModel.SetToFreeThisTurn()`）。
 ///
 /// 技能药水就是这么工作的：它随机生成 3 张技能牌让你挑 1 张，挑中的那张
@@ -709,10 +868,11 @@ pub const F_CORRUPT: u16 = 1 << 3;
 ///
 /// 内核没有牌生成模型，所以这个 flag **不由内核自己设**，而是
 /// `replay::sync` 按观测到的费用设（游戏是唯一权威，它说这张 0 费就是 0 费）。
-pub const F_FREE_THIS_TURN: u16 = 1 << 4;
+pub const F_FREE_THIS_TURN: u8 = 1 << 4;
 
 impl CardInst {
-    pub const EMPTY: CardInst = CardInst { id: 0, flags: 0, bonus: 0, cost_delta: 0, block_bonus: 0 };
+    pub const EMPTY: CardInst =
+        CardInst { id: 0, flags: 0, bonus: 0, cost_delta: 0, ench: 0, ench_amt: 0 };
 
     #[inline(always)]
     pub fn upgraded(&self) -> bool {
@@ -979,6 +1139,23 @@ pub struct State {
     pub skills_played: i32,
     pub exhausted_this_turn: i32,
     pub hp_lost_this_turn: i32,
+    /// **本场战斗里我受到过几次没被完全格挡的伤害**（不是掉了多少血，是几次）。
+    ///
+    /// 扯碎的段数读它（[源码] `TearAsunder`：段数 = 1 + 这个数）。
+    ///
+    /// 判据逐字照 [源码]：`DamageReceivedEntry` 且 `Result.UnblockedDamage > 0`，
+    /// **不分来源** —— 敌人打的、荆棘反弹的、放血那种自伤（[源码]
+    /// `Bloodletting` 走的也是 `CreatureCmd.Damage`，只是 `Unblockable`）
+    /// 全都算，被完全挡住的那些一次都不算。所以收口点就是
+    /// `step::after_player_hp_lost`（它的 `through > 0` 和源码那个过滤器同义）。
+    ///
+    /// **和 `hp_lost_this_turn` 不是一回事**：那个是"这一回合掉了多少血"、
+    /// 回合一换就清零；这个是"这一场挨穿过几次"、整场累加。
+    ///
+    /// **观测不到。** 游戏不报这个计数器 —— 它只把算好的段数渲染进扯碎的
+    /// 卡面文本（`（命中3次）`）。`sync` 从那儿反推，见 `replay::observed_tear_hits`；
+    /// 扯碎不在手上时这一栏是 0，方向是**低估**。
+    pub hp_loss_hits: u8,
     /// 无情猛攻: next attack card costs 0.
     pub free_attack: i32,
 
@@ -990,6 +1167,17 @@ pub struct State {
     /// 影响的是**"满仓"这个判断**：L2 的药水定价按"这一幕还会不会再掉药水"
     /// 决定要不要清仓，而 3/3 和 3/5 是两个完全不同的局面。
     pub potion_slots: u8,
+    /// 这一局的**进阶等级**（0–10）。
+    ///
+    /// 战斗层只有两档读得到它，都在 `asc::adjust` / `asc::hp_range` 里收口：
+    /// **A8 `ToughEnemies`** 抬敌人血量/格挡/覆甲，**A9 `DeadlyEnemies`**
+    /// 抬敌人伤害/段数/力量成长。其余八档一律是局外的（药水槽、精英数、
+    /// 金币、商店价、卡牌概率、第 3 幕第二个 Boss），**L1 一个都不该读**。
+    ///
+    /// **默认 0，而且 `< 8` 时那两个函数一个字节都不查表** ——
+    /// 所以全部既有对拍（都是 A1/A2）逐字节不变。
+    /// `sync` 从 trace 的 `run.ascension` 灌它；L3 自己开仗时由调用方给。
+    pub ascension: u8,
     /// 每只敌人**最近几手的下标**，新的在 `[0]`。给出招机器的
     /// `CannotRepeat` / `CanRepeatXTimes` / `cooldown` 用。
     ///
@@ -1038,10 +1226,12 @@ impl State {
             skills_played: 0,
             exhausted_this_turn: 0,
             hp_lost_this_turn: 0,
+            hp_loss_hits: 0,
             free_attack: 0,
             turn: 1,
             potions: [0; MAX_POTIONS],
             potion_slots: 3,
+            ascension: 0,
             enemy_hist: [[u8::MAX; ENEMY_HIST]; MAX_ENEMIES],
             enemy_used: [0; MAX_ENEMIES],
             rng: Rng::new(seed),
@@ -1051,9 +1241,9 @@ impl State {
         }
     }
 
-    pub fn add_card(&mut self, id: u16, flags: u16, bonus: i16) -> u8 {
+    pub fn add_card(&mut self, id: u16, flags: u8, bonus: i16) -> u8 {
         let ix = self.n_cards;
-        self.cards[ix as usize] = CardInst { id, flags, bonus, cost_delta: 0, block_bonus: 0 };
+        self.cards[ix as usize] = CardInst { id, flags, bonus, cost_delta: 0, ench: 0, ench_amt: 0 };
         self.n_cards += 1;
         self.draw[self.n_draw as usize] = ix;
         self.n_draw += 1;
@@ -1204,6 +1394,44 @@ impl State {
         self.exh[self.n_exh as usize] = c;
         self.n_exh += 1;
         self.exhausted_this_turn += 1;
+    }
+
+    /// 从消耗堆里把一张拿出来。唯一的用处是「回合末从消耗堆里自己打出来」
+    /// （彼岸咆哮，见 `content::EXHAUST_END_AUTOPLAY`）——
+    /// 打出去之后它自带消耗、`to_exhaust` 又把它放回来。
+    ///
+    /// **不动 `exhausted_this_turn`**：那个计数器数的是"这回合消耗了几张"，
+    /// 拿出来再放回去在游戏侧确实是又消耗了一次（`to_exhaust` 会 +1），
+    /// 而在这里往回减就成了净 0，和游戏对不上。
+    pub fn take_from_exh(&mut self, i: usize) -> u8 {
+        let c = self.exh[i];
+        for k in i..(self.n_exh as usize - 1) {
+            self.exh[k] = self.exh[k + 1];
+        }
+        self.n_exh -= 1;
+        c
+    }
+
+    /// 从抽牌堆**中间**抽走第 `i` 张（下标 0 是牌堆底，末尾是顶）。
+    ///
+    /// **已知前缀跟着记**：`n_draw_known` 数的是**末尾**那几张，
+    /// 抽走一张不改变其余任何一张的身份 —— 所以只有**抽走的那张本来就在
+    /// 已知区里**时才 −1，抽走已知区下面的那些一张都不影响。
+    /// （写成"截到插入点"是错的：那会把一堆本来知道的牌白白扔成未知。）
+    ///
+    /// 唯一的调用点是宝石面具（`TOp::MoveRandomPowerFromDrawToHandFree`）。
+    /// 抽牌那条路走的是 `pop_draw_top`，两者别混。
+    pub fn take_from_draw(&mut self, i: usize) -> u8 {
+        let c = self.draw[i];
+        let known_start = (self.n_draw as usize).saturating_sub(self.n_draw_known as usize);
+        for k in i..(self.n_draw as usize - 1) {
+            self.draw[k] = self.draw[k + 1];
+        }
+        self.n_draw -= 1;
+        if i >= known_start {
+            self.n_draw_known = self.n_draw_known.saturating_sub(1);
+        }
+        c
     }
 
     pub fn take_from_disc(&mut self, i: usize) -> u8 {

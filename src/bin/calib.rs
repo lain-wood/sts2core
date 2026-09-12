@@ -98,6 +98,9 @@ fn face_of(id: u16, upgraded: bool, bonus: i16) -> (i32, i32) {
             Op::Damage { base, hits, .. } | Op::DamageAll { base, hits, .. } => {
                 dmg += (base + bonus as i32).max(0) * hits
             }
+            // 扯碎：只算**保底那一段**。段数是局面量而画像没有局面，
+            // 按 0 计会让一张稀有攻击牌在牌组画像里凭空消失。
+            Op::DamagePerHpLossHit { base } => dmg += (base + bonus as i32).max(0),
             Op::DamageIfVuln { base, .. } => dmg += (base + bonus as i32).max(0),
             Op::Block { base } => blk += base,
             _ => {}
@@ -421,7 +424,7 @@ fn main() -> ExitCode {
         let human_end = t.frames.last().map(|f| f.obs.hp).unwrap_or(-1);
         let segs = turn_segments(&t);
         let n_seg = segs.len();
-        let mut r = Replayer::new(&t.run);
+        let mut r = Replayer::for_trace(&t);
         let mut fed = 0usize;
 
         for (k, &(i, j)) in segs.iter().enumerate() {

@@ -192,6 +192,13 @@ impl Line {
             self.n += 1;
         }
     }
+
+    /// **只给诊断工具用**：把一串已经发生过的动作装回一条 `Line`，好让
+    /// `bin/bestline --explain` 能用同一个渲染函数印出来。
+    /// 搜索本身不走这条路 —— 它的 `push` 是私有的，位置由搜索自己定。
+    pub fn push_pub(&mut self, a: Action) {
+        self.push(a);
+    }
 }
 
 /// 求解结果 + **诊断**。诊断不是可选的：不知道搜索有没有搜完，分数就没法读。
@@ -258,6 +265,27 @@ pub struct Weights {
     /// `damage_first`）是给**单回合**求解器排序用的，给它加跨回合项会直接
     /// 改掉驾驶路径，还会污染 `bin/solve` 那条"实战线赢不过穷尽搜索"的自检。
     pub power: i32,
+    /// **即死倒计时（沙坑）的折扣**，按百分比（100 = 原值，0 = 完全关掉）。
+    ///
+    /// # 为什么它和 `power` 不一样，可以进**所有**目标函数
+    ///
+    /// `power` 是**软的跨回合收益**（这张能力牌后面几个回合能产出多少），
+    /// 那种东西塞进单回合目标函数会直接改掉驾驶路径 —— 所以它只在 `LEAF` 里。
+    ///
+    /// 沙坑不是收益，是**一条已经写死的死刑判决**：`S` 层就是"还剩 S 个回合"，
+    /// 而 `S` 和 `horizon` 都是从**叶局面本身**读出来的，和 `win` / `death`
+    /// 一样 determinate。单回合目标函数本来就允许（而且必须）看见死亡 ——
+    /// 沙坑 = 1 那一格它已经看见了（结束回合就死），这一项只是把 `S ≥ 2`
+    /// 的那几格接上，让"还差几个回合"变成连续量而不是一个断崖。
+    ///
+    /// # 风险面为什么是空的
+    ///
+    /// `St::Sandpit` 全内容表**只有第 2 幕 Boss 无厌沙虫一只**挂得出来，
+    /// 别的局面这一项恒为 0 ⇒ 对既有语料**逐字节无影响**。
+    ///
+    /// [`Weights::HP_ONLY`] 是**故意留 0** 的：它是"纯血量"那把对照尺子，
+    /// 三个目标函数一致才有意义，掺进去就不再是对照了。
+    pub clock: i32,
 }
 
 /// 一层易伤/虚弱最多按几层算 —— 它们每回合掉一层，堆过头是浪费。
@@ -279,6 +307,8 @@ impl Weights {
         strength: 60,
         // 单回合目标函数**不看跨回合的账**，见 `Weights::power`。
         power: 0,
+        // 即死倒计时是**死亡**不是收益，三个目标函数都该看见，见 `Weights::clock`。
+        clock: 100,
     };
 
     /// 竞速：敌人的血更值钱。**只在"这一幕必须抢在被磨死之前打完"时用**，
@@ -313,6 +343,32 @@ impl Weights {
     pub const LEAF: Weights =
         Weights { enemy_hp: 75, power: 100, ..Weights::SURVIVE_FIRST };
 
+    /// **确定性窗口内的叶评估。** 和 [`Weights::LEAF`] 只差一处：`win = 0`。
+    ///
+    /// # 它换掉的是一个**地平线人造物**
+    ///
+    /// `win = 100_000` 等于 **1000 点血**。窗口里两条线只要有一条在边界之前
+    /// 把仗打完，它就以 1000 血的优势压过另一条 —— 而“仗有没有在窗口内结束”
+    /// 取决于窗口有多长（确定性延伸到哪里），不是一个决策相关的事实。
+    ///
+    /// `win = 0` 不是“赢不重要”，是**把赢按同一把尺子计价**：
+    /// [`eval`] 在 `combat_over` 那条提前 return 之前不数敌人血量，所以赢下来
+    /// 的局面自动省掉了 `Σ 敌人剩余血 × enemy_hp` 这一整项 ——
+    /// **赢的价钱就是“不用再啃的那些血”**，75 分/点，和函数里其余每一项同一套币值。
+    /// 而仗真的在窗口内打完时，`hp × 100` 就是**这场仗的最终血量**，
+    /// 那正是 P5 端到端量的那个数（不是它的代理量）。
+    ///
+    /// # 为什么只在窗口内用
+    ///
+    /// 窗口内**一个骰子都不掷**（[`window_is_certain`](crate::plan::window_is_certain)），
+    /// 所以“这条线到边界还剩多少血”是**事实**而不是估计量。窗口外那几层是采样出来的，
+    /// 把目标函数换成一个更“平”的口径（少了 1000 血那道台阶）会让一批候选变成
+    /// **近似平局**，而近似平局在采样估值下就是单次可重复性塌掉的样子 ——
+    /// `Leaf::Rollout` 那次 87% -> 71% 正是这个失败模式。**窗口内的确定性才免疫它。**
+    ///
+    /// `death` 原样保留：死是真终局，不是地平线人造物。
+    pub const WINDOW: Weights = Weights { win: 0, ..Weights::LEAF };
+
     /// 纯 HP 差。什么都不加权，用来做对照 —— 当两个目标函数给出同一条线时，
     /// 这条线的可信度比任何权重讨论都高。
     pub const HP_ONLY: Weights = Weights {
@@ -324,6 +380,8 @@ impl Weights {
         enemy_weak: 0,
         strength: 0,
         power: 0,
+        // **故意 0**：这把尺子的全部价值就是"什么都不加权"，见 `Weights::clock`。
+        clock: 0,
     };
 }
 
@@ -354,6 +412,10 @@ pub(crate) fn optimistic_damage(s: &State) -> i32 {
                 }
                 crate::ops::Op::DamageAll { base, hits, .. } => {
                     d += (base + inst.bonus as i32 + str_bonus).max(0) * hits
+                }
+                // 扯碎的段数是**局面量**，不是常数（见 `Op::DamagePerHpLossHit`）
+                crate::ops::Op::DamagePerHpLossHit { base } => {
+                    d += (base + inst.bonus as i32 + str_bonus).max(0) * (1 + s.hp_loss_hits as i32)
                 }
                 _ => {}
             }
@@ -513,6 +575,9 @@ fn damage_per_energy(s: &State) -> i32 {
                 crate::ops::Op::Damage { base, hits, .. }
                 | crate::ops::Op::DamageAll { base, hits, .. } => {
                     face += (base + inst.bonus as i32).max(0) * hits
+                }
+                crate::ops::Op::DamagePerHpLossHit { base } => {
+                    face += (base + inst.bonus as i32).max(0) * (1 + s.hp_loss_hits as i32)
                 }
                 _ => {}
             }
@@ -732,7 +797,79 @@ pub fn eval(s: &State, w: &Weights) -> i32 {
     if w.power != 0 {
         v += power_horizon_value(s, w) * w.power / 100;
     }
+    // 即死倒计时。同样有早退，而且**全内容表只有一只敌人挂得出沙坑** ——
+    // 别的局面这一项连算都不算。
+    if w.clock != 0 {
+        v += clock_value(s, w) * w.clock / 100;
+    }
     v
+}
+
+/// 场上那条**即死倒计时**还剩几个回合。没有就是 `None`。
+///
+/// 沙坑挂在**敌人**身上（[源码] owner 是那只怪，只有 `Target` 指向我），
+/// 所以这里扫的是敌人不是玩家。多只都挂着时取**最小**的那个 ——
+/// 先归零的那条决定我什么时候被吞。
+pub fn death_clock(s: &State) -> Option<i32> {
+    let mut best: Option<i32> = None;
+    for e in 0..s.n_enemies as usize {
+        if !s.enemies[e].alive() {
+            continue;
+        }
+        let n = s.enemies[e].get(crate::state::St::Sandpit);
+        if n > 0 {
+            best = Some(best.map_or(n, |b: i32| b.min(n)));
+        }
+    }
+    best
+}
+
+/// **倒计时短于地平线的那部分，是我永远啃不到的敌人血。**
+///
+/// ```text
+/// S        = 沙坑层数            = 这条线还剩几个我的回合
+/// H        = horizon(s)          = 按现在的输出，还需要几个回合才能啃完这堵墙
+/// 缺口     = max(0, H − S)
+/// 这一项   = − 缺口 × min(每回合伤害, 血墙) × w.enemy_hp
+/// ```
+///
+/// # 为什么是这个形状
+///
+/// **一个新常数都没发明**：`H`、`optimistic_damage`、`enemy_wall_all_forms`、
+/// `w.enemy_hp` 全是 [`horizon`] 和 [`eval`] 已经在用的量，币值也和
+/// `eval` 里那一项**逐字相同** —— 缺一个回合，就是少打一个回合的伤害，
+/// 就是那么多敌人血留在场上没啃掉。这不是一个新的启发式，
+/// 是把 `eval` 已有的那一项按"还剩几个回合"重新记了一次账。
+///
+/// 于是**一张狂乱逃离的边际价值 = 一个回合的输出**（`LEAF` 口径下约
+/// `25 × 75 = 1875`，合 18.75 点血）—— 它压得过一张防御（5 点血），
+/// 和岿然不动（30 格挡 / 2 费）一个量级。这正是实战里那条判断：
+/// **买一个回合，几乎总比多挡一次划算。**
+///
+/// # 三处刻意的保守
+///
+/// * `H` 夹在 `HORIZON_CAP = 8`，而这场仗真实要 10 个回合 ⇒ **缺口被低估**。
+/// * 牌堆里还没抽到的狂乱逃离**不计入 `S`** —— 它们不是叶局面里的事实。
+/// * `optimistic_damage` 本来就偏大（"正好抽到最狠的五张"）⇒ `H` 偏小。
+///
+/// 三条同向：这一项报的缺口**只会比真实的小**。宁可低估这条时间线，
+/// 也不要让求解器为了一个想象出来的缺口去打状态牌。
+///
+/// # 单调性
+///
+/// 缺口对 `S` 单调不增 ⇒ **多打一张狂乱逃离永远不会让分数变低**；
+/// 缺口对血墙单调不减 ⇒ **打掉敌人血也永远不会让这一项变差**。
+/// 后一条和 [`power_horizon_value`] 里滚石那一项踩过的坑是同一个，
+/// `the_clock_term_never_punishes_progress` 钉着。
+fn clock_value(s: &State, w: &Weights) -> i32 {
+    let Some(turns_left) = death_clock(s) else { return 0 };
+    let wall = enemy_wall_all_forms(s);
+    if wall <= 0 {
+        return 0;
+    }
+    let dpt = optimistic_damage(s).max(1).min(wall);
+    let shortfall = (horizon(s) - turns_left).max(0);
+    -shortfall * dpt * w.enemy_hp
 }
 
 /// 现成的目标函数。签名是定死的 `fn(&State) -> i32`（不是闭包），
@@ -759,6 +896,11 @@ pub mod score {
     /// 跨回合搜索的**叶评估**。见 [`Weights::LEAF`] —— 它的权重是标定出来的。
     pub fn leaf(s: &State) -> i32 {
         eval(s, &Weights::LEAF)
+    }
+
+    /// **确定性窗口内**的目标函数 = 最终血量口径。见 [`Weights::WINDOW`]。
+    pub fn window(s: &State) -> i32 {
+        eval(s, &Weights::WINDOW)
     }
 
     /// MCTS 整场战损期望评估：快速模拟至战斗结束，以最终期望生命值为目标。
@@ -797,28 +939,47 @@ pub mod score {
 /// 它就是**按需生成的 Zobrist 表**：Zobrist 要的是"每个 (位置, 取值) 一个
 /// 互相独立的随机数"，而一个好的整数哈希从任意 key 现算一个，效果一样，
 /// 还不用背一张表、不用担心表的初始化顺序影响复现性。
+/// `pub(crate)` 是给 [`plan::key`](crate::plan::key) 用的 —— 跨回合那份指纹
+/// 从这一份出发再往里揉几样，**两边必须是同一个混合函数**。
 #[inline(always)]
-fn z(mut x: u64) -> u64 {
+pub(crate) fn z(mut x: u64) -> u64 {
     x = (x ^ (x >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
     x = (x ^ (x >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
     x ^ (x >> 31)
 }
 
-/// 一张牌实例的完整身份：id / 升级位 / 腐化位 / 暴走加值 / 本场改过的费用。
+/// 一张牌实例的完整身份：id / 升级位 / 腐化位 / 暴走加值 / 本场改过的费用 /
+/// **附魔（种类 + `Amount`）**。
 ///
 /// **`cost_delta` 也在里面**：狂乱逃离打一次自己 +1 费，两张同名不同费的牌
 /// 是两张不同的牌，混为一谈会让搜索把它们合并掉。
+///
+/// 附魔同理：一张带灵巧的防御和一张普通防御给的格挡不一样。
+/// **种类和 `Amount` 两个都要带** —— 只带算好的加值的话，
+/// 「王室认证」（不改任何数值、只加关键字）会和没附魔并成一组，
+/// 而它决定这张牌回合末留不留在手上。
+///
+/// 位宽是**精确**的、不是哈希：`flags` 只占低 8 位（下面那条编译期断言守着），
+/// 于是 8+16+8+8+16+8 = 64 位刚好装下。
 #[inline(always)]
-fn card_ident(s: &State, ix: u8) -> u64 {
+pub(crate) fn card_ident(s: &State, ix: u8) -> u64 {
     let c = s.cards[ix as usize];
-    // 高 8 位放附魔的格挡加值：不带它的话，一张带灵巧的防御和一张普通防御
-    // 会被搜索当成同一张牌合并掉。
-    (c.block_bonus as u8 as u64) << 56
+    (c.ench as u64) << 56
         | (c.id as u64) << 40
+        | (c.ench_amt as u8 as u64) << 32
         | (c.flags as u64) << 24
         | (c.bonus as u16 as u64) << 8
         | (c.cost_delta as u8 as u64)
 }
+
+/// `card_ident` 精确装下每一个字段：8(ench) + 16(id) + 8(ench_amt) + 8(flags)
+/// + 16(bonus) + 8(cost_delta) = 64 位。`CardInst::flags` 是 `u8`，
+/// 类型系统本身就守着这条 —— 位宽不够时这里会编译不过，
+/// 那比"两张牌被静默地并成一张"强得多。
+const _: () = assert!(
+    std::mem::size_of::<crate::state::CardInst>() == 8,
+    "CardInst 涨了：card_ident 的位宽和 State 的体积都要跟着重算"
+);
 
 /// 局面指纹（Zobrist 风格）。
 ///

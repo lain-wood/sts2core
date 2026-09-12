@@ -54,7 +54,14 @@ jobs:
       - name: 一步预测 / 整回合（已知红，守不许变多）
         shell: bash
         run: |
-          BASE_ONE=5     # 4 帧在第3幕Boss复活窗口 + 1 帧在附魔补丁之前录的老 trace
+          # 2026-09-03：复活窗口那 4 帧修好了（`revive_owed` + `step` 的无目标牌
+          # 分支），基线跟着从 5 调到 1。
+          BASE_ONE=1     # act1_f8_elite_terror_eel 帧0：附魔补丁之前录的老 trace
+          # 两帧都是**同一件事**：一张带灵巧的耸肩无视，内核按卡表算 8 而游戏给 10。
+          #   · act1_f8_elite_terror_eel  —— trace 录在附魔字段之前，观测里没有这个量
+          #   · act1_f14_phantasmal_gardeners —— 那一张是段内被抽出来的，
+          #     而牌堆的附魔到 2026-09-03 的 mod 补丁才有；**两条语料都重录不了**
+          # 补丁之后录的新语料不该再出现这一类，所以这个 2 只出不进。
           BASE_TURN=2
 
           # verify 有不一致时退出码是 1，所以整条都要 || true；
@@ -82,6 +89,14 @@ jobs:
           fi
           exit "$fail"
 
+      # **不判红，但要跑。** 它报的是「合成战斗构造器缺什么」——内容覆盖问题，
+      # 和 MISMATCH 不是一档，所以没有阈值。放进 CI 的理由只有一个：
+      # 它是唯一一条检验「开局那一刻」的路（其余七条全从 `Replayer::sync` 出发，
+      # 而第 1 回合的 `TurnStart` 只有 `begin_combat` 跑得到），
+      # 不跑它就会静默烂掉。`data/` 读不到时它自己降级，不会红。
+      - name: 合成战斗构造器（第 0 帧逐字段比，不判红）
+        run: cargo run --release --bin synth_audit -- traces/act*.json traces/synthetic_*.json
+
       - name: 跨回合验收 · fast 策略（已知红，守不许变多）
         shell: bash
         run: |
@@ -102,11 +117,17 @@ jobs:
           exit 0
 
   planner:
-    # 约 2 分半，只有动了跨回合 planner 才需要。手动触发或打 tag 时跑。
+    # 约 15 分钟，只有动了跨回合 planner 才需要。手动触发或打 tag 时跑。
     name: 跨回合 planner D=2（慢，按需）
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: cargo build --release --all-targets
-      - run: cargo run --release --bin rollout -- traces/act*.json --policy plan --plan-depth 2 --depth-sweep 1
+      - name: P1–P5（D=2 vs D=1 配对）
+        run: cargo run --release --bin rollout -- traces/act*.json --policy plan --plan-depth 2 --depth-sweep 1
+      # **这一条独占三件上面那条照不到的事**：候选覆盖 / 到边界后悔 / 深层内层最优性。
+      # 尤其是候选覆盖 —— 不在候选集里的线，叶评估和目标函数评得再准也评不到，
+      # 所以那一栏对下游的一切改动免疫。`--inner` 太慢（约 25 分钟），不进 CI。
+      - name: planner 审计（候选覆盖 / 到边界后悔）
+        run: cargo run --release --bin plan_audit -- traces/act*.json

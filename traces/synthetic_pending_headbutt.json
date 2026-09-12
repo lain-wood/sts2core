@@ -1,0 +1,260 @@
+{
+ "version": 1,
+ "recorded_at": "2026-09-03T00:00:00+08:00",
+ "run": {
+  "act": 1,
+  "floor": 1,
+  "ascension": 0,
+  "character": "铁甲战士",
+  "room_type": "monster"
+ },
+ "settle": {
+  "poll_interval_ms": 40,
+  "stable_polls": 3,
+  "timeout_ms": 4000
+ },
+ "notes": "手工合成 trace。验证阶段 A 的 Pending 跨帧携带与 SelectCard 推进：弃牌堆有两张牌时打出头槌进入 Pending::DiscardToDrawTop，从弃牌堆选择第 0 张（防御）放到抽牌堆顶。",
+ "frames": [
+  {
+   "i": 0,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 3,
+    "max_energy": 3,
+    "player": {
+     "hp": 70,
+     "max_hp": 70,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "dummy_0",
+      "name": "<合成:沙包>",
+      "hp": 100,
+      "max_hp": 100,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "HEADBUTT",
+      "name": "头槌",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Common",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成9点伤害。 将弃牌堆中的一张牌放到你的抽牌堆顶。"
+     },
+     {
+      "slot": 1,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "play_card",
+    "slot": 0,
+    "card_id": "HEADBUTT",
+    "card_name": "头槌",
+    "target": "dummy_0"
+   }
+  },
+  {
+   "i": 1,
+   "obs": {
+    "state_type": "card_select",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 70,
+     "max_hp": 70,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "dummy_0",
+      "name": "<合成:沙包>",
+      "hp": 91,
+      "max_hp": 100,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "draw_count": 0,
+    "draw": [],
+    "discard": [
+     {
+      "name": "防御",
+      "cost": "1"
+     },
+     {
+      "name": "打击",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": {
+     "kind": "card_select",
+     "prompt": "选择一张牌放到你的抽牌堆顶。",
+     "can_confirm": false,
+     "can_cancel": false,
+     "selected": null,
+     "candidates": [
+      {
+       "slot": 0,
+       "id": "DEFEND_IRONCLAD",
+       "name": "防御",
+       "cost": "1",
+       "type": "Skill",
+       "upgraded": false
+      },
+      {
+       "slot": 1,
+       "id": "STRIKE_IRONCLAD",
+       "name": "打击",
+       "cost": "1",
+       "type": "Attack",
+       "upgraded": false
+      }
+     ]
+    }
+   },
+   "action": {
+    "kind": "select_card",
+    "slot": 0
+   }
+  },
+  {
+   "i": 2,
+   "obs": {
+    "state_type": "monster",
+    "round": 1,
+    "side": "player",
+    "is_play_phase": true,
+    "energy": 2,
+    "max_energy": 3,
+    "player": {
+     "hp": 70,
+     "max_hp": 70,
+     "block": 0,
+     "status": {}
+    },
+    "enemies": {
+     "1": {
+      "entity_id": "dummy_0",
+      "name": "<合成:沙包>",
+      "hp": 91,
+      "max_hp": 100,
+      "block": 0,
+      "status": {},
+      "intents": [
+       {
+        "type": "Attack",
+        "label": "10"
+       }
+      ]
+     }
+    },
+    "hand": [
+     {
+      "slot": 0,
+      "id": "STRIKE_IRONCLAD",
+      "name": "打击",
+      "cost": "1",
+      "type": "Attack",
+      "rarity": "Basic",
+      "upgraded": false,
+      "can_play": true,
+      "target_type": "AnyEnemy",
+      "description": "造成6点伤害。"
+     }
+    ],
+    "draw_count": 1,
+    "draw": [
+     {
+      "name": "防御",
+      "cost": "1"
+     }
+    ],
+    "draw_order": [
+     "防御"
+    ],
+    "discard": [
+     {
+      "name": "打击",
+      "cost": "1"
+     },
+     {
+      "name": "头槌",
+      "cost": "1"
+     }
+    ],
+    "exhaust": [],
+    "pending": null
+   },
+   "action": {
+    "kind": "end_turn"
+   }
+  }
+ ]
+}

@@ -31,13 +31,14 @@ from record_trace import (  # noqa: E402
     new_trace,
     normalize,
     resolve,
+    run_verify_last,
     save_raw,
     save_trace,
     wait_for_game,
 )
 
 WATCH_FILE = resolve("traces/_watch.txt")
-IDLE_STOP_S = 90.0
+IDLE_STOP_S = 300.0
 
 
 def _names(cards) -> list[str]:
@@ -224,6 +225,7 @@ def main() -> None:
         frames.append({"i": len(frames), "obs": obs, "action": None})
         save_raw(raw_dir, len(frames) - 1, stable_raw)
         save_trace(trace_path, trace)
+        run_verify_last(trace_path, mode="inferred")
         last_change = time.time()
 
         mark = "?" if action["kind"] == "unknown" else " "

@@ -8,6 +8,7 @@
 //! L2 (in-combat solver) and L3 (deck advisor) are built on top of these and
 //! own no game rules themselves.
 
+pub mod asc;
 pub mod content;
 pub mod damage;
 pub mod json;
@@ -18,6 +19,8 @@ pub mod rollout;
 pub mod solver;
 pub mod state;
 pub mod step;
+/// L3 的地基：合成战斗构造器（`(牌组, 遗物, 血量, 遭遇, 种子) -> State`）
+pub mod synth;
 
 pub use state::{CardInst, Entity, Pending, Rng, St, State, F_CORRUPT, F_UPGRADED};
 pub use step::{
@@ -292,6 +295,10 @@ mod tests {
             ("贪婪", false),
             // Debt：[源码] 带 `Unplayable`
             ("债务", false),
+            // 呼唤（灵魂异鱼塞的）：[源码] `Beckon()` 是 `base(1, Status, …)`
+            // 且**不带 `Unplayable`** —— 花 1 费打出去什么都不发生，
+            // 但那正是它的用处：从手里挪走就不用在回合末挨那 6 点。
+            ("呼唤", true),
         ];
         let actual: Vec<(&str, bool)> = CARDS
             .iter()
@@ -1213,7 +1220,7 @@ mod tests {
         let mut def = Entity::new(200);
         def.set(St::Vulnerable, 1);
 
-        let face = card_face_damage(6, false, 0, atk.get(St::Strength), 0); // 10
+        let face = card_face_damage(6, (1, 1), 0, atk.get(St::Strength), 0); // 10
         assert_eq!(face, 10);
 
         def.set(St::Slow, 10);
@@ -1226,8 +1233,8 @@ mod tests {
     #[test]
     fn corrupt_scales_base_before_strength() {
         // 拆卸+ with 腐化: base 10 -> 15, then +strength
-        assert_eq!(card_face_damage(10, true, 0, 0, 0), 15);
-        assert_eq!(card_face_damage(10, true, 0, 3, 0), 18);
+        assert_eq!(card_face_damage(10, (3, 2), 0, 0, 0), 15);
+        assert_eq!(card_face_damage(10, (3, 2), 0, 3, 0), 18);
     }
 
     #[test]
@@ -1984,6 +1991,7 @@ mod tests {
             })
             .expect("这条 trace 里应该有踩踏");
         let prefix = crate::replay::Trace {
+            ascension: 0,
             version: t.version,
             run: t.run.clone(),
             frames: t.frames[..=k].to_vec(),
@@ -2014,6 +2022,7 @@ mod tests {
             })
             .expect("这条 trace 里应该有怨恨");
         let prefix = crate::replay::Trace {
+            ascension: 0,
             version: t.version,
             run: t.run.clone(),
             frames: t.frames[..=k].to_vec(),
@@ -2031,6 +2040,7 @@ mod tests {
         let src = std::fs::read_to_string("traces/act2_f31_louse.json").unwrap();
         let t = crate::replay::parse_trace(&src).unwrap();
         let one = crate::replay::Trace {
+            ascension: 0,
             version: t.version,
             run: t.run.clone(),
             frames: vec![t.frames[0].clone()],
@@ -2077,21 +2087,44 @@ mod tests {
         }
     }
 
-    /// 表里的 id 必须真的存在于权威遗物表里。
+    /// 表里的 id 必须真的是游戏用的那个 id。
     ///
     /// **拼错一个 id 是静默失效**：`relic_by_id` 永远查不到，遗物被当成
-    /// 「内容表里没有」，而它明明就在表里。拿 `traces/relics_catalog.json`
-    /// （`tools/dump_relics.py` 从游戏导的 55/55）当权威对照。
+    /// 「内容表里没有」，而它明明就在表里。
+    ///
+    /// 权威有两个，**都要认**：
+    ///
+    /// * `traces/relics_catalog.json`（`dump_relics.py` 从游戏导的）——
+    ///   但它是**快照**，只含"这个存档已经发现的"，会落后于实录。
+    /// * **实录本身**：`relics[].id` 是游戏当场报出来的，比任何 dump 都新。
+    ///
+    /// 2026-09-06 建佩尔之血时这条测试当场红了：它不在 09-01 那份快照里，
+    /// 而它明明躺在两条第 3 幕实录的 `relics[]` 里 —— **快照旧了，不是 id 错了**。
+    /// 两处都找不到才是真的拼错。
     #[test]
     fn relic_ids_exist_in_the_authoritative_catalog() {
         let Ok(src) = std::fs::read_to_string("traces/relics_catalog.json") else {
             return; // 权威表还没导出来就跳过，不因此挡住构建
         };
+        // 实录那一侧是**懒扫**：快照命中就不去读那几十兆 JSON。
+        fn seen_in_a_trace(needle: &str) -> bool {
+            let Ok(rd) = std::fs::read_dir("traces") else { return false };
+            for e in rd.flatten() {
+                let p = e.path();
+                if p.extension().map_or(false, |x| x == "json") {
+                    if std::fs::read_to_string(&p).map_or(false, |s| s.contains(needle)) {
+                        return true;
+                    }
+                }
+            }
+            false
+        }
         for r in RELICS {
             let needle = format!("\"{}\"", r.id);
             assert!(
-                src.contains(&needle),
-                "{}（{}）不在权威遗物表里 —— id 是不是拼错了？",
+                src.contains(&needle) || seen_in_a_trace(&needle),
+                "{}（{}）**两个权威都找不到**（导出的遗物表 + 全部实录）
+                 —— id 是不是拼错了？",
                 r.name,
                 r.id
             );
@@ -2695,6 +2728,363 @@ mod tests {
         (0..ENEMIES.len() as u16).find(|&i| crate::content::enemy_def(i).name == name).unwrap()
     }
 
+    // -----------------------------------------------------------------------
+    // 对拍层：两条"观测里没有、但卡面文本里有"的量
+    // -----------------------------------------------------------------------
+
+    /// 痛殴攒下来的加值从卡面反推。**渲染值含攻击方乘区、不含防御方乘区**
+    /// （实测两帧钉的），所以反推的办法是拿同一条管线**正着算一遍试过去**。
+    #[test]
+    fn thrash_bonus_is_read_back_from_the_card_text() {
+        let bonus = |desc: &str, me: &Entity| crate::replay::observed_thrash_bonus(desc, true, me, false);
+        let mut me = Entity::new(80);
+        // 帧3 实测：渲染 7、力量 1、还没吃过牌 ⇒ 加值 0
+        me.set(St::Strength, 1);
+        assert_eq!(bonus("造成7点伤害两次。 消耗你的手牌中……", &me), Some(0));
+        // 吃过一张 16 点的巨石之后
+        assert_eq!(bonus("造成23点伤害两次。", &me), Some(16));
+        // **帧29 实测**：力量 1 + 虚弱 1，渲染 13 ⇒ ⌊(6+B+1)×3/4⌋ = 13 ⇒ B = 11。
+        // 那一帧真吃掉的正是剑柄打击+（渲染 11 点），两边对得上。
+        // 2026-09-06 之前这里返回 `None`（"除不回去"），红了一帧。
+        me.set(St::Weak, 1);
+        assert_eq!(bonus("造成13点伤害两次。", &me), Some(11));
+        // **欠定时取最小解**：⌊v×3/4⌋ = 15 的 v 有 20 和 21 两个 ⇒ 取 13 不取 14
+        assert_eq!(bonus("造成15点伤害两次。", &me), Some(13));
+        // 读不出数字仍然拒绝作答
+        assert_eq!(bonus("没有数字", &me), None);
+        // 渲染值比任何加值都算不出来（这句话不是我以为的那句）⇒ 拒绝作答
+        me.set(St::Weak, 0);
+        assert_eq!(bonus("造成2点伤害两次。", &me), None);
+    }
+
+    /// 钢笔尖到 9 时，**手牌里的攻击牌渲染的是翻倍后的数** ——
+    /// 不认这件事，反推出来的加值会正好多出一个卡面基础值那么多。
+    ///
+    /// [实测] 同一场帧31/32：同样 6 点格挡的全身撞击+，计数 8 渲染 5、计数 9 渲染 10。
+    #[test]
+    fn thrash_bonus_accounts_for_the_pen_nib_preview() {
+        let mut me = Entity::new(80);
+        me.set(St::Strength, 1);
+        // 没翻倍：渲染 7 ⇒ 加值 0
+        assert_eq!(crate::replay::observed_thrash_bonus("造成7点伤害两次。", true, &me, false), Some(0));
+        // 翻倍：同一张牌渲染的是 14，加值仍然是 0
+        assert_eq!(crate::replay::observed_thrash_bonus("造成14点伤害两次。", true, &me, true), Some(0));
+        // 不认翻倍的话，14 会被读成"加值 7"
+        assert_eq!(crate::replay::observed_thrash_bonus("造成14点伤害两次。", true, &me, false), Some(7));
+    }
+
+    /// **身份被就地改写过的牌，名字要跟着走。**
+    ///
+    /// `Op::TransformAttacksInHand`（原始力量）是唯一改 `CardInst.id` 的 op，
+    /// 而对拍的名字表是同步那一刻的快照 —— 不认这件事就会报一条**假红**
+    /// （游戏 3 张巨石+，内核报的还是原来那三张攻击牌）。
+    #[test]
+    fn a_card_rewritten_in_place_reports_its_new_name() {
+        // 第二张要挑一张**内容表今天真没有的**牌（不然 `lookup_card` 找得到，
+        // 就会被当成"身份被改写过"）。彼岸咆哮 2026-09-06 建掉了，换成许愿。
+        let names = vec!["完美打击".to_string(), "许愿".to_string()];
+        // 0 号被原始力量+ 改写成巨石+；1 号是内容表没有的牌，没被改写
+        let cards = [
+            CardInst {
+                id: card::BOULDER,
+                flags: F_UPGRADED,
+                bonus: 0,
+                cost_delta: 0,
+                ench: 0,
+                ench_amt: 0,
+            },
+            CardInst { id: card::UNKNOWN, flags: 0, bonus: 0, cost_delta: 0, ench: 0, ench_amt: 0 },
+        ];
+        assert_eq!(crate::replay::current_card_name(&names, &cards, 0), "巨石+");
+        assert_eq!(
+            crate::replay::current_card_name(&names, &cards, 1),
+            "许愿",
+            "没被改写的未知牌必须留着快照名字 —— 那正是快照存在的理由"
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // 幻象：杀不掉的爪牙（胧光怪的寄生惧魔 / 雾菇的利齿之眼）
+    // -----------------------------------------------------------------------
+
+    /// 胧光怪 + 它召出来的寄生惧魔，跳过召唤那一手直接摆好。
+    fn obscura_pair() -> State {
+        let mut s = State::new(80, 11);
+        s.add_enemy(enemy::THE_OBSCURA, 123);
+        s.add_enemy(enemy::PARAFRIGHT, 21);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        // 本体跳过「幻象」那一手（这几个测试量的是幻象本身，不是召唤）
+        s.enemy_move[0] = 1;
+        s
+    }
+
+    /// **幻象砍死了不算完**：尸体留在场上，它自己回合开始时回满血。
+    ///
+    /// [源码] `IllusionPower`：`ShouldCreatureBeRemovedFromCombatAfterDeath => false`
+    /// + `AfterDeath` -> `SetMoveImmediate(REVIVE_MOVE)` -> `Heal(MaxHp - CurrentHp)`。
+    /// [实测] `act1_f15_ninth`：利齿之眼帧5 被打死、帧6/7 观测里消失、帧8 6/6 回来，
+    /// 而雾菇那两回合的意图**不是** Summon —— 没有第二次召唤。
+    #[test]
+    fn an_illusion_minion_revives_at_full_hp_on_its_own_turn() {
+        let mut s = obscura_pair();
+        // 用真的一刀砍死它 —— `Hook::EnemyDied` 只在伤害落地那条路上发
+        s.enemies[1].hp = 1;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 1 });
+        assert!(!s.enemies[1].alive(), "砍死那一帧它还是死的");
+        assert!(!s.combat_over, "本体还活着，战斗不该结束");
+        assert_eq!(s.enemies[1].get(St::Illusion), 1, "幻象标记要留着，不然复活就没了");
+
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[1].hp, 21, "它自己回合开始时回满");
+        // 复苏那一手不打人：玩家只该挨本体那一下
+        assert!(s.player.hp > 0);
+    }
+
+    /// **死亡剥离的方向和适生力正好相反**：buff 留着，我上的 debuff 被剥掉。
+    /// [源码] `ShouldPowerBeRemovedOnDeath` = `Type == Debuff && !(power is ITemporaryPower)`。
+    #[test]
+    fn illusion_death_keeps_its_buffs_but_strips_my_debuffs() {
+        let mut s = obscura_pair();
+        s.enemies[1].set(St::Strength, 3);
+        s.enemies[1].set(St::Vulnerable, 2);
+        s.enemies[1].set(St::Weak, 2);
+        s.enemies[1].hp = 1;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 1 });
+        assert_eq!(s.enemies[1].get(St::Strength), 3, "力量是 buff，源码明说留着");
+        assert_eq!(s.enemies[1].get(St::Vulnerable), 0, "非临时 debuff 被剥掉");
+        assert_eq!(s.enemies[1].get(St::Weak), 0);
+    }
+
+    /// **本体一死，幻象跟着消失** —— 它带爪牙标记，走 `step::no_master_left`。
+    /// 实录最后一帧正是这样收的场：幻象剩 1 血活着，本体被打死，战斗结束。
+    #[test]
+    fn killing_the_master_ends_the_fight_even_with_the_illusion_alive() {
+        let mut s = obscura_pair();
+        s.enemies[1].hp = 1;
+        s.enemies[0].hp = 1;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert!(!s.enemies[0].alive());
+        assert!(s.combat_over && !s.player_dead, "非爪牙全死光 ⇒ 战斗结束");
+    }
+
+    /// 哀嚎给**自己这一侧每一只**加 3 力量，**含它自己**。
+    /// [源码] `GetTeammatesOf(c) => GetCreaturesOnSide(c.Side)`，含自己。
+    #[test]
+    fn the_obscura_wail_buffs_itself_and_the_illusion() {
+        let mut s = obscura_pair();
+        s.enemy_move[0] = 2; // 哀嚎
+        s.enemy_move[1] = 1; // 幻象照常猛撞
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[0].get(St::Strength), 3, "本体自己也吃这 3 点");
+        assert_eq!(s.enemies[1].get(St::Strength), 3, "幻象也吃");
+    }
+
+    /// 出招图：**幻象只出现一次**（没有任何一条边指回它），
+    /// 之后三手等权随机且都不能连出两次。
+    #[test]
+    fn the_obscura_summons_once_and_then_never_repeats_a_move() {
+        // **血量给够** —— 幻象每回合 16 点，80 血活不过 6 个回合，
+        // 而 `step` 在 `combat_over` 之后原样返回：局面冻住之后再比"有没有重复"
+        // 比的是同一帧和它自己。第一版就是这么假红的。
+        let mut s = State::new(2000, 3);
+        s.add_enemy(def_id_of("胧光怪"), 123);
+        let mut s = begin_combat(s);
+        let mut seen = Vec::new();
+        for _ in 0..12 {
+            assert!(!s.combat_over, "这个测试不该打完");
+            let allowed = crate::step::allowed_next(&s, 0);
+            assert_eq!(allowed & 1, 0, "「幻象」一旦出过就不该再进允许集合");
+            let did = s.enemy_move[0];
+            seen.push(did);
+            s = step(s, Action::EndTurn);
+            assert_ne!(s.enemy_move[0], did, "三条边都是 CannotRepeat");
+        }
+        assert_eq!(seen[0], 0, "起手必须是幻象");
+        assert!(seen[1..].iter().all(|&m| (1..=3).contains(&m)), "之后只在 1..3 里转");
+        // 三条边等权 ⇒ 12 手里三种都该出现过（不是概率断言：`NotTwice` 之下
+        // 连续 12 手只出两种要求每一次都躲开第三种，实际序列是确定的）
+        for m in 1..=3u8 {
+            assert!(seen[1..].contains(&m), "招 {m} 一次都没出现，等权分支不该这样");
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // 沙坑：即死倒计时（第 2 幕 Boss 无厌沙虫）
+    // -----------------------------------------------------------------------
+
+    /// 只有沙虫和一手打不动它的牌 —— 用来量倒计时，不量伤害。
+    fn worm_only(sandpit: i32) -> State {
+        let mut s = State::new(80, 9);
+        s.add_enemy(enemy::THE_INSATIABLE, 321);
+        for _ in 0..10 {
+            s.add_card(card::DEFEND, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        // 跳过液化地面那一手：这几个测试量的是倒计时本身，不是它怎么挂上的
+        s.enemy_move[0] = 1;
+        s.enemies[0].set(St::Sandpit, sandpit);
+        s
+    }
+
+    /// 沙坑每个**敌人回合开始**减 1 —— 减到 0 那一刻**直接死**，和血量无关。
+    ///
+    /// [源码] `SandpitPower.AfterSideTurnStartLate(Enemy)` -> `Decrement`；
+    /// 归零 ⇒ `AfterRemoved` ⇒ `CreatureCmd.Kill(玩家, force: true)`。
+    #[test]
+    fn sandpit_counts_down_once_per_enemy_turn_and_kills_at_zero() {
+        let mut s = worm_only(3);
+        let mut seen = vec![];
+        for _ in 0..3 {
+            s = step(s, Action::EndTurn);
+            seen.push(s.enemies[0].get(St::Sandpit));
+            if s.player_dead {
+                break;
+            }
+        }
+        assert_eq!(seen, vec![2, 1, 0], "每个敌人回合正好减 1 层");
+        assert!(s.player_dead, "沙坑归零就该被吞掉");
+        assert!(s.combat_over);
+    }
+
+    /// **`force: true` 挡掉瓶中精灵。** 这是它和"血量掉到 0"那条死法的分界：
+    /// 后者走 `check_over` -> `try_fairy`，这条不走。
+    #[test]
+    fn sandpit_death_ignores_the_fairy() {
+        let mut s = worm_only(1);
+        s.potion_slots = 1;
+        s.potions[0] = crate::state::potion::FAIRY;
+        let s = step(s, Action::EndTurn);
+        assert!(s.player_dead, "沙坑是强制死亡，瓶中精灵救不回来");
+        assert_eq!(s.potions[0], crate::state::potion::FAIRY, "而且不该白白消耗掉那一瓶");
+    }
+
+    /// 狂乱逃离买回一个回合，**并且这一张实例自己涨 1 费**。
+    #[test]
+    fn frantic_escape_buys_a_turn_and_gets_more_expensive() {
+        let mut s = worm_only(1);
+        let cix = s.add_card(card::FRANTIC_ESCAPE, 0, 0);
+        s.to_hand(cix);
+        let ix = hand_ix_of(&s, card::FRANTIC_ESCAPE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert_eq!(s.enemies[0].get(St::Sandpit), 2, "打出去给沙坑 +1");
+        assert_eq!(s.cards[cix as usize].cost_delta, 1, "这一张实例永久 +1 费");
+        let s = step(s, Action::EndTurn);
+        assert!(!s.player_dead, "买到的这个回合必须真的活下来");
+        assert_eq!(s.enemies[0].get(St::Sandpit), 1);
+    }
+
+    /// **L2 走的注入路径也要发 `EnemyTurnStart`。**
+    ///
+    /// 这条是整件事的要害：求解器只经由 `end_turn_with_incoming` 结算回合，
+    /// 那条路上不发这个钩子的话，它**永远看不见自己会被吞掉** ——
+    /// 2026-09-05 那次 AI 驾驶就是这么死的。
+    #[test]
+    fn the_injected_enemy_turn_also_ticks_the_sandpit() {
+        let s = worm_only(1);
+        let inc = crate::solver::Threat::default().incoming;
+        let after = crate::step::end_turn_with_incoming(s, &inc);
+        assert!(after.player_dead, "注入路径（0 点来袭）也必须触发沙坑的即死");
+    }
+
+    /// 即死倒计时那一项**对所有没有沙坑的局面恒为 0**。
+    ///
+    /// 这条是 `Weights::clock` 敢进**所有**目标函数（而 `power` 只敢进 `LEAF`）
+    /// 的全部依据：风险面是空的。它扫的是整张 `ENEMIES` 表 ——
+    /// 哪天有第二只怪挂得出沙坑，这个测试会先红。
+    #[test]
+    fn the_clock_term_is_inert_on_every_fight_without_a_sandpit() {
+        let mut with_sandpit = vec![];
+        for id in 0..ENEMIES.len() as u16 {
+            let def = crate::content::enemy_def(id);
+            let hands_it_out = def.start_status.iter().any(|(st, _)| *st == St::Sandpit)
+                || def.moves.iter().any(|m| {
+                    m.ops.iter().any(|o| {
+                        matches!(o, crate::ops::EOp::SelfStatus { st: St::Sandpit, .. })
+                    })
+                });
+            if hands_it_out {
+                with_sandpit.push(def.name);
+                continue;
+            }
+            let mut s = State::new(80, 5);
+            s.add_enemy(id, 100);
+            for _ in 0..8 {
+                s.add_card(card::STRIKE, 0, 0);
+            }
+            let s = begin_combat(s);
+            assert_eq!(
+                crate::solver::eval(&s, &crate::solver::Weights::LEAF),
+                crate::solver::eval(
+                    &s,
+                    &crate::solver::Weights { clock: 0, ..crate::solver::Weights::LEAF }
+                ),
+                "{} 身上没有沙坑，倒计时那一项必须一分钱都不动",
+                def.name
+            );
+        }
+        assert_eq!(with_sandpit, vec!["无厌沙虫"], "挂得出沙坑的敌人变了，重读 `Weights::clock` 的风险面");
+    }
+
+    /// **打掉敌人的血永远不会让倒计时那一项变差。**
+    ///
+    /// 和滚石那一项踩过的是同一个坑（叶评估里"收人头"变成负收益）：
+    /// 缺口 = `horizon − 层数`，而 `horizon` 对血墙单调不减 ⇒ 缺口单调不减 ⇒
+    /// 血墙变小这一项只会变好。这里用真的出牌走一遍，守的是"实现和推理一致"。
+    #[test]
+    fn the_clock_term_never_punishes_progress() {
+        let mut s = worm_only(2);
+        for _ in 0..5 {
+            let cix = s.add_card(card::STRIKE, 0, 0);
+            s.to_hand(cix);
+        }
+        let w = crate::solver::Weights::LEAF;
+        let mut prev = crate::solver::eval(&s, &w) - crate::solver::eval(&s, &Weights0::of(&w));
+        for _ in 0..3 {
+            let ix = hand_ix_of(&s, card::STRIKE);
+            s = step(s, Action::PlayCard { hand: ix, target: 0 });
+            let now = crate::solver::eval(&s, &w) - crate::solver::eval(&s, &Weights0::of(&w));
+            assert!(now >= prev, "打掉敌人的血把倒计时那一项从 {prev} 压到了 {now}");
+            prev = now;
+        }
+    }
+
+    /// 只是个取 `clock = 0` 的小工具，免得上面那条测试里到处写结构体字面量。
+    struct Weights0;
+    impl Weights0 {
+        fn of(w: &crate::solver::Weights) -> crate::solver::Weights {
+            crate::solver::Weights { clock: 0, ..*w }
+        }
+    }
+
+    /// 单回合求解器**自己**就该在沙坑 = 1 的回合打出狂乱逃离：
+    /// 结束回合 -> 敌人回合开始 -> 减到 0 -> 死，这一整条都在它的视野里。
+    #[test]
+    fn the_single_turn_solver_plays_frantic_escape_when_the_clock_is_at_one() {
+        let mut s = worm_only(1);
+        let cix = s.add_card(card::FRANTIC_ESCAPE, 0, 0);
+        s.to_hand(cix);
+        let threat = crate::solver::Threat::default();
+        let line = crate::solver::solve_turn(&s, &threat, crate::solver::score::survive_first);
+        let played: Vec<u16> = line
+            .acts()
+            .iter()
+            .filter_map(|a| match a {
+                Action::PlayCard { hand, .. } => Some(s.cards[s.hand[*hand as usize] as usize].id),
+                _ => None,
+            })
+            .collect();
+        assert!(
+            played.contains(&card::FRANTIC_ESCAPE),
+            "沙坑=1 时不打狂乱逃离就是死，求解器必须看得见：{played:?}"
+        );
+    }
+
     /// 没挂机器的敌人**行为一个字节都不能变** —— 30 只还在用固定循环，
     /// 而那 85/95 的基线就建在它们身上。
     #[test]
@@ -2990,6 +3380,142 @@ mod tests {
         let allowed2 = crate::step::allowed_next(&s, 0);
         assert_eq!(allowed2 & (1 << s.enemy_move[0]), 0, "出完当前手后不能连出自身");
         assert_eq!(allowed2.count_ones(), 2, "三手等权随机每次禁掉刚出的那一手");
+    }
+
+    /// **`hp_loss_hits` 数的是"挨穿过几次"，不是"掉了多少血"。**
+    ///
+    /// [源码] 的过滤器是 `DamageReceivedEntry` 且 `Result.UnblockedDamage > 0`：
+    /// 被完全格挡的一次都不算，而**来源一概不问** —— 敌人打的、荆棘反弹的、
+    /// 放血那种自伤（[源码] `Bloodletting` 走的也是 `CreatureCmd.Damage`）全算。
+    /// 而且它**整场累加**，不跟着回合清零（`hp_lost_this_turn` 才是每回合的）。
+    #[test]
+    fn hp_loss_hits_counts_unblocked_instances_not_hp() {
+        let mut s = base_state();
+        for _ in 0..10 {
+            s.add_card(card::DEFEND, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        assert_eq!(s.hp_loss_hits, 0);
+
+        // 一次挨 20 点：算 1 次，不是 20 次
+        crate::step::take_attack_hit(&mut s, 0, 20);
+        assert_eq!(s.hp_loss_hits, 1);
+        assert_eq!(s.hp_lost_this_turn, 20, "血量那一栏数的还是血");
+
+        // 被完全挡住：一次都不算
+        s.player.block = 50;
+        crate::step::take_attack_hit(&mut s, 0, 20);
+        assert_eq!(s.hp_loss_hits, 1, "全被格挡吃掉 ⇒ UnblockedDamage 是 0");
+
+        // 挡不满：算 1 次
+        s.player.block = 5;
+        crate::step::take_attack_hit(&mut s, 0, 20);
+        assert_eq!(s.hp_loss_hits, 2);
+
+        // 跨回合不清零
+        let before = s.hp_loss_hits;
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.hp_lost_this_turn, 0, "这一栏每回合清零");
+        assert!(s.hp_loss_hits >= before, "这一栏不清零（敌人这一手可能又加了）");
+    }
+
+    /// 扯碎「在本场战斗中，你每失去过一次生命值，这张牌就额外造成一次伤害」。
+    ///
+    /// [源码] `TearAsunder`：`WithHitCount(Calculate(target))`，
+    /// `Calculate = 0 + 1 × (1 + M)` = **1 + M**。
+    ///
+    /// 两件事一起守：
+    /// 1. 段数跟着 `hp_loss_hits` 走 —— **卡面上那个「造成3次」是快照不是定义**，
+    ///    第一版就是照它写死了 `hits: 3`；
+    /// 2. 段数在**第一段落地之前**就定死（源码里是构造命令时求值的）。
+    ///    敌人带荆棘时每一段都会反弹到我身上、把计数器顶上去，
+    ///    循环里重读的话这张牌会自己越滚越长。
+    #[test]
+    fn tear_asunder_hit_count_is_one_plus_unblocked_hits_and_frozen_at_play_time() {
+        fn play_tear(hits_before: u8, thorns: i32) -> i32 {
+            let mut s = State::new(80, 3);
+            s.add_enemy(enemy::DUMMY, 4000);
+            for _ in 0..6 {
+                s.add_card(card::TEAR_ASUNDER, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.hp_loss_hits = hits_before;
+            s.enemies[0].set(St::Thorns, thorns);
+            s.energy = 9;
+            let hp_before = s.enemies[0].hp;
+            let i = hand_ix_of(&s, card::TEAR_ASUNDER);
+            let after = step(s, Action::PlayCard { hand: i, target: 0 });
+            hp_before - after.enemies[0].hp
+        }
+
+        // 基础伤害 5，没挨过打 ⇒ 1 段
+        assert_eq!(play_tear(0, 0), 5);
+        // 挨穿过 2 次 ⇒ 3 段
+        assert_eq!(play_tear(2, 0), 15);
+        assert_eq!(play_tear(7, 0), 40, "act1_f17 卡面「命中8次」那一档");
+
+        // 敌人带荆棘：每一段反弹 1 点到我身上，`hp_loss_hits` 一路涨，
+        // 但段数必须还是 3 —— 涨到 4、5 段就说明段数被写在循环里重读了。
+        assert_eq!(play_tear(2, 1), 15, "段数在打出的那一刻就定死了");
+    }
+
+    /// 升级只加伤害，不改费用（[源码] `OnUpgrade` 只有 `UpgradeValueBy(2)`）。
+    #[test]
+    fn tear_asunder_upgrade_only_touches_damage() {
+        let d = card(card::TEAR_ASUNDER);
+        assert_eq!(d.cost, 2);
+        assert_eq!(d.cost_upg, 2, "费用不变 —— 观测到的 扯碎+ 也是 2 费");
+        assert!(!d.exhausts);
+        assert!(d.targeted);
+        assert_eq!(d.ops, &[crate::ops::Op::DamagePerHpLossHit { base: 5 }]);
+        assert_eq!(d.ops_upg, &[crate::ops::Op::DamagePerHpLossHit { base: 7 }]);
+    }
+
+    /// **复活窗口里无目标牌照样打得出去。**
+    ///
+    /// [实测] act3_f48 帧11/12：实验体被砍掉一条命、观测里 `enemies: []`、
+    /// 出牌阶段还开着，玩家打了坚定不移+ 和 时候未到，游戏**都接受了**。
+    /// 打不出去的只有攻击牌 —— 它们没有目标。
+    ///
+    /// 这条守的是 `step` 和 `legal_actions` **对同一个局面给同一个答案**。
+    /// 原来 `step` 的 `PlayCard` 在 `first_alive()` 为空时无条件原样返回，
+    /// 于是无目标牌被 `legal_actions` 允许、被 `step` 拒绝 —— 而 `step` 拒绝的
+    /// 表现形式是"状态没变"，**不报错**。药水那一支从来没这个洞。
+    #[test]
+    fn untargeted_cards_still_play_while_the_boss_is_waiting_to_revive() {
+        let mut s = State::new(80, 3);
+        s.add_enemy(enemy::TEST_SUBJECT_BOSS, 100);
+        for _ in 0..5 {
+            s.add_card(card::DEFEND, 0, 0);
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        // 砍掉这一条命：血 0、适生力还在（[源码] 摘除发生在它自己的复苏那一手）
+        s.enemies[0].hp = 0;
+        assert!(!s.enemies[0].alive());
+        assert!(s.any_enemy_present(), "带适生力 = 还在场上");
+        s.energy = 3;
+
+        let (acts, n) = legal_actions(&s);
+        let d = hand_ix_of(&s, card::DEFEND);
+        assert!(
+            acts[..n].iter().any(|a| matches!(a, Action::PlayCard { hand, .. } if *hand == d)),
+            "legal_actions 允许无目标牌"
+        );
+
+        let block_before = s.player.block;
+        let after = step(s, Action::PlayCard { hand: d, target: 0 });
+        assert_ne!(after, s, "step 也必须接受它，否则两个入口对不上");
+        assert!(after.player.block > block_before, "防御该真的给出格挡");
+        assert_eq!(after.energy, 2);
+
+        // 反面：攻击牌没有目标，两边都该拒
+        let t = hand_ix_of(&s, card::STRIKE);
+        assert!(
+            !acts[..n].iter().any(|a| matches!(a, Action::PlayCard { hand, .. } if *hand == t)),
+            "有目标牌在没有活敌人时不该出现在候选里"
+        );
+        assert_eq!(step(s, Action::PlayCard { hand: t, target: 0 }), s, "打不出去");
     }
 
     /// 实验体 [源码] `TestSubject`（第 3 幕 Boss）：
@@ -3737,6 +4263,17 @@ mod tests {
             // 摆动球的相位：被 `TCond::EveryNTurns` 读，不是被某条 `PowerDef`
             // 认领。它是**条件的输入**，不是触发器本身。
             St::PendulumPhase,
+            // 钢笔尖的三个：在场标记和计数器在 `step::resolve_played_card`
+            // 出牌结算**之前**那一段读（数第 10 张攻击），翻倍标记在
+            // `damage::apply_modifiers` 里当乘区读。
+            // 三个是一条链，缺任何一环都不会报错、只会静默失效。
+            St::PenNib,
+            St::PenNibCount,
+            St::PenNibArmed,
+            // 损毁头盔：`step::modify_status_amount_received` 读它
+            // （本场第一次加力量 ×2）。和钢笔尖同一族 —— 改的是"正在算的那个数"，
+            // 所以消费点在施加 status 那条路上，不是触发器。
+            St::RuinedHelmet,
         ];
         // `counter_to` 那一栏也要查 —— 它同样是"遗物往状态里塞了个东西"，
         // 塞了没人读一样是哑弹。摆动球的相位就在这一栏里。
@@ -4325,6 +4862,306 @@ mod tests {
         let s = step(s, Action::PlayCard { hand: 0, target: 0 });
         // 3 费 - 2 费(牌费) + 2(两张打击) = 3
         assert_eq!(s.energy, 3, "手里剩两张攻击牌 => +2 能量");
+    }
+
+    /// 跃跃欲试的**第二句**：「你在本回合内不能再获得能量。」
+    ///
+    /// [源码] `NoEnergyGainPower.ModifyEnergyGain => 0m`，而卡面两条 op 的**顺序
+    /// 就是规则** —— 先拿能量再上禁令，反过来写这张牌自己就拿不到能量了。
+    ///
+    /// 不建这一句，方向是**乐观**：求解器会以为可以先跃跃欲试拿 2 点、
+    /// 再被遗忘的仪式拿 4 点，而游戏给 0。
+    #[test]
+    fn expect_a_fight_locks_out_every_later_energy_gain_this_turn() {
+        let s = hand_of(
+            1,
+            100,
+            &[card::EXPECT_A_FIGHT, card::STRIKE, card::STRIKE, card::BRIGHTEST_FLAME],
+            3,
+        );
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.energy, 3, "自己那一笔照给：3 - 2 + 2");
+        assert!(s.player.get(St::NoEnergyGain) > 0, "禁令挂上了");
+        // 至亮之焰「获得2点能量。抽2张牌。失去1点最大生命。」—— 能量那一笔被锁掉，
+        // **别的效果照常**（禁令只改能量，不是"这张牌打不出"）。
+        let before_hp = s.player.max_hp;
+        let i = (0..s.n_hand as usize)
+            .find(|&i| s.cards[s.hand[i] as usize].id == card::BRIGHTEST_FLAME)
+            .expect("至亮之焰在手里") as u8;
+        let s = step(s, Action::PlayCard { hand: i, target: 0 });
+        assert_eq!(s.energy, 3, "0 费的牌，那 2 点能量一点都没进来");
+        assert_eq!(s.player.max_hp, before_hp - 1, "牌的其余效果照常结算");
+    }
+
+    /// 钢笔尖：**每打出的第 10 张攻击牌造成双倍伤害**（[源码] `PenNib`）。
+    ///
+    /// 计数器跨战斗保留，所以这里直接把它摆到 8 —— 实战里 `sync` 从遗物面板灌。
+    /// 数在**结算之前**，所以翻倍的是第 10 张自己。
+    #[test]
+    fn pen_nib_doubles_the_tenth_attack_and_only_that_one() {
+        let mut s = hand_of(7, 200, &[card::STRIKE, card::STRIKE, card::STRIKE], 9);
+        s.player.set(St::PenNib, 1);
+        s.player.set(St::PenNibCount, 8);
+        let hp0 = s.enemies[0].hp;
+
+        // 第 9 张：照常
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        let plain = hp0 - s.enemies[0].hp;
+        assert_eq!(s.player.get(St::PenNibCount), 9);
+        assert_eq!(s.player.get(St::PenNibArmed), 0, "打完就摘，别留到下一张");
+
+        // 第 10 张：×2，计数器归零
+        let hp1 = s.enemies[0].hp;
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(hp1 - s.enemies[0].hp, plain * 2, "第 10 张翻倍");
+        assert_eq!(s.player.get(St::PenNibCount), 0, "数到 10 归零");
+
+        // 第 11 张：又是照常
+        let hp2 = s.enemies[0].hp;
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(hp2 - s.enemies[0].hp, plain, "第 11 张不翻倍");
+        assert_eq!(s.player.get(St::PenNibCount), 1);
+    }
+
+    /// 钢笔尖只数**攻击牌**，而且没这件遗物时一个计数器都不该动。
+    #[test]
+    fn pen_nib_counts_only_attacks_and_only_when_you_have_it() {
+        let s = hand_of(7, 200, &[card::DEFEND, card::STRIKE], 9);
+        let mut s2 = s;
+        s2.player.set(St::PenNib, 1);
+        s2.player.set(St::PenNibCount, 3);
+        let s2 = step(s2, Action::PlayCard { hand: 0, target: 0 }); // 防御
+        assert_eq!(s2.player.get(St::PenNibCount), 3, "技能牌不计数");
+        let s2 = step(s2, Action::PlayCard { hand: 0, target: 0 }); // 打击
+        assert_eq!(s2.player.get(St::PenNibCount), 4);
+        // 没遗物：计数器一直是 0，也没人翻倍
+        let s = step(s, Action::PlayCard { hand: 1, target: 0 });
+        assert_eq!(s.player.get(St::PenNibCount), 0);
+    }
+
+    // -----------------------------------------------------------------------
+    // 附魔（`content::ENCHANTS`）
+    // -----------------------------------------------------------------------
+
+    /// 附魔挂在**卡实例**上：同名的两张牌可以只有一张带。
+    /// 灵巧加格挡、锋利加伤害，**两族互不串**（一张既打伤害又给格挡的牌
+    /// 只带灵巧时不该凭空多伤害）。
+    #[test]
+    fn enchantments_are_per_instance_and_do_not_cross_hooks() {
+        let nimble = crate::content::enchant_by_id("NIMBLE").unwrap().0;
+        let sharp = crate::content::enchant_by_id("SHARP").unwrap().0;
+
+        let mut s = hand_of(3, 200, &[card::DEFEND, card::DEFEND, card::STRIKE], 9);
+        // 0 号防御带灵巧2，1 号不带
+        let c0 = s.hand[0];
+        s.cards[c0 as usize].ench = nimble;
+        s.cards[c0 as usize].ench_amt = 2;
+        // 打击带锋利3
+        let c2 = s.hand[2];
+        s.cards[c2 as usize].ench = sharp;
+        s.cards[c2 as usize].ench_amt = 3;
+
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        let with_nimble = s.player.block;
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        let plain = s.player.block - with_nimble;
+        assert_eq!(with_nimble - plain, 2, "灵巧 +2 只跟着那一张实例");
+
+        let hp = s.enemies[0].hp;
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(hp - s.enemies[0].hp, 6 + 3, "打击 6 + 锋利 3");
+    }
+
+    /// 灵巧的加值加在**卡面基础格挡**上，然后才过敏捷/脆弱
+    /// （[源码] `EnchantBlockAdditive(originalBlock)`，"runs BEFORE all other
+    /// block modification hooks"）。
+    ///
+    /// **样本要挑分得开的**：基础 5 + 灵巧 2 带脆弱时两种顺序都给 5
+    /// （⌊7×0.75⌋ = 5，⌊5×0.75⌋+2 = 5），什么都没验到。
+    /// 防御+（基础 8）分得开：⌊10×0.75⌋ = **7**，而先脆弱再加是 6+2 = **8**。
+    #[test]
+    fn nimble_is_added_before_frail_not_after() {
+        let nimble = crate::content::enchant_by_id("NIMBLE").unwrap().0;
+        let mut s = hand_of(3, 200, &[card::DEFEND], 9);
+        let c = s.hand[0];
+        s.cards[c as usize].flags |= F_UPGRADED;
+        s.cards[c as usize].ench = nimble;
+        s.cards[c as usize].ench_amt = 2;
+        s.player.set(St::Frail, 1);
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.player.block, 7, "(8 + 2) × 3/4 = 7.5 -> 7");
+    }
+
+    /// 「王室认证」（王室印章给的）：`OnEnchant` 加**固有 + 保留**。
+    ///
+    /// 保留 = 回合结束不弃掉这一张。[实测] 2026-09-06
+    /// `act3_f46_elite_soul_nexus` 两个回合边界：带它的均衡+ 留在手上，
+    /// 同一手的添柴+ 被弃掉。
+    #[test]
+    fn royally_approved_retains_its_card_across_the_turn_boundary() {
+        let ra = crate::content::enchant_by_id("ROYALLY_APPROVED").unwrap().0;
+        let mut s = hand_of(5, 200, &[card::STRIKE, card::DEFEND], 3);
+        let keep = s.hand[0];
+        s.cards[keep as usize].ench = ra;
+        s.cards[keep as usize].ench_amt = 1;
+        s.cards[keep as usize].flags |= F_RETAIN;
+        // **停在抽牌之前**：抽牌堆是空的，`open_hand` 会把弃牌堆洗回来再抽，
+        // 那样刚弃掉的那张又回到手上，这条测试就什么都没验到。
+        let s = crate::step::end_turn_before_draw(s);
+        assert!(
+            (0..s.n_hand as usize).any(|i| s.hand[i] == keep),
+            "带保留的那一张留在手上"
+        );
+        assert_eq!(s.n_hand, 1, "只留下它一张");
+        assert_eq!(s.n_disc, 1, "同一手的另一张照常进弃牌堆");
+    }
+
+    /// 固有：开局洗完之后必定在起手。内核的抽牌堆顶在**末尾**，所以是挪到末尾。
+    #[test]
+    fn innate_cards_are_moved_to_the_top_of_the_draw_pile() {
+        let mut s = State::new(80, 99);
+        s.add_enemy(enemy::DUMMY, 100);
+        for _ in 0..12 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let innate = s.add_card(card::DEFEND, F_INNATE, 0);
+        let s = begin_combat(s);
+        assert!(
+            (0..s.n_hand as usize).any(|i| s.hand[i] == innate),
+            "13 张牌里抽 5 张，固有那张必定在起手"
+        );
+    }
+
+    /// 彼岸咆哮：**进了消耗堆之后**每个回合从那里再自己打一次
+    /// （[源码] `AfterAutoPostPlayPhaseEntered` 判 `Pile.Type == Exhaust`）。
+    ///
+    /// **它自己不消耗** —— 打出去进弃牌堆。2026-09-09 之前这里写着"自带消耗"，
+    /// 依据是权威卡表的关键字词表，而那一栏里的"消耗"来自描述里的
+    /// 「消耗**牌堆**」四个字。[实测] `act1_f7_sewer_clam` 帧1→2 判死了这条。
+    /// 所以这个测试得**先把它送进消耗堆**（这里用烙印那类做不到，
+    /// 直接摆一个消耗堆状态）。
+    ///
+    /// 时点由 [源码] `CombatManager` 定死：在回合末钩子和弃手牌之前。
+    #[test]
+    fn howl_from_beyond_replays_itself_from_the_exhaust_pile_every_turn() {
+        let s = hand_of(11, 300, &[card::HOWL_FROM_BEYOND], 3);
+        let hp0 = s.enemies[0].hp;
+        let mut s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        let once = hp0 - s.enemies[0].hp;
+        assert_eq!(once, 16, "对所有敌人 16 点");
+        assert_eq!(s.n_exh, 0, "**它自己不消耗**，打出去进弃牌堆");
+        assert_eq!(s.n_disc, 1);
+        // 手动把它挪进消耗堆（游戏里靠恶魔之焰/烙印那类），再验重放那一半
+        let c = s.take_from_disc(0);
+        s.exh[s.n_exh as usize] = c;
+        s.n_exh += 1;
+        let s = s;
+
+        let hp1 = s.enemies[0].hp;
+        let s = end_turn_with_incoming(s, &NO_INCOMING);
+        assert_eq!(hp1 - s.enemies[0].hp, 16, "回合末从消耗堆里打了一次");
+
+        // **打完就离开消耗堆** —— [源码] `CardModel.GetResultPileTypeForCardPlay()`
+        // 只看这张牌自己带不带 `Exhaust` 关键字，**不管它是从哪个堆打出来的**，
+        // 所以非消耗牌一律进弃牌堆。于是这是**一次性**的，不是永动机：
+        // 要再来一次得把它重新消耗掉（恶魔之焰 / 烙印 / 痛殴）。
+        assert_eq!(s.n_exh, 0, "打完进弃牌堆，不留在消耗堆");
+        let hp2 = s.enemies[0].hp;
+        let s = end_turn_with_incoming(s, &NO_INCOMING);
+        assert_eq!(hp2 - s.enemies[0].hp, 0, "已经不在消耗堆里了，不再发作");
+    }
+
+    /// 附魔表的完整性：id 不重名、`modelled: false` 必须写清楚卡在哪。
+    ///
+    /// 后半条是这张表的全部价值 —— 一个没建全、又没说明的附魔，
+    /// 和"建好了"长得一模一样。
+    #[test]
+    fn every_enchantment_is_either_modelled_or_says_what_is_missing() {
+        use std::collections::HashSet;
+        let mut seen = HashSet::new();
+        for e in crate::content::ENCHANTS {
+            assert!(seen.insert(e.id), "附魔 id 重名：{}", e.id);
+            assert!(
+                e.id.chars().all(|c| c.is_ascii_uppercase() || c == '_'),
+                "附魔 id 要和游戏一致（大写下划线）：{}",
+                e.id
+            );
+            if !e.modelled {
+                assert!(!e.note.is_empty(), "{} 没建全，但没说卡在哪", e.id);
+            }
+        }
+        // `CardInst::ench` 存的是下标+1，`u8` 装得下
+        assert!(crate::content::ENCHANTS.len() < 255);
+    }
+
+    /// 佩尔之血：**每回合起手多抽 1 张，无条件**
+    /// （[源码] `PaelsBlood.ModifyHandDraw => count + 1`）。
+    ///
+    /// 建成"回合开始多抽"而不是"把 5 改成 6"：`Hook::TurnStart` 在 `open_hand`
+    /// 之前跑，先抽 1 再抽 5 和一次抽 6 从牌堆顶取到的是同一批牌。
+    #[test]
+    fn paels_blood_draws_one_extra_card_every_turn() {
+        let mut s = State::new(80, 4);
+        s.add_enemy(enemy::DUMMY, 100);
+        for _ in 0..20 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let plain = begin_combat(s).n_hand;
+        assert_eq!(plain, 5, "没这件遗物就是 5 张");
+
+        s.player.set(St::PaelsBlood, 1);
+        let s = begin_combat(s);
+        assert_eq!(s.n_hand, 6, "第 1 回合就生效");
+        let s = end_turn_with_incoming(s, &NO_INCOMING);
+        assert_eq!(s.n_hand, 6, "**每个**回合都生效，不是只有第 1 回合");
+    }
+
+    /// 遗物面板上那个计数器有两种，**灌进内核的方式不同**：
+    /// 回合相位要减掉这一场已经走过的回合数，别的计数器原样灌。
+    ///
+    /// 判据走 `content::is_turn_phase`（谁在 `EveryNTurns` 里当 `phase`）。
+    /// 写死成名单的话，下一个带计数器的遗物进来时会被静默地按错的那一档处理。
+    #[test]
+    fn only_turn_phase_counters_get_the_round_offset() {
+        // 摆动球：[源码] 每回合 `(x+1) % 3`，观测到的是加过 round 次之后的值
+        assert!(crate::content::is_turn_phase(St::PendulumPhase));
+        // 钢笔尖：数的是打出过几张攻击牌，和回合数无关
+        assert!(!crate::content::is_turn_phase(St::PenNibCount));
+    }
+
+    /// **从战斗中途接进来时，只有"一场用一次"的私有量该当成已经用掉。**
+    ///
+    /// 实战驱动（`solve --live`）永远是中途调用，所以这条决定了那时内核
+    /// 看不看得见身上的遗物。判据走 `content::spent_once_per_combat`
+    /// —— 数据（规则里有没有 `ClearSelf`），不是名单。
+    #[test]
+    fn mid_fight_sync_keeps_constant_relic_markers_but_not_once_per_combat_charges() {
+        use crate::content::spent_once_per_combat;
+        // 臂甲的充能：`damage::card_block` 里花掉，没有 PowerDef 认领 ⇒ 写死在函数里
+        assert!(spent_once_per_combat(St::VambraceCharge));
+        // 百年积木：[源码] 的 `UsedThisCombat`，规则里就是 `TOp::ClearSelf`
+        assert!(spent_once_per_combat(St::CentennialPuzzle));
+        // "我身上有这件遗物"的常数标记：中途接进来照样该恢复
+        assert!(!spent_once_per_combat(St::BurningBlood));
+        assert!(!spent_once_per_combat(St::PenNib));
+        assert!(!spent_once_per_combat(St::ParryingShield));
+        // 回合闸门的那几件靠 `TCond` 拦，不靠"用掉"—— 恢复了也不会再发作
+        assert!(!spent_once_per_combat(St::Anchor));
+        assert!(!spent_once_per_combat(St::Lantern));
+    }
+
+    /// 钢笔尖那个 ×2 是**乘区**，和虚弱一起累乘、最后只取整一次。
+    ///
+    /// [实测] `act3_f46_elite_soul_nexus` 帧32：格挡 6 + 力量 1 = 7，带虚弱，
+    /// 游戏打 10 = ⌊7 × 3/4 × 2⌋。
+    #[test]
+    fn pen_nib_multiplies_inside_the_chain_not_after_it() {
+        let mut atk = Entity::new(80);
+        atk.set(St::Weak, 1);
+        let def = Entity::new(100);
+        assert_eq!(apply_modifiers(7, &atk, &def), 5, "只有虚弱：⌊7×0.75⌋");
+        atk.set(St::PenNibArmed, 1);
+        assert_eq!(apply_modifiers(7, &atk, &def), 10, "⌊7×0.75×2⌋ = 10");
     }
 
     /// 飞剑回旋镖「造成 3 点伤害，随机 3 次」。
@@ -5320,7 +6157,7 @@ mod tests {
             Err(_) => return,
         };
         let t = super::replay::parse_trace(&src).unwrap();
-        let mut r = super::replay::Replayer::new(&t.run);
+        let mut r = super::replay::Replayer::for_trace(&t);
         let mut sy = r.sync(&t.frames[0].obs);
         r.identify_enemies(&mut sy.state, &t.frames[0].obs);
 
@@ -5495,7 +6332,7 @@ mod tests {
             Err(_) => return,
         };
         let t = super::replay::parse_trace(&src).unwrap();
-        let mut r = super::replay::Replayer::new(&t.run);
+        let mut r = super::replay::Replayer::for_trace(&t);
         let mut sy = r.sync(&t.frames[0].obs);
         r.identify_enemies(&mut sy.state, &t.frames[0].obs);
 
@@ -5707,6 +6544,43 @@ mod tests {
                 if expect_hit { 6 } else { 0 },
                 "{block} 点格挡时招架盾打了 {dealt} 点"
             );
+        }
+    }
+
+    /// 尖叫酒壶：回合结束**手牌为空**才打那 20 点，手里还有牌就一点不打。
+    ///
+    /// **反例那一半才是这条规则的全部内容。** [源码] 的钩子是
+    /// `BeforeSideTurnEnd`，跑在**弃手牌之前**；挪到弃牌之后手牌恒空，
+    /// 这件遗物会变成"每回合白给 20 点"，而且**四种对拍模式都不会红**
+    /// —— 那是敌人血量上一个稳定的偏差，观测里看不出是谁打的。
+    ///
+    /// 顺带钉两件事：打的是**所有**敌人（[源码] `HittableEnemies`），
+    /// 以及力量不进这一条（`ValueProp.Unpowered`）。
+    #[test]
+    fn screaming_flagon_fires_only_on_an_empty_hand_and_hits_everyone() {
+        for (n_hand, expect) in [(3u8, 0), (0u8, 20)] {
+            let mut s = State::new(80, 29);
+            s.add_enemy(enemy::DUMMY, 300);
+            s.add_enemy(enemy::DUMMY, 300);
+            for _ in 0..5 {
+                s.add_card(card::DEFEND, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.player.set(St::ScreamingFlagon, 20);
+            // 力量 5 —— 进了这一条就说明走错了乘区（该走 unpowered）
+            s.player.set(St::Strength, 5);
+            s.n_hand = n_hand;
+            let before = [s.enemies[0].hp, s.enemies[1].hp];
+            // 敌人不还手，掉的血就只可能是酒壶打的
+            let after = crate::end_turn_with_incoming(s, &[(0, 0); crate::state::MAX_ENEMIES]);
+            for e in 0..2 {
+                assert_eq!(
+                    before[e] - after.enemies[e].hp,
+                    expect,
+                    "手牌 {n_hand} 张时敌人 {e} 掉了 {} 点",
+                    before[e] - after.enemies[e].hp
+                );
+            }
         }
     }
 
@@ -6425,7 +7299,7 @@ mod tests {
             Err(_) => return,
         };
         let t = super::replay::parse_trace(&src).unwrap();
-        let mut r = super::replay::Replayer::new(&t.run);
+        let mut r = super::replay::Replayer::for_trace(&t);
         for f in t.frames.iter().take(4) {
             let sy = r.sync(&f.obs);
             assert_eq!(sy.state.n_draw_known, 0, "同步出来的局面不该带已知前缀");
@@ -6463,6 +7337,189 @@ mod tests {
             let mut split = crate::step::end_turn_before_draw(s);
             crate::step::open_hand(&mut split);
             assert_eq!(atomic, split, "seed {seed}：拆开再拼回去和原子的那一步不一样");
+        }
+    }
+
+    /// **深层选线的目标函数默认必须是叶评估。**
+    ///
+    /// expectimax 的规矩：决策节点取"后继子树价值"的最大值，而最后一层的后继
+    /// 就是叶子。2026-09-04 之前这里是 `cfg.score`（`damage_first`），
+    /// 于是最后一层的 argmax 取的是**另一个函数**的最大值。
+    ///
+    /// 这条测试只钉默认值 —— "换回去会怎样"是 `bin/rollout --alt` 的活，
+    /// "换过来对不对"是 `bin/plan_audit` 的活。**这里只保证没人把默认悄悄改回去。**
+    #[test]
+    fn deep_score_defaults_to_the_leaf_objective() {
+        use crate::plan::Plan;
+        use crate::solver::score;
+        let cfg = Plan::default();
+        // 函数指针先显式转一次再比地址：直接拿函数项转 usize 比的是零大小类型
+        let want: fn(&crate::state::State) -> i32 = score::leaf;
+        assert_eq!(
+            cfg.deep_score as usize, want as usize,
+            "深层选线的目标函数该是 score::leaf（和 cfg.leaf 同口径），见 Plan::deep_score"
+        );
+        assert_ne!(
+            cfg.deep_score as usize, cfg.score as usize,
+            "deep_score 和 score 相等就等于退回 2026-09-04 之前 —— \
+             要 A/B 请用 `--alt \"deep-score=damage\"`，别改默认值"
+        );
+    }
+
+    /// **`deep_score` 一个字都不许影响 D=1。**
+    ///
+    /// `plan_line_with_threat` 在 `depth <= 1` 时提前 return、走的是 `cfg.score`，
+    /// 所以 `plan_depth_one_is_exactly_solve_turn` 那条门不受影响 ——
+    /// 但那条测试用的是**默认配置**，改错了它不一定红。这一条专门盯着：
+    /// 把 `deep_score` 换成一个明显不同的函数，D=1 的线必须逐字不变。
+    #[test]
+    fn deep_score_does_not_touch_depth_one() {
+        use crate::plan::{plan_line, Plan};
+        use crate::solver::{explain, score};
+        for seed in 1..=15u64 {
+            let s = hand_of(seed, 120, &[card::STRIKE, card::DEFEND, card::BASH], 3);
+            let base = Plan::default();
+            let mut alt = base;
+            alt.deep_score = score::hp_only;
+            assert_eq!(
+                explain(&s, plan_line(&s, &base).acts()),
+                explain(&s, plan_line(&s, &alt).acts()),
+                "seed {seed}：D=1 的线被 deep_score 改掉了 —— \
+                 说明有人在 depth<=1 那条路上读了它"
+            );
+        }
+    }
+
+    /// **窗口目标函数的默认值不许悄悄改回去**，而且它和叶评估**只该差 `win`**。
+    ///
+    /// 第二条断言是这一整条改动的全部内容：`Weights::WINDOW` 要是还差了别的项，
+    /// "窗口内换尺子"就不再是"拿掉一个地平线人造物"，而是一次没标定过的换权重。
+    #[test]
+    fn the_window_objective_is_the_leaf_objective_minus_the_win_constant() {
+        use crate::plan::Plan;
+        use crate::solver::{score, Weights};
+        let cfg = Plan::default();
+        let want: fn(&crate::state::State) -> i32 = score::window;
+        assert_eq!(
+            cfg.window_score as usize, want as usize,
+            "窗口内的目标函数该是 score::window（最终血量口径），见 Plan::window_score"
+        );
+        assert_eq!(Weights::WINDOW.win, 0, "WINDOW 的 win 不是 0，那 1000 血的台阶还在");
+        let (w, l) = (&Weights::WINDOW, &Weights::LEAF);
+        assert_eq!(
+            (w.hp, w.enemy_hp, w.death, w.enemy_vuln, w.enemy_weak, w.strength, w.power),
+            (l.hp, l.enemy_hp, l.death, l.enemy_vuln, l.enemy_weak, l.strength, l.power),
+            "WINDOW 和 LEAF 除了 win 之外还差了别的项 —— 那就不是「拿掉地平线人造物」了"
+        );
+    }
+
+    /// **两把尺子只在"赢下来的终局"上不同。**
+    ///
+    /// 这条把上面那个权重断言翻译成行为：仗还在打 ⇒ 逐字相等；赢了 ⇒ 差恰好一个
+    /// `Weights::LEAF.win`。`plan_audit` 报告里"不含 win 那一列是口径中立的"
+    /// 这句话，全部依据就是这一条。
+    #[test]
+    fn the_two_rulers_differ_only_on_a_won_terminal() {
+        use crate::solver::{score, Weights};
+        for seed in 1..=15u64 {
+            let s = hand_of(seed, 120, &[card::STRIKE, card::DEFEND, card::BASH], 3);
+            assert!(!s.combat_over, "场景立不住：仗还没打完才对");
+            assert_eq!(
+                score::window(&s),
+                score::leaf(&s),
+                "seed {seed}：仗还在打，两把尺子却给了不同的分"
+            );
+            // 同一个局面，把敌人打没
+            let mut won = s;
+            won.enemies[0].hp = 0;
+            won.combat_over = true;
+            assert_eq!(
+                score::leaf(&won) - score::window(&won),
+                Weights::LEAF.win,
+                "seed {seed}：赢下来那一刻两把尺子的差不是一个 win"
+            );
+        }
+    }
+
+    /// **`window_score` 一个字都不许影响 D=1。**
+    ///
+    /// 和 `deep_score_does_not_touch_depth_one` 同一类：`plan_line_with_threat`
+    /// 在 `depth <= 1` 时提前 return、走 `cfg.score`，所以换掉窗口目标函数
+    /// 不该动实战驱动那条路径（**驾驶用的就是 D=1**）。
+    #[test]
+    fn window_score_does_not_touch_depth_one() {
+        use crate::plan::{plan_line, Plan};
+        use crate::solver::{explain, score};
+        for seed in 1..=15u64 {
+            let s = hand_of(seed, 120, &[card::STRIKE, card::DEFEND, card::BASH], 3);
+            let base = Plan::default();
+            let mut alt = base;
+            alt.window_score = score::hp_only;
+            assert_eq!(
+                explain(&s, plan_line(&s, &base).acts()),
+                explain(&s, plan_line(&s, &alt).acts()),
+                "seed {seed}：D=1 的线被 window_score 改掉了"
+            );
+        }
+    }
+
+    /// **尺子是每次搜索一把，判据是窄根**（[`crate::plan::Plan::at_root`]）。
+    ///
+    /// 三件事一起钉：窄根上深层选线和叶评估**一起**换掉（只换一半就是筛子和尺子
+    /// 分家）· 非窄根上一个字不动 · `window-score=leaf` 把整件事变回恒等。
+    ///
+    /// **坏掉的样子**：逐叶子挑尺子。那时同一次搜索里"确定赢的那条线"用
+    /// `win = 0` 的尺子、"采样分支里侥幸赢的那条线"用 `win = 100000` 的尺子，
+    /// 事实输给运气 —— 这条测试拦不住那种写法，但 `at_root` 的文档解释了为什么
+    /// 挑法必须收口在这一个函数里，而这条测试钉着它就是唯一的入口。
+    #[test]
+    fn the_window_ruler_is_picked_once_per_search_and_only_on_a_narrow_root() {
+        use crate::plan::{root_is_narrow, Leaf, Plan};
+        use crate::solver::score;
+        let cfg = Plan::default();
+
+        // 窄根：整堆牌序已知（`draw_pile_order` 补丁之后 `sync` 出来的样子）
+        let mut narrow = short_draw_pile_scene(8, 4);
+        narrow.n_draw_known = narrow.n_draw;
+        assert!(root_is_narrow(&narrow), "场景立不住：这该是个窄根");
+        let eff = cfg.at_root(&narrow);
+        assert_eq!(
+            eff.deep_score as usize, cfg.window_score as usize,
+            "窄根上深层选线没换成窗口目标函数"
+        );
+        match eff.leaf {
+            Leaf::Eval(f) => assert_eq!(
+                f as usize, cfg.window_score as usize,
+                "窄根上叶评估没跟着换 —— 筛子和尺子分家了"
+            ),
+            other => panic!("默认配置的叶评估该是 Leaf::Eval，收到 {other:?}"),
+        }
+
+        // 非窄根：牌序未知，一个字都不该动
+        let wide = short_draw_pile_scene(8, 4);
+        assert!(!root_is_narrow(&wide), "场景立不住：这不该是窄根");
+        let same = cfg.at_root(&wide);
+        assert_eq!(same.deep_score as usize, cfg.deep_score as usize, "非窄根上尺子被换了");
+        match (same.leaf, cfg.leaf) {
+            (Leaf::Eval(a), Leaf::Eval(b)) => {
+                assert_eq!(a as usize, b as usize, "非窄根上叶评估被换了")
+            }
+            _ => panic!("默认配置的叶评估该是 Leaf::Eval"),
+        }
+
+        // `window-score=leaf` ⇒ 整件事是恒等映射（A/B 的退回通道）
+        let mut off = cfg;
+        off.window_score = score::leaf;
+        let rev = off.at_root(&narrow);
+        assert_eq!(
+            rev.deep_score as usize, off.deep_score as usize,
+            "window-score=leaf 该逐字退回，深层选线却变了"
+        );
+        match (rev.leaf, off.leaf) {
+            (Leaf::Eval(a), Leaf::Eval(b)) => {
+                assert_eq!(a as usize, b as usize, "window-score=leaf 该逐字退回，叶评估却变了")
+            }
+            _ => panic!("默认配置的叶评估该是 Leaf::Eval"),
         }
     }
 
@@ -7570,6 +8627,150 @@ mod tests {
         check_chance_node(&s, "无已知前缀");
     }
 
+    // -----------------------------------------------------------------
+    // 确定性窗口（2026-09-05，阶段 2）
+    // -----------------------------------------------------------------
+
+    /// **`chance_is_certain` 说确定，`chance_children` 就必须只给一个孩子。**
+    ///
+    /// 这一条守的是"判据只有一处定义"：确定性窗口靠 `chance_is_certain` 决定
+    /// 借不借这一层，而真正展开的是 `chance_children`。两边一旦分岔，
+    /// 窗口就会在一个**会分岔**的节点上借层 —— 那正是这个判据要防的事，
+    /// 而且**不报错，只是搜错**。
+    #[test]
+    fn chance_is_certain_agrees_with_chance_children() {
+        use crate::plan::{chance_children, chance_is_certain, Plan};
+        let cfg = Plan::default();
+        // 五种局面各来一份：抽干净、抽干净但有弃牌堆、已知前缀盖满、
+        // 已知前缀不够、整堆都不知道
+        let mut scenes: Vec<(State, &str)> = vec![
+            (short_draw_pile_scene(3, 0), "抽牌堆 3 张、弃牌堆空"),
+            (short_draw_pile_scene(3, 6), "抽牌堆 3 张、弃牌堆 6 张"),
+            (short_draw_pile_scene(8, 4), "抽牌堆 8 张、没有已知前缀"),
+        ];
+        let mut known = short_draw_pile_scene(8, 4);
+        known.n_draw_known = known.n_draw;
+        scenes.push((known, "整堆已知"));
+        let mut half = short_draw_pile_scene(8, 4);
+        half.n_draw_known = 2;
+        scenes.push((half, "只知道顶上 2 张"));
+
+        for (s, tag) in &scenes {
+            let kids = chance_children(s, &cfg, 1);
+            let single = kids.len() == 1 && (kids[0].p - 1.0).abs() < 1e-9;
+            if chance_is_certain(s) {
+                assert!(single, "{tag}：判据说确定，`chance_children` 却给了 {} 个孩子", kids.len());
+            }
+        }
+    }
+
+    /// **判据是"双重确定"，不是"单孩子"。**
+    ///
+    /// 同一个整堆已知的牌堆，只换场上那只敌人：
+    /// 假人（`machine: None`，固定循环）⇒ 下一手唯一 ⇒ 窗口开；
+    /// 蛮兽（`MAWLER_RAND`，从爪击出发允许 {撕咬, 咆哮} 两手）⇒ 掷骰 ⇒ 窗口关。
+    ///
+    /// **坏掉的样子**：把判据写成"孩子只有一个"。那时第二条断言当场红 ——
+    /// 抽牌确实定死了，可 `advance_move` 会掷一次骰，我们跟着的只是一条抽样
+    /// 轨迹，把它当事实往下深搜是在放大一个样本。
+    #[test]
+    fn the_window_needs_both_halves_not_just_one_child() {
+        use crate::plan::{chance_is_certain, window_is_certain};
+
+        let mut fixed = short_draw_pile_scene(8, 4);
+        fixed.n_draw_known = fixed.n_draw;
+        assert!(chance_is_certain(&fixed), "场景立不住：抽牌那一半就不确定");
+        assert!(window_is_certain(&fixed), "假人是固定循环，下一手该是唯一的");
+
+        // 同一个牌堆，把敌人换成带随机分支的蛮兽
+        let mut rand_foe = fixed;
+        rand_foe.n_enemies = 0; // 让 `add_enemy` 覆盖 0 号槽
+        rand_foe.add_enemy(enemy::MAWLER, 100);
+        rand_foe.enemy_hist[0] = [u8::MAX; crate::state::ENEMY_HIST];
+        rand_foe.enemy_move[0] = crate::step::initial_move(&rand_foe, 0);
+        assert!(
+            crate::step::allowed_next(&rand_foe, 0).count_ones() > 1,
+            "场景立不住：蛮兽这一手之后本来就该有两个可能"
+        );
+        assert!(chance_is_certain(&rand_foe), "抽牌那一半没变，还该是确定的");
+        assert!(
+            !window_is_certain(&rand_foe),
+            "敌人下一手会掷骰，窗口却认为这一层是确定的 —— 判据退化成了「单孩子」"
+        );
+    }
+
+    /// **窗口的默认值不许悄悄改回去**，而且 `window = 0` 要真的关得掉。
+    #[test]
+    fn window_defaults_to_the_cap_and_zero_switches_it_off() {
+        use crate::plan::{Plan, HARD_DEPTH_CAP, MAX_EXTEND, WINDOW_CAP};
+        let cfg = Plan::default();
+        assert_eq!(cfg.window, WINDOW_CAP, "确定性窗口的默认值被改了，见 Plan::window");
+        // 三笔预算加起来必须够不着硬闸，否则窗口会被截断而没人知道
+        assert!(
+            (cfg.depth + MAX_EXTEND + WINDOW_CAP) as usize <= HARD_DEPTH_CAP,
+            "depth {} + 延伸 {MAX_EXTEND} + 窗口 {WINDOW_CAP} 顶到了硬闸 {HARD_DEPTH_CAP}",
+            cfg.depth
+        );
+    }
+
+    /// **确定层不扣计划深度**，而且三笔账都真的被扣了。
+    ///
+    /// 造一个整堆已知、敌人是固定循环的局面（那一段是有限确定性博弈），
+    /// 从 `left = 0` 出发：
+    ///
+    /// * `window = 0` ⇒ 就地评估（老行为），一层都不借；
+    /// * `window > 0` ⇒ 真的往下搜，`window_fired > 0`，而且**借的层数不超过预算**；
+    /// * 无论借多少，`max_depth` 都在 [`HARD_DEPTH_CAP`] 之内。
+    ///
+    /// 第三条是这里唯一能抓住"忘了扣 `free`"的：那种错不报错、不改端点的值，
+    /// 只让搜索越钻越深 —— 和 `extension_budget_is_actually_checked` 守的是
+    /// 同一类事故。
+    #[test]
+    fn the_window_deepens_without_spending_planned_depth() {
+        use crate::plan::{node_value_ext, window_is_certain, Plan, PlanStat, HARD_DEPTH_CAP};
+        // 厚血假人 + 1 能量：仗一时半会打不完，窗口才有得借
+        let mut s = State::new(80, 44);
+        s.add_enemy(enemy::DUMMY, 300);
+        for _ in 0..20 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        s.base_energy = 1;
+        s.energy = 1;
+        let mut leaf = crate::step::end_turn_before_draw(s);
+        // 整堆已知 = `draw_pile_order` 补丁之后 `sync` 出来的样子
+        leaf.n_draw_known = leaf.n_draw;
+        assert!(window_is_certain(&leaf), "场景立不住：这一层本来就该是确定的");
+
+        let mut off = Plan::default();
+        off.depth = 2;
+        off.window = 0;
+        let mut st_off = PlanStat::default();
+        let v_off = node_value_ext(&leaf, &off, 0, 1, 0, &mut st_off);
+        assert_eq!(v_off, off.leaf.value(&leaf, off.seed, 1), "关掉窗口就该就地评估");
+        assert_eq!(st_off.window_fired, 0, "窗口关着还借了层");
+
+        let mut on = off;
+        on.window = 3;
+        let mut st_on = PlanStat::default();
+        let v_on = node_value_ext(&leaf, &on, 0, 1, 0, &mut st_on);
+        assert!(st_on.window_fired > 0, "确定的层一层都没借");
+        assert!(
+            st_on.window_fired <= on.window as u32,
+            "借了 {} 层，而预算只有 {} —— `free` 没被扣",
+            st_on.window_fired,
+            on.window
+        );
+        assert_ne!(v_on, v_off, "借了层却和就地评估同分，说明根本没往下搜");
+        assert!(
+            (st_on.max_depth as usize) <= HARD_DEPTH_CAP,
+            "递归到了第 {} 层，硬闸在 {HARD_DEPTH_CAP}",
+            st_on.max_depth
+        );
+        // 借来的层不该动 `ext` 那笔账 —— 上面传的 `ext` 就是 0
+        assert_eq!(st_on.ext_fired, 0, "窗口把延伸预算也花掉了，两笔账串了");
+    }
+
     /// 机会节点：**顶上摆了两张确定的牌**。
     ///
     /// 这一条是上面那条的另一半：确定的那两张不参与随机，
@@ -7603,12 +8804,164 @@ mod tests {
     #[test]
     fn tt_only_reuses_entries_deep_enough() {
         use crate::plan::Tt;
-        let mut tt = Tt::new(10);
+        let tt = Tt::new(10);
         tt.store(0xABCD, 2, 42);
         assert_eq!(tt.probe(0xABCD, 1), Some(42), "存 2 要 1，可以用");
         assert_eq!(tt.probe(0xABCD, 2), Some(42), "存 2 要 2，可以用");
         assert_eq!(tt.probe(0xABCD, 3), None, "存 2 要 3，**不能**用");
         assert_eq!(tt.probe(0x1234, 1), None, "没存过的 key");
+        assert_eq!(tt.probes(), 4, "四次 probe 都该记上账");
+        assert_eq!(tt.hits(), 2, "命中两次");
+        // 负数的值要能原样取回来 —— 载荷是打包进一个 u64 的，
+        // 符号位掉了的话所有"要死了"的叶子会变成天文数字的好分数
+        tt.store(0x77, 0, i32::MIN / 2);
+        assert_eq!(tt.probe(0x77, 0), Some(i32::MIN / 2), "负分打包/解包不能变号");
+    }
+
+    /// 置换表**并发写不会互相撕裂**：多个线程同时往同一张表写，
+    /// 读回来的每一格要么是某一次写的原样，要么 miss —— 不能出现
+    /// "这一半来自 A、那一半来自 B"的缝合值。
+    ///
+    /// 它守的是 lockless hashing 那个异或校验。写反了/漏了校验位，
+    /// 症状是**偶尔**读到一个别人写的值，而搜索照样跑完、不报错。
+    #[test]
+    fn tt_survives_concurrent_writers() {
+        use crate::plan::Tt;
+        let tt = Tt::new(12);
+        // 值和 key 绑死：`value == (key * 3) as i32`。读到不满足这条的就是缝合的。
+        std::thread::scope(|sc| {
+            for t in 0..4u64 {
+                let tt = &tt;
+                sc.spawn(move || {
+                    for i in 0..20_000u64 {
+                        let k = (i * 4 + t) | 1;
+                        tt.store(k, 1, k.wrapping_mul(3) as i32);
+                        if let Some(v) = tt.probe(k, 1) {
+                            assert_eq!(v, k.wrapping_mul(3) as i32, "key {k} 读到了缝合值");
+                        }
+                    }
+                });
+            }
+        });
+        assert!(tt.probes() > 0, "一次都没探过，这条测试什么都没守住");
+    }
+
+    /// 一个**带抽牌堆**的战斗局面。`hand_of` 把牌全发到手上（`n_draw = 0`），
+    /// 而候选生成那几条读数问的正是抽牌堆 —— 所以它们要另一个场景。
+    fn combat_with_draw_pile(seed: u64) -> State {
+        let mut s = State::new(80, seed);
+        s.add_enemy(enemy::DUMMY, 300);
+        for i in 0..20 {
+            s.add_card(if i % 2 == 0 { card::STRIKE } else { card::DEFEND }, 0, 0);
+        }
+        begin_combat(s)
+    }
+
+    /// **`plan::key` 必须分开 `solver::key` 合并掉的那几样。**
+    ///
+    /// 这是阶段 3c 唯一能钉住的东西：拿 `solver::key` 去做跨回合 memo
+    /// 是一个**静默错误** —— 两个只差"这场用过哪几手"的局面被并进同一格，
+    /// 而四种对拍模式全看不见。每一项都先断言 `solver::key` 真的合并了它
+    /// （否则这条测试是在守一件本来就不会发生的事），再断言 `plan::key` 分开了。
+    #[test]
+    fn plan_key_separates_what_solver_key_merges() {
+        // 要一副**真的抽牌堆**（`hand_of` 把牌全发到手上，`n_draw` 是 0，
+        // 那样 `n_draw_known` 那一条就无从改起）
+        let base = combat_with_draw_pile(7);
+        assert!(base.n_draw >= 5, "场景立不住：抽牌堆还不够一手");
+        assert_eq!(crate::plan::key(&base), crate::plan::key(&base), "同一个局面该同一个 key");
+
+        let cases: [(&str, fn(&mut State)); 6] = [
+            ("n_draw_known", |s| s.n_draw_known = s.n_draw.min(3)),
+            ("enemy_hist", |s| s.enemy_hist[0][0] = 2),
+            ("enemy_used", |s| s.enemy_used[0] = 0b1010),
+            ("rng.shuffle", |s| s.rng.shuffle ^= 0xDEAD_BEEF),
+            ("rng.enemy", |s| s.rng.enemy ^= 0xDEAD_BEEF),
+            ("rng.gen", |s| s.rng.gen ^= 0xDEAD_BEEF),
+        ];
+        for (name, mutate) in cases {
+            let mut other = base;
+            mutate(&mut other);
+            assert_ne!(base, other, "{name}：局面根本没改动，这一条什么都没守住");
+            assert_eq!(
+                crate::solver::key(&base),
+                crate::solver::key(&other),
+                "{name}：`solver::key` 居然分得开它 —— 那这条测试守的前提不成立了，\
+                 回去看 `plan::key` 的文档表还对不对"
+            );
+            assert_ne!(
+                crate::plan::key(&base),
+                crate::plan::key(&other),
+                "{name}：`plan::key` 把两个不同的局面并成了同一格"
+            );
+        }
+    }
+
+    /// **窄根才开大 K。** `Plan::k_at` 是这三处（planner / 诊断 / 审计台）
+    /// 唯一的定义，它判错的样子是"审计台量的候选集不是 planner 用的那个"。
+    #[test]
+    fn k_opens_up_only_on_a_narrow_root() {
+        use crate::plan::{root_is_narrow, Plan};
+        let cfg = Plan::default();
+        let mut s = combat_with_draw_pile(11);
+        // 整堆已知 = `draw_pile_order` 补丁之后 `sync` 出来的样子
+        s.n_draw_known = s.n_draw;
+        assert!(s.n_draw >= 5, "场景立不住：抽牌堆还不够一手");
+        assert!(root_is_narrow(&s), "整堆已知却不算窄根");
+        assert_eq!(cfg.k_at(&s), cfg.k_certain, "窄根该用 k_certain");
+
+        // 只已知半手：根这一手随便抽两张就把"整堆已知"破了
+        let mut half = s;
+        half.n_draw_known = 3;
+        assert!(!root_is_narrow(&half), "只已知 3 张不该算窄根");
+        assert_eq!(cfg.k_at(&half), cfg.k, "宽根该退回 k");
+
+        // 关掉之后一律用 k，和阶段 3b 之前逐字相同
+        let mut off = cfg;
+        off.k_certain = 0;
+        assert_eq!(off.k_at(&s), off.k, "k_certain=0 该退回 k");
+    }
+
+    /// **`--set` / `--alt` 的键解析和一行说明住在库里，三个验收台共用一份。**
+    ///
+    /// 它坏掉的样子：写错一个键名而它默默不生效，得到的是"两条 arm 逐字相同"
+    /// 这种看着很正常的读数。所以不认识的键必须**报错**。
+    #[test]
+    fn plan_overrides_round_trip() {
+        use crate::plan::{Plan, K_CERTAIN, TT_BITS, WINDOW_CAP};
+        let mut c = Plan::default();
+        assert_eq!(c.k_certain, K_CERTAIN);
+        assert_eq!(c.tt_bits, TT_BITS);
+        // **默认三处同口径**：候选排序 / 深层选线 / 叶评估。
+        // 阶段 3a 的全部内容就是把第一处从 `score` 挪到这一档上，
+        // 而它是个**独立字段**（A/B 要单独扳得动它），所以默认值会不会
+        // 悄悄跟 `deep_score` 走散，只有这一条守得住。
+        assert_eq!(
+            c.cand_score as usize, c.deep_score as usize,
+            "默认配置里候选排序和深层选线该是同一个目标函数"
+        );
+        assert!(
+            matches!(c.leaf, crate::plan::Leaf::Eval(f) if f as usize == c.deep_score as usize),
+            "默认叶评估也该是同一个"
+        );
+        c.apply("cand-score=damage,k-certain=off,tt=off").expect("这三个键该认得");
+        assert_eq!(c.k_certain, 0);
+        assert_eq!(c.tt_bits, 0);
+        // **先显式转成 `fn(...)` 再比地址** —— 直接拿函数项转 usize 转的是
+        // 零大小类型的地址，编译器会警告，比出来的东西也没有意义。
+        let addr = |f: fn(&State) -> i32| f as usize;
+        assert_eq!(addr(c.cand_score), addr(crate::solver::score::damage_first));
+        c.apply("k-certain=on,tt=on,window=on").expect("on 该认得");
+        assert_eq!(c.k_certain, K_CERTAIN);
+        assert_eq!(c.tt_bits, TT_BITS);
+        assert_eq!(c.window, WINDOW_CAP);
+        assert!(c.apply("cand-scroe=damage").is_err(), "键名写错了必须报错，不能默默忽略");
+        assert!(c.apply("cand-score=nonsense").is_err(), "值不认识也要报错");
+        // 说明里三个目标函数都要看得见 —— 它们各自不同正是这两轮改动的内容
+        let d = c.describe();
+        for want in ["线目标", "候选目标", "深层目标", "置换表", "窄根"] {
+            assert!(d.contains(want), "describe 里少了 {want}：{d}");
+        }
     }
 
     /// 斩杀延伸的乐观界要数**整个循环**的牌，不只手牌。
@@ -7783,5 +9136,1159 @@ mod tests {
         assert_eq!(s.enemies[0].get(St::Burrowed), 0, "破盾清除钻地");
         assert_eq!(s.enemy_move[0], 3, "破盾被打进眩晕（move 3）");
         assert_eq!(s.enemies[0].get(St::MoveForcedThisTurn), 1);
+    }
+
+    // -----------------------------------------------------------------
+    // 进阶（`src/asc.rs`，生成产物）
+    //
+    // 四条守卫，各守一件**表和内核之间会悄悄错位**的事。生成器按
+    // (种类, 低进阶值) 去认内核的 op，所以内核那边改一个数、插一条敌人，
+    // 表就指错地方了 —— 而指错**不会报错**，只会在高进阶下算错。
+    // -----------------------------------------------------------------
+
+    /// A8 以下 `adjust` 必须逐字返回原 op —— 这是"既有对拍逐字节不变"的全部依据。
+    #[test]
+    fn ascension_below_8_is_a_no_op() {
+        for r in crate::asc::ASC_OPS {
+            let op = crate::content::ENEMIES[r.def as usize].moves[r.mv as usize].ops
+                [r.op as usize];
+            for a in 0..8u8 {
+                assert_eq!(
+                    format!("{:?}", crate::asc::adjust(r.def, r.mv as usize, r.op as usize, a, op)),
+                    format!("{op:?}"),
+                    "A{a} 下 {} 的「{}」被改了，而 A8 才是第一档",
+                    r.name,
+                    r.mv_name
+                );
+            }
+        }
+        for r in crate::asc::ASC_HP {
+            for a in 0..8u8 {
+                assert_eq!(crate::asc::hp_range(r.def, a), Some(r.low), "{} A{a}", r.name);
+            }
+        }
+    }
+
+    /// 表里的下标还指着它自己写的那只敌人 / 那一手。
+    ///
+    /// 有人往 `ENEMIES` 中间插一条，所有下标就整体平移了，而**平移不会报错**。
+    #[test]
+    fn asc_table_indices_still_point_at_the_named_enemy() {
+        for r in crate::asc::ASC_HP {
+            let d = &crate::content::ENEMIES[r.def as usize];
+            assert_eq!(d.name, r.name, "ASC_HP 的下标 {} 指错了敌人", r.def);
+        }
+        for r in crate::asc::ASC_OPS {
+            let d = &crate::content::ENEMIES[r.def as usize];
+            assert_eq!(d.name, r.name, "ASC_OPS 的下标 {} 指错了敌人", r.def);
+            let m = &d.moves[r.mv as usize];
+            assert_eq!(m.name, r.mv_name, "{} 的第 {} 手指错了", r.name, r.mv);
+            assert!(
+                (r.op as usize) < m.ops.len(),
+                "{} 的「{}」只有 {} 个 op，表里指到 {}",
+                r.name,
+                r.mv_name,
+                m.ops.len(),
+                r.op
+            );
+        }
+    }
+
+    /// **连接键还成立**：表里的 `low` 必须逐字等于内核那个 op 今天写着的数。
+    ///
+    /// 生成器就是靠这个值认出"这一行说的是哪个 op"的。内核改了数而没重新
+    /// 生成表，这条会红 —— 否则高进阶下面那一档会被换成一个**不相干的值**。
+    #[test]
+    fn asc_ops_low_value_still_matches_the_kernel_op() {
+        use crate::ops::EOp;
+        for r in crate::asc::ASC_OPS {
+            let op =
+                crate::content::ENEMIES[r.def as usize].moves[r.mv as usize].ops[r.op as usize];
+            let got = match (op, r.hits) {
+                (EOp::Attack { hits, .. }, true) => hits,
+                (EOp::Attack { base, .. }, false) => base,
+                (EOp::AttackPlusStackHits { hits, .. }, true) => hits,
+                (EOp::AttackPlusStackHits { base, .. }, false) => base,
+                (EOp::Block(n), _) => n,
+                (EOp::SelfStatus { amt, .. }, _) => amt,
+                (EOp::PlayerStatus { amt, .. }, _) => amt,
+                (EOp::AddCardToDiscard { count, .. }, _) => count,
+                _ => panic!(
+                    "{} 的「{}」第 {} 个 op 是 {:?}，`asc::patch` 认不出来 —— 该重新生成表",
+                    r.name, r.mv_name, r.op, op
+                ),
+            };
+            assert_eq!(
+                got, r.low,
+                "{} 的「{}」({}) 内核是 {got}，表里的低进阶值是 {} —— \
+                 内核改过数而表没重新生成，跑 tools/dump_ascension.py",
+                r.name, r.mv_name, r.prop, r.low
+            );
+        }
+    }
+
+    /// 内核那个**点值**血量必须落在 [源码] 的低进阶区间里。
+    ///
+    /// 两个来源独立：内核的数是 A1/A2 实测钉的，区间是反编译读的。
+    /// 对不上说明其中一个错了，而两个都会让 L3 开出一场不存在的仗。
+    #[test]
+    fn asc_hp_low_range_contains_the_kernel_point_value() {
+        for r in crate::asc::ASC_HP {
+            let d = &crate::content::ENEMIES[r.def as usize];
+            assert!(
+                r.low.0 <= d.max_hp && d.max_hp <= r.low.1,
+                "{} 内核血量 {}，[源码] 低进阶区间 {:?}",
+                r.name,
+                d.max_hp,
+                r.low
+            );
+        }
+    }
+
+    /// **正面证据**：A9 之后小啃兽的撞击真的从 12 打到 13。
+    ///
+    /// 上面三条守的都是"别错位""别提前生效"，**没有一条证明它真的生效** ——
+    /// 一张全是 no-op 的空表也能让那三条全绿。
+    #[test]
+    fn ascension_9_actually_raises_the_damage_that_lands() {
+        let nibbit = crate::content::ENEMIES.iter().position(|d| d.name == "小啃兽").unwrap();
+        let hit_at = |asc: u8| {
+            let mut s = State::new(80, 1);
+            s.ascension = asc;
+            s.add_enemy(nibbit as u16, 45);
+            let mut s = crate::step::begin_combat(s);
+            s.enemy_move[0] = 0; // 撞击
+            s = step(s, Action::EndTurn);
+            80 - s.player.hp
+        };
+        // A7 走低进阶那一档，A9 走高进阶那一档。ButtDamage 12 -> 13。
+        assert_eq!(hit_at(7), 12, "A7 该是低进阶值");
+        assert_eq!(hit_at(8), 12, "血量那一档是 A8，伤害那一档是 A9 —— 别混");
+        assert_eq!(hit_at(9), 13, "A9 `DeadlyEnemies` 之后撞击该打 13");
+        assert_eq!(hit_at(10), 13);
+        // 血量区间是另一档：A8 起 42–46 变 44–48
+        assert_eq!(crate::asc::hp_range(nibbit as u16, 7), Some((42, 46)));
+        assert_eq!(crate::asc::hp_range(nibbit as u16, 8), Some((44, 48)));
+    }
+
+    // ======================================================================
+    // L3 阶段 1：合成战斗构造器（`src/synth.rs`）
+    //
+    // 验收台是 `bin/synth_audit`（拿实录第 0 帧当测试集）。下面这几条守的是
+    // **审计台照不到的那半**：它只跑得了语料里出现过的组合，而这些是规矩。
+    // ======================================================================
+
+    /// `St::ALL` 的下标必须就是 `St::ix`。
+    ///
+    /// 它只用来起名字（诊断输出），**比较本身走 `0..N_STATUS` 的下标** ——
+    /// 所以漏一条的代价只是印成 `status[87]`。这条守的是**顺序**：
+    /// 顺序错了名字就会张冠李戴，那比印下标更糟。
+    #[test]
+    fn st_all_is_indexed_by_ix() {
+        for (i, st) in St::ALL.iter().enumerate() {
+            assert_eq!(st.ix(), i, "St::ALL 第 {i} 项是 {st:?}，它的 ix 是 {}", st.ix());
+        }
+        assert!(St::ALL.len() <= crate::state::N_STATUS);
+    }
+
+    /// `SYNTH_ONLY_GAPS` 里的 id 必须真在 `RELICS` 里、而且 `modelled: true`。
+    ///
+    /// 打错一个字的后果是这条**永远不会被报出来** —— 而这张表存在的全部意义
+    /// 就是把"合成路径上还欠什么"报出来。`modelled: false` 的那些走
+    /// `Gap::UnmodelledRelic`，重复挂在这里只会让同一件事报两遍。
+    #[test]
+    fn synth_only_gaps_name_real_relics() {
+        for (id, why) in crate::content::SYNTH_ONLY_GAPS {
+            let def = crate::content::relic_by_id(id)
+                .unwrap_or_else(|| panic!("SYNTH_ONLY_GAPS 里的 {id} 不在 RELICS 表里"));
+            assert!(
+                def.modelled,
+                "{id} 已经是 modelled: false 了，Gap::UnmodelledRelic 会报它 —— 挂在合成缺口表里等于报两遍"
+            );
+            assert!(!why.is_empty(), "{id} 得写清楚它在开局那一刻少做了什么");
+        }
+    }
+
+    /// `ENEMY_START_PLAYER_STATUS` 里的名字必须解析得到真敌人。
+    ///
+    /// 它按**名字**索引（不是下标），所以表增删不会漂 —— 但拼错就是静默失效。
+    #[test]
+    fn enemy_start_player_status_names_resolve() {
+        for (name, st, amt) in crate::content::ENEMY_START_PLAYER_STATUS {
+            assert!(
+                crate::replay::enemy_id(name).is_some(),
+                "ENEMY_START_PLAYER_STATUS 里的「{name}」查不到敌人"
+            );
+            assert!(*amt != 0, "「{name}」给的 {st:?} 是 0 层，等于没写");
+        }
+    }
+
+    fn synth_deck(n: usize) -> Vec<crate::synth::DeckCard> {
+        (0..n).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect()
+    }
+
+    /// 遗物的 `start_status` 要落到玩家身上，**而且第 1 回合的覆甲不掉层**。
+    ///
+    /// 后半句是 2026-09-09 由 `bin/synth_audit` 报出来的真 bug：
+    /// [源码] `PlatingPower.AfterSideTurnStart` 对玩家那一支要求
+    /// `TurnNumber != 1`，内核只给敌人那一支加了这个门。
+    /// **对拍路径结构上看不见它** —— 那边每帧从观测重灌 `PLATING_POWER`，
+    /// 而第 1 回合的 `TurnStart` 只有 `begin_combat` 跑得到。
+    #[test]
+    fn synth_hangs_relic_start_status_on_the_player() {
+        let deck = synth_deck(10);
+        let relics = [
+            crate::synth::RelicSpec::new("VAJRA"),  // 力量 +1
+            crate::synth::RelicSpec::new("GORGET"), // 覆甲 4
+        ];
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+        let spec = crate::synth::FightSpec {
+            relics: &relics,
+            ..crate::synth::FightSpec::new(&deck, 80, &enemies, 7)
+        };
+        let built = crate::synth::build(&spec);
+        assert_eq!(built.state.player.get(St::Strength), 1, "金刚杵的力量没挂上");
+        assert_eq!(
+            built.state.player.get(St::PlatedArmor),
+            4,
+            "护喉甲给 4 层覆甲，而第 1 回合不掉层（[源码] TurnNumber != 1）"
+        );
+        assert_eq!(built.state.turn, 1);
+        assert_eq!(built.state.n_hand, 5, "开局发 5 张");
+    }
+
+    /// 人工制品要吃掉**触发器发出去的** debuff，不只是卡牌发出去的。
+    ///
+    /// [源码] `ArtifactPower.TryModifyPowerAmountReceived` 挂在接收方身上、
+    /// 不问来源。[实测] 2026-09-09 `act3_f48_boss_aeonglass_2026-09-06` 第 0 帧：
+    /// 永世沙漏是「人工制品 2 · 虚弱 0」（红面具那 1 层被吃掉了）。
+    #[test]
+    fn artifact_absorbs_a_debuff_handed_out_by_a_relic() {
+        let deck = synth_deck(10);
+        let relics = [crate::synth::RelicSpec::new("RED_MASK")];
+        let aeon =
+            crate::content::ENEMIES.iter().position(|d| d.name == "永世沙漏").unwrap() as u16;
+        let enemies = [crate::synth::EnemySpec::with_hp(aeon, 512)];
+        let spec = crate::synth::FightSpec {
+            relics: &relics,
+            ..crate::synth::FightSpec::new(&deck, 80, &enemies, 3)
+        };
+        let built = crate::synth::build(&spec);
+        assert_eq!(built.state.enemies[0].get(St::Weak), 0, "虚弱该被人工制品吃掉");
+        assert_eq!(built.state.enemies[0].get(St::Artifact), 2, "吃掉一次要掉一层");
+    }
+
+    /// 敌人开战时给**玩家**挂的 status（火箭的包围）。
+    ///
+    /// `EnemyDef::start_status` 只装挂自己身上的，这一类走
+    /// `content::ENEMY_START_PLAYER_STATUS`，消费点在 `begin_combat`。
+    #[test]
+    fn an_enemy_can_hand_the_player_a_status_at_combat_start() {
+        let deck = synth_deck(10);
+        let rocket = crate::content::ENEMIES.iter().position(|d| d.name == "火箭").unwrap() as u16;
+        let enemies = [crate::synth::EnemySpec::with_hp(rocket, 199)];
+        let built = crate::synth::build(&crate::synth::FightSpec::new(&deck, 80, &enemies, 1));
+        assert_eq!(built.state.player.get(St::Surrounded), 1, "火箭开局给玩家挂包围");
+        assert_eq!(built.state.enemies[0].get(St::BackAttackRight), 1);
+        assert_eq!(built.state.enemies[0].get(St::CrabRage), 1);
+    }
+
+    /// 血量掷点：**落在区间里**，而且**不动战斗内的三条随机流**。
+    ///
+    /// 后半句是 CRN 的前提（不变量 4 的同一条道理）：掷血量发生在开仗之前，
+    /// 让它扰动 `rng.shuffle` 就等于"换一只敌人的血"会改掉整局的抽牌顺序。
+    #[test]
+    fn synth_rolls_enemy_hp_inside_the_range_without_touching_the_combat_rngs() {
+        let nibbit =
+            crate::content::ENEMIES.iter().position(|d| d.name == "小啃兽").unwrap() as u16;
+        let (lo, hi) = crate::asc::hp_range(nibbit, 0).expect("小啃兽该有血量区间");
+        let deck = synth_deck(10);
+        let mut seen_low = false;
+        let mut seen_high = false;
+        for seed in 0..64u64 {
+            let enemies = [crate::synth::EnemySpec::rolled(nibbit)];
+            let built =
+                crate::synth::build(&crate::synth::FightSpec::new(&deck, 80, &enemies, seed));
+            let hp = built.state.enemies[0].max_hp;
+            assert!(hp >= lo && hp <= hi, "掷出来的 {hp} 不在区间 [{lo},{hi}] 里");
+            seen_low |= hp == lo;
+            seen_high |= hp == hi;
+            // 同一个种子、只把血量从"掷"换成"给定"，抽牌顺序必须逐字节相同
+            let fixed = [crate::synth::EnemySpec::with_hp(nibbit, hp)];
+            let same = crate::synth::build(&crate::synth::FightSpec::new(&deck, 80, &fixed, seed));
+            assert_eq!(
+                built.state.hand, same.state.hand,
+                "掷血量扰动了洗牌流 —— CRN 配对比较会当场失效"
+            );
+            assert_eq!(built.state.rng, same.state.rng);
+        }
+        assert!(seen_low && seen_high, "64 个种子该把区间两端都掷到");
+    }
+
+    /// 同种子 + 同 spec ⇒ 逐字节相同（不变量 4 在 L3 这一侧的形状）。
+    #[test]
+    fn synth_is_deterministic_given_the_seed() {
+        let deck = synth_deck(12);
+        let enemies = [crate::synth::EnemySpec::rolled(enemy::NIBBIT)];
+        let a = crate::synth::build(&crate::synth::FightSpec::new(&deck, 80, &enemies, 99));
+        let b = crate::synth::build(&crate::synth::FightSpec::new(&deck, 80, &enemies, 99));
+        assert_eq!(a.state, b.state);
+    }
+
+    /// 构造器**知道自己缺了什么**：认不出的遗物、没建模的遗物、
+    /// 只在合成路径上欠的遗物、没给的跨战斗计数器、内核不认识的牌，各报各的。
+    #[test]
+    fn synth_reports_every_gap_it_cannot_fill() {
+        use crate::synth::Gap;
+        let deck = vec![
+            crate::synth::DeckCard::new(card::STRIKE, false),
+            crate::synth::DeckCard::new(card::UNKNOWN, false),
+        ];
+        let relics = [
+            crate::synth::RelicSpec::new("NO_SUCH_RELIC"),
+            crate::synth::RelicSpec::new("REPTILE_TRINKET"), // modelled: false
+            crate::synth::RelicSpec::new("PETRIFIED_TOAD"),    // 只在合成路径上欠
+            crate::synth::RelicSpec::new("PENDULUM"),          // 有计数器，没给值
+        ];
+        let enemies = [crate::synth::EnemySpec::rolled(enemy::DUMMY)]; // 假人没有血量区间
+        let spec = crate::synth::FightSpec {
+            relics: &relics,
+            ..crate::synth::FightSpec::new(&deck, 80, &enemies, 5)
+        };
+        let built = crate::synth::build(&spec);
+        let has = |f: &dyn Fn(&Gap) -> bool| built.gaps.iter().any(|g| f(g));
+        assert!(has(&|g| matches!(g, Gap::UnknownCard { ix: 1 })), "{:?}", built.gaps);
+        assert!(has(&|g| matches!(g, Gap::UnknownRelic(id) if id == "NO_SUCH_RELIC")));
+        assert!(has(&|g| matches!(g, Gap::UnmodelledRelic(id) if id == "REPTILE_TRINKET")));
+        assert!(has(&|g| matches!(g, Gap::SynthUnmodelledRelic { id, .. } if id == "PETRIFIED_TOAD")));
+        assert!(has(&|g| matches!(g, Gap::RelicCounterMissing(id) if id == "PENDULUM")));
+        assert!(has(&|g| matches!(g, Gap::NoHpRange { .. })));
+        assert!(!built.clean());
+    }
+
+    /// 牌组进去多少张，开局手牌 + 抽牌堆就该是多少张（多重集不变）。
+    #[test]
+    fn the_deck_goes_in_whole() {
+        let deck: Vec<_> = (0..9)
+            .map(|i| {
+                crate::synth::DeckCard::new(
+                    if i % 3 == 0 { card::DEFEND } else { card::STRIKE },
+                    i % 2 == 0,
+                )
+            })
+            .collect();
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 50)];
+        let built = crate::synth::build(&crate::synth::FightSpec::new(&deck, 80, &enemies, 42));
+        let s = &built.state;
+        assert_eq!(s.n_cards as usize, deck.len());
+        assert_eq!((s.n_hand + s.n_draw) as usize, deck.len(), "牌只该在手牌和抽牌堆里");
+        assert_eq!(s.n_disc, 0);
+        assert_eq!(s.n_exh, 0);
+        let mut want: Vec<_> = deck.iter().map(|c| (c.id, c.flags)).collect();
+        let mut got: Vec<_> =
+            (0..s.n_cards as usize).map(|i| (s.cards[i].id, s.cards[i].flags)).collect();
+        want.sort();
+        got.sort();
+        assert_eq!(want, got, "多重集变了 —— 洗牌不该改牌的身份");
+    }
+
+    /// 两件遗物给**同一个**私有 status 时，`sync` 那条路要相加，不是后一条盖前一条。
+    ///
+    /// [实测] 2026-09-09 `act3_f46_soul_nexus` 第 0 帧玩家格挡 **14** = 锚 10 + 假锚 4。
+    /// 合成那条路一直是 `add`（`step::grant_relic`），`bin/synth_audit`
+    /// 就是拿这个把两条路的分歧比出来的。
+    #[test]
+    fn two_relics_granting_the_same_status_stack_in_sync() {
+        let mk = |id: &str| crate::replay::RelicObs {
+            id: id.to_string(),
+            name: id.to_string(),
+            counter: None,
+        };
+        let obs = crate::replay::Obs {
+            round: 1,
+            hp: 59,
+            max_hp: 75,
+            relics: vec![mk("ANCHOR"), mk("FAKE_ANCHOR")],
+            ..Default::default()
+        };
+        let mut r = crate::replay::Replayer::new("test");
+        let synced = r.sync(&obs);
+        assert_eq!(
+            synced.state.player.get(St::Anchor),
+            14,
+            "锚 10 + 假锚 4 = 14；后一条盖掉前一条的话这里会是 4 或 10"
+        );
+    }
+
+
+    // ---- 2026-09-09 第三批遗物（合成审计台照出来的那六件 + 损毁头盔）----
+
+    /// 斗篷扣：回合结束时**每张手牌**给 1 点格挡。
+    ///
+    /// [源码] `CloakClasp.BeforeSideTurnEnd` = `(int)(cards.Count × Block)`，
+    /// 时点在**弃手牌之前** —— 数的是"我没打出去的那几张"。
+    #[test]
+    fn cloak_clasp_blocks_per_card_left_in_hand() {
+        let build = |cards_in_hand: usize| -> i32 {
+            let mut s = State::new(80, 3);
+            s.add_enemy(enemy::DUMMY, 100);
+            for _ in 0..10 {
+                s.add_card(card::STRIKE, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.player.set(St::CloakClasp, 1);
+            // 打掉几张，手上就少几张
+            for _ in 0..(5 - cards_in_hand) {
+                s = step(s, Action::PlayCard { hand: 0, target: 0 });
+            }
+            let mut inc = NO_INCOMING;
+            inc[0] = (30, 1); // 敌人打 30，格挡挡下几点看得出来
+            let after = end_turn_with_incoming(s, &inc);
+            80 - after.player.hp
+        };
+        // 手上 5 张 -> 5 点格挡 -> 挨 25；手上 2 张 -> 2 点 -> 挨 28
+        assert_eq!(build(5), 25, "5 张手牌该给 5 点格挡");
+        assert_eq!(build(2), 28, "2 张手牌该给 2 点格挡");
+    }
+
+    /// 号角靴钉：**只在第 2 回合**开始给 14 点格挡（清完格挡之后）。
+    #[test]
+    fn horn_cleat_fires_only_on_turn_two() {
+        let mut s = State::new(80, 3);
+        s.add_enemy(enemy::DUMMY, 100);
+        for _ in 0..20 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        s.player.set(St::HornCleat, 14);
+        assert_eq!(s.player.block, 0, "第 1 回合不给");
+        let s = end_turn_with_incoming(s, &NO_INCOMING);
+        assert_eq!(s.turn, 2);
+        assert_eq!(s.player.block, 14, "第 2 回合开始给 14 点");
+        let s = end_turn_with_incoming(s, &NO_INCOMING);
+        assert_eq!(s.turn, 3);
+        assert_eq!(s.player.block, 0, "只给一次");
+    }
+
+    /// 损毁头盔：本场**第一次**获得力量时翻倍，之后不再触发。
+    ///
+    /// [实测] 2026-09-09 `act3_f48_boss_aeonglass_2026-09-06` 第 0 帧：
+    /// 身上金刚杵（开局 +1 力量）+ 损毁头盔，观测到的力量是 **2**。
+    #[test]
+    fn ruined_helmet_doubles_the_first_strength_gain_only() {
+        // 开局那条路（`grant_relics` 的第二趟）
+        let deck: Vec<_> =
+            (0..10).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+        // **故意把金刚杵写在损毁头盔前面**：两趟的意义就在于顺序无关
+        let relics = [
+            crate::synth::RelicSpec::new("VAJRA"),
+            crate::synth::RelicSpec::new("RUINED_HELMET"),
+        ];
+        let spec = crate::synth::FightSpec {
+            relics: &relics,
+            ..crate::synth::FightSpec::new(&deck, 80, &enemies, 11)
+        };
+        let built = crate::synth::build(&spec);
+        assert_eq!(built.state.player.get(St::Strength), 2, "金刚杵 1 点该被翻成 2");
+        assert_eq!(built.state.player.get(St::RuinedHelmet), 0, "用掉就清零");
+
+        // 卡牌那条路（`apply_status`），而且只翻第一次
+        let mut s = State::new(80, 3);
+        s.add_enemy(enemy::DUMMY, 100);
+        for _ in 0..6 {
+            s.add_card(card::COMBUST, 0, 0); // 燃烧：+2 力量
+        }
+        let mut s = begin_combat(s);
+        s.player.set(St::RuinedHelmet, 1);
+        let before = s.player.get(St::Strength);
+        let ix = hand_ix_of(&s, card::COMBUST);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert_eq!(s.player.get(St::Strength), before + 4, "第一次 +2 该翻成 +4");
+        let ix = hand_ix_of(&s, card::COMBUST);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert_eq!(s.player.get(St::Strength), before + 6, "第二次照常 +2");
+    }
+
+    /// 古茶具：**只有刚休息过**才给那 +2 能量，而且只给第 1 回合。
+    ///
+    /// 它欠的「上一个房间是不是休息处」不在 L1 里，但**在 L3 手上** ——
+    /// 所以走 `FightSpec::after_rest` 这个输入，而不是内核去猜。
+    /// 假货给 1 点（[源码] 真品 `EnergyVar(2)`、假货 1）。
+    #[test]
+    fn the_tea_set_only_pays_out_after_a_rest() {
+        let deck: Vec<_> =
+            (0..10).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+        let energy_at_start = |id: &str, after_rest: bool| -> i32 {
+            let relics = [crate::synth::RelicSpec::new(id)];
+            let spec = crate::synth::FightSpec {
+                relics: &relics,
+                after_rest,
+                ..crate::synth::FightSpec::new(&deck, 80, &enemies, 4)
+            };
+            crate::synth::build(&spec).state.energy
+        };
+        assert_eq!(energy_at_start("VENERABLE_TEA_SET", false), 3, "没休息过就是 3 点");
+        assert_eq!(energy_at_start("VENERABLE_TEA_SET", true), 5, "刚休息过 +2");
+        assert_eq!(energy_at_start("FAKE_VENERABLE_TEA_SET", true), 4, "假货只给 1 点");
+        // 第 2 回合不再给（标记用掉就清）
+        let relics = [crate::synth::RelicSpec::new("VENERABLE_TEA_SET")];
+        let spec = crate::synth::FightSpec {
+            relics: &relics,
+            after_rest: true,
+            ..crate::synth::FightSpec::new(&deck, 80, &enemies, 4)
+        };
+        let s = crate::synth::build(&spec).state;
+        let s = end_turn_with_incoming(s, &NO_INCOMING);
+        assert_eq!(s.energy, 3, "只兑现一次");
+    }
+
+    /// 新进表的六件里，三件是纯局外的 —— 它们**不该**挂任何战斗层状态。
+    ///
+    /// 这条守的是"别为了看起来建好了而乱挂 status"：局外遗物的产物
+    /// （牌组、最大生命、金币）本来就在 L3 的输入里。
+    #[test]
+    fn the_three_outside_combat_relics_hang_nothing() {
+        for id in ["LEAFY_POULTICE", "FROZEN_EGG", "SIGNET_RING"] {
+            let def = crate::content::relic_by_id(id).unwrap();
+            assert!(def.start_status.is_empty() && def.private_status.is_empty());
+            assert!(def.counter_to.is_none());
+            assert!(def.modelled, "{id} 是局外遗物，战斗层不欠它什么");
+            assert!(
+                crate::content::synth_gap(id).is_none(),
+                "{id} 的产物已经在 L3 的输入里（牌组/最大生命/金币），不是合成缺口"
+            );
+        }
+    }
+
+
+    // ---- 2026-09-09 批 3：开局手牌那一类（风箱 / 骨茶 / 宝石面具 / 碎石者 / 小血瓶）----
+
+    fn synth_fight(relics: &[&str], deck: &[crate::synth::DeckCard], seed: u64) -> State {
+        let specs: Vec<_> = relics.iter().map(|id| crate::synth::RelicSpec::new(id)).collect();
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+        let spec = crate::synth::FightSpec {
+            relics: &specs,
+            ..crate::synth::FightSpec::new(deck, 80, &enemies, seed)
+        };
+        crate::synth::build(&spec).state
+    }
+
+    /// 风箱：开局把**手牌**升级 —— 而且必须在**抽牌之后**。
+    ///
+    /// [源码] `Bellows.AfterPlayerTurnStart` + `TurnNumber <= 1`。
+    /// 挂在 `TurnStart` 上的话它会去升级一手还没发下来的空牌，
+    /// 所以钩子是 `HandDrawn`。这条测试就是那个时序的判据。
+    #[test]
+    fn bellows_upgrades_the_opening_hand_after_the_draw() {
+        let deck: Vec<_> =
+            (0..12).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        let s = synth_fight(&["BELLOWS"], &deck, 7);
+        assert_eq!(s.n_hand, 5);
+        for i in 0..s.n_hand as usize {
+            assert!(s.cards[s.hand[i] as usize].upgraded(), "手上这 5 张该全是 +");
+        }
+        // 抽牌堆里的**不**升级 —— 它只管手牌
+        let un = (0..s.n_draw as usize).filter(|&i| !s.cards[s.draw[i] as usize].upgraded()).count();
+        assert_eq!(un, s.n_draw as usize, "抽牌堆里那 7 张一张都不该升");
+        // 没有风箱就一张都不升
+        let plain = synth_fight(&[], &deck, 7);
+        assert!(
+            (0..plain.n_hand as usize).all(|i| !plain.cards[plain.hand[i] as usize].upgraded()),
+            "没风箱不该有 +"
+        );
+    }
+
+    /// 碎石者：开局把**抽牌堆**里随机 2 张可升级的升掉（不动手牌）。
+    #[test]
+    fn stone_cracker_upgrades_two_in_the_draw_pile() {
+        let deck: Vec<_> =
+            (0..12).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        let s = synth_fight(&["STONE_CRACKER"], &deck, 5);
+        let up = (0..s.n_cards as usize).filter(|&i| s.cards[i].upgraded()).count();
+        assert_eq!(up, 2, "[源码] `Take(2)`");
+        // 升的是抽牌堆里的：**规则在抽牌之前跑**，所以升过的那两张可能被抽上来。
+        // 判据只看总数 —— 位置由洗牌决定，不该钉。
+    }
+
+    /// 宝石面具：开局从抽牌堆挑一张**能力牌**进手牌，并让它本回合免费。
+    ///
+    /// [源码] `JeweledMask.BeforeHandDraw` —— **抽牌之前**，所以手牌是 5+1。
+    /// 卡面文本写的是"本场战斗"，而源码那个方法叫 `SetToFreeThisTurn`：照源码。
+    #[test]
+    fn jeweled_mask_pulls_a_free_power_before_the_draw() {
+        let mut deck: Vec<_> =
+            (0..12).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        deck.push(crate::synth::DeckCard::new(card::PYRE, false)); // 唯一一张能力牌
+        let s = synth_fight(&["JEWELED_MASK"], &deck, 3);
+        assert_eq!(s.n_hand, 6, "抽 5 张之前先塞进来一张 ⇒ 6 张");
+        let ix = (0..s.n_hand as usize)
+            .find(|&i| s.cards[s.hand[i] as usize].id == card::PYRE)
+            .expect("那张能力牌该在手上");
+        assert!(
+            s.cards[s.hand[ix] as usize].flags & crate::state::F_FREE_THIS_TURN != 0,
+            "它该被标成本回合免费"
+        );
+        // 牌堆里一张能力牌都没有时什么都不做
+        let plain: Vec<_> =
+            (0..12).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        assert_eq!(synth_fight(&["JEWELED_MASK"], &plain, 3).n_hand, 5);
+    }
+
+    /// 小血瓶：开局回 2 血（假货 1），**只回第 1 回合那一次**，而且顶到上限为止。
+    #[test]
+    fn blood_vial_heals_at_the_start_of_combat_only() {
+        let deck: Vec<_> =
+            (0..12).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        let heal = |id: &str, hp: i32| -> i32 {
+            let specs = [crate::synth::RelicSpec::new(id)];
+            let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+            let spec = crate::synth::FightSpec {
+                relics: &specs,
+                max_hp: 80,
+                ..crate::synth::FightSpec::new(&deck, hp, &enemies, 2)
+            };
+            crate::synth::build(&spec).state.player.hp
+        };
+        assert_eq!(heal("BLOOD_VIAL", 60), 62);
+        assert_eq!(heal("FAKE_BLOOD_VIAL", 60), 61, "假货只回 1 点");
+        assert_eq!(heal("BLOOD_VIAL", 79), 80, "顶到上限为止");
+        // 第 2 回合不再回
+        let specs = [crate::synth::RelicSpec::new("BLOOD_VIAL")];
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+        let spec = crate::synth::FightSpec {
+            relics: &specs,
+            max_hp: 80,
+            ..crate::synth::FightSpec::new(&deck, 60, &enemies, 2)
+        };
+        let s = crate::synth::build(&spec).state;
+        let s = end_turn_with_incoming(s, &NO_INCOMING);
+        assert_eq!(s.player.hp, 62, "只回一次");
+    }
+
+    /// 缩放仪：**只有 Boss 房**才回那 25 血。
+    #[test]
+    fn pantograph_only_heals_in_a_boss_room() {
+        let deck: Vec<_> =
+            (0..12).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        let hp_after = |boss: bool| -> i32 {
+            let specs = [crate::synth::RelicSpec::new("PANTOGRAPH")];
+            let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+            let spec = crate::synth::FightSpec {
+                relics: &specs,
+                max_hp: 80,
+                boss_room: boss,
+                ..crate::synth::FightSpec::new(&deck, 40, &enemies, 2)
+            };
+            crate::synth::build(&spec).state.player.hp
+        };
+        assert_eq!(hp_after(false), 40, "普通房不给");
+        assert_eq!(hp_after(true), 65, "Boss 房 +25");
+    }
+
+    /// 骨茶：**局外计数器 > 0** 才武装，而且和风箱共用同一个 status。
+    #[test]
+    fn bone_tea_arms_only_when_the_caller_says_it_has_combats_left() {
+        let deck: Vec<_> =
+            (0..12).map(|_| crate::synth::DeckCard::new(card::STRIKE, false)).collect();
+        let upgraded_in_hand = |counter: Option<i32>| -> usize {
+            let specs = [crate::synth::RelicSpec { id: "BONE_TEA", counter }];
+            let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+            let spec = crate::synth::FightSpec {
+                relics: &specs,
+                ..crate::synth::FightSpec::new(&deck, 80, &enemies, 9)
+            };
+            let s = crate::synth::build(&spec).state;
+            (0..s.n_hand as usize).filter(|&i| s.cards[s.hand[i] as usize].upgraded()).count()
+        };
+        assert_eq!(upgraded_in_hand(Some(2)), 5, "还剩 2 场 ⇒ 升级整手");
+        assert_eq!(upgraded_in_hand(Some(0)), 0, "用完了就不给");
+        assert_eq!(upgraded_in_hand(None), 0, "拿不到就当没武装（低估自己）");
+    }
+
+    /// 拿走抽牌堆中间一张时，**已知前缀要跟着截**。
+    ///
+    /// `n_draw_known` 数的是末尾那几张，而 `take_from_draw` 把它上面那一段
+    /// 整体前移了 —— 不截的话 planner 会以为自己知道一批**已经换了位置**的牌。
+    #[test]
+    fn taking_a_card_out_of_the_draw_pile_truncates_the_known_prefix() {
+        let mut s = State::new(80, 1);
+        for _ in 0..6 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        // 只知道顶上两张（下标 4、5）
+        s.n_draw_known = 2;
+        let n = s.n_draw;
+        // 从**已知区下面**（下标 2）拿走：其余每一张的身份都没变 ⇒ 已知数不动
+        s.take_from_draw(2);
+        assert_eq!(s.n_draw, n - 1);
+        assert_eq!(s.n_draw_known, 2, "抽走已知区下面的牌不该让已知区缩水");
+        // 从**已知区里**（末尾）拿走：少了一张已知的 ⇒ −1
+        let mut s2 = State::new(80, 1);
+        for _ in 0..6 {
+            s2.add_card(card::STRIKE, 0, 0);
+        }
+        s2.n_draw_known = 2;
+        s2.take_from_draw(5);
+        assert_eq!(s2.n_draw_known, 1);
+    }
+
+
+    // ======================================================================
+    // L3 阶段 2：单场评估（`src/synth/eval.rs`）
+    //
+    // 验收台是 `bin/fight_eval`（拿实录第 0 帧当测试集，判据是**截断率 0**）。
+    // 下面这几条守的是台子照不到的那半：它只跑得了语料里出现过的组合，
+    // 而这些是规矩 —— 尤其是「截断的样本不许进分布」和 CRN 那一条。
+    // ======================================================================
+
+    fn eval_deck(n: usize) -> Vec<crate::synth::DeckCard> {
+        (0..n)
+            .map(|i| crate::synth::DeckCard::new(
+                if i % 2 == 0 { card::STRIKE } else { card::DEFEND },
+                false,
+            ))
+            .collect()
+    }
+
+    /// **认不出敌人就拒绝作答**，而不是给一个自信的 0% 死亡率。
+    ///
+    /// 推演靠 `EnemyDef::moves` 推敌人每一手，`enemy::UNKNOWN` 唯一的一手是
+    /// `EOp::Nothing` —— 那是**一场敌人不出手的仗**（12 血打 200 血一滴不掉，
+    /// 见 `rollout` 模块头）。这条要是松了，L3 会对每一场它看不懂的仗报「稳赢」。
+    #[test]
+    fn eval_refuses_when_it_cannot_predict_the_enemy() {
+        use crate::synth::eval::{evaluate, EvalCfg, Refusal};
+        let deck = eval_deck(10);
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::UNKNOWN, 50)];
+        let spec = crate::synth::FightSpec::new(&deck, 80, &enemies, 7);
+        let ev = evaluate(&spec, &EvalCfg { samples: 8, ..EvalCfg::default() });
+        assert_eq!(ev.refused, Some(Refusal::CannotRollout));
+        assert_eq!(ev.n, 0, "拒绝作答时一个数都不许报");
+        assert_eq!(ev.hp_end.n, 0);
+        assert!(ev.samples.is_empty());
+    }
+
+    /// **CRN**：两副不同的牌组，样本 `i` 上看到的敌人血量必须一样。
+    ///
+    /// L3 问的是"加这张牌好多少"，那个差要在同一批随机上量。
+    /// `synth::hp_stream` 只吃 `spec.seed`，而 `eval::sample_seed` 只吃
+    /// `(seed, i)` —— 牌组进不来。这条断了的话，"多一张牌"会顺手换掉敌人的血，
+    /// 两个候选比的就不是同一场仗了。
+    #[test]
+    fn two_decks_see_the_same_enemy_hp_on_the_same_sample() {
+        use crate::synth::eval::sample_seed;
+        let a = eval_deck(10);
+        let b = eval_deck(14); // 多四张牌
+        let enemies = [crate::synth::EnemySpec::rolled(enemy::NIBBIT)];
+        let mut seen = Vec::new();
+        for i in 0..8 {
+            let sa = crate::synth::FightSpec::new(&a, 80, &enemies, sample_seed(999, i));
+            let sb = crate::synth::FightSpec::new(&b, 80, &enemies, sample_seed(999, i));
+            let (ba, bb) = (crate::synth::build(&sa), crate::synth::build(&sb));
+            assert_eq!(
+                ba.state.enemies[0].max_hp, bb.state.enemies[0].max_hp,
+                "样本 {i}：换了牌组敌人血量就变了 —— CRN 断了"
+            );
+            seen.push(ba.state.enemies[0].max_hp);
+        }
+        seen.dedup();
+        assert!(seen.len() > 1, "八个样本掷出同一个血量 —— 血量那条方差没被采到");
+    }
+
+    /// 同一个 spec 跑两遍，**逐样本逐字段相同**。
+    ///
+    /// 并行是按下标写回原位的（`rollout::par_map`），顺序一变分位数就不可复现。
+    #[test]
+    fn eval_is_deterministic_given_the_seed() {
+        use crate::synth::eval::{evaluate, EvalCfg};
+        let deck = eval_deck(12);
+        let enemies = [crate::synth::EnemySpec::rolled(enemy::NIBBIT)];
+        let spec = crate::synth::FightSpec::new(&deck, 80, &enemies, 4242);
+        let cfg = EvalCfg { samples: 16, ..EvalCfg::default() };
+        let a = evaluate(&spec, &cfg);
+        let b = evaluate(&spec, &cfg);
+        assert_eq!(a.samples, b.samples);
+        assert_eq!(a.deaths, b.deaths);
+        assert_eq!(a.hp_end, b.hp_end);
+    }
+
+    /// **截断的样本既不进血量分布、也不进死亡数。**
+    ///
+    /// 撞上回合上限的推演战斗没有分出胜负，而它照样带着一个血量 ——
+    /// 把那个数读成"活着结束"正是 `bin/rollout` 的 P4 在量的事。
+    /// 这里把上限压到 1 个回合，制造一批必然截断的样本。
+    #[test]
+    fn truncated_samples_stay_out_of_the_distributions() {
+        use crate::synth::eval::{evaluate, EvalCfg};
+        let deck = eval_deck(12);
+        // 假人 600 血：一个回合绝对打不完
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 600)];
+        let spec = crate::synth::FightSpec::new(&deck, 80, &enemies, 11);
+        let ev = evaluate(&spec, &EvalCfg { samples: 8, max_turns: 1, ..EvalCfg::default() });
+        assert_eq!(ev.truncated, 8, "一个回合打不完 600 血");
+        assert_eq!(ev.deaths, 0);
+        assert_eq!(ev.hp_end.n, 0, "截断的样本不许进血量分布");
+        assert_eq!(ev.loss.n, 0);
+        assert_eq!(ev.turns.n, 0);
+        assert!(ev.truncation_rate() > 0.99);
+    }
+
+    /// 配对比较**必须是同一批样本**，对不上就返回 `None` 而不是硬算。
+    #[test]
+    fn paired_delta_refuses_two_different_batches() {
+        use crate::synth::eval::{evaluate, paired_delta, EvalCfg};
+        let deck = eval_deck(12);
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::NIBBIT, 46)];
+        let spec = crate::synth::FightSpec::new(&deck, 80, &enemies, 5);
+        let a = evaluate(&spec, &EvalCfg { samples: 8, ..EvalCfg::default() });
+        let b = evaluate(&spec, &EvalCfg { samples: 12, ..EvalCfg::default() });
+        assert!(paired_delta(&a, &b).is_none(), "样本数不同就不是同一批随机");
+        // 种子基不同也不许配对 —— 那时算出来的"差"是两份噪声相减
+        let other_seed =
+            evaluate(&crate::synth::FightSpec::new(&deck, 80, &enemies, 6), &EvalCfg { samples: 8, ..EvalCfg::default() });
+        assert!(paired_delta(&a, &other_seed).is_none(), "种子基不同就不是同一批随机");
+        // 同一批：自己和自己比，逐样本差必须全是 0
+        let c = evaluate(&spec, &EvalCfg { samples: 8, ..EvalCfg::default() });
+        let d = paired_delta(&a, &c).expect("同一个 spec 同一个样本数");
+        assert_eq!(d.pairs, 8);
+        assert_eq!(d.hp.min, 0);
+        assert_eq!(d.hp.max, 0);
+        assert_eq!(d.deaths_delta, 0);
+    }
+
+    /// **升级过的牌组不许更差** —— 配对之后逐样本比。
+    ///
+    /// 这是阶段 3 那条单调性自检的单场版本。它**不是**统计检验：
+    /// 打击 5 -> 打击+ 8 是严格更强的一张牌，同一批随机下不该出现
+    /// "整体更差"。方向反了通常意味着评估口径写反了（比如把战损当成了收益）。
+    #[test]
+    fn upgrading_every_strike_never_reads_worse() {
+        use crate::synth::eval::{evaluate, paired_delta, EvalCfg};
+        let base = eval_deck(12);
+        let upg: Vec<_> = base
+            .iter()
+            .map(|c| crate::synth::DeckCard::new(c.id, c.id == card::STRIKE))
+            .collect();
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::NIBBIT, 46)];
+        let cfg = EvalCfg { samples: 32, ..EvalCfg::default() };
+        let a = evaluate(&crate::synth::FightSpec::new(&base, 60, &enemies, 8), &cfg);
+        let b = evaluate(&crate::synth::FightSpec::new(&upg, 60, &enemies, 8), &cfg);
+        let d = paired_delta(&a, &b).expect("同一个种子基、同一个样本数");
+        assert!(d.deaths_delta <= 0, "升级之后死得更多：{}", d.deaths_delta);
+        assert!(
+            d.hp.mean >= 0.0,
+            "升级之后平均终点血量更低（{:.2}）—— 更强 {} / 更弱 {}",
+            d.hp.mean,
+            d.b_better,
+            d.a_better
+        );
+    }
+
+    /// **已知偏差是从这副牌组自己算出来的**，不是一段写死的免责文本。
+    #[test]
+    fn caveats_are_derived_from_the_deck_not_hardcoded() {
+        use crate::synth::eval::{evaluate, Caveat, EvalCfg};
+        let cfg = EvalCfg { samples: 4, ..EvalCfg::default() };
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::NIBBIT, 46)];
+        let plain = eval_deck(10);
+        let ev = evaluate(&crate::synth::FightSpec::new(&plain, 80, &enemies, 1), &cfg);
+        assert!(
+            !ev.caveats().iter().any(|c| matches!(c, Caveat::EngineCards(_))),
+            "一张能力牌都没有，不该报引擎牌那一条"
+        );
+        assert!(!ev.caveats().iter().any(|c| matches!(c, Caveat::PotionsUnused(_))));
+        // 掺一张能力牌进去，那一条就该出现
+        let mut with_power = plain.clone();
+        with_power.push(crate::synth::DeckCard::new(card::DEMON_FORM, false));
+        let potions = [crate::state::potion::FIRE, 0, 0];
+        let spec = crate::synth::FightSpec {
+            potions: &potions,
+            ..crate::synth::FightSpec::new(&with_power, 80, &enemies, 1)
+        };
+        let ev = evaluate(&spec, &cfg);
+        assert!(ev.caveats().iter().any(|c| matches!(c, Caveat::EngineCards(1))));
+        assert!(ev.caveats().iter().any(|c| matches!(c, Caveat::PotionsUnused(1))));
+        // **A8 以上**那条只在高进阶出现：整张进阶表是 [源码] 档，
+        // 而目标是 A10 —— 这一栏必须在读数旁边，不能等到出结果才想起来。
+        assert!(!ev.caveats().iter().any(|c| matches!(c, Caveat::SourceOnlyAscension(_))));
+        let a10 = crate::synth::FightSpec {
+            ascension: 10,
+            ..crate::synth::FightSpec::new(&plain, 80, &enemies, 1)
+        };
+        let ev = evaluate(&a10, &cfg);
+        assert!(ev.caveats().iter().any(|c| matches!(c, Caveat::SourceOnlyAscension(10))));
+    }
+
+    // ----------------------------------------------------------------------
+    // L1：势不可当的归属，和「触发器打出来的伤害也要数层数」
+    //
+    // 两条都是 2026-09-12 由 L3 阶段 3 的整幕链照出来的 —— 它是第一个
+    // **长时间连打几百场**的台子，而这两条错都要绕很多圈才看得见。
+    // ----------------------------------------------------------------------
+
+    /// **势不可当只认自己获得的格挡。**
+    ///
+    /// [源码] `JuggernautPower.AfterBlockGained` 的判据是
+    /// `!(amount <= 0m) && creature == base.Owner`。第二个条件内核原来没有，
+    /// 于是**敌人蜷身获得格挡会触发我的势不可当** —— 白送一次伤害，
+    /// 而且那一下又把蜷身打醒，两条规则合起来是个环。
+    #[test]
+    fn juggernaut_only_fires_on_its_owners_block() {
+        let deck = [
+            crate::synth::DeckCard::new(card::STRIKE, false),
+            crate::synth::DeckCard::new(card::DEFEND, false),
+        ];
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+        let spec = crate::synth::FightSpec {
+            start_status: &[(St::Juggernaut, 5)],
+            ..crate::synth::FightSpec::new(&deck, 80, &enemies, 7)
+        };
+        // --- 反面：敌人自己获得格挡，势不可当**不许**发作 ---
+        let mut s = crate::synth::build(&spec).state;
+        s.enemies[0].add(St::CurlUp, 14);
+        let hp0 = s.enemies[0].hp;
+        // 打一张打击：敌人挨打 -> 蜷身给**它自己**14 格挡。
+        let strike = (0..s.n_hand as usize)
+            .find(|&i| s.cards[s.hand[i] as usize].id == card::STRIKE)
+            .expect("手上有打击");
+        s = crate::step(s, crate::step::Action::PlayCard { hand: strike as u8, target: 0 });
+        assert_eq!(s.enemies[0].block, 14, "蜷身该给它自己 14 点格挡");
+        assert_eq!(
+            s.enemies[0].hp,
+            hp0 - 6,
+            "只该掉打击那一下（6）—— 掉更多就是势不可当跟着敌人的格挡发作了"
+        );
+        assert_eq!(s.enemies[0].get(St::CurlUp), 0, "蜷身用完就该清掉");
+
+        // --- 正面：我自己获得格挡，它照常发作 ---
+        let mut s = crate::synth::build(&spec).state;
+        let hp0 = s.enemies[0].hp;
+        let defend = (0..s.n_hand as usize)
+            .find(|&i| s.cards[s.hand[i] as usize].id == card::DEFEND)
+            .expect("手上有防御");
+        s = crate::step(s, crate::step::Action::PlayCard { hand: defend as u8, target: 0 });
+        assert_eq!(s.enemies[0].hp, hp0 - 5, "我获得格挡 ⇒ 势不可当打 5 点");
+    }
+
+    /// **触发器打出来的那一下，它的钩子要算在上一层里。**
+    ///
+    /// `hit_enemy_with` 原来把 `EnemyAttacked/EnemyDamaged/EnemyDied/AllyDied`
+    /// 一律按 `depth = 0` 点火，于是 `MAX_HOOK_DEPTH` 在**整条伤害路径上失效**：
+    /// 任何「触发器打人 -> 挨打的那只再触发」的环都数不到上限，
+    /// 表现是**爆栈**而不是一条红。
+    ///
+    /// 这里从 `MAX_HOOK_DEPTH` 那一层点火：势不可当自己还能发作（判据是
+    /// `depth > MAX`），但它打出来的那一下已经在 `MAX + 1` 层上 ——
+    /// 蜷身因此**不该**再被唤醒。修之前这一格恒等于 14。
+    #[test]
+    fn a_trigger_caused_hit_carries_the_hook_depth() {
+        let deck = [crate::synth::DeckCard::new(card::STRIKE, false)];
+        let enemies = [crate::synth::EnemySpec::with_hp(enemy::DUMMY, 100)];
+        let spec = crate::synth::FightSpec {
+            start_status: &[(St::Juggernaut, 5)],
+            ..crate::synth::FightSpec::new(&deck, 80, &enemies, 3)
+        };
+        let mut s = crate::synth::build(&spec).state;
+        s.enemies[0].add(St::CurlUp, 14);
+        let hp0 = s.enemies[0].hp;
+        crate::step::fire(&mut s, crate::ops::Hook::GainBlock, crate::step::MAX_HOOK_DEPTH);
+        assert_eq!(s.enemies[0].hp, hp0 - 5, "势不可当在 MAX 层上仍该发作");
+        assert_eq!(
+            s.enemies[0].block, 0,
+            "它打出来的那一下已经在 MAX+1 层 —— 蜷身不该再被唤醒"
+        );
+        assert_eq!(s.enemies[0].get(St::CurlUp), 14, "没被唤醒就不该掉层");
+
+        // 同一件事从第 0 层点火：蜷身**该**醒，这一半证明上面那条不是
+        // 「钩子根本没接上」。
+        let mut s = crate::synth::build(&spec).state;
+        s.enemies[0].add(St::CurlUp, 14);
+        crate::step::fire(&mut s, crate::ops::Hook::GainBlock, 0);
+        assert_eq!(s.enemies[0].block, 14, "第 0 层点火时蜷身该醒");
+    }
+
+    // ----------------------------------------------------------------------
+    // L3 阶段 3：整幕链式评估（`src/synth/act.rs`）
+    // ----------------------------------------------------------------------
+
+    fn act_table() -> Option<crate::synth::encounters::Table> {
+        crate::synth::encounters::Table::load("data").ok()
+    }
+
+    /// **休息处回多少血是 [源码] 定的，不是拍的。**
+    ///
+    /// `HealRestSiteOption.GetBaseHealAmount = MaxHp * 0.3m`，落地那一步
+    /// `Creature.SetCurrentHpInternal` 是 `(int)Math.Min(hp + amount, MaxHp)`
+    /// —— **向下取整**。73 血上限回 21 而不是 22。
+    #[test]
+    fn rest_heals_thirty_percent_rounded_down() {
+        use crate::synth::act::rest_heal;
+        assert_eq!(rest_heal(73), 21);
+        assert_eq!(rest_heal(80), 24);
+        assert_eq!(rest_heal(0), 0);
+        assert_eq!(rest_heal(9), 2, "2.7 -> 2，向下取整");
+    }
+
+    /// 路线字符串**认不出的字母整条拒绝**，不悄悄跳过。
+    #[test]
+    fn parse_rooms_refuses_a_letter_it_does_not_know() {
+        use crate::synth::act::{parse_rooms, Room};
+        assert_eq!(parse_rooms("MMRB").unwrap(), vec![Room::Monster, Room::Monster, Room::Rest, Room::Boss]);
+        assert_eq!(parse_rooms("m e b r").unwrap().len(), 4, "大小写和空白都认");
+        assert!(parse_rooms("MMX").is_err(), "X 不是房间 —— 整条拒绝");
+        assert!(parse_rooms("   ").is_err());
+    }
+
+    /// **两副牌组在同一个样本上抽到同一批遭遇**（CRN 多共享的那一维）。
+    ///
+    /// 判据取的是**可观测的后果**：哪几间开不出来只由遭遇序列决定，
+    /// 所以两副牌组逐样本的 `unsimulated` 必须**逐个相等**。
+    /// 序列一旦跟着牌组走，这一列当场就会分岔。
+    #[test]
+    fn two_decks_see_the_same_encounter_sequence() {
+        let Some(t) = act_table() else { return };
+        use crate::synth::act::{evaluate_act, parse_rooms, ActCfg, ActPlan};
+        let rooms = parse_rooms("MMEB").unwrap();
+        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let cfg = ActCfg { samples: 12, ..ActCfg::default() };
+        let a = eval_deck(10);
+        let b = eval_deck(16); // 多六张牌
+        let enemies: [crate::synth::EnemySpec; 0] = [];
+        let sa = crate::synth::FightSpec::new(&a, 80, &enemies, 4242);
+        let sb = crate::synth::FightSpec::new(&b, 80, &enemies, 4242);
+        let (ea, eb) = (evaluate_act(&sa, &plan, &t, &cfg), evaluate_act(&sb, &plan, &t, &cfg));
+        assert_eq!(ea.n, eb.n);
+        for i in 0..ea.n {
+            assert_eq!(
+                ea.samples[i].unsimulated, eb.samples[i].unsimulated,
+                "样本 {i}：换了牌组抽到的遭遇就变了 —— 整幕链这一维的 CRN 断了"
+            );
+        }
+    }
+
+    /// **开不出来的那一场是"跳过并计数"，不是"不存在"。**
+    ///
+    /// 第 1 幕 Underdocks 内核今天只开得出一半，所以这条链必然漏几场。
+    /// 漏掉的场次要同时出现在两处：逐样本的 `unsimulated` 和报告里的
+    /// `skipped` 原因清单 —— 少一处，读结论的人就看不见这个数是**乐观**的。
+    #[test]
+    fn an_encounter_the_kernel_cannot_open_is_counted_not_hidden() {
+        let Some(t) = act_table() else { return };
+        use crate::synth::act::{evaluate_act, parse_rooms, ActCfg, ActPlan};
+        let rooms = parse_rooms("MMMMB").unwrap();
+        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let cfg = ActCfg { samples: 8, ..ActCfg::default() };
+        let deck = eval_deck(10);
+        let enemies: [crate::synth::EnemySpec; 0] = [];
+        let ev = evaluate_act(
+            &crate::synth::FightSpec::new(&deck, 80, &enemies, 99),
+            &plan,
+            &t,
+            &cfg,
+        );
+        assert!(ev.refused.is_none());
+        assert!(ev.unsimulated.mean > 0.0, "这一幕开得出 {:?}，不可能一场都不漏", ev.coverage);
+        assert!(!ev.skipped.is_empty(), "漏了却没有理由清单 = 静默地漏");
+        assert!(ev.coverage.0 < ev.coverage.1, "覆盖率要和结论一起报");
+        assert!(ev.missing_fights().is_some(), "漏了就要报那条偏差");
+    }
+
+    /// 配对比较的三个前提：**同种子基、同样本数、同一条路线**。
+    ///
+    /// 路线那一条是整幕独有的 —— 换了路线就不是同一个问题了，
+    /// 那时候的差值什么都不是。
+    #[test]
+    fn paired_act_delta_refuses_anything_but_the_same_setup() {
+        let Some(t) = act_table() else { return };
+        use crate::synth::act::{evaluate_act, paired_act_delta, parse_rooms, ActCfg, ActPlan};
+        let rooms = parse_rooms("MMB").unwrap();
+        let other = parse_rooms("MMRB").unwrap();
+        let cfg = ActCfg { samples: 8, ..ActCfg::default() };
+        let deck = eval_deck(10);
+        let enemies: [crate::synth::EnemySpec; 0] = [];
+        let spec = crate::synth::FightSpec::new(&deck, 80, &enemies, 5);
+        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let a = evaluate_act(&spec, &plan, &t, &cfg);
+        // 自己和自己：逐样本差必须全是 0
+        let b = evaluate_act(&spec, &plan, &t, &cfg);
+        let d = paired_act_delta(&a, &b).expect("同一个 spec、同一条路线");
+        assert_eq!(d.hp.min, 0);
+        assert_eq!(d.hp.max, 0);
+        assert_eq!(d.deaths_delta, 0);
+        // 换种子基 / 换样本数 / 换路线，三条都不许配对
+        let other_seed = evaluate_act(
+            &crate::synth::FightSpec { seed: 6, ..spec },
+            &plan,
+            &t,
+            &cfg,
+        );
+        assert!(paired_act_delta(&a, &other_seed).is_none(), "种子基不同");
+        let fewer = evaluate_act(&spec, &plan, &t, &ActCfg { samples: 4, ..cfg });
+        assert!(paired_act_delta(&a, &fewer).is_none(), "样本数不同");
+        let other_route = evaluate_act(
+            &spec,
+            &ActPlan { rooms: &other, ..plan },
+            &t,
+            &cfg,
+        );
+        assert!(paired_act_delta(&a, &other_route).is_none(), "路线不同");
+    }
+
+    /// **升级过的牌组走完一幕不许更差** —— 阶段 2 那条单调性自检的整幕版本。
+    ///
+    /// 它不是统计检验：打击/防御 5 -> 8 是严格更强的牌，同一批遭遇下
+    /// 不该出现"整体更危险"。方向反了通常意味着链的血量接错了地方
+    /// （比如把战损当成了收益，或者休息处回血算进了错的一侧）。
+    #[test]
+    fn upgrading_the_basics_never_reads_worse_across_an_act() {
+        let Some(t) = act_table() else { return };
+        use crate::synth::act::{
+            evaluate_act, paired_act_delta, parse_rooms, upgrade_basics, ActCfg, ActPlan,
+        };
+        let rooms = parse_rooms("MMRMB").unwrap();
+        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let cfg = ActCfg { samples: 24, ..ActCfg::default() };
+        let base = eval_deck(12);
+        let upg = upgrade_basics(&base);
+        let enemies: [crate::synth::EnemySpec; 0] = [];
+        let spec = crate::synth::FightSpec::new(&base, 60, &enemies, 8);
+        let a = evaluate_act(&spec, &plan, &t, &cfg);
+        let b = evaluate_act(&crate::synth::FightSpec { deck: &upg, ..spec }, &plan, &t, &cfg);
+        let d = paired_act_delta(&a, &b).expect("同一个种子基、同一条路线");
+        assert!(d.deaths_delta <= 0, "升级之后整幕死得更多：{}", d.deaths_delta);
+        assert!(
+            d.hp.mean >= 0.0,
+            "升级之后走完一幕的血量更低（{:.2}）—— 更好 {} / 更差 {}",
+            d.hp.mean,
+            d.b_better,
+            d.a_better
+        );
+    }
+
+    /// **休息处那一间只做一件事：回 30% 上限、封顶。**
+    ///
+    /// 用一条只有休息处的"路线"把它单独量出来 —— 一场仗都不打，
+    /// 终点血量就该正好是 `min(上限, 进来时 + rest_heal)`。
+    #[test]
+    fn a_rest_room_heals_and_caps_at_max_hp() {
+        let Some(t) = act_table() else { return };
+        use crate::synth::act::{evaluate_act, parse_rooms, rest_heal, ActCfg, ActPlan};
+        let rooms = parse_rooms("RR").unwrap();
+        let plan = ActPlan { act: "Underdocks", rooms: &rooms, double_boss: false };
+        let cfg = ActCfg { samples: 4, ..ActCfg::default() };
+        let deck = eval_deck(10);
+        let enemies: [crate::synth::EnemySpec; 0] = [];
+        let spec = crate::synth::FightSpec {
+            max_hp: 80,
+            ..crate::synth::FightSpec::new(&deck, 30, &enemies, 1)
+        };
+        let ev = evaluate_act(&spec, &plan, &t, &cfg);
+        assert_eq!(ev.deaths, 0);
+        assert_eq!(ev.hp_end.min, (30 + 2 * rest_heal(80)).min(80), "两觉睡满");
+        let full = crate::synth::FightSpec { hp: 78, ..spec };
+        let ev = evaluate_act(&full, &plan, &t, &cfg);
+        assert_eq!(ev.hp_end.max, 80, "封顶在上限");
     }
 }

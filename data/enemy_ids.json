@@ -1,0 +1,1000 @@
+{
+ "note": "[实录] 英文 MonsterModel 类名 ↔ 内核 content::ENEMIES 的名字。连接键只有实录（观测里 entity_id 和 name 在同一条记录里）。`kernel_enemy: null` = 还没见过或内核还没建，**不猜**。",
+ "resolution": "镜像 replay::enemy_id：直配中文名 -> 截 `#` 后缀 -> replay.rs 的别名表。",
+ "monsters": {
+  "Aeonglass": {
+   "key": "AEONGLASS",
+   "observed_names": [
+    "永世沙漏"
+   ],
+   "kernel_enemy": "永世沙漏",
+   "source": "trace",
+   "note": null
+  },
+  "Architect": {
+   "key": "ARCHITECT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "AssassinRubyRaider": {
+   "key": "ASSASSIN_RUBY_RAIDER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "AxeRubyRaider": {
+   "key": "AXE_RUBY_RAIDER",
+   "observed_names": [
+    "劫掠者斧手"
+   ],
+   "kernel_enemy": "劫掠者斧手",
+   "source": "trace",
+   "note": null
+  },
+  "Axebot": {
+   "key": "AXEBOT",
+   "observed_names": [
+    "巨斧机器人"
+   ],
+   "kernel_enemy": "巨斧机器人",
+   "source": "trace",
+   "note": null
+  },
+  "BattleFriendV1": {
+   "key": "BATTLE_FRIEND_V1",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "BattleFriendV2": {
+   "key": "BATTLE_FRIEND_V2",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "BattleFriendV3": {
+   "key": "BATTLE_FRIEND_V3",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "BigDummy": {
+   "key": "BIG_DUMMY",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "BowlbugEgg": {
+   "key": "BOWLBUG_EGG",
+   "observed_names": [
+    "盛碗虫（卵）"
+   ],
+   "kernel_enemy": "盛碗虫（卵）",
+   "source": "trace",
+   "note": null
+  },
+  "BowlbugNectar": {
+   "key": "BOWLBUG_NECTAR",
+   "observed_names": [
+    "盛碗虫（蜜）"
+   ],
+   "kernel_enemy": "盛碗虫（蜜）",
+   "source": "trace",
+   "note": null
+  },
+  "BowlbugRock": {
+   "key": "BOWLBUG_ROCK",
+   "observed_names": [
+    "盛碗虫（石）"
+   ],
+   "kernel_enemy": "盛碗虫（石）",
+   "source": "trace",
+   "note": null
+  },
+  "BowlbugSilk": {
+   "key": "BOWLBUG_SILK",
+   "observed_names": [
+    "盛碗虫（丝）"
+   ],
+   "kernel_enemy": "盛碗虫（丝）",
+   "source": "trace",
+   "note": null
+  },
+  "BruteRubyRaider": {
+   "key": "BRUTE_RUBY_RAIDER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "BygoneEffigy": {
+   "key": "BYGONE_EFFIGY",
+   "observed_names": [
+    "旧日雕像"
+   ],
+   "kernel_enemy": "旧日雕像",
+   "source": "trace",
+   "note": null
+  },
+  "Byrdonis": {
+   "key": "BYRDONIS",
+   "observed_names": [
+    "多尼斯异鸟"
+   ],
+   "kernel_enemy": "多尼斯异鸟",
+   "source": "trace",
+   "note": null
+  },
+  "Byrdpip": {
+   "key": "BYRDPIP",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "CalcifiedCultist": {
+   "key": "CALCIFIED_CULTIST",
+   "observed_names": [
+    "钙化邪教徒"
+   ],
+   "kernel_enemy": "钙化邪教徒",
+   "source": "trace",
+   "note": null
+  },
+  "CeremonialBeast": {
+   "key": "CEREMONIAL_BEAST",
+   "observed_names": [
+    "仪式兽"
+   ],
+   "kernel_enemy": "仪式兽",
+   "source": "trace",
+   "note": null
+  },
+  "Chomper": {
+   "key": "CHOMPER",
+   "observed_names": [
+    "啃咬机"
+   ],
+   "kernel_enemy": "啃咬机",
+   "source": "trace",
+   "note": null
+  },
+  "CorpseSlug": {
+   "key": "CORPSE_SLUG",
+   "observed_names": [
+    "噬尸蛞蝓"
+   ],
+   "kernel_enemy": "噬尸蛞蝓",
+   "source": "trace",
+   "note": null
+  },
+  "CrossbowRubyRaider": {
+   "key": "CROSSBOW_RUBY_RAIDER",
+   "observed_names": [
+    "劫掠者弩手"
+   ],
+   "kernel_enemy": "劫掠者弩手",
+   "source": "trace",
+   "note": null
+  },
+  "Crusher": {
+   "key": "CRUSHER",
+   "observed_names": [
+    "碾碎爪"
+   ],
+   "kernel_enemy": "碾碎爪",
+   "source": "trace",
+   "note": null
+  },
+  "CubexConstruct": {
+   "key": "CUBEX_CONSTRUCT",
+   "observed_names": [
+    "立柱构造体"
+   ],
+   "kernel_enemy": "立柱构造体",
+   "source": "trace",
+   "note": null
+  },
+  "DampCultist": {
+   "key": "DAMP_CULTIST",
+   "observed_names": [
+    "潮湿邪教徒"
+   ],
+   "kernel_enemy": "潮湿邪教徒",
+   "source": "trace",
+   "note": null
+  },
+  "DecimillipedeSegment": {
+   "key": "DECIMILLIPEDE_SEGMENT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "DecimillipedeSegmentBack": {
+   "key": "DECIMILLIPEDE_SEGMENT_BACK",
+   "observed_names": [
+    "残杀千足虫"
+   ],
+   "kernel_enemy": "残杀千足虫",
+   "source": "trace",
+   "note": null
+  },
+  "DecimillipedeSegmentFront": {
+   "key": "DECIMILLIPEDE_SEGMENT_FRONT",
+   "observed_names": [
+    "残杀千足虫"
+   ],
+   "kernel_enemy": "残杀千足虫",
+   "source": "trace",
+   "note": null
+  },
+  "DecimillipedeSegmentMiddle": {
+   "key": "DECIMILLIPEDE_SEGMENT_MIDDLE",
+   "observed_names": [
+    "残杀千足虫"
+   ],
+   "kernel_enemy": "残杀千足虫",
+   "source": "trace",
+   "note": null
+  },
+  "DeprecatedMonster": {
+   "key": "DEPRECATED_MONSTER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "DevotedSculptor": {
+   "key": "DEVOTED_SCULPTOR",
+   "observed_names": [
+    "虔诚雕刻师"
+   ],
+   "kernel_enemy": "虔诚雕刻师",
+   "source": "trace",
+   "note": null
+  },
+  "Entomancer": {
+   "key": "ENTOMANCER",
+   "observed_names": [
+    "蜂群术士"
+   ],
+   "kernel_enemy": "蜂群术士",
+   "source": "trace",
+   "note": null
+  },
+  "Exoskeleton": {
+   "key": "EXOSKELETON",
+   "observed_names": [
+    "外骨骼虫"
+   ],
+   "kernel_enemy": "外骨骼虫",
+   "source": "trace",
+   "note": null
+  },
+  "EyeWithTeeth": {
+   "key": "EYE_WITH_TEETH",
+   "observed_names": [
+    "利齿之眼"
+   ],
+   "kernel_enemy": "利齿之眼",
+   "source": "trace",
+   "note": null
+  },
+  "Fabricator": {
+   "key": "FABRICATOR",
+   "observed_names": [
+    "组装师"
+   ],
+   "kernel_enemy": "组装师",
+   "source": "trace",
+   "note": null
+  },
+  "FakeMerchantMonster": {
+   "key": "FAKE_MERCHANT_MONSTER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "FatGremlin": {
+   "key": "FAT_GREMLIN",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "FlailKnight": {
+   "key": "FLAIL_KNIGHT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "Flyconid": {
+   "key": "FLYCONID",
+   "observed_names": [
+    "飞蝇菌子"
+   ],
+   "kernel_enemy": "飞蝇菌子",
+   "source": "trace",
+   "note": null
+  },
+  "Fogmog": {
+   "key": "FOGMOG",
+   "observed_names": [
+    "雾菇"
+   ],
+   "kernel_enemy": "雾菇",
+   "source": "trace",
+   "note": null
+  },
+  "FossilStalker": {
+   "key": "FOSSIL_STALKER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "FrogKnight": {
+   "key": "FROG_KNIGHT",
+   "observed_names": [
+    "青蛙骑士"
+   ],
+   "kernel_enemy": "青蛙骑士",
+   "source": "trace",
+   "note": null
+  },
+  "FuzzyWurmCrawler": {
+   "key": "FUZZY_WURM_CRAWLER",
+   "observed_names": [
+    "毛绒伏地虫"
+   ],
+   "kernel_enemy": "毛绒伏地虫",
+   "source": "trace",
+   "note": null
+  },
+  "GasBomb": {
+   "key": "GAS_BOMB",
+   "observed_names": [
+    "气态炸弹"
+   ],
+   "kernel_enemy": "气态炸弹",
+   "source": "trace",
+   "note": null
+  },
+  "GlobeHead": {
+   "key": "GLOBE_HEAD",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "GremlinMerc": {
+   "key": "GREMLIN_MERC",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "Guardbot": {
+   "key": "GUARDBOT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "HauntedShip": {
+   "key": "HAUNTED_SHIP",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "HunterKiller": {
+   "key": "HUNTER_KILLER",
+   "observed_names": [
+    "猎人杀手"
+   ],
+   "kernel_enemy": "猎人杀手",
+   "source": "trace",
+   "note": null
+  },
+  "InfestedPrism": {
+   "key": "INFESTED_PRISM",
+   "observed_names": [
+    "感染棱柱"
+   ],
+   "kernel_enemy": "感染棱柱",
+   "source": "trace",
+   "note": null
+  },
+  "Inklet": {
+   "key": "INKLET",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "KinFollower": {
+   "key": "KIN_FOLLOWER",
+   "observed_names": [
+    "同族信徒"
+   ],
+   "kernel_enemy": "同族信徒",
+   "source": "trace",
+   "note": null
+  },
+  "KinPriest": {
+   "key": "KIN_PRIEST",
+   "observed_names": [
+    "同族神官"
+   ],
+   "kernel_enemy": "同族神官",
+   "source": "trace",
+   "note": null
+  },
+  "KnowledgeDemon": {
+   "key": "KNOWLEDGE_DEMON",
+   "observed_names": [],
+   "kernel_enemy": "知识恶魔",
+   "source": "alias",
+   "note": null
+  },
+  "LagavulinMatriarch": {
+   "key": "LAGAVULIN_MATRIARCH",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "LeafSlimeM": {
+   "key": "LEAF_SLIME_M",
+   "observed_names": [
+    "树叶史莱姆（中）"
+   ],
+   "kernel_enemy": "树叶史莱姆（中）",
+   "source": "trace",
+   "note": null
+  },
+  "LeafSlimeS": {
+   "key": "LEAF_SLIME_S",
+   "observed_names": [
+    "树叶史莱姆（小）"
+   ],
+   "kernel_enemy": "树叶史莱姆（小）",
+   "source": "trace",
+   "note": null
+  },
+  "LivingFog": {
+   "key": "LIVING_FOG",
+   "observed_names": [
+    "活雾"
+   ],
+   "kernel_enemy": "活雾",
+   "source": "trace",
+   "note": null
+  },
+  "LivingShield": {
+   "key": "LIVING_SHIELD",
+   "observed_names": [
+    "活体盾"
+   ],
+   "kernel_enemy": "活体盾",
+   "source": "trace",
+   "note": null
+  },
+  "LouseProgenitor": {
+   "key": "LOUSE_PROGENITOR",
+   "observed_names": [
+    "虱虫之祖"
+   ],
+   "kernel_enemy": "虱虫之祖",
+   "source": "trace",
+   "note": null
+  },
+  "MagiKnight": {
+   "key": "MAGI_KNIGHT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "Mawler": {
+   "key": "MAWLER",
+   "observed_names": [
+    "蛮兽"
+   ],
+   "kernel_enemy": "蛮兽",
+   "source": "trace",
+   "note": null
+  },
+  "MechaKnight": {
+   "key": "MECHA_KNIGHT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "MultiAttackMoveMonster": {
+   "key": "MULTI_ATTACK_MOVE_MONSTER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "MysteriousKnight": {
+   "key": "MYSTERIOUS_KNIGHT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "Myte": {
+   "key": "MYTE",
+   "observed_names": [],
+   "kernel_enemy": "螨虫",
+   "source": "alias",
+   "note": null
+  },
+  "Nibbit": {
+   "key": "NIBBIT",
+   "observed_names": [
+    "小啃兽"
+   ],
+   "kernel_enemy": "小啃兽",
+   "source": "trace",
+   "note": null
+  },
+  "Noisebot": {
+   "key": "NOISEBOT",
+   "observed_names": [
+    "噪音机器人"
+   ],
+   "kernel_enemy": "噪音机器人",
+   "source": "trace",
+   "note": null
+  },
+  "OneHpMonster": {
+   "key": "ONE_HP_MONSTER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "Osty": {
+   "key": "OSTY",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "Ovicopter": {
+   "key": "OVICOPTER",
+   "observed_names": [
+    "直飞产卵虫"
+   ],
+   "kernel_enemy": "直飞产卵虫",
+   "source": "trace",
+   "note": null
+  },
+  "OwlMagistrate": {
+   "key": "OWL_MAGISTRATE",
+   "observed_names": [
+    "猫头鹰法官"
+   ],
+   "kernel_enemy": "猫头鹰法官",
+   "source": "trace",
+   "note": null
+  },
+  "PaelsLegion": {
+   "key": "PAELS_LEGION",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "Parafright": {
+   "key": "PARAFRIGHT",
+   "observed_names": [
+    "寄生惧魔"
+   ],
+   "kernel_enemy": "寄生惧魔",
+   "source": "trace",
+   "note": null
+  },
+  "PhantasmalGardener": {
+   "key": "PHANTASMAL_GARDENER",
+   "observed_names": [
+    "花园幽灵鳗"
+   ],
+   "kernel_enemy": "花园幽灵鳗",
+   "source": "trace",
+   "note": null
+  },
+  "PhrogParasite": {
+   "key": "PHROG_PARASITE",
+   "observed_names": [
+    "异蛙寄生虫"
+   ],
+   "kernel_enemy": "异蛙寄生虫",
+   "source": "trace",
+   "note": null
+  },
+  "PunchConstruct": {
+   "key": "PUNCH_CONSTRUCT",
+   "observed_names": [
+    "拳击构装体"
+   ],
+   "kernel_enemy": "拳击构装体",
+   "source": "trace",
+   "note": null
+  },
+  "Queen": {
+   "key": "QUEEN",
+   "observed_names": [],
+   "kernel_enemy": "蜂后",
+   "source": "alias",
+   "note": null
+  },
+  "Rocket": {
+   "key": "ROCKET",
+   "observed_names": [
+    "火箭"
+   ],
+   "kernel_enemy": "火箭",
+   "source": "trace",
+   "note": null
+  },
+  "ScrollOfBiting": {
+   "key": "SCROLL_OF_BITING",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "Seapunk": {
+   "key": "SEAPUNK",
+   "observed_names": [
+    "海洋混混"
+   ],
+   "kernel_enemy": "海洋混混",
+   "source": "trace",
+   "note": null
+  },
+  "SewerClam": {
+   "key": "SEWER_CLAM",
+   "observed_names": [
+    "下水道蚌"
+   ],
+   "kernel_enemy": "下水道蚌",
+   "source": "trace",
+   "note": null
+  },
+  "ShrinkerBeetle": {
+   "key": "SHRINKER_BEETLE",
+   "observed_names": [
+    "缩小甲虫"
+   ],
+   "kernel_enemy": "缩小甲虫",
+   "source": "trace",
+   "note": null
+  },
+  "SingleAttackMoveMonster": {
+   "key": "SINGLE_ATTACK_MOVE_MONSTER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "SkulkingColony": {
+   "key": "SKULKING_COLONY",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "SlimedBerserker": {
+   "key": "SLIMED_BERSERKER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "SlitheringStrangler": {
+   "key": "SLITHERING_STRANGLER",
+   "observed_names": [
+    "蛇行扼杀者"
+   ],
+   "kernel_enemy": "蛇行扼杀者",
+   "source": "trace",
+   "note": null
+  },
+  "SludgeSpinner": {
+   "key": "SLUDGE_SPINNER",
+   "observed_names": [
+    "淤泥旋螺"
+   ],
+   "kernel_enemy": "淤泥旋螺",
+   "source": "trace",
+   "note": null
+  },
+  "SlumberingBeetle": {
+   "key": "SLUMBERING_BEETLE",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "SnappingJaxfruit": {
+   "key": "SNAPPING_JAXFRUIT",
+   "observed_names": [
+    "闪光贾克斯果"
+   ],
+   "kernel_enemy": "闪光贾克斯果",
+   "source": "trace",
+   "note": null
+  },
+  "SneakyGremlin": {
+   "key": "SNEAKY_GREMLIN",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "SoulFysh": {
+   "key": "SOUL_FYSH",
+   "observed_names": [
+    "灵魂异鱼"
+   ],
+   "kernel_enemy": "灵魂异鱼",
+   "source": "trace",
+   "note": null
+  },
+  "SoulNexus": {
+   "key": "SOUL_NEXUS",
+   "observed_names": [
+    "灵魂枢纽"
+   ],
+   "kernel_enemy": "灵魂枢纽",
+   "source": "trace",
+   "note": null
+  },
+  "SpectralKnight": {
+   "key": "SPECTRAL_KNIGHT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "SpinyToad": {
+   "key": "SPINY_TOAD",
+   "observed_names": [
+    "棘刺蟾蜍"
+   ],
+   "kernel_enemy": "棘蟾",
+   "source": "trace",
+   "note": null
+  },
+  "Stabbot": {
+   "key": "STABBOT",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "TenHpMonster": {
+   "key": "TEN_HP_MONSTER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "TerrorEel": {
+   "key": "TERROR_EEL",
+   "observed_names": [
+    "骇鳗"
+   ],
+   "kernel_enemy": "骇鳗",
+   "source": "trace",
+   "note": null
+  },
+  "TestSubject": {
+   "key": "TEST_SUBJECT",
+   "observed_names": [
+    "实验体 #C10"
+   ],
+   "kernel_enemy": "实验体",
+   "source": "trace",
+   "note": null
+  },
+  "TheAdversaryMkOne": {
+   "key": "THE_ADVERSARY_MK_ONE",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "TheAdversaryMkThree": {
+   "key": "THE_ADVERSARY_MK_THREE",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "TheAdversaryMkTwo": {
+   "key": "THE_ADVERSARY_MK_TWO",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "TheForgotten": {
+   "key": "THE_FORGOTTEN",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "TheInsatiable": {
+   "key": "THE_INSATIABLE",
+   "observed_names": [
+    "无厌沙虫"
+   ],
+   "kernel_enemy": "无厌沙虫",
+   "source": "trace",
+   "note": null
+  },
+  "TheLost": {
+   "key": "THE_LOST",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "TheObscura": {
+   "key": "THE_OBSCURA",
+   "observed_names": [
+    "胧光怪"
+   ],
+   "kernel_enemy": "胧光怪",
+   "source": "trace",
+   "note": null
+  },
+  "ThievingHopper": {
+   "key": "THIEVING_HOPPER",
+   "observed_names": [
+    "偷窃草蜢"
+   ],
+   "kernel_enemy": "偷窃草蜢",
+   "source": "trace",
+   "note": null
+  },
+  "Toadpole": {
+   "key": "TOADPOLE",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "TorchHeadAmalgam": {
+   "key": "TORCH_HEAD_AMALGAM",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "ToughEgg": {
+   "key": "TOUGH_EGG",
+   "observed_names": [
+    "幼虫",
+    "结实的卵"
+   ],
+   "kernel_enemy": "结实的卵",
+   "source": "trace",
+   "note": "观测里这个 entity_id 报过多个名字（幼虫/结实的卵），按 [源码] 血量区间判定"
+  },
+  "TrackerRubyRaider": {
+   "key": "TRACKER_RUBY_RAIDER",
+   "observed_names": [
+    "劫掠者追踪手"
+   ],
+   "kernel_enemy": "劫掠者追踪手",
+   "source": "trace",
+   "note": null
+  },
+  "Tunneler": {
+   "key": "TUNNELER",
+   "observed_names": [
+    "地道虫"
+   ],
+   "kernel_enemy": "地道虫",
+   "source": "trace",
+   "note": null
+  },
+  "TurretOperator": {
+   "key": "TURRET_OPERATOR",
+   "observed_names": [
+    "高塔炮手"
+   ],
+   "kernel_enemy": "高塔炮手",
+   "source": "trace",
+   "note": null
+  },
+  "TwigSlimeM": {
+   "key": "TWIG_SLIME_M",
+   "observed_names": [
+    "树枝史莱姆（中）"
+   ],
+   "kernel_enemy": "树枝史莱姆（中）",
+   "source": "trace",
+   "note": null
+  },
+  "TwigSlimeS": {
+   "key": "TWIG_SLIME_S",
+   "observed_names": [
+    "树枝史莱姆（小）"
+   ],
+   "kernel_enemy": "树枝史莱姆（小）",
+   "source": "trace",
+   "note": null
+  },
+  "TwoTailedRat": {
+   "key": "TWO_TAILED_RAT",
+   "observed_names": [
+    "双尾鼠"
+   ],
+   "kernel_enemy": "双尾鼠",
+   "source": "trace",
+   "note": null
+  },
+  "Vantom": {
+   "key": "VANTOM",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "VineShambler": {
+   "key": "VINE_SHAMBLER",
+   "observed_names": [],
+   "kernel_enemy": null,
+   "source": null,
+   "note": null
+  },
+  "WaterfallGiant": {
+   "key": "WATERFALL_GIANT",
+   "observed_names": [
+    "瀑布巨兽"
+   ],
+   "kernel_enemy": "瀑布巨兽",
+   "source": "trace",
+   "note": null
+  },
+  "Wriggler": {
+   "key": "WRIGGLER",
+   "observed_names": [
+    "扭动虫"
+   ],
+   "kernel_enemy": "扭动虫",
+   "source": "trace",
+   "note": null
+  },
+  "Zapbot": {
+   "key": "ZAPBOT",
+   "observed_names": [
+    "电击机器人"
+   ],
+   "kernel_enemy": "电击机器人",
+   "source": "trace",
+   "note": null
+  }
+ }
+}

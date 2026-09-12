@@ -76,7 +76,18 @@ def main(argv):
     #
     # 一开始只认了 `--power-reserve`，加 `--leaf` 的时候忘了这里，
     # 于是 `--leaf eval` 被当成文件路径，当场 traceback。改成表驱动。
-    PASSTHROUGH = ("--power-reserve", "--leaf", "--plan-k", "--budget")
+    PASSTHROUGH = (
+        "--power-reserve",
+        "--leaf",
+        "--plan-k",
+        "--budget",
+        "--deep-score",
+        "--window",
+        # 阶段 3 那三个旋钮走 `--plan-set "k=v,…"` 一个口子（键的解析在
+        # `Plan::apply`，三个验收台共用）。**加新旋钮不用再回来改这张表** ——
+        # `--leaf` 那次忘了改，`--leaf eval` 被当成文件路径当场 traceback。
+        "--plan-set",
+    )
     extra = []
     rest = []
     argv = list(argv)

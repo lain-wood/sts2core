@@ -49,6 +49,16 @@ pub enum Cond {
 pub enum Op {
     Damage { base: i32, hits: i32, scale: Scale },
     DamageAll { base: i32, hits: i32, scale: Scale },
+    /// 扯碎「造成 N 点伤害。在本场战斗中，你每失去过一次生命值，
+    /// 这张牌就额外造成一次伤害。」**变的是段数，不是每段的数值** ——
+    /// 所以它不能写成 `Scale`（那一族改的是基础伤害）。
+    ///
+    /// [源码] `TearAsunder`：段数 = `CalculationBase(0) + CalculationExtra(1) × (1 + M)`
+    /// = **1 + M**，`M = State::hp_loss_hits`。
+    /// 游戏把算好的段数直接渲染进卡面（`（命中3次）`），
+    /// 所以"卡面写着造成3次"是**那一刻的快照**，不是这张牌的定义 ——
+    /// 照它写死 `hits: 3` 是这张牌第一版的错法。
+    DamagePerHpLossHit { base: i32 },
     /// 拆卸: repeat the preceding damage if the target is Vulnerable.
     DamageIfVuln { base: i32, scale: Scale },
     Block { base: i32 },
@@ -262,6 +272,15 @@ pub struct CardDef {
 pub enum Hook {
     /// 我的回合开始（能量已回满、格挡已清零、抽牌**之前**）
     TurnStart,
+    /// 我的回合开始、**手牌已经发到手上之后**（`step::open_hand` 末尾）。
+    ///
+    /// 和 `TurnStart` 差的就是抽牌那一步，而这一步**分得开两批遗物**：
+    /// * 抽牌**之前**：宝石面具（[源码] `BeforeHandDraw`，它要往抽牌堆里挑牌）
+    /// * 抽牌**之后**：风箱 / 骨茶（[源码] `AfterPlayerTurnStart`，它们升级**手牌**）
+    ///
+    /// 挂在 `TurnStart` 上的话，风箱会去升级一手**还没发下来的空牌**。
+    /// 2026-09-09 为这两件加的，加的时候就有两个消费者。
+    HandDrawn,
     /// **获得了格挡**，且实际数值 > 0。谁在用：势不可当。
     ///
     /// 游戏侧是 `AfterBlockGained(creature, amount, ...)`，里面第一句就是
@@ -421,6 +440,11 @@ pub enum Amt {
     /// 本回合**已经打出的牌数**（`State::cards_played`）。
     /// 娇弱回合末要还回去的正是这个数。
     CardsPlayed,
+    /// **手上现在有几张牌** × 这个 power 的层数（斗篷扣：每张 1 点格挡）。
+    ///
+    /// [源码] `CloakClasp.BeforeSideTurnEnd` 是 `(int)(cards.Count * Block)`，
+    /// 所以层数是**每张给几点**、不是总数 —— 和 `Stacks` 那一族的语义一致。
+    HandCardsTimesStacks,
 }
 
 /// 触发器里的条件。**每一条都有一件真遗物在用**，没有为将来预留的。
@@ -497,6 +521,13 @@ pub enum TCond {
     /// 消费者：覆甲那四条（两条玩家、两条敌人）。
     OwnerIsPlayer,
     OwnerIsEnemy,
+    /// 持有者的**手牌是空的**（尖叫酒壶）。
+    ///
+    /// [源码] `ScreamingFlagon.BeforeSideTurnEnd` 判的是
+    /// `PileType.Hand.GetPile(Owner).IsEmpty`，而那个钩子跑在**弃手牌之前**。
+    /// **时点是这条规则的全部内容**：挪到弃手牌之后它就恒真，
+    /// 这件遗物会变成"每回合白给 20 点"。
+    HandEmpty,
 }
 
 /// 触发时能做的事。刻意做得很小 —— 每多一条都要有一张真牌在等着它。
@@ -666,11 +697,36 @@ pub enum TOp {
     /// 新生成的牌要不要继承场上同名牌的层数（[源码]
     /// `Aeonglass.AfterCardGeneratedForCombat`）。
     AddCardToHand { card: u16, count: i32 },
+    /// 把**手上现在这几张**全部升级（风箱 / 骨茶）。
+    /// 已经升级过的不动；假升级（`凋萎+N`）那一栏不碰。
+    UpgradeHand,
+    /// 从**抽牌堆**随机挑 n 张可升级的牌升级（碎石者，n=2）。
+    /// [源码] `StoneCracker.AfterRoomEntered`：`Where(IsUpgradable).StableShuffle().Take(n)`。
+    UpgradeRandomInDraw(i32),
+    /// 从抽牌堆随机挑一张**能力牌**放进手牌，并给它挂上「本回合免费」
+    /// （宝石面具）。抽牌堆里没有能力牌就什么都不做。
+    ///
+    /// [源码] `JeweledMask.BeforeHandDraw`：`SetToFreeThisTurn()` 之后
+    /// `CardPileCmd.Add(card, Hand)`。**卡面文本写的是"本场战斗"，
+    /// 而源码那个方法名是 `ThisTurn`** —— 照源码，两者只在"留到下回合"时分得开。
+    MoveRandomPowerFromDrawToHandFree,
     /// 把自己的层数**置成** n（不是加 n）。凋萎存在的计数器归位用它。
     ///
     /// 和 `GrowSelf` 的区别：那个要知道现在是多少，这个不用。
     /// [源码] `CardsLeft.BaseValue = 6m` 就是一次赋值，照抄。
     SetSelf(i32),
+    /// **直接杀死玩家**，和血量无关（沙坑倒计时归零 ⇒ 被吞下）。
+    ///
+    /// [源码] `SandpitPower.AfterRemoved` 走的是
+    /// `CreatureCmd.Kill(allAffectedCreature, force: true)`，而 `force: true`
+    /// 的语义源码里明写着 —— **"blocking death prevention by effects like
+    /// Fairy in a Bottle"**。所以这条路**不给瓶中精灵机会**，和"血量掉到 0"
+    /// 那条死法不是同一条：后者走 `check_over` -> `try_fairy`。
+    ///
+    /// 这是内核里第二条通往 `player_dead` 的路。第一条在 `check_over` 里，
+    /// 判据是 `hp <= 0`；这一条判据是**回合数**。两条不能合并 ——
+    /// 合并就得给 `check_over` 编一个假的"血量 0"，那样瓶中精灵会把它救回来。
+    KillPlayer,
 }
 
 /// 一条「什么 status 在什么时候做什么」的规则。
@@ -712,6 +768,18 @@ pub enum EOp {
     /// 盛碗虫（石）的晕眩用它清掉失衡标记（[源码] `IsOffBalance = false`）。
     /// 和 `SelfStatus { amt: -1 }` 的区别：那个在已经是 0 的时候会变成 -1，
     /// 之后再置位就成了 0 —— 一个只在特定顺序下发作的静默错误。
+    /// 给**它自己这一侧所有活着的敌人**加 status，**包含它自己**。
+    ///
+    /// [源码] 胧光怪的哀嚎：
+    /// `PowerCmd.Apply<StrengthPower>(.., GetTeammatesOf(base.Creature), 3m, ..)`，
+    /// 而 `GetTeammatesOf(c) => GetCreaturesOnSide(c.Side)` —— **含自己**
+    /// （同一个函数已经被组装师那条 `ECond::AlliesAliveAtLeast` 钉过一次：
+    /// 第3幕第45层那一帧同时钉死了阈值和"含不含自己"）。
+    ///
+    /// **和 `SelfStatus` 必须分开**：场上只有它一只时两者结果相同，
+    /// 带着幻象时差一份力量 —— 而"带着幻象"正是这只怪的常态。
+    /// 写成 `SelfStatus` 是**乐观**的（少算幻象那 16 点撞击的加成）。
+    TeamStatus { st: St, amt: i32 },
     ClearSelfStatus(St),
     /// 往我的**抽牌堆**塞 N 张牌（噪音机器人的第二张眩晕）。
     ///
@@ -986,6 +1054,71 @@ pub struct PotionDef {
 // | 规则修饰 | 臂甲（首次卡牌格挡翻倍）| `step.rs` 的窄 `if` |
 // | 结构性 | 药水腰带（+2 药水栏位）| `State` 容量，不是 status |
 // | 局外 | 白银熔炉、佩尔之翼 | **不进 L1** —— 不属于战斗层 |
+
+/// 附魔的 `Amount` 怎么变成一个数值。**只有这三种形状**，别再加第四种没有
+/// 真实附魔在用的 —— 和「不许有空钩子」同一条规矩。
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum EnchVal {
+    /// 这个钩子这个附魔不改（`EnchantXxxAdditive` 的默认实现就是返回 0）
+    Zero,
+    /// `=> Amount`（灵巧、锋利、旺盛）
+    Amount,
+    /// `=> Amount - 1`（黏糊糊：第一次打出时 `Amount` 是 1 ⇒ 加 0）
+    AmountMinus1,
+    /// 数值写死在附魔自己的 `DynamicVar` 上、和 `Amount` 无关
+    /// （墨迹 +1 伤害、特兹卡塔拉的余烬 +3 伤害）
+    Fixed(i32),
+}
+
+impl EnchVal {
+    #[inline]
+    pub fn eval(self, amount: i32) -> i32 {
+        match self {
+            EnchVal::Zero => 0,
+            EnchVal::Amount => amount,
+            EnchVal::AmountMinus1 => amount - 1,
+            EnchVal::Fixed(v) => v,
+        }
+    }
+}
+
+/// 一种**附魔**（[源码] `EnchantmentModel`）。一张牌至多带一个，挂在**卡实例**上
+/// （`CardInst::ench` / `ench_amt`），所以牌组里三张打击可以只有一张带。
+///
+/// # 这张表的形状 = `EnchantmentModel` 的虚方法表
+///
+/// 源码里附魔**只有六个口子**能改游戏：`EnchantBlockAdditive` /
+/// `EnchantBlockMultiplicative` / `EnchantDamageAdditive` /
+/// `EnchantDamageMultiplicative` / `EnchantPlayCount`，外加 `OnEnchant`（改关键字
+/// 和费用）和 `OnPlay`（打出时多做一件事）。
+///
+/// **这张表只装内核今天真的消费的那几个**（格挡加、伤害加、伤害乘、关键字）。
+/// 其余的口子**没有字段** —— 加一个没人读的字段和加一个空钩子是同一种错：
+/// 它看起来像建好了。装不下的附魔一律 `modelled: false`，
+/// `replay` 会把它们点名进 `Report::unknown_enchantments`。
+///
+/// # `modelled: false` 不等于"没效果"
+///
+/// 它等于"内核会**算错**这张牌，而且知道自己在算错"。`--live` 把它们列出来，
+/// 对拍不会静默放过。
+pub struct EnchantDef {
+    /// 游戏 id（大写下划线），和观测里 `enchantment.id` 逐字对齐
+    pub id: &'static str,
+    pub name: &'static str,
+    /// `EnchantBlockAdditive`：加在**卡面基础格挡**上，在敏捷/脆弱/臂甲之前
+    pub block_add: EnchVal,
+    /// `EnchantDamageAdditive`：和锋利同一档，加在基础值上、在力量之前
+    pub damage_add: EnchVal,
+    /// `EnchantDamageMultiplicative`：`(分子, 分母)`，`(1, 1)` = 不乘。
+    /// **作用在基础值上、在力量之前**（源码里它"先于所有其它伤害钩子"跑）
+    pub damage_mul: (i32, i32),
+    /// `OnEnchant` 给这张牌永久加的关键字（`F_INNATE` / `F_RETAIN`）
+    pub keywords: u8,
+    /// 内核是否**完整**建了这一个（差一个口子就是 false）
+    pub modelled: bool,
+    /// 没建的那部分卡在哪。建全了的写依据
+    pub note: &'static str,
+}
 
 /// 一个遗物。`start_status` 是它在**战斗开始时**给玩家挂的 status，
 /// 规则本身写在 `content::POWERS` 里（和能力牌同一套机器）。

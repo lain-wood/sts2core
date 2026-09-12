@@ -117,6 +117,15 @@ fn main() -> ExitCode {
         eprintln!("  --all     连「两条线一模一样」的回合也列出来");
         eprintln!("  --plan [D] 只对 --live 有效：额外报一条跨回合 planner 的线（默认 D=2）。");
         eprintln!("            **它是被测对象不是驾驶员** —— 驾驶仍然看上面那条单回合线");
+        eprintln!("  --deep-score  深层选线的目标函数（默认 leaf，和叶评估同口径）。");
+        eprintln!("            `--deep-score damage` = 2026-09-04 之前的行为，A/B 用它；");
+        eprintln!("            `tools/plan_seed_sweep.py` 透传它，那条可重复性读数才配得成对");
+        eprintln!("  --window  确定性窗口最多免费借几层（默认 6）。`--window 0` = 2026-09-05");
+        eprintln!("            之前的行为，A/B 用它；同样由 `plan_seed_sweep.py` 透传");
+        eprintln!("  --plan-set \"k=v,...\"  planner 的任意配置键，和 `bin/rollout --alt` /");
+        eprintln!("            `bin/plan_audit --set` **同一份解析**（`Plan::apply`）。");
+        eprintln!("            退回阶段 4 之前：--plan-set \"window-score=leaf\"");
+        eprintln!("            退回阶段 3 之前：--plan-set \"cand-score=damage,k-certain=off,tt=off\"");
         return ExitCode::from(2);
     }
 
@@ -132,6 +141,20 @@ fn main() -> ExitCode {
     let mut plan_power_reserve: Option<usize> = None;
     // 方案 C：`--leaf rollout[:samples:turns]`。量可重复性用它。
     let mut plan_leaf: Option<String> = None;
+    // 深层选线的目标函数（`Plan::deep_score`）。**A/B 用它**：
+    // `--deep-score damage` = 2026-09-04 之前的行为。
+    // 它必须有一个手柄，否则 `tools/plan_seed_sweep.py` 那条"单次可重复性"
+    // 就只能拿今天的读数去比一个记在文档里的历史值 —— 那是在比两次运行，
+    // 不是配对比较。
+    let mut plan_deep_score: Option<fn(&State) -> i32> = None;
+    // 确定性窗口（`Plan::window`）。**A/B 用它**：`--window 0` = 2026-09-05
+    // 之前的行为。和 `--deep-score` 同一个理由 —— 没有手柄，
+    // `tools/plan_seed_sweep.py` 那条可重复性读数就配不成对。
+    let mut plan_window: Option<u8> = None;
+    // 阶段 3 那三个旋钮（`cand_score` / `k_certain` / `tt_bits`）**不再各开一个
+    // 长选项**：键的解析已经收口到 `Plan::apply`，三个验收台共用一份。
+    // 再在这里手抄一遍就等于第二份定义。
+    let mut plan_set: Option<String> = None;
     let mut plan_explain = false;
     let mut it = args.iter();
     while let Some(a) = it.next() {
@@ -159,10 +182,50 @@ fn main() -> ExitCode {
                     return ExitCode::from(2);
                 }
             },
+            // **在这里就判**，不留到 `--plan` 那个分支里 —— 没带 `--plan` 时
+            // 一个写错的值会静默不生效，而那种错的表现是"读数看着很正常"。
+            "--deep-score" => match it.next().map(|v| v.as_str()) {
+                Some("survive") => plan_deep_score = Some(score::survive_first),
+                Some("damage") => plan_deep_score = Some(score::damage_first),
+                Some("hp") => plan_deep_score = Some(score::hp_only),
+                Some("leaf") => plan_deep_score = Some(score::leaf),
+                other => {
+                    eprintln!("--deep-score 只认 survive/damage/hp/leaf，收到 {other:?}");
+                    return ExitCode::from(2);
+                }
+            },
+            // 同上，**在参数解析处就判值**。
+            "--window" => match it.next().and_then(|v| v.parse::<u8>().ok()) {
+                Some(n) if (n as usize) <= sts2core::plan::HARD_DEPTH_CAP => plan_window = Some(n),
+                _ => {
+                    eprintln!(
+                        "--window 后面要跟 0..={} 的数字（0 = 关掉确定性窗口）",
+                        sts2core::plan::HARD_DEPTH_CAP
+                    );
+                    return ExitCode::from(2);
+                }
+            },
             "--power-reserve" => match it.next().and_then(|v| v.parse::<usize>().ok()) {
                 Some(n) => plan_power_reserve = Some(n),
                 _ => {
                     eprintln!("--power-reserve 后面要跟一个数字");
+                    return ExitCode::from(2);
+                }
+            },
+            // 任意配置键，解析和 `bin/rollout --alt` / `bin/plan_audit --set`
+            // 是**同一份**（`Plan::apply`）。**在参数解析处就判**，
+            // 免得一个写错的键名跑到半路才炸。
+            "--plan-set" => match it.next() {
+                Some(v) => {
+                    let mut probe = sts2core::plan::Plan::default();
+                    if let Err(e) = probe.apply(v) {
+                        eprintln!("--plan-set: {e}");
+                        return ExitCode::from(2);
+                    }
+                    plan_set = Some(v.clone());
+                }
+                None => {
+                    eprintln!("--plan-set 后面要跟一串 key=value（逗号分隔），见 --help");
                     return ExitCode::from(2);
                 }
             },
@@ -226,6 +289,9 @@ fn main() -> ExitCode {
                     plan_k,
                     plan_power_reserve,
                     plan_leaf,
+                    plan_deep_score,
+                    plan_window,
+                    plan_set,
                     plan_explain,
                 )
             }
@@ -390,6 +456,9 @@ fn live_advise(
     plan_k: Option<usize>,
     plan_power_reserve: Option<usize>,
     plan_leaf: Option<String>,
+    plan_deep_score: Option<fn(&State) -> i32>,
+    plan_window: Option<u8>,
+    plan_set: Option<String>,
     plan_explain: bool,
 ) -> ExitCode {
     let src = match std::fs::read_to_string(path) {
@@ -414,19 +483,8 @@ fn live_advise(
         return ExitCode::from(2);
     };
     let obs = &f.obs;
-    if !obs.is_play_phase {
+    if !obs.is_play_phase && !obs.pending {
         println!("现在不是出牌阶段（state_type={}），没什么可解的。", obs.state_type);
-        return ExitCode::SUCCESS;
-    }
-    // 游戏开着选牌界面（烙印/发掘/战吼/武装那类）时**必须拒绝作答**。
-    // `Replayer::sync` 只同步观测里有的东西，而它**不还原 `Pending`** ——
-    // 于是内核会以为可以随便出牌，给出一条游戏根本不接受的线。
-    // 这种"看着很自信、执行第一步就卡住"的输出比不作答危险得多。
-    if obs.pending {
-        println!(
-            "游戏正开着一个选牌界面。**这一层不作答** —— 同步不还原选牌状态，
-             硬算出来的线游戏不会接受。请先在游戏里把这个选择做完，再跑一次。"
-        );
         return ExitCode::SUCCESS;
     }
 
@@ -434,6 +492,17 @@ fn live_advise(
         eprintln!("这个文件里一帧都没有");
         return ExitCode::from(2);
     };
+
+    // 游戏开着选牌界面（烙印/发掘/战吼/武装那类）时：
+    // 若有历史且内核已走进该 Pending，则正常求解输出选择建议；
+    // 仅在单帧无历史（同步未还原 Pending）时才拒绝作答。
+    if obs.pending && sy.state.pending == sts2core::state::Pending::None {
+        println!(
+            "游戏正开着一个选牌界面。**这一层不作答** —— 同步未还原选牌状态（无历史走进该界面），
+             硬算出来的线游戏不会接受。请先在游戏里把这个选择做完，再跑一次。"
+        );
+        return ExitCode::SUCCESS;
+    }
     let threat = threat_of(&r, obs);
     // 认出敌人是谁。**单回合求解用不着**（威胁是观测输入），但跨回合推演
     // （`--score mcts`）必须知道对面是谁，否则推的是一场敌人不出手的仗。
@@ -522,6 +591,26 @@ fn live_advise(
                 obs.relics.len(),
                 blind.len()
             );
+            for b in &blind {
+                println!("        · {b}");
+            }
+        }
+    }
+
+    // 手牌上**没建全的附魔**。和遗物那一栏同一条理由：沉默地少算一张牌的数值
+    // 是最坏的情况。判据是 `EnchantDef::modelled`（表里没有 = 同样没建全）。
+    {
+        let mut blind: Vec<String> = Vec::new();
+        for c in &obs.hand {
+            if c.enchant_id.is_empty() || sts2core::replay::enchant_fully_modelled(&c.enchant_id) {
+                continue;
+            }
+            let why = sts2core::content::enchant_by_id(&c.enchant_id.to_ascii_uppercase())
+                .map_or("内容表里没有这一种".to_string(), |(_, d)| d.note.to_string());
+            blind.push(format!("{}（{} {}）—— {}", c.name, c.enchant_id, c.enchant_amount, why));
+        }
+        if !blind.is_empty() {
+            println!("附魔  手里有 {} 张牌的附魔**内核没建全**，它们的数值会算错：", blind.len());
             for b in &blind {
                 println!("        · {b}");
             }
@@ -895,6 +984,15 @@ fn live_advise(
             if let Some(r) = plan_power_reserve {
                 cfg.power_reserve = r;
             }
+            // 深层选线的目标函数。默认 `score::leaf`（和叶评估同口径），
+            // `--deep-score damage` 退回 2026-09-04 之前。值在参数解析处就判过了。
+            if let Some(f) = plan_deep_score {
+                cfg.deep_score = f;
+            }
+            // 确定性窗口。`--window 0` 退回 2026-09-05 之前。
+            if let Some(w) = plan_window {
+                cfg.window = w;
+            }
             if let Some(spec) = &plan_leaf {
                 let mut lt = spec.split(':');
                 if let Some("rollout") = lt.next() {
@@ -905,12 +1003,24 @@ fn live_advise(
                     };
                 }
             }
+            // `--plan-set` **最后应用**：它是"覆盖"，谁点名谁说了算。
+            // 值在参数解析处已经判过了，这里再判一次只是不想吞掉错误。
+            if let Some(spec) = &plan_set {
+                if let Err(e) = cfg.apply(spec) {
+                    eprintln!("--plan-set: {e}");
+                    return ExitCode::from(2);
+                }
+            }
+            println!("配置  {}", cfg.describe());
             if plan_explain {
                 // 诊断：根候选线 + 各自的深层估值。**它分得开两件事** ——
                 // 「这条线根本没进候选」和「进了候选但分低」。
                 println!(
-                    "候选  K={} 条 + 能力保底 {} 条（按 solve_turn_topk 的顺序），后面是 D={d} 的深层估值：",
-                    cfg.k, cfg.power_reserve
+                    "候选  K={} 条（窄根 {}）+ 能力保底 {} 条（按 solve_turn_topk 的顺序），\
+                     后面是 D={d} 的深层估值：",
+                    cfg.k_at(&sy.state),
+                    sts2core::plan::root_is_narrow(&sy.state),
+                    cfg.power_reserve
                 );
                 let (cands, n_main) = sts2core::plan::plan_candidates(&sy.state, &cfg, &threat);
                 let best = cands.iter().map(|(_, v)| *v).max().unwrap_or(0);
@@ -929,8 +1039,22 @@ fn live_advise(
                 }
             }
             let t0 = std::time::Instant::now();
-            let pline = sts2core::plan::plan_line_with_threat(&sy.state, &cfg, &threat);
+            let rep = sts2core::plan::plan_report(&sy.state, &cfg, &threat);
+            let pline = rep.line;
             let ms = t0.elapsed().as_millis();
+            // 置换表的**唯一证据**：key 写错的样子就是命中率掉到 0，
+            // 而那不会让任何东西变红。
+            if rep.tt_probes > 0 {
+                println!(
+                    "        候选 {} 条 · 置换表 {}/{} = {:.1}% 命中 · 窗口借了 {} 层 · 最深 {} 层",
+                    rep.n_cands,
+                    rep.tt_hits,
+                    rep.tt_probes,
+                    100.0 * rep.tt_hits as f64 / rep.tt_probes as f64,
+                    rep.stat.window_fired,
+                    rep.stat.max_depth
+                );
+            }
             let pnames = explain(&sy.state, pline.acts());
             let snames = explain(&sy.state, sol.line.acts());
             println!(
@@ -999,7 +1123,7 @@ fn depends_on_turn_counters(id: u16) -> bool {
 /// 把一条 trace 切成回合，逐个回合比。
 fn solve_trace(t: &Trace, scorer: fn(&State) -> i32, budget: u32) -> Vec<Turn> {
     let mut out = Vec::new();
-    let mut r = Replayer::new(&t.run);
+    let mut r = Replayer::for_trace(t);
     let n = t.frames.len();
     let mut i = 0usize;
     // 走过的帧要喂给 `Replayer::advance`，**否则观测里没有的每回合计数器在
@@ -1069,9 +1193,6 @@ fn compare_turn(
                 if !known {
                     return skip(&format!("内容表里没有这瓶药水（{name}）"));
                 }
-            }
-            Some(Act::SelectCard { .. }) | Some(Act::Confirm) => {
-                return skip("走了选牌界面（v1 不对拍选牌）")
             }
             _ => {}
         }
@@ -1161,8 +1282,13 @@ fn upgrade_threat_live(
         let Some(m) = def.moves.get(mv) else { continue };
         let mut hits = 0i32;
         let mut base = 0i32;
-        for op in m.ops {
-            if let EOp::Attack { base: b, hits: h } = *op {
+        for (oi, op) in m.ops.iter().enumerate() {
+            // 进阶收口，见 `asc::adjust`。漏了它高进阶下面那条"现算一遍必须和
+            // 观测标签逐字相同"的自检会失败，于是整份退回冻住的标签 ——
+            // 安全，但看不见任何改敌人这一击的手段。
+            if let EOp::Attack { base: b, hits: h } =
+                sts2core::asc::adjust(s.enemy_def[id.slot], mv, oi, s.ascension, *op)
+            {
                 base = b;
                 hits += h;
             }
@@ -1236,6 +1362,22 @@ fn human_line(sy: &Synced, r: &Replayer, acts: &[Frame]) -> Result<Vec<Action>, 
             }
             st = ns;
             out.push(a);
+            continue;
+        }
+        if let Some(Act::SelectCard { slot }) = &f.action {
+            let a = Action::Choose { hand: *slot as u8 };
+            let ns = sts2core::step(st, a);
+            if ns == st {
+                return Err(format!("内核拒绝了实战选牌（槽{slot}）"));
+            }
+            st = ns;
+            out.push(a);
+            continue;
+        }
+        if let Some(Act::Confirm) = &f.action {
+            if st.pending != sts2core::state::Pending::None {
+                st.pending = sts2core::state::Pending::None;
+            }
             continue;
         }
         let Some(Act::Play { card_name, target, .. }) = &f.action else { continue };

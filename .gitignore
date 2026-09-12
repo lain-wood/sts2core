@@ -33,6 +33,16 @@ traces/_seed_sweep.json
 traces/_t5.json
 traces/raw_*/
 
+# ---------------------------------------------------------------------------
+# data/ 里的东西**全部跟踪**，尽管其中一半是生成的。分两类：
+#   1. 手写      *_overrides.json                 ← 不可再生，必须跟踪
+#   2. 生成      encounters.json / enemy_ids.json / ascension.json
+#                （连同 src/asc.rs）              ← 可重跑，但**仍然跟踪**
+# 第 2 类跟踪的理由和 traces/ 的权威表一样，外加一条自己的：
+# 它们的输入是 decompiled/，而那个目录是 .gitignore 掉的 ——
+# 不跟踪产物的话，clone 下来的仓库根本重跑不出这几份表，而 src/asc.rs 还要参与编译。
+# ---------------------------------------------------------------------------
+
 # sts2.wiki 的抓取缓存（tools/dump_bestiary.py 用）。
 # 可再生，而且是**别人网站的内容** —— 不该装在一个 MIT 仓库里重新分发。
 traces/.wiki_cache/
