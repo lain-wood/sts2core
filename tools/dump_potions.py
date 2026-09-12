@@ -3,7 +3,7 @@ r"""导出权威药水表 -> `traces/potions_catalog.json`。
 
 用法（游戏要开着）：
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\dump_potions.py"
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\dump_potions.py"
 
 ## 它和 `dump_relics.py` / `dump_catalog.py` **走的不是同一条路**
 

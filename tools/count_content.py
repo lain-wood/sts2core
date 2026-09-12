@@ -11,7 +11,7 @@ r"""内容清单重数 —— 唯一权威的计数口径。
 
 用法（无参数）：
 
-    "D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/count_content.py
+    "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/count_content.py
 
 `--md` 直接吐出 CLAUDE.md 那张表的 markdown，贴过去就行。
 

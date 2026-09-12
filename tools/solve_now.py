@@ -4,7 +4,7 @@ r"""实战：读当前局面，问 L2 求解器"这回合怎么打"。
 **只有一条固定命令，不带任何参数**（和录制器同一个理由：命令字符串一变就要
 重新过一次权限确认）：
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\solve_now.py"
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\solve_now.py"
 
 它做四件事：
 

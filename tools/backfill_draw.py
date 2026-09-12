@@ -15,7 +15,7 @@ r"""把抽牌堆**内容**从保留的原始帧回填进老 trace。
 * **按指纹配对**，配不上的帧留空，绝不猜。
 
 用法（无参数）：
-    & "D:\sts2sim\.venv\Scripts\python.exe" tools/backfill_draw.py
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/backfill_draw.py
 """
 import glob
 import json

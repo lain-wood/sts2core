@@ -1,6 +1,6 @@
 r"""量一件事：实战路径上那条 D=2 的线，有多少是**采样噪声**。
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\plan_seed_sweep.py"
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\plan_seed_sweep.py"
 
 做法：拿已录的 trace，逐个**回合起点**截出一个「到此为止」的单帧局面
 （`--live` 读最后一帧，前面那些帧是每回合计数器的来路），

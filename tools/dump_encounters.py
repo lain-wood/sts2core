@@ -41,8 +41,8 @@ r"""导出**遭遇表**（幕 → 遭遇 → 怪物）和**英文类名 ↔ 内�
 
 ## 用法（无参数；游戏**不用**开着）
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/dump_encounters.py
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/dump_encounters.py --md
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/dump_encounters.py
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/dump_encounters.py --md
 
 `--md` 吐覆盖率那张表的 markdown，好整块贴进文档（和 `count_content.py --md` 同一个约定）。
 """

@@ -9,7 +9,7 @@
 
 用法（固定命令，无参数；目标取 traces/_watch.txt 里的 trace 那一行）：
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\reinfer_trace.py"
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\reinfer_trace.py"
 """
 from __future__ import annotations
 

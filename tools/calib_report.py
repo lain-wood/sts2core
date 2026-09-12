@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """P6 标定报告：`bin/calib` 导出的样本长什么样，基线有多强。
 
-    & "D:\\game mod\\sts2sim\\.venv\\Scripts\\python.exe" "D:\\game mod\\sts2core\\tools\\calib_report.py" <calib.csv>
+    & "D:\\game mod\\sts2core\\.venv\\Scripts\\python.exe" "D:\\game mod\\sts2core\\tools\\calib_report.py" <calib.csv>
 
 # 它在回答三个问题，顺序不能反
 

@@ -10,9 +10,9 @@ r"""L3 构筑顾问的**脏活那一半**：读实况 -> 拼一份请求 -> 交�
 
 只用标准库（`record_trace` 的 HTTP 那一份），所以 MCP server 挂不挂都能跑：
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\advise_core.py" deck
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\advise_core.py" act
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\advise_core.py" reward
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\advise_core.py" deck
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\advise_core.py" act
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\advise_core.py" reward
 
 ## 牌组从哪来：**mod 的第四个本地补丁**
 
@@ -447,6 +447,94 @@ def elite_candidates(rooms: str) -> list[dict]:
 
 
 # --------------------------------------------------------------------------
+# 自检：**Python 这一层唯一的守卫**
+# --------------------------------------------------------------------------
+
+#: 两份手搓的实况 JSON（`tools/fixtures/`）。它们不是实录，是**测试集** ——
+#: 里面故意留着一张内核不认识的牌、一张带附魔的牌、一个空药水槽。
+FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures")
+
+
+def selftest() -> int:
+    """离线跑一遍这一层自己负责的三件事，**不需要游戏**。
+
+    内核那边有九条对拍验收，而**从实况 JSON 到请求**这一段在这之前一条守卫都没有。
+    这里验的正是那一段（每一条都踩过或者差点踩过）：
+
+    | 验什么 | 为什么是它 |
+    |---|---|
+    | 牌组翻译 | 14 张进去要 14 张出来，而且那张内核不认识的要**被点名**（"不认识"和"没效果"是两件事）|
+    | 认幕的两条路 | 有地图块 -> 认出幕名**并钉住 Boss**；没有 -> **拒绝作答**（第 1 幕两个同序号，猜一个就是自信地算错）|
+    | 请求拼装 | 整幕链真跑一次，退 0 —— 它顺带证明 `advise` 这个可执行文件在、遭遇表读得到 |
+
+    退非零码时**印出是哪一条**，不要只报一个 fail。
+    """
+    ok = True
+
+    def check(name: str, cond: bool, detail: str = "") -> None:
+        nonlocal ok
+        print(f"  [{'过' if cond else '红'}] {name}{'' if cond else ' —— ' + detail}")
+        ok = ok and cond
+
+    print("== advise_core 自检（离线，不需要游戏）==")
+    # **可执行文件在不在是第一条** —— 不在的话后面每一条都会以同一个原因红，
+    # 而那堆红里唯一有信息的就是这一句。
+    have_exe = os.path.exists(ADVISE_EXE)
+    check("advise 可执行文件在", have_exe,
+          f"{ADVISE_EXE} 不在 —— 先 `cargo build --release --bins`（后面几条跳过）")
+    with open(os.path.join(FIXTURES, "live_map.json"), encoding="utf-8") as f:
+        on_map = json.load(f)
+    with open(os.path.join(FIXTURES, "live_card_reward.json"), encoding="utf-8") as f:
+        on_reward = json.load(f)
+
+    # 1. 牌组翻译：张数对得上，不认识的那张被点名
+    deck, src = deck_from_state(on_map)
+    check("牌组张数", len(deck) == 14, f"{len(deck)} != 14")
+    check("牌组来自 player.deck", "player.deck" in src, src)
+    out = advise(on_map, question="deck") if have_exe else ""
+    if have_exe:
+        check("内核不认识的那张被点名", "内核不认识" in out and "铁甲" in out, out[:200])
+        check("空药水槽和「认不得」分开印", "空槽" in out, out[:200])
+
+    # 2. 认幕：地图屏认得出并钉住 Boss
+    ctx = act_context(on_map)
+    check("从地图屏认出幕名", ctx.get("act_name") == "Underdocks", str(ctx.get("act_name")))
+    check("钉住了地图上那只 Boss", ctx.get("boss") == "SoulFyshBoss", str(ctx.get("boss")))
+    check("数得出还剩几间", isinstance(ctx.get("rooms_left"), int), str(ctx.get("rooms_left")))
+
+    # 3. 认幕：没有地图块 + 没有缓存 -> **拒绝作答**
+    try:
+        os.remove(CTX_PATH)
+    except OSError:
+        pass
+    try:
+        build_request(on_reward, question="act")
+        check("没地图块时拒绝作答", False, "居然给出了一个幕名")
+    except AdviseError as e:
+        check("没地图块时拒绝作答", "认不出是哪一幕" in str(e), str(e))
+
+    # 4. 请求拼装：整幕链真跑一次（顺带证明 advise 在、遭遇表读得到）
+    #
+    # **`AdviseError` 要接住**（可执行文件没构建就是这一条）：
+    # 让它抛成 traceback 的话，退出码是对的而"是哪一条红了"要去读栈。
+    if have_exe:
+        req, _ = build_request(on_map, question="act", rooms="MMRB", samples=16, seed=7)
+        code, report = call(req)
+        check("整幕链跑得通", code == 0, f"退出码 {code}：{report[:200]}")
+        check("报告带着覆盖率", "开得出" in report, report[:200])
+        check("报告带着已知偏差", "低估" in report or "缺口" in report, report[-400:])
+
+    # 5. 候选：三张奖励牌各一条
+    cands = reward_candidates(on_reward)
+    check("卡牌奖励生成三条候选", len(cands) == 3, str(len(cands)))
+    up = upgrade_candidates(deck)
+    check("升级候选跳过已经升过的", all("防御+" not in c["label"] for c in up), str([c["label"] for c in up]))
+
+    print("== 自检" + ("全过" if ok else "**有红**") + " ==")
+    return 0 if ok else 1
+
+
+# --------------------------------------------------------------------------
 # CLI（冒烟用；实战入口是 MCP 的 sts2-advisor）
 # --------------------------------------------------------------------------
 
@@ -466,7 +554,11 @@ def main() -> int:
     ap.add_argument("--samples", type=int, default=None)
     ap.add_argument("--top", type=int, default=0)
     ap.add_argument("--state", default=None, help="拿一份存下来的实况 JSON 跑（离线冒烟用）")
+    ap.add_argument("--selftest", action="store_true",
+                    help="拿 tools/fixtures/ 那两份实况跑一遍这一层的守卫（离线，CI 跑的就是它）")
     args = ap.parse_args()
+    if args.selftest:
+        return selftest()
 
     try:
         if args.state:

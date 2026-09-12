@@ -1,6 +1,6 @@
 r"""标定叶评估里能力那一项的折扣 `Weights::power`。
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\calib_power.py" <sib.csv>
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\calib_power.py" <sib.csv>
 
 判据沿用 P6 那一套，**一个字没改**：兄弟组内排序 + 平均后悔（血/次决策）。
 不用全局相关 —— 限深搜索只在兄弟之间比较，全局相关会被"第 1 幕 90 血

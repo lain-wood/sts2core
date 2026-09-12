@@ -63,7 +63,7 @@ L3  构筑顾问                          调用 L2，搜「拿哪张牌/移除/
 （2026-09-05 就抓到过：两份表在两天内漂开了）。
 
 ```bash
-"D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/count_content.py
+"D:\game mod\sts2core\.venv\Scripts\python.exe" tools/count_content.py
 ```
 
 粗线条：牌和敌人覆盖了实战打得到的绝大部分，遗物**进表**接近满、**建模**还欠一批，

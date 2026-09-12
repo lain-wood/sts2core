@@ -1,0 +1,26 @@
+# 这个仓库是 Rust 的，这份 pyproject **只为一件事存在**：
+# `advisor/` 那层 MCP 外壳要 `mcp` 这个包，而 `uv run` 要一个项目定义。
+#
+# 依赖的分界线写在 `advisor/server.py` 的模块头，这里再说一遍：
+# **`mcp` 只给 `advisor/`。`tools/` 那十几个脚本一律只用标准库** ——
+# 那条规矩保证录制器和实战入口不依赖 MCP，游戏跑着、MCP server 也跑着的时候
+# 它们能独立工作，不跟它抢连接。
+#
+# `tools` 列进 `packages` 只是为了让 `from tools import advise_core` 成立
+# （同仓库内的普通 import，不是 sys.path 注入）。那些脚本照样能直接跑。
+[project]
+name = "sts2core-advisor"
+version = "0.1.0"
+description = "sts2-advisor MCP server —— sts2core 的 L3 在 MCP 那一侧的外壳"
+requires-python = ">=3.11"
+dependencies = [
+    # 钉在 2.0 以下：2.x 那一支拿掉了 `mcp.server.fastmcp`。
+    # 和 STS2MCP 那个 mod 自己的依赖对齐，两个 server 走同一套证过的 API。
+    "mcp>=1.7.1,<2",
+]
+
+[project.scripts]
+sts2-advisor = "advisor.server:main"
+
+[tool.setuptools]
+packages = ["advisor", "tools"]

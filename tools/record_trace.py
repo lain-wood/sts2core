@@ -7,7 +7,7 @@ MCP server 也跑着的时候独立工作，不跟它抢连接。
 解释器：这台机器 PATH 上的 `python` 是 Windows Store 的假壳（无输出、退出 9009），
 `py` 也没有。用项目自带的 venv，本脚本只依赖标准库，用哪个 venv 都行：
 
-    $PY = "D:\game mod\sts2sim\.venv\Scripts\python.exe"
+    $PY = "D:\game mod\sts2core\.venv\Scripts\python.exe"
 
 用法（每次调用做一个动作，把帧追加进同一个文件）:
 

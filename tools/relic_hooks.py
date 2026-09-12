@@ -11,7 +11,7 @@ r"""从反编译源码里读出每件遗物的**钩子面**，用来判断内核
 羽翼之靴）。游戏更新之后重跑反编译 + 这个脚本，才知道审计还算不算数。
 
 用法（无参数）：
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/relic_hooks.py
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/relic_hooks.py
 """
 import json
 import os

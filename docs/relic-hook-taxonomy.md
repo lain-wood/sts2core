@@ -16,7 +16,7 @@
 **可以重跑**；下面的分类和结论是**判断**，改内核的时候要一起改。
 
 ```bash
-"D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core	ools
+"D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core	ools
 elic_hooks.py"
 ```
 

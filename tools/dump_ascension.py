@@ -38,8 +38,8 @@ r"""导出**进阶数值**：`data/ascension.json`（全部事实）+ `src/asc.r
 
 ## 用法（无参数，游戏不用开）
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/dump_ascension.py
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/dump_ascension.py --md
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/dump_ascension.py
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/dump_ascension.py --md
 """
 
 from __future__ import annotations
@@ -350,7 +350,7 @@ RS_HEADER = '''//! 进阶数值表 —— **生成产物，别手改**。
 //!
 //! 重新生成：
 //! ```text
-//! & "D:\\game mod\\sts2sim\\.venv\\Scripts\\python.exe" tools/dump_ascension.py
+//! & "D:\\game mod\\sts2core\\.venv\\Scripts\\python.exe" tools/dump_ascension.py
 //! ```
 //!
 //! 来源和口径写在 `tools/dump_ascension.py` 的文件头。三条要点：

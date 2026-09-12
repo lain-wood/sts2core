@@ -11,7 +11,7 @@ r"""导出权威遗物表 -> `traces/relics_catalog.json`。
 
 用法（游戏要开着）：
 
-    & "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\dump_relics.py"
+    & "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\dump_relics.py"
 """
 
 from __future__ import annotations

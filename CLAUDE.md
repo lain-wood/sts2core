@@ -1,6 +1,6 @@
 # sts2core — 《杀戮尖塔 2》模拟内核（L1 规则 + L2 求解器）
 
-零依赖的 Rust 内核，正在替换旧的 Python 模拟器 `sts2sim/`。
+零依赖的 Rust 内核。它**已经替换掉**旧的 Python 模拟器（`sts2sim/`，2026-09-12 删除）。
 实战驱动流程在父目录 [`../CLAUDE.md`](../CLAUDE.md)，**先读那份**。
 
 ## 六份文档，各管一件事
@@ -26,7 +26,7 @@ verification-log 里，这里只写**现在的样子和为什么是这个样子*
 
 ## 为什么重写（这是设计的全部动机）
 
-旧的 `sts2sim/`（约 3000 行 Python）有三个硬伤，根子都在"状态是对象图、
+旧的 `sts2sim/`（约 3000 行 Python，**2026-09-12 删除**）有三个硬伤，根子都在"状态是对象图、
 效果是硬编码"：
 
 1. **只认 35 张牌**，条件牌（`每当`/`如果`/X 费/手牌操作）**拒绝评分**而不是打分
@@ -77,12 +77,18 @@ pub fn grant_relic(s: &mut State, def: &RelicDef, counter: Option<i32>);  // L3 
 2026-09-12）· **MCP 接线** `src/bin/advise.rs` + `tools/advise_core.py`
 （2026-09-12），见下面那四节。
 
-**`sts2sim/` 2026-09-12 清空了**：八个 MCP 工具名和签名一个没动、内部全部改调这边，
-而那个 Python 模拟器（约 3000 行）**连同它的两个记录器一起删掉了** ——
-留着一个没人调、结论又和内核不一致的第二套估值器，比没有更危险。
-删之前搬走了一样东西：`advisor/bestiary.json` 是 2026-08-14 那一局的**实测血量**，
-35 只里 22 只对拍语料里没有（语料 08-16 才开始），进了
-`data/enemies_observed_legacy.json`。`sts2sim/.venv` 仍然是所有 Python 工具的解释器。
+**`sts2sim/` 2026-09-12 整个删掉了**，两样东西搬进了本仓库：
+
+* **MCP 外壳** -> `advisor/server.py`（八个工具名和签名一个没动，内部全调这边）。
+  它是 L3 接口的**消费者**，该和接口住在一起 —— 见「L3：MCP 接线」那一节的
+  「为什么它住在这里」。
+* **实测血量** -> `data/enemies_observed_legacy.json`（2026-08-14 那一局记的，
+  35 只里 22 只对拍语料里没有 —— 语料 08-16 才开始。**实测不可再生**）。
+
+那个 Python 模拟器本身连同它的两个记录器一起删了：留着一个没人调、结论又和内核
+不一致的第二套估值器，比没有更危险。
+**解释器也跟着搬了**：`.venv` 现在在本仓库根下（`uv` 按 `pyproject.toml` 建的），
+所有 Python 工具走 `D:\game mod\sts2core\.venv\Scripts\python.exe`。
 
 ---
 
@@ -1215,7 +1221,7 @@ trace 数系统性小于真实战斗数。
 游戏 ──HTTP──► tools/advise_core.py ──JSON/stdin──► target/release/advise ──► 一份人读的报告
                （脏活：读状态、认牌名、挑候选）      （L3：evaluate_act / evaluate + 配对比较）
                                                             ▲
-                        sts2sim/advisor/server.py（八个 MCP 工具，只做映射）
+                        advisor/server.py（八个 MCP 工具，只做映射）
 ```
 
 和 `solve_now.py -> solve --live` **同一条路**（独立可执行文件 + JSON/stdio），
@@ -1601,7 +1607,7 @@ bestline        第2幕Boss 无厌沙虫（束宽 3000 · 40 条候选 · 16 个
 ## 内容清单（**别手改，跑脚本**）
 
 ```bash
-"D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/count_content.py --md
+"D:\game mod\sts2core\.venv\Scripts\python.exe" tools/count_content.py --md
 ```
 
 **这张表是 `tools/count_content.py --md` 的输出，整块替换掉，不要手改一格。**
@@ -1824,7 +1830,8 @@ bestline        第2幕Boss 无厌沙虫（束宽 3000 · 40 条候选 · 16 个
 | | 干什么 |
 |---|---|
 | `solve_now.py` | **实战入口**：读局面 → `record_trace.normalize()` → 单帧 `traces/_live.json` → `solve --live --plan`。**固定命令，无参数** |
-| `advise_core.py` | **L3 的实战入口**：读实况 → 拼请求 → `advise.exe`。它独占两件内核办不到的事：**认这是哪一幕**（第 1 幕两个同序号，只有地图屏的 Boss id 分得开，缓存在 `traces/_advise_ctx.json`）和**数还剩几间房**。`sts2sim/advisor/server.py` 的八个 MCP 工具全调它 |
+| `advise_core.py` | **L3 的实战入口**：读实况 → 拼请求 → `advise.exe`。它独占两件内核办不到的事：**认这是哪一幕**（第 1 幕两个同序号，只有地图屏的 Boss id 分得开，缓存在 `traces/_advise_ctx.json`）和**数还剩几间房**。`advisor/server.py` 的八个 MCP 工具全调它 |
+| `fixtures/` | 两份**手搓的实况 JSON**（不是实录）：`advise_core.py --selftest` 的测试集。一份带地图块（认幕 + 钉 Boss 走它），一份故意没有（验"认不出是哪一幕就拒绝作答"）|
 | `record_trace.py` | **驱动式**录制器（它执行动作，所以动作是已知的）。`--plan` 见下 |
 | `watch_trace.py` | **被动**录制器（玩家自己点，我在旁边看）。配置走 `traces/_watch.txt` |
 | `reinfer_trace.py` | 反推规则改进后，拿存下来的观测把 `inferred` 的动作**重算一遍**，不用重打一场。真实动作一个都不碰 |
@@ -1837,6 +1844,18 @@ bestline        第2幕Boss 无厌沙虫（束宽 3000 · 40 条候选 · 16 个
 | `relic_hooks.py` | 从反编译源码读每件遗物的**钩子面**（行为，不是静态字段）|
 | `dump_ascension.py` | 从反编译源码导**进阶数值**（A8 敌人耐久 / A9 敌人输出）到 `data/ascension.json` + 生成 `src/asc.rs`。**按 (种类, 低进阶值) 认内核的 op**，认不准就整条跳过并报出来 |
 | `dump_encounters.py` | **L3 的数据地基**：从反编译源码导「幕 → 遭遇 → 怪物」到 `data/encounters.json`，从实录导英文类名 ↔ 内核敌人的连接键到 `data/enemy_ids.json`，并印**覆盖率**（这一幕内核今天开得出几场仗）。`--md` 吐覆盖率表。**解析器敢于放弃** —— 构成含随机的遭遇标 `exact: false`，由 `data/encounters_overrides.json` 手填 |
+
+### `advisor/`：唯一依赖 `mcp` 包的地方
+
+| | 干什么 |
+|---|---|
+| `server.py` | `sts2-advisor` MCP server。八个工具名映射到 `tools/advise_core.py` -> `bin/advise` 的三个问法，**一条游戏规则都没有**。2026-09-12 从 `sts2sim/` 搬进来 —— 它是 L3 接口的消费者，接口一变它就得跟着变，放在另一个目录时没有任何东西把这两件事绑在一起 |
+| `../pyproject.toml` | 只为 `uv run` 存在（`mcp` 这一个依赖）。`packages = ["advisor", "tools"]` 让 `from tools import advise_core` 成立 —— **普通 import，不是 `sys.path` 注入** |
+| `../uv.lock` · `../.venv/` | 这个仓库自己的 Python 环境。**`.venv` 是所有 Python 工具的解释器**（PATH 上那个 `python` 是 Store 假壳）|
+
+> **依赖的分界线**：`mcp` 只出现在本目录。**`tools/` 那十几个脚本一律只用标准库**
+> —— 那条规矩保证录制器和实战入口不依赖 MCP，游戏跑着、MCP server 也跑着的时候
+> 它们能独立工作，不跟它抢连接。
 
 ### `data/`：不是 trace 的那些表
 
@@ -1875,10 +1894,10 @@ bestline        第2幕Boss 无厌沙虫（束宽 3000 · 40 条候选 · 16 个
 
 ```bash
 # 驱动式：我出牌，动作是已知的。动作全写进 traces/_plan.txt
-& "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\record_trace.py" --plan
+& "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\record_trace.py" --plan
 
 # 被动式：玩家出牌，动作是反推的。配置走 traces/_watch.txt
-& "D:\game mod\sts2sim\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\watch_trace.py"
+& "D:\game mod\sts2core\.venv\Scripts\python.exe" "D:\game mod\sts2core\tools\watch_trace.py"
 ```
 
 计划文件每行一个步骤，语法和子命令一样（`trace <路径>` / `init` /
@@ -1925,6 +1944,13 @@ cargo 在 `C:\Users\admin\.cargo\bin`。
 —— 反正边界调用很少（一次"评估这个决策"进去、算几十秒出来），IPC 开销可以忽略，
 还能绕开 CPython 的 MSVC ABI 问题。
 
+Python 那一侧的环境由 `uv` 按本仓库的 `pyproject.toml` 建（`.venv/`，gitignore 掉）：
+
+```bash
+uv run --directory "D:\game mod\sts2core" python -m advisor.server   # MCP 那边就是这么起的
+"D:\game mod\sts2core\.venv\Scripts\python.exe" tools/advise_core.py --selftest
+```
+
 ### 这个环境的 shell 坑
 
 * 默认 shell 是 **Windows PowerShell 5.1**：**没有 `&&`**，用 `;` 或 `; if ($?) { ... }`
@@ -1932,4 +1958,5 @@ cargo 在 `C:\Users\admin\.cargo\bin`。
 * **不要对原生 exe 用 `2>&1`**：5.1 会把 stderr 每行包成 ErrorRecord，
   即使 cargo 返回 0 也会冒出 `NativeCommandError`。stderr 本来就会被捕获
 * 路径含空格（`D:\game mod`），记得加引号
-* PATH 里的 `python` 是 Microsoft Store 的假壳，**真的解释器在 `sts2sim/.venv/`**
+* PATH 里的 `python` 是 Microsoft Store 的假壳，**真的解释器在本仓库的 `.venv/`**
+  （`D:\game mod\sts2core\.venv\Scripts\python.exe`，2026-09-12 从 `sts2sim/` 搬过来）

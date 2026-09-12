@@ -189,7 +189,7 @@ B 要动搜索行为，所以**做之前先量**：拿现有语料跑一次对�
 
 ### L3 构筑顾问：四个阶段都做完了，**剩下的是它自己报出来的三条**
 
-2026-09-12 接完线：`sts2sim/advisor` 的八个 MCP 工具全部改调
+2026-09-12 接完线：`advisor/` 的八个 MCP 工具全部改调
 `bin/advise`（`tools/advise_core.py` 拼请求），工具名和签名一个没动。
 设计和三个问法见 `../CLAUDE.md` 的「L3：MCP 接线」，证据在 verification-log。
 

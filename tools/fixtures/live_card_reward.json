@@ -1,0 +1,136 @@
+{
+ "state_type": "card_reward",
+ "run": {
+  "act": 1,
+  "floor": 6,
+  "ascension": 2
+ },
+ "player": {
+  "hp": 54,
+  "max_hp": 73,
+  "deck": [
+   {
+    "name": "打击",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "打击",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "打击",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "打击",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "打击",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "防御",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "防御",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "防御",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "防御",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "痛击",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "拆卸",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "铁甲",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "防御+",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "耸肩无视",
+    "cost": "1",
+    "description": "",
+    "enchantment": {
+     "id": "NIMBLE",
+     "name": "NIMBLE",
+     "amount": 2
+    }
+   }
+  ],
+  "deck_count": 14,
+  "relics": [
+   {
+    "id": "BURNING_BLOOD",
+    "name": "燃烧之血",
+    "counter": null
+   },
+   {
+    "id": "PENDULUM",
+    "name": "摆动球",
+    "counter": 3
+   }
+  ],
+  "potions": [
+   {
+    "id": "FIRE_POTION",
+    "name": "火焰药水",
+    "slot": 0
+   },
+   {
+    "id": "BLOCK_POTION",
+    "name": "格挡药水",
+    "slot": 2
+   }
+  ],
+  "max_potion_slots": 3
+ },
+ "card_reward": {
+  "cards": [
+   {
+    "name": "铁甲",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "刀锋之舞",
+    "cost": "1",
+    "description": ""
+   },
+   {
+    "name": "恶魔形态",
+    "cost": "1",
+    "description": ""
+   }
+  ],
+  "can_skip": true
+ },
+ "_note": "**手搓的实况 JSON，不是实录** —— `tools/advise_core.py --selftest` 的测试集。形状照 mod 的 `/api/v1/singleplayer`（含 `player.deck` 那个本地补丁字段），数值是编的：14 张牌里故意留了一张内核不认识的（铁甲）和一张带附魔的（耸肩无视），药水槽故意空一格。**地图那份带 `map` 块**（认幕 + 钉 Boss 走它），**卡牌奖励那份故意没有** —— 它验的正是「认不出是哪一幕就拒绝作答」。改它之前想一下 selftest 断言的是什么。"
+}

@@ -97,6 +97,24 @@ jobs:
       - name: 合成战斗构造器（第 0 帧逐字段比，不判红）
         run: cargo run --release --bin synth_audit -- traces/act*.json traces/synthetic_*.json
 
+      # ------------------------------------------------------------------
+      # L3 的两道硬门 + Python 那一层的守卫。
+      # **判据都是截断率 0**（分母一个是仗、一个是链）：撞上回合上限的推演
+      # 没有分出胜负，而它照样带着一个血量 —— 那是本仓库最忌讳的"自信地算错"。
+      # 别用 `--max-turns` 去消它。
+      # ------------------------------------------------------------------
+      - name: L3 单场评估（硬门：截断率 0）
+        run: cargo run --release --bin fight_eval -- traces/act*.json traces/synthetic_*.json
+
+      - name: L3 整幕链（硬门：截断率 0；另报回溯检验）
+        run: cargo run --release --bin act_eval -- traces/act*.json
+
+      # 从实况 JSON 到请求那一段（认牌名 / 认幕 / 拼请求）在这之前**一条守卫都没有**。
+      # 测试集是 `tools/fixtures/` 里两份手搓的实况，不需要游戏、不需要 mcp 包
+      # —— `advise_core.py` 只用标准库。
+      - name: L3 接线自检（Python 那一层，离线）
+        run: python3 tools/advise_core.py --selftest
+
       - name: 跨回合验收 · fast 策略（已知红，守不许变多）
         shell: bash
         run: |

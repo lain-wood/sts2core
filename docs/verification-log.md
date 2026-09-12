@@ -8189,3 +8189,56 @@ search）· `smoke_test.py` · `advisor/bestiary.py` · `advisor/recorder.py` ·
 
 > **`.claude/settings.local.json` 里还留着一条指向 `smoke_test.py` 的权限白名单** ——
 > 那是 harness 的配置不是这个仓库的，而且是惰性的（命令不存在就跑不起来），没动。
+
+
+## MCP 外壳搬进本仓库，`sts2sim/` 彻底退场（2026-09-12 晚，第二步）
+
+上一条把模拟器删了，留下的那层 MCP 外壳还住在 `sts2sim/`。**那是个环**：
+
+```
+sts2core/tools/*.py  ──需要解释器──►  sts2sim/.venv
+sts2sim/advisor/server.py ──sys.path 注入──►  sts2core/tools/advise_core.py
+                          ──subprocess──►   sts2core/target/release/advise
+```
+
+后果不是"不好看"，是三件具体的事：**没有任何东西把接口和它的消费者绑在一起**
+（不同目录、而且那个目录没有版本控制 —— 改了请求格式没有测试会红）·
+**sts2core 声明不出自己的依赖**（CI 只跑 cargo，`tools/` 那十几个脚本的运行环境
+在仓库外面）· 隔壁 `STS2MCP/mcp/` 就是反例：**server 和它暴露的东西住在一起**。
+
+### 搬了什么
+
+| 从 | 到 |
+|---|---|
+| `sts2sim/advisor/server.py` | `advisor/server.py`（`sys.path` 注入换成 `from tools import advise_core`）|
+| `sts2sim/pyproject.toml` | `pyproject.toml`（`packages = ["advisor", "tools"]`，只剩 `mcp` 一个依赖；`httpx` 去掉了 —— HTTP 那份在 `record_trace.py`，只用标准库）|
+| `sts2sim/.venv` | `.venv`（`uv` 按新的 pyproject 重建，30 个包全从本地缓存装的，没联网）|
+
+`.mcp.json` 的 `--directory` 跟着改成 `D:\game mod\sts2core`。
+新加 `tools/__init__.py`：它只为让那句 import 成立，**那十几个脚本仍然是脚本、
+仍然只用标准库** —— `mcp` 这个包今天只出现在 `advisor/`。
+
+### 顺带补上的两件事
+
+* **`tools/advise_core.py --selftest`**：Python 那一层在这之前**一条守卫都没有**。
+  测试集是 `tools/fixtures/` 里两份**手搓的实况 JSON**（不是实录），13 条断言，
+  验的是这一层自己负责的三件事：牌组翻译（14 张进 14 张出，不认识的那张要被点名）·
+  认幕的两条路（有地图块 -> 认出幕名并钉住 Boss；没有 -> **拒绝作答**）·
+  请求拼装（整幕链真跑一次）。
+  **反向验过**：把 `advise` 可执行文件挪走，它退非零码并指名是哪一条
+  （第一版会抛 traceback，改成先查文件在不在 —— 不在的话后面每条都会以同一个
+  原因红，而那堆红里唯一有信息的就是那一句）。
+* **CI 补了三条**：`fight_eval` 和 `act_eval` 这两道硬门（截断率 0）
+  2026-09-10 / 09-12 建好之后**一直没进 CI**，加上上面那条自检。
+
+### 删除被运行中的 MCP server 挡住了
+
+`rm -rf sts2sim` 报 `Device or resource busy` —— 两个 `uv.exe` + 两个 `python.exe`
+的工作目录就在那儿（`--directory "D:\game mod\sts2sim"`，会话启动时拉起来的）。
+**没有去 kill 它们**：那是用户会话里活着的 MCP server。
+所有指针都已经改到 sts2core（`.mcp.json` · 权限白名单 · 17 个文件里的解释器路径），
+所以那个目录现在是个**没人引用的空壳**，重启会话之后一条命令删掉即可。
+
+> 这和「WPS 打开 md 会独占锁住文件」是同一类坑：**Windows 上"删不掉"通常不是
+> 权限问题，是有进程的 cwd 或句柄在里面**。查法是
+> `Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*目录*' }`。
