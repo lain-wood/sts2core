@@ -145,12 +145,14 @@ pub fn fast_play_turn_rec(s: &mut State, rec: &mut Option<Vec<Action>>) {
         let mv = &def.moves[mi];
         for (oi, op) in mv.ops.iter().enumerate() {
             // 进阶收口，见 `asc::adjust`
-            if let EOp::Attack { base, hits } =
-                crate::asc::adjust(s.enemy_def[e], mi, oi, s.ascension, *op)
-            {
-                let face = base + s.enemies[e].get(St::Strength);
-                threat_incoming += face.max(0) * hits;
-            }
+            let (base, hits) = match crate::asc::adjust(s.enemy_def[e], mi, oi, s.ascension, *op) {
+                EOp::Attack { base, hits } => (base, hits),
+                EOp::AttackPlusSelfStatus { base, hits, per } => (base + s.enemies[e].get(per), hits),
+                EOp::AttackPlusStackHits { base, hits, per } => (base, hits + s.enemies[e].get(per)),
+                _ => continue,
+            };
+            let face = base + s.enemies[e].get(St::Strength);
+            threat_incoming += face.max(0) * hits;
         }
     }
 
@@ -355,10 +357,18 @@ pub fn predicted_threat(s: &State) -> Threat {
         let mut hits = 0i32;
         let mut per_hit = 0i32;
         for (oi, op) in mv.ops.iter().enumerate() {
-            // 进阶收口，见 `asc::adjust`
-            if let EOp::Attack { base, hits: h } =
-                crate::asc::adjust(s.enemy_def[e], ix, oi, s.ascension, *op)
-            {
+            // 进阶收口，见 `asc::adjust`。恐惧（遗忘之物）的敏捷加值在它自己的回合才会变，
+            // 我这一回合里不动它 —— 所以在这里并进基础值不会冻住任何我能改的东西。
+            let op = match crate::asc::adjust(s.enemy_def[e], ix, oi, s.ascension, *op) {
+                EOp::AttackPlusSelfStatus { base, hits, per } => {
+                    EOp::Attack { base: base + s.enemies[e].get(per), hits }
+                }
+                EOp::AttackPlusStackHits { base, hits, per } => {
+                    EOp::Attack { base, hits: hits + s.enemies[e].get(per) }
+                }
+                other => other,
+            };
+            if let EOp::Attack { base, hits: h } = op {
                 // **给的是面板基础值，不在这里过乘区。**
                 //
                 // 以前这里先 `apply_modifiers` 再塞进 `Threat`，等于把"这一击打多少"
@@ -524,6 +534,12 @@ pub struct Outcome {
     /// 「差一口气」还是「僵住了」。2026-08-25 换策略之后 P4 第一次变红，
     /// 正是靠这个数看出来那 22 条推演停在 400 血上下 —— 不是慢，是打不动。
     pub enemy_hp_left: i32,
+    /// 推演结束时的玩家**最大生命**。
+    ///
+    /// 整幕链要把它带进下一场：纸伤难愈（咬人卷轴）掉的上限、狂宴涨的上限都是
+    /// **局内永久**的，而 2026-09-13 之前链上每一场都拿开局那个 `max_hp` 重开，
+    /// 两个方向的变化一起静默丢掉。
+    pub final_max_hp: i32,
 }
 
 /// 从给定状态开始，模拟到整场战斗结束，返回**结局**。
@@ -555,7 +571,12 @@ pub fn rollout_outcome_with(s: State, max_turns: usize, policy: Policy) -> Outco
     let (s, turns) = rollout_to_state(s, max_turns, policy);
     let died = s.player_dead || s.player.hp <= 0;
     let enemy_hp_left =
-        (0..s.n_enemies as usize).filter(|&e| s.enemies[e].alive()).map(|e| s.enemies[e].hp).sum();
+        // 锁血等自爆的瀑布巨兽数 0（`content::hp_left_this_form`）—— 那 999999999 不是要打的血，
+        // 算进来会把 L3「两边都死的仗谁把敌人打得更残」那一栏整个淹掉。
+        (0..s.n_enemies as usize)
+            .filter(|&e| s.enemies[e].alive())
+            .map(|e| crate::content::hp_left_this_form(&s.enemies[e]))
+            .sum();
     Outcome {
         final_hp: s.player.hp,
         turns,
@@ -563,6 +584,7 @@ pub fn rollout_outcome_with(s: State, max_turns: usize, policy: Policy) -> Outco
         died,
         truncated: !s.combat_over,
         enemy_hp_left,
+        final_max_hp: s.player.max_hp,
     }
 }
 

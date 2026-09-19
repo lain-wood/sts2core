@@ -401,7 +401,7 @@ fn main() -> ExitCode {
     println!("\n✓ 没有任何回合的实战线赢过穷尽搜索 —— 求解器至少是自洽的。");
     println!(
         "注意这**不等于**求解器打得对：它只在 L1 已经对拍验证过的规则范围内可信，\n\
-         而遗物、复活、多阶段这些 L1 还没有的东西，它同样看不见。"
+         尚未建模的内容仍会影响结论，具体缺口见上方报告。"
     );
     ExitCode::SUCCESS
 }
@@ -1091,7 +1091,7 @@ fn live_advise(
     }
 
     println!(
-        "\n提醒  遗物/复活/多阶段 L1 还没有，求解器看不见它们；\n\
+        "\n提醒  求解结果受上方列出的模型缺口限制；\n\
          \x20     每打出一张牌都要重读状态（entity_id 会重新编号）。"
     );
     ExitCode::SUCCESS
@@ -1286,11 +1286,21 @@ fn upgrade_threat_live(
             // 进阶收口，见 `asc::adjust`。漏了它高进阶下面那条"现算一遍必须和
             // 观测标签逐字相同"的自检会失败，于是整份退回冻住的标签 ——
             // 安全，但看不见任何改敌人这一击的手段。
-            if let EOp::Attack { base: b, hits: h } =
-                sts2core::asc::adjust(s.enemy_def[id.slot], mv, oi, s.ascension, *op)
-            {
-                base = b;
-                hits += h;
+            match sts2core::asc::adjust(s.enemy_def[id.slot], mv, oi, s.ascension, *op) {
+                EOp::Attack { base: b, hits: h } => {
+                    base = b;
+                    hits += h;
+                }
+                // 恐惧：基础值含它自己的敏捷（我这一回合里改不了它）
+                EOp::AttackPlusSelfStatus { base: b, hits: h, per } => {
+                    base = b + s.enemies[id.slot].get(per);
+                    hits += h;
+                }
+                EOp::AttackPlusStackHits { base: b, hits: h, per } => {
+                    base = b;
+                    hits += h + s.enemies[id.slot].get(per);
+                }
+                _ => {}
             }
         }
         if hits == 0 {

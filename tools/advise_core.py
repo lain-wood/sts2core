@@ -150,11 +150,21 @@ def _encounters() -> dict:
         return json.load(f)
 
 
-def _act_of_boss(table: dict, boss_id: str) -> str | None:
+def _canonical_boss(table: dict, boss_id: str | None) -> tuple[str | None, str | None]:
+    """将 boss id（如 KAISER_CRAB_BOSS 或 SoulFyshBoss）规范化为 (幕名, 遭遇 key)。"""
+    if not boss_id:
+        return None, None
+    norm = boss_id.replace("_", "").lower()
     for name, act in (table.get("acts") or {}).items():
-        if boss_id in (act.get("encounters") or []):
-            return name
-    return None
+        for enc in act.get("encounters") or []:
+            if enc == boss_id or enc.replace("_", "").lower() == norm:
+                return name, enc
+    return None, boss_id
+
+
+def _act_of_boss(table: dict, boss_id: str) -> str | None:
+    act_name, _ = _canonical_boss(table, boss_id)
+    return act_name
 
 
 def _acts_by_index(table: dict, index: int) -> list[str]:
@@ -206,16 +216,22 @@ def act_context(raw: dict) -> dict:
     m = raw.get("map") or {}
     boss = (m.get("boss") or {}).get("id")
     if boss:
-        ctx["act_name"] = _act_of_boss(table, boss)
-        ctx["boss"] = boss
+        act_name, canon_boss = _canonical_boss(table, boss)
+        ctx["act_name"] = act_name
+        ctx["boss"] = canon_boss
         bosses = [b.get("id") for b in (m.get("bosses") or []) if b.get("id")]
         if len(bosses) > 1:
-            ctx["second_boss"] = bosses[1]
+            _, canon_second = _canonical_boss(table, bosses[1])
+            ctx["second_boss"] = canon_second
         cur = m.get("current_position") or {}
         boss_row = (m.get("boss") or {}).get("row")
         if isinstance(boss_row, int) and isinstance(cur.get("row"), int):
             # 一行一间房：走到 Boss 那一行还要经过 `boss_row - 当前行` 间。
             ctx["rooms_left"] = max(boss_row - int(cur["row"]), 1)
+        if not ctx["act_name"]:
+            names = _acts_by_index(table, act_no - 1)
+            if len(names) == 1:
+                ctx["act_name"] = names[0]
         ctx["source"] = "地图屏（当场读的）"
         _save_ctx(ctx)
         return ctx

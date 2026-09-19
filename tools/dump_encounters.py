@@ -489,7 +489,7 @@ def observed_names() -> dict[str, list[str]]:
 # 组装 + 报告
 # ---------------------------------------------------------------------------
 
-def apply_overrides(encs: dict, warn: list[str]) -> int:
+def apply_overrides(encs: dict, mons: dict, warn: list[str]) -> int:
     """并入手写的构成 override。
 
     和内容编译器那条规矩同一个理由（roadmap「文本推不出来的语义走 overrides
@@ -519,6 +519,35 @@ def apply_overrides(encs: dict, warn: list[str]) -> int:
         e["source"] = "override"
         e["note"] = ov.get("why")
         n += 1
+    # **分布**（2026-09-14）：构成随机、但分布在 [源码] 里逐支枚举得完的那几场。
+    # `exact` 仍然是 false（它不是一场仗），多一栏 `variants` 给 L3 按权重抽。
+    for name, ov in (blob.get("distributions") or {}).items():
+        e = encs.get(name)
+        if e is None:
+            warn.append(f"distributions 里的 `{name}` 不在遭遇表里 —— 反编译目录过期或名字写错")
+            continue
+        if e["exact"]:
+            warn.append(f"distributions 写了一场构成确定的仗：`{name}` —— 确定的就不是分布")
+            continue
+        variants = [{"weight": int(v["weight"]), "monsters": list(v["monsters"])}
+                    for v in ov.get("variants") or []]
+        listed = {m for v in variants for m in v["monsters"]}
+        seen = set(e["all_possible"]) | {m for ms in e["choice_fields"].values() for m in ms}
+        bad = []
+        if not variants or any(v["weight"] <= 0 or not v["monsters"] for v in variants):
+            bad.append("空表 / 非正权重 / 空构成")
+        if listed - set(mons):
+            bad.append(f"不是怪物类：{sorted(listed - set(mons))}")
+        if seen - listed:
+            bad.append(f"解析器看得见的候选没出现在任何一支里：{sorted(seen - listed)}")
+        if bad:
+            warn.append(f"distributions `{name}` 自检失败，整条不并入：{'；'.join(bad)}")
+            continue
+        e["note_decompiled"] = e["note"]
+        e["variants"] = variants
+        e["source"] = "override-distribution"
+        e["note"] = ov.get("why")
+        n += 1
     return n
 
 
@@ -532,7 +561,7 @@ def build() -> tuple[dict, dict, list[str]]:
     obs = observed_names()
 
     warn: list[str] = []
-    n_over = apply_overrides(encs, warn)
+    n_over = apply_overrides(encs, mons, warn)
 
     # 英文类名 -> 内核敌人
     ids: dict[str, dict] = {}
@@ -633,10 +662,13 @@ def coverage(enc: dict, ids: dict) -> list[tuple]:
             if e is None:
                 missing.append((name, ["<遭遇不在表里>"]))
                 continue
-            if not e["exact"]:
+            if not e["exact"] and not e.get("variants"):
                 uncertain.append((name, e["note"]))
                 continue
-            gaps = sorted({m for m in e["monsters"]
+            # 分布（`variants`）要**每一支**都开得出，这一场才算开得出 —— 和内核的 `Table::coverage` 同口径
+            members = (e["monsters"] if e["exact"]
+                       else [m for v in e["variants"] for m in v["monsters"]])
+            gaps = sorted({m for m in members
                            if not (ids["monsters"].get(m) or {}).get("kernel_enemy")})
             (ok if not gaps else missing).append((name, gaps))
         rows.append((act, a, ok, uncertain, missing))

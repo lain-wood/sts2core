@@ -309,6 +309,21 @@ fn apply(base: &[Named], c: &Cand) -> Vec<DeckCard> {
 // 报告
 // ---------------------------------------------------------------------------
 
+/// `curse_policy` 印成人读的：三次知识的诅咒各选哪边（「心灵腐化 / 瓦解 / 虚脱」）。
+fn curse_label(mask: u8) -> String {
+    let sets = &sts2core::content::KNOWLEDGE_CURSES;
+    (0..sets.len())
+        .map(|k| {
+            if mask & (1u8 << k) != 0 {
+                sts2core::replay::st_name(sts2core::state::St::Disintegration)
+            } else {
+                sts2core::replay::st_name(sets[k].other)
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(" / ")
+}
+
 fn pct(x: f64) -> String {
     format!("{:.0}%", x * 100.0)
 }
@@ -580,6 +595,7 @@ fn run_act(req: &Req, table: &Table) -> ExitCode {
         potion_slots: req.potion_slots,
         base_energy: req.base_energy,
         ascension: req.ascension,
+        curse_policy: sts2core::content::DEFAULT_CURSE_POLICY,
         seed: req.seed,
     };
     let plan = ActPlan {
@@ -605,6 +621,17 @@ fn run_act(req: &Req, table: &Table) -> ExitCode {
     match &req.pin_boss {
         Some(b) => println!("Boss **钉死为 {b}**（地图上写着的那只）"),
         None => println!("Boss **没钉** —— 从这一幕的 Boss 池里均匀掷，方差比实战大"),
+    }
+    if let Some(b) = &req.pin_boss {
+        let curse = table
+            .resolve(b)
+            .map_or(false, |es| es.iter().any(|e| sts2core::content::offers_curse_choice(e.def)));
+        if curse {
+            println!(
+                "     这只 Boss 有「知识的诅咒」：整幕链按默认选法「{}」打；8 种选法的对比问单场（`question: fight`）",
+                curse_label(spec.curse_policy)
+            );
+        }
     }
     deck_summary(&req.deck);
     println!(
@@ -690,7 +717,7 @@ fn run_act(req: &Req, table: &Table) -> ExitCode {
         println!("  · 没打成 {s}");
     }
     println!(
-        "  ~ **报的是「这副牌组在我们这套策略手里」的成色**：引擎牌（每回合给格挡的 /\n    会衰减的 / 触发式的）在跨回合搜索里评不到 ⇒ 带引擎的牌组被**低估**；\n    回溯检验量到我们这套策略**每场比玩家多掉 6.9 血**，一幕几场就是几倍。"
+        "  ~ **报的是「这副牌组在我们这套策略手里」的成色**：引擎牌（每回合给格挡的 /\n    会衰减的 / 触发式的）在跨回合搜索里评不到 ⇒ 带引擎的牌组被**低估**；\n    回溯检验量到我们这套策略**每场比玩家多掉 7.2 血**，一幕几场就是几倍。"
     );
     println!("\n({:.1} 秒)", t0.elapsed().as_secs_f64());
     ExitCode::SUCCESS
@@ -698,11 +725,19 @@ fn run_act(req: &Req, table: &Table) -> ExitCode {
 
 fn run_fight(req: &Req, table: Option<&Table>) -> ExitCode {
     // 敌人两个来源：遭遇 key（查表，**构成含随机的整条拒绝**）或者直接给名字。
+    // 构成是分布的那几场（盛碗虫）也拒绝：单场问的是「这一场」，而分布里有好几场 ——
+    // 整幕链会按权重抽，这里要调用方直接给场上那几只的名字。
     let (enemies, what) = match (&req.encounter, table) {
         (Some(key), Some(t)) => match t.resolve(key) {
             Ok(e) => (e, key.clone()),
             Err(why) => {
-                println!("[拒绝作答] 这一场开不出来：{why}");
+                match t.encounters.get(key).filter(|e| !e.variants.is_empty()) {
+                    Some(e) => println!(
+                        "[拒绝作答] {key} 的构成是分布（{} 种，整幕链按 [源码] 权重抽）—— 单场问法请直接给场上敌人的名字",
+                        e.variants.len()
+                    ),
+                    None => println!("[拒绝作答] 这一场开不出来：{why}"),
+                }
                 return ExitCode::from(1);
             }
         },
@@ -752,6 +787,7 @@ fn run_fight(req: &Req, table: Option<&Table>) -> ExitCode {
         potion_slots: req.potion_slots,
         base_energy: req.base_energy,
         ascension: req.ascension,
+        curse_policy: sts2core::content::DEFAULT_CURSE_POLICY,
         seed: req.seed,
     };
     let cfg = EvalCfg { samples: req.samples, max_turns: req.max_turns, ..EvalCfg::default() };
@@ -813,6 +849,33 @@ fn run_fight(req: &Req, table: Option<&Table>) -> ExitCode {
         println!("  [不评分] {r}");
     }
 
+    // **知识的诅咒：8 种选法配对比一遍。** 三次二选一是玩家的决策，内核照 `curse_policy` 打；
+    // 和上面的基准同一批随机（`paired_delta`），基准就是默认选法。L2 不给它定价，所以这张表是唯一的出处。
+    if enemies.iter().any(|e| sts2core::content::offers_curse_choice(e.def)) {
+        println!(
+            "\n-- 知识的诅咒：8 种选法（每行是三次各选哪边；和基准同一批随机，基准 = 默认「{}」）",
+            curse_label(spec.curse_policy)
+        );
+        let mut crows = Vec::new();
+        for mask in 0u8..8 {
+            if mask == spec.curse_policy {
+                continue;
+            }
+            let ev = evaluate(&FightSpec { curse_policy: mask, ..spec }, &cfg);
+            if ev.refused.is_some() {
+                continue;
+            }
+            if let Some(d) = paired_delta(&base, &ev) {
+                crows.push(Row::from_fight(&curse_label(mask), &d, None, fight_fallback(&base, &ev)));
+            }
+        }
+        rank(&mut crows);
+        print_rows(&crows, req.samples, 8);
+        println!(
+            "  ~ 推演从开局打到底，**不看局面临时换选法**；实战里第三次「看情况」的那个情况，这张表给不了"
+        );
+    }
+
     println!("\n-- 这次评估自己知道的毛病（**和上面每个数一起读**）：");
     print_caveats(&base.caveats(), &base.gaps, None);
     println!(
@@ -849,6 +912,7 @@ fn run_deck(req: &Req) -> ExitCode {
         potion_slots: req.potion_slots,
         base_energy: req.base_energy,
         ascension: req.ascension,
+        curse_policy: sts2core::content::DEFAULT_CURSE_POLICY,
         seed: req.seed,
     };
     let built = sts2core::synth::build(&spec);

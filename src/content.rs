@@ -6,6 +6,13 @@
 use crate::ops::*;
 use crate::state::{St, F_INNATE, F_RETAIN};
 
+/// [源码] CardTag.Strike for the cards supported by this kernel.
+pub const STRIKE_CARDS: &[u16] = &[
+    card::STRIKE, card::ASH_STRIKE, card::SETUP_STRIKE, card::POMMEL_STRIKE,
+    card::TWIN_STRIKE, card::ULTIMATE_STRIKE, card::PERFECTED_STRIKE,
+];
+pub fn is_strike(id: u16) -> bool { STRIKE_CARDS.contains(&id) }
+
 pub mod card {
     pub const STRIKE: u16 = 0;
     pub const DEFEND: u16 = 1;
@@ -2325,9 +2332,13 @@ pub static POWERS: &[PowerDef] = &[
             then: &[TOp::If { cond: TCond::TurnAtLeast(2), then: &[TOp::GrowSelf(-1)] }],
         }],
     },
+    //
+    // **给格挡挂在 `EnemyTurnEndEarly` 上**（[源码] `BeforeSideTurnEndEarly`），不是 `EnemyTurnEnd`。
+    // 2026-09-14 熟睡甲虫逼出来的：熟睡在 `AfterSideTurnEnd` 减到 0 醒来时把覆甲整个移除，
+    // 而那一回合的格挡**已经给过了**。两条压在同一个钩子上，先后就只剩表内顺序。
     PowerDef {
         st: St::PlatedArmor,
-        hook: Hook::EnemyTurnEnd,
+        hook: Hook::EnemyTurnEndEarly,
         ops: &[TOp::If { cond: TCond::OwnerIsEnemy, then: &[TOp::OwnerBlock(Amt::Stacks)] }],
     },
     // 沙坑（第 2 幕 Boss 无厌沙虫）：**一条即死倒计时**。
@@ -2407,11 +2418,162 @@ pub static POWERS: &[PowerDef] = &[
             ],
         }],
     },
+    // 人体蜂房（蜂群术士，[源码] `PersonalHivePower.AfterDamageReceived`）：
+    // `target == Owner && dealer != null && props.IsPoweredAttack()` ⇒ 往**我的抽牌堆随机位置**
+    // 塞 `Amount` 张晕眩（`CardPilePosition.Random`）。
+    //
+    // 三条都是源码定的，别凭卡面改：
+    //   · **每一段攻击各一次**：`AfterDamageReceived` 逐段调用，多段牌付几倍的晕眩
+    //   · **不看打没打穿**：门里没有 `UnblockedDamage`
+    //   · **只认攻击**：药水 / 遗物 / 荆棘 / 能力牌的伤害是 `Unpowered`，不塞。
+    //     [实测] 2026-08-22 `act2_f27_elite_entomancer`（蜂房 1 层）：BASH / ULTIMATE_STRIKE /
+    //     HEMOKINESIS / POMMEL_STRIKE / MOLTEN_FIST 各让抽牌堆多 1 张晕眩；
+    //     FIRE_POTION（20 点）和 OROBIC_ACID 一张都没塞
+    //
+    // 挂在 `EnemyDamaged` 上，所以**打死它的那一下不塞**（源码塞，但仗已经打完了，不影响任何结果）。
+    PowerDef {
+        st: St::PersonalHive,
+        hook: Hook::EnemyDamaged,
+        ops: &[TOp::If {
+            cond: TCond::LastHitWasAttack,
+            then: &[TOp::AddCardToDraw { card: card::DAZED, amt: Amt::Stacks }],
+        }],
+    },
+    // 熟睡（熟睡甲虫，[源码] `SlumberPower`）。两处减层，减到 0 就醒：
+    //
+    //   AfterDamageReceived: target == Owner && UnblockedDamage != 0 ⇒ −1；归零 ⇒
+    //       CreatureCmd.Stun(owner, WakeUpMove, "ROLL_OUT_MOVE")   —— 击晕换招，下一手「醒来」
+    //   AfterSideTurnEnd（持有者那一边）: −1；归零 ⇒ WakeUpMove（当场移除覆甲，不击晕）
+    //
+    // **被打穿**不分是不是攻击（门里没有 `IsPoweredAttack`）：药水打穿也算，**被格挡吃掉的不算**。
+    // 回合末那条挂在 `EnemyTurnEnd`，而敌人覆甲给格挡在 `EnemyTurnEndEarly` ——
+    // 醒来那一回合的格挡已经给过了（[源码] `BeforeSideTurnEndEarly` 早于 `AfterSideTurnEnd`）。
+    //
+    // 回合末醒的那一次**不改指针**：打鼾之后接什么，内核在打鼾出完那一刻就按
+    // 「掷招那一刻还睡不睡」定好了（`M_SLUMBERING_BEETLE` 那个 ≥ 2 的阈值）。
+    PowerDef {
+        st: St::Slumber,
+        hook: Hook::EnemyDamaged,
+        ops: &[TOp::If {
+            cond: TCond::LastHitUnblocked,
+            then: &[
+                TOp::GrowSelf(-1),
+                // 2 = 醒来（被击晕的那一手），之后固定出击
+                TOp::If { cond: TCond::SelfStacksAtMost(0), then: &[TOp::OwnerForceMove(2)] },
+            ],
+        }],
+    },
+    PowerDef {
+        st: St::Slumber,
+        hook: Hook::EnemyTurnEnd,
+        ops: &[
+            TOp::GrowSelf(-1),
+            TOp::If { cond: TCond::SelfStacksAtMost(0), then: &[TOp::OwnerClearStatus(St::PlatedArmor)] },
+        ],
+    },
+    // 沉睡（乐加维林族母，[源码] `AsleepPower`）。三条钩子，**和熟睡（上面那两条）逐条不同**，
+    // 别照着改 —— 两个 power 只是长得像：
+    //
+    //   AfterDamageReceived: target == Owner && UnblockedDamage != 0 ⇒
+    //       Remove<PlatingPower> + Stun(owner, WakeUpMove, "SLASH_MOVE") + Remove<self>
+    //       —— 打穿一下**整条沉睡直接没了**（熟睡是 −1 层）
+    //   BeforeSideTurnEndVeryEarly: Amount <= 1 && 有覆甲 ⇒ Remove<PlatingPower>
+    //       —— **最早一档**，排在覆甲给格挡（`BeforeSideTurnEndEarly`）之前，
+    //          所以最后一个睡眠回合它**拿不到那堵墙**。`Hook::EnemyTurnEndVeryEarly`
+    //          就是为这一条加的，它是唯一的消费者
+    //   AfterSideTurnEnd: −1；归零 ⇒ WakeUpMove，而 [源码] 的 `WakeUpMove` 只播动画、
+    //       **不碰覆甲**（覆甲在上一档已经摘掉了）⇒ 内核这一条只剩减层
+    //
+    // 「打穿」不分是不是攻击（门里没有 `IsPoweredAttack`），被格挡吃掉的不算 ——
+    // 和熟睡同一条判据（`TCond::LastHitUnblocked`）。开局覆甲 12，打不穿就醒不了。
+    PowerDef {
+        st: St::Asleep,
+        hook: Hook::EnemyDamaged,
+        ops: &[TOp::If {
+            cond: TCond::LastHitUnblocked,
+            then: &[
+                TOp::OwnerClearStatus(St::PlatedArmor),
+                // 5 = 醒来（被击晕的那一手），之后固定接斩击（[源码] `Stun(.., "SLASH_MOVE")`）
+                TOp::OwnerForceMove(5),
+                // **必须是最后一条**：`ClearSelf` 之后这条规则的层数就是 0 了
+                TOp::ClearSelf,
+            ],
+        }],
+    },
+    PowerDef {
+        st: St::Asleep,
+        hook: Hook::EnemyTurnEndVeryEarly,
+        ops: &[TOp::If {
+            cond: TCond::SelfStacksAtMost(1),
+            then: &[TOp::OwnerClearStatus(St::PlatedArmor)],
+        }],
+    },
+    // 减层。归零之后 `fire` 那道 `n > 0` 的门自然不再发它，所以不用夹 0。
+    // **不改指针**：睡到自然醒的那一次游戏侧没有击晕，下一手接什么在族母出完
+    // 沉睡那一刻就按「掷招那一刻还睡不睡」定好了（`M_LAGAVULIN_MATRIARCH` 那个 ≥ 2 的阈值）。
+    PowerDef { st: St::Asleep, hook: Hook::EnemyTurnEnd, ops: &[TOp::GrowSelf(-1)] },
+    // 滑溜（墨影幻灵 / 墨宝，[源码] `SlipperyPower.AfterDamageReceived`）：
+    // `target == Owner && result.UnblockedDamage >= 1` ⇒ `Decrement`。
+    //
+    // **封顶那一半不在这张表里**，它在 `damage::absorb`（掉血封顶 1，不是伤害封顶 1）——
+    // 为什么分在两处、以及和无实体差在哪，写在 `St::Slippery`。
+    //
+    // 判据用 `LastHitUnblocked` 和熟睡同一条。**封顶在减层之前发生**，所以
+    // `UnblockedDamage` 已经是压完的 1 —— 两种读法在"够不够 1"上同真同假，
+    // 这条门因此不受封顶顺序影响。
+    PowerDef {
+        st: St::Slippery,
+        hook: Hook::EnemyDamaged,
+        ops: &[TOp::If { cond: TCond::LastHitUnblocked, then: &[TOp::GrowSelf(-1)] }],
+    },
+    // 硬化外壳（鬼祟珊瑚群，[源码] `HardenedShellPower.BeforeSideTurnStart`）：
+    // **任何一边**的回合开始把 `damageReceivedThisTurn` 清零 —— 内核存的是余额，于是「清零」就是
+    // 「余额回满到上限」。持有者是上限那个私有标记（`St::HardenedShellCap`），层数就是上限 20。
+    //
+    // **封顶那一半不在这张表里**，在 `damage::absorb`（和滑溜同一格，扣完格挡之后）。
+    // 钩子为什么是新开的 `SideTurnStart` 而不是 `TurnStart`：见那个钩子的文档（水银沙漏的 3 点
+    // 该算进我这个回合的额度，压在同一个钩子上就只剩表内顺序）。
+    PowerDef {
+        st: St::HardenedShellCap,
+        hook: Hook::SideTurnStart,
+        ops: &[TOp::OwnerSetStatus { st: St::HardenedShell, amt: Amt::Stacks }],
+    },
+    // 吮吸（化石追踪者，[源码] `SuckPower.AfterAttack`）：它这一次攻击里**打穿了几段**，
+    // 就 +`Amount` × 段数 力量。内核逐段给（`AttackUnblocked` 本来就逐段点火）——
+    // 等价的理由在 `St::Suck`：同一手的面板值开头只算一次，逐段给的力量进不了下一段。
+    // 门和纸伤难愈同一个（`UnblockedDamage > 0`，被格挡吃光的那段不算）。
+    PowerDef {
+        st: St::Suck,
+        hook: Hook::AttackUnblocked,
+        ops: &[TOp::OwnerStatus { st: St::Strength, amt: Amt::Stacks }],
+    },
+    // 意外（地精佣兵，[源码] `SurprisePower.AfterDeath`）：先召唤卑鄙地精、再召唤胖地精。
+    // 和寄生物同一个形状（`EnemyDied` 只让死的那一只触发、`summon_one` 往后开新格，
+    // 尸体留在原格 —— 所以打死它那一刻场上就有活敌人，战斗不结束，
+    // 等于 [源码] 的 `ShouldStopCombatFromEnding => true`）。
+    //
+    // **血量是 `[判断]`**：两只的 [源码] 区间是 10–14 / 13–17（`ToughEnemies` 各 +1），
+    // `SummonN` 只收一个数，取中位 12 / 15 —— 和寄生物的扭动虫取 19（17–21 的中位）同一个做法。
+    // 偷来的金币（`HeistPower`）战斗层没有，不挂。
+    PowerDef {
+        st: St::Surprise,
+        hook: Hook::EnemyDied,
+        ops: &[
+            TOp::SummonN { def: enemy::SNEAKY_GREMLIN, hp: 12, count: 1 },
+            TOp::SummonN { def: enemy::FAT_GREMLIN, hp: 15, count: 1 },
+        ],
+    },
     // 轰鸣：在**我的回合结束**时自己消失（[源码] `AfterSideTurnEnd`）。
     // 它是敌人在**它的**回合挂上来的，所以撑过我的下一个回合再消失 ——
     // 这正是它能限制我一整个回合的原因。放 `TURN_SCOPED` 会在回合**开始**
     // 就清掉，等于这条 debuff 从来没生效过。
     PowerDef { st: St::Ringing, hook: Hook::TurnEnd, ops: &[TOp::ClearSelf] },
+    // 缠结（藤蔓蹒跚者）：同一个形状 —— 敌人回合里挂上、撑过我的下一个回合、**我的**回合结束摘掉
+    // （[源码] `TangledPower.AfterSideTurnEnd`，`participants.Contains(Owner)`；敌人回合结束时 participants 是敌人，不摘）。
+    // 挂 `TurnEndLate` 而不是轰鸣那个 `TurnEnd`：[源码] 这一句在 `FlushPlayerHand` **之后**，
+    // `TurnEndLate` 是内核里离它最近的一档（`AfterSideTurnEnd` 和 `...Late` 之间没有消费者分得开）。
+    // 两档之间没有任何东西读攻击牌的费用，所以这个选择改不了一个数；写近的那个只是为了不留一条假的时点。
+    PowerDef { st: St::Tangled, hook: Hook::TurnEndLate, ops: &[TOp::ClearSelf] },
     // 寄生物「死亡时，召唤……某种东西」= [源码] `InfestedPower.AfterDeath`：
     // 4 只 Wriggler，每只 `StartStunned = true`（所以它们的机器从眩晕那一手开始）。
     // 层数 4 就是只数，但这里写 `Fixed(4)` 而不是 `Stacks` —— `SummonN` 的
@@ -2512,6 +2674,29 @@ pub static POWERS: &[PowerDef] = &[
             ],
         }],
     },
+    // 蒸汽喷发（瀑布巨兽）：**被击杀时不算死 —— 锁成 999999999 血，下一手「即将爆发」**。
+    //
+    // [源码] `SteamEruptionPower.AfterDeath`（`!wasRemovalPrevented && creature == Owner`）
+    // -> `WaterfallGiant.TriggerAboutToBlowState()`：`SetMaxAndCurrentHp(999999999m)` +
+    // `SetMoveImmediate(AboutToBlowState, forceTransition: true)`。这个 power 自己
+    // `ShouldPowerBeRemovedAfterOwnerDeath => false`，别的 power 照常随死亡摘掉。
+    //
+    // 和适生力的区别是**血当场就回来了**（[实测] 砍死那一帧之后观测里就是 999999999），
+    // 所以它从死的那一刻起就是活的：打得到、上得了 debuff（虚弱真的压得低爆炸那一下），
+    // 「还在场上」那三处口径一处都不用碰。它没有第二条命：「即将爆发」移除蒸汽喷发之后，
+    // 「爆炸」里的 `EOp::KillSelf` 再死一次就不会再触发这条。
+    //
+    // 叶评估那一侧：锁血期间 `remaining_hp_including_revives` 数 0（`hp_left_this_form`）。
+    PowerDef {
+        st: St::SteamEruption,
+        hook: Hook::EnemyDied,
+        ops: &[
+            TOp::ClearOwnerStatusesExcept(&[St::SteamEruption]),
+            TOp::OwnerSetMaxHp(ABOUT_TO_BLOW_HP),
+            TOp::OwnerHealToFull,
+            TOp::OwnerForceMove(WATERFALL_ABOUT_TO_BLOW_MOVE),
+        ],
+    },
     // 幻象（寄生惧魔自带）：**被击杀时不移出战斗，下一手回满血**。
     //
     // [源码] `IllusionPower`：
@@ -2561,6 +2746,72 @@ pub static POWERS: &[PowerDef] = &[
         hook: Hook::EnemyTurnStart,
         ops: &[TOp::If { cond: TCond::OwnerIsDead, then: &[TOp::OwnerHealToFull] }],
     },
+    // 接续（残杀千足虫，[源码] `ReattachPower`，每节出场自带 25）：
+    // **一节被砍死不移出战斗，死后第二个敌人回合回 25 血。**
+    //
+    //   `ShouldCreatureBeRemovedFromCombatAfterDeath(owner) => false`  尸体留在场上
+    //   `ShouldAllowHitting => !IsReviving`                          尸体打不到（内核：血量 0 本来就打不到）
+    //   `ShouldOwnerDeathTriggerFatal => AreAllOtherSegmentsDead()`  别的节全死了才结束
+    //   `AfterDeath` -> `SetMoveImmediate(DeadState)`：`DEAD_MOVE` 什么都不做，
+    //   后继 `REATTACH_MOVE` -> `DoReattach` -> `Heal(Amount)`，再往后等权随机三选一
+    //
+    // **战斗结束的判据一个字不用改**：别的节全死 = 所有非爪牙都死了 = `no_master_left`。
+    // 所以接续**不进** `any_enemy_present`（这是它和适生力的区别），而 `DoReattach` 里那个
+    // `if (!AreAllOtherSegmentsDead())` 在内核里恒真 —— 能走到回血那一步，战斗就还没结束。
+    //
+    // **死亡剥离连力量一起清**（那个虚方法默认 true，只有接续自己重写成 false）。
+    // [实测] `act2_f28_decimillipede`：节 1 死前缠绕的标签是 `Attack:10`（8 + 力量 2），
+    // 接续回来之后第一手缠绕是 `Attack:8`。
+    //
+    // [实测] 同一份实录两次复活，时序逐帧对上：第 3 回合砍死 -> 第 4 回合观测里没有 ->
+    // 第 5 回合 25/44 回来；第 5 回合砍死 -> 第 7 回合 25/40 回来。
+    // **窗口因此是两个我方回合**：砍死那一回合 + 下一回合结束之前把别的节全砍掉，它就回不来。
+    PowerDef {
+        st: St::Reattach,
+        hook: Hook::EnemyDied,
+        ops: &[
+            TOp::ClearOwnerStatusesExcept(&[St::Reattach]),
+            TOp::OwnerSetStatus { st: St::ReattachDue, amt: Amt::Fixed(2) },
+        ],
+    },
+    // 接续的第二半：倒计时。敌人回合开始减 1，减到 0 回 `Reattach` 层数那么多血，
+    // 并把这一手换成「重接」（它自己不做事，意图是 Heal）。
+    //
+    // **回血在回合开始、不在它那一手里**，和适生力 / 幻象同一个简化：死人不出手，
+    // 要等它活过来这一手才轮得到。`DEAD_MOVE` 那一个敌人回合就是倒计时从 2 数到 1。
+    //
+    // **强制换招放在复活这一刻，不放在死亡那一刻**（幻象是后者）：对拍路径上尸体的
+    // `EnemyDef` 是 UNKNOWN、出招指针也没对齐，死的时候定下的指针传不到这里；
+    // 复活这一刻由规则自己定，两条路就都对。
+    // **紧跟着清掉 `MoveForcedThisTurn`**：那个标记的意思是"同步那一刻观测到的意图过期了"，
+    // 而敌人回合开始时没有任何观测会过期（尸体本来就没有意图）。留着它的话，推演路径上
+    // 这一节活过来之后的那个我方回合，注入威胁会把它的伤害跳过一次。
+    PowerDef {
+        st: St::ReattachDue,
+        hook: Hook::EnemyTurnStart,
+        ops: &[
+            TOp::GrowSelf(-1),
+            TOp::If {
+                cond: TCond::SelfStacksAtMost(0),
+                then: &[
+                    TOp::OwnerHeal(Amt::OwnerStacksOf(St::Reattach)),
+                    // 3 = 重接，见 `M_DECIMILLIPEDE` 的下标表
+                    TOp::OwnerForceMove(3),
+                    TOp::OwnerClearStatus(St::MoveForcedThisTurn),
+                ],
+            },
+        ],
+    },
+    // 瓦解（知识恶魔的诅咒给**我**挂的，[源码] `DisintegrationPower.AfterSideTurnEndLate`）：
+    // 我的回合结束时受 `Amount` 点 `Unpowered` 伤害。
+    //
+    // **时点是我的回合末最后一步**：[源码] `AfterSideTurnEndLate` 在 `Hook.AfterTurnEnd` 里，
+    // 第二阶段弃完手牌之后才跑 —— 晚于灼伤那类手牌发作、晚于奥利哈钢，**早于敌人出手**。
+    // 所以这一回合剩下的格挡先吃它，吃剩的才去挡敌人那一手。
+    // [玩家判定] 2026-09-14：「回合末剩的格挡真的挡得住，并且是先结算」。
+    //
+    // 走 `TOp::DamagePlayer`（`Unpowered`、过难以杀灭/无实体、走格挡、不是攻击），和流电同一条路。
+    PowerDef { st: St::Disintegration, hook: Hook::TurnEndLate, ops: &[TOp::DamagePlayer(Amt::Stacks)] },
     // 复仇宿敌（实验体阶段 3）：**每个敌人回合末交替获得/摘掉 1 层无实体**。
     //
     // [源码] `NemesisPower.AfterSideTurnEnd` 就是一个
@@ -2592,6 +2843,84 @@ pub static POWERS: &[PowerDef] = &[
         st: St::Stock,
         hook: Hook::EnemyDied,
         ops: &[TOp::SummonCarryingSelfMinusOne { def: enemy::AXEBOT, hp: 74 }],
+    },
+    // 抢夺力量 / 抢夺速度（失落之物 / 遗忘之物）：**自己死时把偷走的还给我**。
+    //
+    // [源码] `PossessStrengthPower.AfterDeath`：`creature == Owner` 且没被阻止移除时，
+    // 对字典里每个受害者 `Apply<StrengthPower>(-stolen)`。偷的那一半在它们的招式里
+    // （`EOp::PlayerStatus{-2}` + `EOp::SelfStatus{+2}`）。
+    //
+    // 退还量为什么读它**自己的**力量而不是一个私有计数器、两者在哪两种情况下分岔，
+    // 见 `Amt::OwnerStacksOf`。`EnemyDied` 只让死的那一只自己触发（`fire_ctx` 的
+    // `only_ctx`），所以杀掉遗忘之物不会把力量还回来。
+    PowerDef {
+        st: St::PossessStrength,
+        hook: Hook::EnemyDied,
+        ops: &[TOp::PlayerStatus { st: St::Strength, amt: Amt::OwnerStacksOf(St::Strength) }],
+    },
+    PowerDef {
+        st: St::PossessSpeed,
+        hook: Hook::EnemyDied,
+        ops: &[TOp::PlayerStatus { st: St::Dexterity, amt: Amt::OwnerStacksOf(St::Dexterity) }],
+    },
+    // 流电（电球头开局 6 层）：我每打出一张**能力牌**，挨层数那么多点。
+    //
+    // [源码] `GalvanicPower.AfterCardPlayed` -> `CreatureCmd.Damage(owner, Amount,
+    // ValueProp.Unpowered | Move)`。时点在**结算之后**，正是 `Hook::CardPlayed`。
+    // 这 6 点**走格挡**（没有 `Unblockable`）、不是攻击 —— 走 `TOp::DamagePlayer`。
+    //
+    // 对求解器的后果是实在的：这场仗里一张能力牌等于再付 6 点血，
+    // 薪火之源/恶魔形态那类引擎牌的账要重算。
+    PowerDef {
+        st: St::Galvanic,
+        hook: Hook::CardPlayed,
+        ops: &[TOp::If {
+            cond: TCond::LastPlayedKindIs(Kind::Power),
+            then: &[TOp::DamagePlayer(Amt::Stacks)],
+        }],
+    },
+    // 纸伤难愈（咬人卷轴开局 2 层）：它的攻击**每打穿一段**，我 −2 最大生命。
+    //
+    // [源码] `PaperCutsPower.AfterDamageGiven`：`dealer == Owner && target.IsPlayer
+    // && props.IsPoweredAttack() && result.UnblockedDamage > 0` ->
+    // `CreatureCmd.LoseMaxHp(target, Amount)`。四卷咀嚼 5×2 全打穿就是一回合 −16 上限，
+    // **而且带出这场仗** —— 整幕链会把它传给下一场（`synth::act`）。
+    PowerDef {
+        st: St::PaperCuts,
+        hook: Hook::AttackUnblocked,
+        ops: &[TOp::PlayerLoseMaxHp(Amt::Stacks)],
+    },
+    // 剧痛刺击（实验体阶段 2 自带 1 层）：它的攻击每打穿一段，往我弃牌堆塞 1 张伤口。
+    //
+    // [源码] `PainfulStabsPower.AfterAttack`：`command.Attacker == Owner` 且是攻击，
+    // 数这条攻击命令里 `UnblockedDamage > 0` 的段数，塞 `Amount × 段数` 张伤口进弃牌堆。
+    // 逐段各塞 `Amount` 张和它给出同一个总数。
+    //
+    // 2026-09-13 之前它在 `KNOWN_UNMODELLED` 里挂着「欠『这一下打穿了多少』传进钩子」——
+    // 纸伤难愈要的正是同一个钩子（`Hook::AttackUnblocked`），它是那个钩子的第二个消费者。
+    PowerDef {
+        st: St::PainfulStabs,
+        hook: Hook::AttackUnblocked,
+        ops: &[TOp::AddCardToDiscard { card: card::WOUND, count: 1 }],
+    },
+    // 恶咒（幽灵骑士）：[源码] `HexPower.AfterDeath` —— **施咒者**死了（`creature == Applier`）
+    // 就把恶咒从我身上摘掉，邪咒随之清掉、牌不再虚无。
+    //
+    // 施咒者是谁观测里没有（恶咒挂在**我**身上，`Applier` 不报），所以规则挂在骑士身上
+    // 一个**私有标记**上（`St::HexCaster`，按名字从 `ENEMY_PRIVATE_MARKERS` 来）：
+    // `EnemyDied` 只让死的那一只自己触发，于是杀掉连枷骑士不会解咒。
+    // 一场只有一只幽灵骑士，"施咒者死了"和"幽灵骑士死了"是同一件事。
+    PowerDef {
+        st: St::HexCaster,
+        hook: Hook::EnemyDied,
+        ops: &[TOp::PlayerClearStatus(St::Hex)],
+    },
+    // 抑制（魔法骑士）：[源码] `DampenPower.AfterDeath` —— 施咒者集合空了就移除，
+    // `AfterRemoved` 把降过级的牌逐张升回去。一场只有一只魔法骑士，集合就是它自己。
+    PowerDef {
+        st: St::DampenCaster,
+        hook: Hook::EnemyDied,
+        ops: &[TOp::RestoreDampenedCards, TOp::PlayerClearStatus(St::Dampen)],
     },
     // 抱抱先生「在你的回合开始时，对所有敌人造成等量于当前回合数的伤害」
     // [源码] `MrStruggles.AfterPlayerTurnStart`：
@@ -3002,6 +3331,12 @@ pub static TURN_SCOPED: &[St] = &[
 /// "故意写死的规则修饰"和"忘了写规则的哑弹能力牌"。加一个就要在
 /// `step.rs` 里同步加它的消费点，否则测试会放行一张什么都不做的牌。
 pub static RULE_MODIFIERS: &[St] = &[
+    St::RedSkull,
+    St::RedSkullActive,
+    // 知识恶魔的两个诅咒（2026-09-14）。心灵腐化：`step::open_hand` 少抽；
+    // 懒惰：`step::cards_locked` + `step` 的 `PlayCard` 拒绝第 N+1 张。
+    St::MindRot,
+    St::Sloth,
     St::Barricade,
     St::Entrench,
     St::AllOrNothing,
@@ -3028,8 +3363,6 @@ pub static RULE_MODIFIERS: &[St] = &[
     // 胆小：受到未被格挡的卡牌攻击时，获得等量格挡。消费点在 `step.rs::hit_enemy_with`
     St::Skittish,
     St::SkittishTriggered,
-    // 蒸汽喷发（瀑布巨兽计数器）
-    St::SteamEruption,
     // 钻地（地道虫）：敌人回合开始格挡不清零，格挡被破时眩晕。消费点在 `step.rs::begin_enemy_turn` / `step.rs::hit_enemy_with`
     St::Burrowed,
     // 钢笔尖的在场标记和跨战斗攻击计数器。消费点是
@@ -3042,6 +3375,9 @@ pub static RULE_MODIFIERS: &[St] = &[
     // 里一个只认 status 的窄 `if` —— 和臂甲/坚定不移同一类（`ModifyXxx` 那一族，
     // 遗物把状态交给玩家实体，规则那一侧一个 `if 遗物` 都没有）。
     St::RuinedHelmet,
+    // 恶咒（幽灵骑士挂在我身上）：手里每一张没有回合末发作效果的牌都是虚无。
+    // 消费点是 `step::resolve_hand_end` 的窄判断 —— 它改的是"回合末消不消耗"这条判定。
+    St::Hex,
 ];
 
 /// **伤害管线读的 status**：乘区、上限、朝向、格挡翻倍。
@@ -3059,6 +3395,7 @@ pub static RULE_MODIFIERS: &[St] = &[
 /// 把口径放宽之后，这一组当场被点名 —— 它们都**有**消费点，
 /// 只是从来没人登记过。加一个进来之前先确认：管线里真的有人读它吗？
 pub static PIPELINE_STATUSES: &[St] = &[
+    St::StrikeDummy,
     St::Shrink,        // 攻击方缩小 ×2/3（damage.rs）
     St::Slow,          // 防御方缓慢 ×(1 + 0.1×本回合此牌之前打出的牌数)
     St::SlowSource,    // 「谁带缓慢、每张牌几个百分点」，step.rs 的窄 if
@@ -3073,6 +3410,8 @@ pub static PIPELINE_STATUSES: &[St] = &[
     // 钢笔尖的翻倍标记。`damage::apply_modifiers` 里和上面这些同一个循环，
     // 上下标记怎么来的见 `St::PenNibArmed`
     St::PenNibArmed,
+    // 硬化外壳的余额：`damage::absorb` 里封掉血、扣余额（回满那一半是 `POWERS` 里上限那条规则）
+    St::HardenedShell,
 ];
 
 /// **纯标记 status**：游戏把它显示成一个 power，但效果在**打出那一刻就结算完了**，
@@ -3084,7 +3423,21 @@ pub static PIPELINE_STATUSES: &[St] = &[
 ///
 /// 加进这张表之前先确认：它真的什么都不做吗？还是你**漏了**一条规则？
 /// 完整性测试靠这张表放行它们，放错了就等于给自己开了个后门。
-pub static MARKER_STATUSES: &[St] = &[St::Pyre];
+pub static MARKER_STATUSES: &[St] = &[
+    St::Pyre,
+    // 抑制（魔法骑士挂在我身上）。效果在**挂上的那一刻**就结算完了
+    // （`EOp::DowngradeUpgradedCards` 降级并打上 `F_DAMPENED`），之后它只是个印记；
+    // 解除走施咒者身上 `St::DampenCaster` 那条规则。
+    St::Dampen,
+    // 虚脱（知识恶魔的诅咒）。效果在**选中的那一刻**就落在 `State::base_energy` 上了
+    // （`EOp::CurseOfKnowledge`，和薪火之源同一个做法），之后它只是个印记。
+    St::WasteAway,
+    // 偷窃 / 盗窃（地精佣兵一族）。[源码] 两个都只动**金币**（`PlayerCmd.LoseGold` /
+    // 死时 `AddExtraReward(GoldReward)`），而金币不在战斗层 —— 对一场仗的结局它们真的什么都不做。
+    // 挂着纯粹为了和观测对齐（不映射的话整帧的 status 报「没检查」）。
+    St::Thievery,
+    St::Heist,
+];
 
 /// **已知但故意不建模**的 status。
 ///
@@ -3109,15 +3462,6 @@ pub static KNOWN_UNMODELLED: &[St] = &[
     //      在此之前这份欠账**不可枚举** —— 只有读遍 state.rs 才知道欠了什么。
     // 结实的卵：掉到 0 层原地变成幼虫。欠 `EOp::TransformSelf`
     St::Hatch,
-    // 私有蜂巢：挨打往抽牌堆塞牌。欠「把 powered 传进 EnemyDamaged」+「随机位置塞 N 张」
-    St::PersonalHive,
-    // 重接（千足虫）：一节死了不移出战斗，隔一手回满 25 血。
-    // 欠「尸体留在场上 + 死后仍然走出招表」。**方向是乐观的：内核低估这一场**
-    St::Reattach,
-    // 剧痛刺击（实验体阶段 2）：未格挡伤害塞伤口。
-    // 欠「把"这一下打穿了多少"传进钩子」—— 现有的 Attacked 只说挨了一下。
-    // 方向是**乐观**的（内核少给我塞一堆伤口）。
-    St::PainfulStabs,
     // 侵蚀（活雾）：打出技能牌时让技能牌染上瓦斯。欠「手牌/牌库卡牌附魔修饰」
     St::Smoggy,
 ];
@@ -3183,6 +3527,16 @@ pub static HAND_END: &[HandEndDef] = &[
 // 点名报出来（见 `bin/solve.rs`）。内核必须能说出"我不认识这个"。
 
 pub static RELICS: &[RelicDef] = &[
+    RelicDef {
+        id: "MANGO", name: "芒果",
+        start_status: &[], private_status: &[], counter_to: None, modelled: true,
+        note: "[源码] 拾取时最大生命 +14；战斗观测已含，不重复施加",
+    },
+    RelicDef {
+        id: "BING_BONG", name: "宾邦",
+        start_status: &[], private_status: &[], counter_to: None, modelled: true,
+        note: "[源码] 新加入主牌组的牌复制一张；局外效果，主牌组快照已含",
+    },
     // ---- 局外：不属于战斗层，内核不欠它们什么，所以 modelled = true ----
     RelicDef {
         id: "SILVER_CRUCIBLE", name: "白银熔炉",
@@ -3513,8 +3867,8 @@ pub static RELICS: &[RelicDef] = &[
     },
     RelicDef {
         id: "RED_SKULL", name: "红头骨",
-        start_status: &[], private_status: &[], counter_to: None, modelled: false,
-        note: "血量≤50% 时 +3 力量。欠**持续条件**（掉到一半以下要即时生效，不是一次性触发）",
+        start_status: &[], private_status: &[(St::RedSkull, 3)], counter_to: None, modelled: true,
+        note: "[源码+实测] 血量≤50% 时 +3 力量；回血越过阈值时移除。观测力量已含加成",
     },
     // ---- 2026-09-09 第三批：新一局第 1 幕捡到的六件 ----
     // 三件局外（战斗层不欠它们什么），两件战斗层，一件只在合成路径上欠。
@@ -3582,8 +3936,8 @@ pub static RELICS: &[RelicDef] = &[
     },
     RelicDef {
         id: "STRIKE_DUMMY", name: "打击木偶",
-        start_status: &[], private_status: &[], counter_to: None, modelled: false,
-        note: "名字带「打击」的牌 +3 伤害。欠按**牌名**分组（内核只有 id，没有名字谓词）",
+        start_status: &[], private_status: &[(St::StrikeDummy, 3)], counter_to: None, modelled: true,
+        note: "[源码+实测] CardTag.Strike 的有源攻击 +3，位于乘区之前",
     },
     RelicDef {
         id: "THE_ABACUS", name: "算盘",
@@ -4272,11 +4626,15 @@ pub mod enemy {
     pub const BOWLBUG_SILK: u16 = 25;
     pub const CHOMPER: u16 = 26;
     pub const LOUSE_PROGENITOR: u16 = 27;
+    /// 异螨（第 2 幕杂兵，`MytesNormal` 两只同场）。2026-09-14 照 [源码] 原地重建 ——
+    /// 这个下标原来是一条错的 [wiki]「螨虫」。起手按站位，浓毒往手牌塞毒素。
     pub const MYTE: u16 = 28;
     pub const OVICOPTER: u16 = 29;
     pub const SPINY_TOAD: u16 = 30;
     pub const QUEEN: u16 = 31;
     pub const DOORMAKER: u16 = 32;
+    /// 知识恶魔（**第 2 幕 Boss**）。2026-09-14 按 [源码] 重建（原来的 [wiki] 定义是错的），
+    /// 三次二选一的诅咒走 `State::curse_policy`，见 `ENEMIES` 那一条。
     pub const KNOWLEDGE_DEMON: u16 = 33;
     /// 第2幕 Boss 双怪。**它们所在的战斗有三条内核没有的机制**，见 `ENEMIES` 里
     /// 那两条的注释 —— 拿它们做跨回合推演之前先读那段。
@@ -4296,8 +4654,8 @@ pub mod enemy {
     /// 外骨骼虫（第2幕）。**难以杀灭 9 的第一个真实来源** ——
     /// 在它之前那条乘区一次都没被数据碰过。
     pub const EXOSKELETON_ROACH: u16 = 42;
-    /// 蜂群术士（第2幕精英）。带**人体蜂房** —— 那个 status 只映射了名字，
-    /// 行为没建模，见 `St::PersonalHive`。
+    /// 蜂群术士（第2幕精英）。带**人体蜂房**：我每一段攻击命中它，抽牌堆多层数那么多张晕眩
+    /// （2026-09-14 建的，见 `St::PersonalHive`）。喷射信息素拆成两手，见 `M_ENTOMANCER`。
     pub const ENTOMANCER: u16 = 43;
     /// 感染棱柱（第2幕精英）。带**活力火花** —— 它让我每张技能牌都带污染，
     /// 而污染让我挨的每一次攻击 +1。两个都只映射不建模，见 `St::Tainted`。
@@ -4373,6 +4731,57 @@ pub mod enemy {
     pub const PUNCH_CONSTRUCT: u16 = 80;
     /// 第 1 幕 Boss 灵魂异鱼。隔几手给自己无实体 2，塞的状态牌是应急按钮
     pub const SOUL_FYSH: u16 = 81;
+    // ---- 2026-09-13 第 3 幕补敌人（批 1 + 批 2）。**全部 [源码]，一条实录都没有**。
+    // 中文名取自游戏本地化表（`SlayTheSpire2.pck` 里的 `*.name`），不是推的。
+    pub const SLIMED_BERSERKER: u16 = 82;
+    pub const MECHA_KNIGHT: u16 = 83;
+    pub const GLOBE_HEAD: u16 = 84;
+    /// 咬人卷轴。普通遭遇 4 卷、弱遭遇 3 卷**共用一个 def**，起手按槽位错开。
+    pub const SCROLL_OF_BITING: u16 = 85;
+    pub const THE_LOST: u16 = 86;
+    pub const THE_FORGOTTEN: u16 = 87;
+    // ---- 2026-09-14 第 3 幕骑士团（批 3，`KnightsElite` 三只同场）。**全部 [源码]**。
+    pub const FLAIL_KNIGHT: u16 = 88;
+    /// 幽灵骑士。**恶咒**：带着它时我回合末没打出去的牌全部消耗，它死了才解。
+    pub const SPECTRAL_KNIGHT: u16 = 89;
+    /// 魔法骑士。**抑制**：本场已升级的牌全部降级，它死了才升回来。
+    pub const MAGI_KNIGHT: u16 = 90;
+    // ---- 2026-09-14 第 2 幕（批 4）。**全部 [源码]**。
+    /// 熟睡甲虫。开局覆甲 15 + 熟睡 3；**被打穿一下就少睡一回合**，醒了之后每手出击 16 + 力量 2。
+    pub const SLUMBERING_BEETLE: u16 = 91;
+    // ---- 2026-09-17 第 1 幕（批 2）。**全部 [源码]**。
+    /// 乐加维林族母（**第 1 幕暗港 Boss**）。开局覆甲 12 + 沉睡 3；
+    /// **打穿一下就醒**（覆甲当场没、晕一回合再斩击），醒后四手定环。
+    pub const LAGAVULIN_MATRIARCH: u16 = 92;
+    // ---- 2026-09-17 第 1 幕（批 3）。**全部 [源码]**。
+    /// 墨影幻灵（**第 1 幕密林 Boss**）。开局**滑溜 8** —— 前 8 次打穿各只掉 1 血，
+    /// 所以**段数是货币**，见 `St::Slippery`。四手定环。
+    pub const VANTOM: u16 = 93;
+    /// 墨宝（第 1 幕密林杂兵，`InkletsNormal` 三只同场）。滑溜 1，中间那只起手旋风。
+    pub const INKLET: u16 = 94;
+    // ---- 2026-09-19 第 1 幕（批 4）。**全部 [源码]**。
+    /// 鬼祟珊瑚群（**第 1 幕暗港精英**）。开局**硬化外壳 20**：每个回合（双方各算各的）
+    /// 最多掉 20 血，见 `St::HardenedShell`。四手定环。
+    pub const SKULKING_COLONY: u16 = 95;
+    // ---- 2026-09-19 第 1 幕（批 5，暗港杂兵）。**全部 [源码]**。
+    pub const HAUNTED_SHIP: u16 = 96;
+    /// 蟾蜍蝌蚪（`ToadpolesWeak` 两只同场）。**起手按站位**：前面那只先长刺，后面那只先旋转。
+    pub const TOADPOLE: u16 = 97;
+    /// 化石追踪者。开局**吮吸 3**：它的攻击每打穿一段 +3 力量。
+    pub const FOSSIL_STALKER: u16 = 98;
+    /// 地精佣兵。开局**意外**：它死时召唤卑鄙地精 + 胖地精（打死它不算赢）。
+    pub const GREMLIN_MERC: u16 = 99;
+    /// 卑鄙地精（地精佣兵死时召唤）：醒来 -> 一直冲撞。
+    pub const SNEAKY_GREMLIN: u16 = 100;
+    /// 胖地精（地精佣兵死时召唤）：醒来 -> 逃跑（内核近似成原地不动，见它的 def）。
+    pub const FAT_GREMLIN: u16 = 101;
+    // ---- 2026-09-19 第 1 幕（批 6，密林杂兵）。**全部 [源码]**。
+    /// 藤蔓蹒跚者（`VineShamblerNormal` 单怪）。紧绕藤蔓给我挂**缠结**：下一个我方回合攻击牌 +1 费。
+    pub const VINE_SHAMBLER: u16 = 102;
+    /// 劫掠者刺客（`RubyRaidersNormal` 五选三之一）。一招：致命射击。
+    pub const RAIDER_ASSASSIN: u16 = 103;
+    /// 劫掠者暴徒（同上）。殴打 / 怒吼（+3 力量）交替。
+    pub const RAIDER_BRUTE: u16 = 104;
 }
 
 // ===========================================================================
@@ -4604,22 +5013,68 @@ static M_CHOMPER: Machine = Machine {
 
 /// 残杀千足虫的一节 [源码] `DecimillipedeSegment`（三节共用一个类）。
 ///
-/// 下标：0 扭动 5×2 · 1 壮硕 6+自身力量2 · 2 缠绕 8+给我 debuff
+/// 下标：0 扭动 5×2 · 1 壮硕 6+自身力量2 · 2 缠绕 8+给我 debuff ·
+/// **3 重接**（接续复活那一手，不在循环里 —— 只有 `St::ReattachDue` 那条规则的
+/// `OwnerForceMove(3)` 进得来）
 ///
 /// **平时是纯三循环** `缠绕 -> 壮硕 -> 扭动 -> 缠绕`（`FollowUpState` 首尾相接），
-/// 起手由 `StarterMoveIdx % 3` 决定 —— 也就是**三节各从循环的不同点开始**
-/// （[实测] 同屏三节正好一节 5×2、一节 6+Buff、一节 8+Debuff，一一对上）。
-/// 内核不知道自己是第几节，所以起手用等权 `Rand`，和啃咬机的 `_screamFirst` 同一个处理。
+/// 起手由 `StarterMoveIdx % 3` 决定（0 扭动 · 1 壮硕 · 2 缠绕，和内核下标同号），
+/// 而 [源码] `DecimillipedeElite` 给 Front / Middle / Back 三节 `num / num+1 / num+2`
+/// （`num = Rng.NextInt(3)`）—— **三节两两不同，而且是同一个方向的轮换**。
 ///
-/// **死亡之后那两手（DEAD -> REATTACH）没建**：见 `St::Reattach`。
-/// 内核里这一节死了就是死了，所以它**低估这一场**。
+/// **起手写成 `ECond::SlotRep`**（2026-09-15，见 verified-rules §2.14）：
+/// 单看一节三手都可能（`allowed_initial` 三手全开）；合成一场仗时按槽位错开
+/// （`initial_move` 取 `num = 0`：扭动 / 壮硕 / 缠绕）。槽位 0/1/2 = Front/Middle/Back，
+/// 是遭遇表的出场顺序，也是观测里的顺序。
+/// [实测] 两条实录的开局都是这个方向的轮换：`act2_f28` 壮硕/缠绕/扭动（`num = 1`）·
+/// `act2_f30` 扭动/壮硕/缠绕（`num = 0`）；反方向（`num / num+2 / num+1`）两条都对不上。
+/// 在这之前是等权 `Rand`，`initial_move` 取最低位 ⇒ 合成路径上三节全从扭动起、整场同相。
+/// **没用 `SlotIs`（咬人卷轴那个写法）**：它会让 `act2_f28` 三节在 `synth_audit` 的开局第一手全报集合外。
+///
+/// **死了之后**（2026-09-14 建，见 `St::Reattach`）：[源码] `DEAD_MOVE` -> `REATTACH_MOVE`
+/// -> 等权随机三选一（`CannotRepeat`）-> 回到上面的循环。`DEAD_MOVE` 内核不建成一手：
+/// 死人不出手，那一个敌人回合由 `St::ReattachDue` 的倒计时数掉。
+/// [实测] `act2_f28_decimillipede` 两次复活之后的第一手分别是缠绕和壮硕，之后照循环走。
 static M_DECIMILLIPEDE: Machine = Machine {
-    start: Next::Rand(&[
-        Branch { to: 0, weight: 1, repeat: Repeat::Forever, cooldown: 0 },
-        Branch { to: 1, weight: 1, repeat: Repeat::Forever, cooldown: 0 },
-        Branch { to: 2, weight: 1, repeat: Repeat::Forever, cooldown: 0 },
+    start: Next::Cond(&[
+        (ECond::SlotRep(0), 0),
+        (ECond::SlotRep(1), 1),
+        (ECond::SlotRep(2), 2),
     ]),
-    after: &[Next::Go(2), Next::Go(0), Next::Go(1)],
+    after: &[
+        Next::Go(2),
+        Next::Go(0),
+        Next::Go(1),
+        // 重接之后。`CannotRepeat` 比的是上一手（重接），所以三条都放行
+        Next::Rand(&[
+            Branch { to: 0, weight: 1, repeat: Repeat::NotTwice, cooldown: 0 },
+            Branch { to: 1, weight: 1, repeat: Repeat::NotTwice, cooldown: 0 },
+            Branch { to: 2, weight: 1, repeat: Repeat::NotTwice, cooldown: 0 },
+        ]),
+    ],
+};
+
+/// 知识恶魔 [源码] `KnowledgeDemon.GenerateMoveStateMachine`
+///
+/// ```text
+/// 知识的诅咒 -> 抽打 -> 知识过载 -> 思考 -> 条件（诅咒出过不到 3 次 ? 知识的诅咒 : 抽打）
+/// 起点 = 知识的诅咒
+/// ```
+///
+/// 所以第 1 / 5 / 9 回合是诅咒，第 13 回合起只剩 抽打 -> 知识过载 -> 思考 三手循环。
+/// 条件读的是 [源码] 私有的 `_curseOfKnowledgeCounter`，内核从我身上的诅咒 status 反推
+/// （`content::curses_taken`），不另存计数器。
+static M_KNOWLEDGE_DEMON: Machine = Machine {
+    start: Next::Go(0),
+    after: &[
+        Next::Go(1),
+        Next::Go(2),
+        Next::Go(3),
+        Next::Cond(&[
+            (ECond::CursesTakenBelow(&KNOWLEDGE_CURSES, 3), 0),
+            (ECond::CursesTakenAtLeast(&KNOWLEDGE_CURSES, 3), 1),
+        ]),
+    ],
 };
 
 static M_HUNTER_KILLER: Machine = Machine {
@@ -4928,13 +5383,173 @@ static M_EXOSKELETON: Machine = Machine {
 /// **起点是蜂群**（`new MonsterMoveStateMachine(list, moveState2)`）。
 ///
 /// ```text
-/// 蜂群(3x7) -> 长矛(18) -> 信息素喷吐(强化) -> 蜂群 -> …
+/// 蜜——蜂——！(3x7) -> 矛击！(18) -> 喷射信息素(强化) -> 蜜——蜂——！ -> …
 /// ```
 ///
-/// 纯确定性，所以其实用 `loop_from = 0` 的固定循环也表达得了；
-/// 写成机器是为了让"这三条边是从源码逐条抄的"这件事留在类型里。
-static M_ENTOMANCER: Machine =
-    Machine { start: Next::Go(0), after: &[Next::Go(1), Next::Go(2), Next::Go(0)] };
+/// **喷射信息素在内核里拆成两手**（下标 2 / 3）。[源码] 是同一个 `MoveState`，分支写在
+/// `SpitMove` 的方法体里：`if (蜂房 < 3) { 蜂房 +1; 力量 +1 } else { 力量 +2 }`。
+/// 拆开之后分支由机器的条件边表达，读自身层数（`ECond::SelfStatusBelow`）。
+/// **等价的前提**：内核在矛击出完那一刻判（`advance_move`），游戏在喷射信息素**执行**那一刻判 ——
+/// 两者之间蜂房的层数没有任何东西会改（只有喷射信息素自己加它）。
+///
+/// 两手的意图签名逐字相同（`Buff`），实况对齐靠 `step::move_reachable_now` 挑出
+/// 「当前层数下走得到的那一手」，见 `Replayer::identify_enemies`。
+static M_ENTOMANCER: Machine = Machine {
+    start: Next::Go(0),
+    after: &[
+        Next::Go(1),
+        Next::Cond(&[
+            (ECond::SelfStatusBelow(St::PersonalHive, 3), 2),
+            (ECond::SelfStatusAtLeast(St::PersonalHive, 3), 3),
+        ]),
+        Next::Go(0),
+        Next::Go(0),
+    ],
+};
+
+/// 异螨 [源码] `Myte.GenerateMoveStateMachine`
+///
+/// ```text
+/// 起点 = 条件（SlotName == "first" ? 浓毒 : SlotName == "second" ? 吸吮）
+/// 浓毒 -> 啃咬 -> 吸吮 -> 浓毒
+/// ```
+///
+/// 站位名内核没有，用**槽位号**近似（`ECond::SlotIs`，和外骨骼虫同一个近似）：
+/// `MytesNormal` 只有 first / second 两格，出场顺序就是槽位 0 / 1。
+static M_MYTE: Machine = Machine {
+    start: Next::Cond(&[(ECond::SlotIs(0), 0), (ECond::SlotIs(1), 2)]),
+    after: &[Next::Go(1), Next::Go(2), Next::Go(0)],
+};
+
+/// 熟睡甲虫 [源码] `SlumberingBeetle.GenerateMoveStateMachine`
+///
+/// ```text
+/// 打鼾 -> 条件（HasPower<SlumberPower> ? 打鼾 : 出击）
+/// 出击 -> 出击
+/// 起点 = 打鼾
+/// ```
+///
+/// 第三手「醒来」不在源码的机器里（`CreatureCmd.Stun` 临时造的态），只能被熟睡那条规则
+/// 强制打进去，之后固定接出击（`Stun(.., "ROLL_OUT_MOVE")`）。
+///
+/// **条件边的阈值是 2 不是「还有没有熟睡」—— 这是时点换算，不是改规则**：
+/// [源码] 在**我方回合开始**才掷下一手（`CombatManager.StartTurn` -> `PrepareForNextTurn`），
+/// 那时敌人回合末的熟睡 −1 已经发生过；内核在打鼾出完那一刻就推进指针（`advance_move`），
+/// 早了那一次 −1。于是「掷的那一刻还有熟睡」⇔「推进那一刻熟睡 ≥ 2」。
+/// `--predict-enemy` 拿我方回合开头的观测判下一手，那一刻的层数也还没减，所以两条路是同一个阈值。
+/// 写成 ≥ 1 的话，回合末醒来之后它会**多睡一回合**（乐观）。
+static M_SLUMBERING_BEETLE: Machine = Machine {
+    start: Next::Go(0),
+    after: &[
+        Next::Cond(&[
+            (ECond::SelfStatusAtLeast(St::Slumber, 2), 0),
+            (ECond::SelfStatusBelow(St::Slumber, 2), 1),
+        ]),
+        Next::Go(1),
+        Next::Go(1),
+    ],
+};
+
+/// 乐加维林族母 [源码] `LagavulinMatriarch.GenerateMoveStateMachine`
+///
+/// ```text
+/// 沉睡 -> 条件（HasPower<AsleepPower> ? 沉睡 : 斩击）
+/// 斩击 -> 开膛破肚 -> 斩击2 -> 灵魂汲取 -> 斩击 -> …
+/// 起点 = 沉睡
+/// ```
+///
+/// 第六手「醒来」不在源码的机器里（`CreatureCmd.Stun(owner, WakeUpMove, "SLASH_MOVE")`
+/// 临时造的态），只能被沉睡那条规则强制打进去，之后固定接**斩击**。
+///
+/// **条件边的阈值是 2 不是「还有没有沉睡」** —— 和熟睡甲虫逐字同一条时点换算，
+/// 见 `M_SLUMBERING_BEETLE` 那段：[源码] 在我方回合开始才掷下一手，那时敌人回合末的
+/// −1 已经发生；内核在沉睡出完那一刻就推进指针，早了那一次 −1。
+/// 写成 ≥ 1 的话它会**多睡一回合**（乐观）。
+static M_LAGAVULIN_MATRIARCH: Machine = Machine {
+    start: Next::Go(0),
+    after: &[
+        Next::Cond(&[
+            (ECond::SelfStatusAtLeast(St::Asleep, 2), 0),
+            (ECond::SelfStatusBelow(St::Asleep, 2), 1),
+        ]),
+        Next::Go(2),
+        Next::Go(3),
+        Next::Go(4),
+        Next::Go(1),
+        Next::Go(1),
+    ],
+};
+
+/// 墨宝 [源码] `Inklet.GenerateMoveStateMachine`
+///
+/// ```text
+/// 刺击 -> 随机（锐利凝视 | 旋风，等权，各 CannotRepeat）
+/// 旋风 -> 刺击 ;  锐利凝视 -> 刺击
+/// 起点 = MiddleInklet ? 旋风 : 刺击
+/// ```
+///
+/// 所以是**刺击和那个二选一交替**。两条随机边的 `CannotRepeat` 在这台机器上
+/// 其实永远拦不住（上一手必然是刺击），照抄源码留着。
+///
+/// **起点按槽位，而且是确定的**：[源码] `InkletsNormal` 造三只、**给中间那只**
+/// `MiddleInklet = true`，出场顺序就是槽位 0/1/2 —— 遭遇本身一个随机数都没掷。
+/// 所以用 `ECond::SlotIs` 不是 `SlotRep`（后者是"遭遇掷了个数、几只按槽位错开"那种，
+/// 见千足虫）。
+///
+/// 源码里还有一个 `INIT_RAND` 分支**是死代码**：它既没进 `list`、也不是 initialState。
+static M_INKLET: Machine = Machine {
+    start: Next::Cond(&[(ECond::SlotIs(1), 1), (ECond::SlotIs(0), 0), (ECond::SlotIs(2), 0)]),
+    after: &[
+        Next::Rand(&[
+            Branch { to: 2, weight: 1, repeat: Repeat::NotTwice, cooldown: 0 },
+            Branch { to: 1, weight: 1, repeat: Repeat::NotTwice, cooldown: 0 },
+        ]),
+        Next::Go(0),
+        Next::Go(0),
+    ],
+};
+
+/// 蟾蜍蝌蚪 [源码] `Toadpole.GenerateMoveStateMachine`
+///
+/// ```text
+/// 起点 = 条件（IsFront ? 带刺 : 旋转）
+/// 旋转 -> 带刺 -> 吐刺 -> 旋转
+/// ```
+///
+/// **起点按站位，而且是确定的**：[源码] `ToadpolesWeak.GenerateMonsters` 造两只，
+/// 第一只 `IsFront = true`、第二只 `false` —— 遭遇一个随机数都没掷，所以是 `ECond::SlotIs`
+/// （和墨宝同一个理由，不是千足虫那种 `SlotRep`）。`IsFront` 是遭遇设的字段、开局就定死，
+/// **不是** `ECond::Front`（「槽位最小的活着的那只」）那种会随死亡变的近似 —— 这里用不着它：
+/// 起点只判一次。
+static M_TOADPOLE: Machine = Machine {
+    start: Next::Cond(&[(ECond::SlotIs(0), 2), (ECond::SlotIs(1), 1)]),
+    after: &[Next::Go(1), Next::Go(2), Next::Go(0)],
+};
+
+/// 化石追踪者 [源码] `FossilStalker.GenerateMoveStateMachine`
+///
+/// ```text
+/// 起点 = 缠上
+/// 每一手之后 -> 随机（缠上 | 冲撞 | 甩动，等权，各 CanRepeatXTimes(2)）
+/// ```
+///
+/// `AddBranch(state, 2)` 是 `(state, maxRepeats)` 那个重载（权重默认 1）⇒ `Repeat::AtMost(2)`：
+/// **同一手最多连出两次**。[源码] 判的是 `StateLog` 最后两条是不是都是它，
+/// 而 `StateLog` 只记招式（两种分支态 `ShouldAppearInLogs => false`），开局那一手缠上也记进去了 ——
+/// 和内核的 `enemy_hist` 同一个口径。
+static M_FOSSIL_STALKER: Machine = Machine {
+    start: Next::Go(1),
+    after: &[
+        Next::Rand(&FOSSIL_STALKER_RAND),
+        Next::Rand(&FOSSIL_STALKER_RAND),
+        Next::Rand(&FOSSIL_STALKER_RAND),
+    ],
+};
+static FOSSIL_STALKER_RAND: [Branch; 3] = [
+    Branch { to: 1, weight: 1, repeat: Repeat::AtMost(2), cooldown: 0 },
+    Branch { to: 0, weight: 1, repeat: Repeat::AtMost(2), cooldown: 0 },
+    Branch { to: 2, weight: 1, repeat: Repeat::AtMost(2), cooldown: 0 },
+];
 
 /// 结实的卵 [源码] `ToughEgg`：孵化 → 啃咬 → 啃咬 → …（`moveState2` 自指）
 static M_TOUGH_EGG: Machine =
@@ -5078,7 +5693,13 @@ static M_PHANTASMAL_GARDENER: Machine = Machine {
 };
 
 /// 瀑布巨兽 [源码] `WaterfallGiant.GenerateMoveStateMachine`：
-/// 0: 加压 (Buff) -> 1: 重踏 (15点+虚弱) -> 2: 撞击 (10点) -> 3: 虹吸 (回血10) -> 4: 高压枪 (20点) -> 5: 升压 (13点) -> 1 ...
+/// 0: 加压 (Buff) -> 1: 重踏 (15点+虚弱) -> 2: 撞击 (10点) -> 3: 虹吸 (回血10) -> 4: 高压枪 (20点起，每打一次 +5) -> 5: 升压 (13点) -> 1 ...
+///
+/// 6 / 7 是**死后**那两手，只能由死亡规则强制进来（[源码] `TriggerAboutToBlowState` ->
+/// `SetMoveImmediate(AboutToBlowState, forceTransition: true)`，规则在 `POWERS` 的蒸汽喷发）：
+/// 6: 即将爆发（Stun，把蒸汽喷发层数记成爆炸伤害）-> 7: 爆炸（打那么多，然后自杀）。
+/// `AboutToBlowState.MustPerformOnceBeforeTransitioning = true` 那一半在 `step::enemy_turn`：
+/// 它在**自己出招途中**被反伤打死时，指针停在 6，不跟着刚打完的这一手推进。
 static M_WATERFALL_GIANT: Machine = Machine {
     start: Next::Go(0),
     after: &[
@@ -5088,6 +5709,8 @@ static M_WATERFALL_GIANT: Machine = Machine {
         Next::Go(4), // 3: 虹吸 -> 4: 高压枪
         Next::Go(5), // 4: 高压枪 -> 5: 升压
         Next::Go(1), // 5: 升压 -> 1: 重踏
+        Next::Go(7), // 6: 即将爆发 -> 7: 爆炸
+        Next::Go(7), // 7: 爆炸（打完就死了；[源码] FollowUpState 指向自己）
     ],
 };
 
@@ -5103,6 +5726,63 @@ static M_TUNNELER: Machine = Machine {
         Next::Go(2), // 2: 地底突袭 -> 2: 地底突袭
         Next::Go(0), // 3: 眩晕 -> 0: 咬击
     ],
+};
+
+/// 咬人卷轴 [源码] `ScrollOfBiting.GenerateMoveStateMachine`：
+/// 0: 大啃 (14) -> 2: 更多牙齿 (+2 力量) -> 1: 咀嚼 (5×2) -> RAND{ 大啃 `CannotRepeat` | 咀嚼 `CanRepeatXTimes(2)` }
+///
+/// **两个 `AddBranch` 重载别读反**：`AddBranch(chomp, MoveRepeatType.CannotRepeat)` 权重 1；
+/// `AddBranch(chew, 2)` 走的是 `(state, int maxRepeats)` —— **2 是最多连出几次，不是权重**。
+///
+/// **起手按槽位**：[源码] 遭遇里 `StarterMoveIdx` 前三卷是 `num / num+1 / num+2`
+/// （`num = Rng.NextInt(3)`，三卷共用），**第四卷写死 2**；机器按 `% 3` 选 大啃 / 咀嚼 / 更多牙齿。
+/// 内核固定 `num = 0`（和花园幽灵鳗的 `SlotIs` 起手同一个形状）。**这不是精确等价**，差在两处：
+/// * **出手顺序**：槽位小的先出手。`num = 0` 时第 1 回合总是先大啃后咀嚼
+///   （真实分布里是 2/3）。纸伤难愈按**打穿的段数**算，格挡够挡一部分时
+///   先挨大啃会多被打穿几段 ⇒ 这条近似**偏悲观**
+/// * `bin/synth_audit` 的「开局第一手」拿它当允许集合 —— 真实录像上约 2/3 会报集合外。
+///   那是这条近似的代价，不是规则错
+static M_SCROLL_OF_BITING: Machine = Machine {
+    start: Next::Cond(&[
+        (ECond::SlotIs(0), 0),
+        (ECond::SlotIs(1), 1),
+        (ECond::SlotIs(2), 2),
+        (ECond::SlotIs(3), 2),
+    ]),
+    after: &[
+        Next::Go(2), // 0: 大啃 -> 2: 更多牙齿
+        Next::Rand(&[
+            Branch { to: 0, weight: 1, repeat: Repeat::NotTwice, cooldown: 0 },
+            Branch { to: 1, weight: 1, repeat: Repeat::AtMost(2), cooldown: 0 },
+        ]), // 1: 咀嚼 -> RAND
+        Next::Go(1), // 2: 更多牙齿 -> 1: 咀嚼
+    ],
+};
+
+/// 连枷骑士 [源码] `FlailKnight.GenerateMoveStateMachine`：
+/// 起手 0: 撞击 (15)；三手打完都回到**同一个** RAND —— 战争吟唱 `CannotRepeat` ·
+/// 连枷 `AddBranch(flail, 2)` · 撞击 `AddBranch(ram, 2)`，权重都是 1。
+/// 那两个 2 是**最多连出几次**不是权重（重载读法见 `M_SCROLL_OF_BITING`）。
+const FLAIL_KNIGHT_RAND: Next = Next::Rand(&[
+    Branch { to: 2, weight: 1, repeat: Repeat::NotTwice, cooldown: 0 },
+    Branch { to: 1, weight: 1, repeat: Repeat::AtMost(2), cooldown: 0 },
+    Branch { to: 0, weight: 1, repeat: Repeat::AtMost(2), cooldown: 0 },
+]);
+static M_FLAIL_KNIGHT: Machine = Machine {
+    start: Next::Go(0),
+    after: &[FLAIL_KNIGHT_RAND, FLAIL_KNIGHT_RAND, FLAIL_KNIGHT_RAND],
+};
+
+/// 幽灵骑士 [源码] `SpectralKnight.GenerateMoveStateMachine`：
+/// 0: 恶咒 -> 1: 灵魂斩击 (15) -> RAND{ 灵魂斩击 `AddBranch(slash, 2)`（最多连出两次）|
+/// 灵魂火焰 3×3 `CannotRepeat` }，火焰打完也回到这个 RAND。**恶咒只出一次**（没有边指回它）。
+const SPECTRAL_KNIGHT_RAND: Next = Next::Rand(&[
+    Branch { to: 1, weight: 1, repeat: Repeat::AtMost(2), cooldown: 0 },
+    Branch { to: 2, weight: 1, repeat: Repeat::NotTwice, cooldown: 0 },
+]);
+static M_SPECTRAL_KNIGHT: Machine = Machine {
+    start: Next::Go(0),
+    after: &[Next::Go(1), SPECTRAL_KNIGHT_RAND, SPECTRAL_KNIGHT_RAND],
 };
 
 pub static ENEMIES: &[EnemyDef] = &[
@@ -5469,13 +6149,27 @@ pub static ENEMIES: &[EnemyDef] = &[
             EnemyMove { name: "扑击", intent: "Attack", ops: &[EOp::Attack { base: 14, hits: 1 }] },
         ],
     },
-    // 28 [wiki] 螨虫
+    // 28 [源码] 异螨 `Myte`（2026-09-14 批 4 原地重建；**一条实录都没有**）
+    //
+    // 这个下标原来是一条 [wiki] 档的「螨虫」，**是错的**（浓毒建成了「虚弱 2」），09-14 先摘成占位、
+    // 同一天照 [源码] 填回来。名字（怪物和招式）取自游戏本地化表：`MYTE.name` = 异螨。
+    //
+    // 血量 61–67（`ToughEnemies` 64–69），表里取上界 67，合成路径从 `asc::hp_range` 掷。
+    // 定环 浓毒 -> 啃咬 -> 吸吮 -> 浓毒；**起手按站位**（[源码] 初始态是读 `SlotName` 的
+    // `ConditionalBranchState`）：`first` 先浓毒、`second` 先吸吮，见 `M_MYTE`。
+    //   浓毒：往我**手牌**塞 2 张毒素（`StatusIntent(2)`，写死的 `_toxicCount`，不吃进阶；手满溢出进弃牌堆）
+    //   啃咬：13（`DeadlyEnemies` 15）
+    //   吸吮：4 + 自身力量 2（`DeadlyEnemies` 6 / 3）
+    // 毒素那张牌早就在内核里（留在手里到回合末受 5 点，走格挡；打出去 1 费消耗）。
     EnemyDef {
-        name: "螨虫", max_hp: 67, start_status: &[], loop_from: 0, machine: None,
+        name: "异螨", max_hp: 67, start_status: &[], loop_from: 0,
+        machine: Some(&M_MYTE),
         moves: &[
-            EnemyMove { name: "剧毒", intent: "Debuff", ops: &[EOp::PlayerStatus { st: St::Weak, amt: 2 }] },
-            EnemyMove { name: "撕咬", intent: "Attack", ops: &[EOp::Attack { base: 13, hits: 1 }] },
-            EnemyMove { name: "吸血", intent: "Attack", ops: &[EOp::Attack { base: 4, hits: 1 }, EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+            EnemyMove { name: "浓毒", intent: "StatusCard",
+                ops: &[EOp::AddCardToHand { card: card::TOXIC, count: 2 }] },
+            EnemyMove { name: "啃咬", intent: "Attack", ops: &[EOp::Attack { base: 13, hits: 1 }] },
+            EnemyMove { name: "吸吮", intent: "Attack",
+                ops: &[EOp::Attack { base: 4, hits: 1 }, EOp::SelfStatus { st: St::Strength, amt: 2 }] },
         ],
     },
     // 29 [源码+实测] 直飞产卵虫 `Ovicopter`（2026-08-22 第2幕第24层首遇）
@@ -5524,7 +6218,9 @@ pub static ENEMIES: &[EnemyDef] = &[
             EnemyMove { name: "舌刺", intent: "Attack", ops: &[EOp::Attack { base: 17, hits: 1 }] },
         ],
     },
-    // 31 [wiki] 蜂后（Act 2 Boss）
+    // 31 [wiki] 蜂后 —— **第 3 幕** Boss `QueenBoss` 的一半（原来标成「Act 2 Boss」，标错了）。
+    // **这条定义已知是错的**：缺「你是我的了」、「为我燃烧」的力量给队友不给自己、
+    // 出招按火炬头死没死分叉。见 roadmap「第 3 幕还剩的一批」。
     EnemyDef {
         name: "蜂后", max_hp: 400, start_status: &[], loop_from: 2, machine: None,
         moves: &[
@@ -5535,7 +6231,9 @@ pub static ENEMIES: &[EnemyDef] = &[
             EnemyMove { name: "狂怒", intent: "Buff", ops: &[EOp::SelfStatus { st: St::Strength, amt: 2 }] },
         ],
     },
-    // 32 [wiki] 造门者（Act 2 Boss）
+    // 32 [wiki] 造门者 —— **不在任何一幕的遭遇池里**（`data/encounters.json` 四幕都没有它，
+    // `data/enemy_ids.json` 也没有类名连到这里）。原来标成「Act 2 Boss」，标错了；
+    // 大概是 wiki 上一个旧版本的 Boss。留着只因为删掉会让后面的下标整体平移。
     EnemyDef {
         name: "造门者", max_hp: 489, start_status: &[], loop_from: 0, machine: None,
         moves: &[
@@ -5543,14 +6241,33 @@ pub static ENEMIES: &[EnemyDef] = &[
             EnemyMove { name: "退回门中", intent: "Attack", ops: &[EOp::Attack { base: 40, hits: 1 }, EOp::SelfStatus { st: St::Strength, amt: 5 }] },
         ],
     },
-    // 33 [wiki] 知识恶魔（Act 2 Boss）
+    // 33 [源码] 知识恶魔 `KnowledgeDemon`，**第 2 幕 Boss**（2026-09-14 按源码重建，**未实测**）
+    //
+    // 原来这一条是 [wiki] 档的，三处错（诅咒建成「虚弱 2 + 脆弱 2」· 思考不回血 ·
+    // `loop_from = 1` 让诅咒整场只出一次）。2026-09-14 先换成占位，同一天按源码重建。
+    // 名字取自游戏本地化表：知识恶魔 · 知识的诅咒 / 抽打 / 知识过载 / 思考；
+    // 四个诅咒是 瓦解 / 心灵腐化 / 懒惰 / 虚脱（`*_POWER.title`）。
+    //
+    // A0：血量 379（A8 399，不是区间）· 抽打 17（A9 18）· 知识过载 8×3（9×3）·
+    // 思考 11（13）+ **回 30 血** + 自身力量 2（3）。出招见 `M_KNOWLEDGE_DEMON`。
+    //
+    // **这场仗的核心是知识的诅咒**：不打人，弹一个**不能跳过**的二选一（`canSkip` 默认 false），
+    // 三次各是 瓦解 6 / 心灵腐化 1 · 瓦解 7 / 懒惰 3 · 瓦解 8 / 虚脱 1，全是永久的。
+    // 选哪边是**玩家的决策**，内核照 `State::curse_policy` 执行：L3 把 8 种选法配对比一遍，
+    // L2 不给它定价（价值全在后面几个回合）。
     EnemyDef {
-        name: "知识恶魔", max_hp: 379, start_status: &[], loop_from: 1, machine: None,
+        name: "知识恶魔", max_hp: 379, start_status: &[], loop_from: 0,
+        machine: Some(&M_KNOWLEDGE_DEMON),
         moves: &[
-            EnemyMove { name: "知识诅咒", intent: "Debuff", ops: &[EOp::PlayerStatus { st: St::Weak, amt: 2 }, EOp::PlayerStatus { st: St::Frail, amt: 2 }] },
-            EnemyMove { name: "拍击", intent: "Attack", ops: &[EOp::Attack { base: 17, hits: 1 }] },
-            EnemyMove { name: "知识淹没", intent: "Attack", ops: &[EOp::Attack { base: 8, hits: 3 }] },
-            EnemyMove { name: "深思", intent: "Attack", ops: &[EOp::Attack { base: 11, hits: 1 }, EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+            EnemyMove { name: "知识的诅咒", intent: "Debuff",
+                ops: &[EOp::CurseOfKnowledge(&KNOWLEDGE_CURSES)] },
+            EnemyMove { name: "抽打", intent: "Attack", ops: &[EOp::Attack { base: 17, hits: 1 }] },
+            EnemyMove { name: "知识过载", intent: "Attack", ops: &[EOp::Attack { base: 8, hits: 3 }] },
+            // 意图是 `SingleAttackIntent, HealIntent, BuffIntent` —— 签名按 ops 的顺序生成副作用意图
+            EnemyMove { name: "思考", intent: "Attack",
+                ops: &[EOp::Attack { base: 11, hits: 1 },
+                       EOp::Heal(30),
+                       EOp::SelfStatus { st: St::Strength, amt: 2 }] },
         ],
     },
 
@@ -5565,9 +6282,11 @@ pub static ENEMIES: &[EnemyDef] = &[
     //      背后打来的伤害 **×1.5**，而打出一张指向性牌会转身、改变谁在背后。
     //      **意图标签含这个乘区** —— 实测同一手在转身前后从 49 变 33。
     //   2. **蟹之怒**（`CRAB_RAGE_POWER`）：一只死了，另一只 +6 力量 +99 格挡。
-    //   3. tough 变体：观测到的 HP 是 wiki 括号里那个（209/199），而伤害基础值
-    //      却是**不带括号**那一列。两个括号不是同一个变体轴，**没分辨出来**，
-    //      所以这里只写实测到的那一组，不去猜另一组。
+    //   3. 进阶两个轴（2026-09-14 读 [源码] `Crusher` / `Rocket` 解开的；这里原来写着
+    //      「两个括号不是同一个变体轴，没分辨出来」）：**血量走 A8 `ToughEnemies`**
+    //      （209→219 / 199→209），**伤害和力量走 A9 `DeadlyEnemies`**。实录全是 A0/A1，
+    //      所以两列都是低档，下面写的就是低档。碾碎爪有三个 A9 数（摧折 / 戒备打击 14、
+    //      适应 +3）生成器按值认不出（和别的 op 撞值），手填在 `data/ascension_overrides.json`。
     //
     // 后果：默认对拍模式**不受影响**（它注入观测到的标签，乘区已经在标签里）；
     // 但 `--predict-enemy` 算出来的数字会在背后攻击的回合偏低 1/3，落进
@@ -5788,26 +6507,28 @@ pub static ENEMIES: &[EnemyDef] = &[
     // 43 蜂群术士 [源码] `Entomancer`，**第 2 幕精英**（2026-08-22 首遇并通关）
     //
     // A0 档：血量 `MinInitialHp == MaxInitialHp == 145`（进阶 155，**不是区间**）；
-    // 蜂群 3 点 × 7 段（进阶 8 段）；长矛 18（进阶 20）。
+    // 蜜——蜂——！3 点 × 7 段（进阶 8 段）；矛击！18（进阶 20）。招式名取自游戏本地化表
+    // （2026-09-14 之前是照 wiki 译的 蜂群 / 长矛 / 信息素喷吐）。
     //
-    // **开局自带人体蜂房 1 层**（`AfterAddedToRoom`）。那个 status 内核
-    // **没有建模行为**，只映射了名字和层数 —— 欠什么、以及它对打法的影响，
-    // 写在 `St::PersonalHive` 的注释里。**读这只怪的求解结果时要记得那一段**：
-    // 内核算不出多段攻击的真实代价。
+    // **开局自带人体蜂房 1 层**（`AfterAddedToRoom`）：我每一段攻击命中它，
+    // 抽牌堆就多层数那么多张晕眩。规则在 `POWERS`，2026-09-14 建的。
     //
-    // 信息素喷吐（`SpitMove`）在内核里被简化成「+2 力量」：
-    // [源码] 是 `if (hive < 3) { hive += 1; 力量 +1 } else { 力量 +2 }`，
-    // 而内核没有人体蜂房这个量，那个分支表达不了。**取了力量 +2 那一支**，
-    // 因为它是不高估玩家的那边（力量涨得更快）。实测第一次喷吐走的是
-    // hive < 3 那一支（力量 +1），所以**内核这里会高估敌人伤害**，
-    // 这是刻意的方向，不是没发现。
+    // 喷射信息素（`SpitMove`）按蜂房层数分两支，内核拆成下标 2 / 3 两手（见 `M_ENTOMANCER`）：
+    //   2 = 蜂房 < 3：蜂房 +1、力量 +1
+    //   3 = 蜂房 ≥ 3：力量 +2
+    // 两支的数都是 [源码] 写死的 `1m` / `2m`，**不吃进阶**。所以晕眩是 1 -> 2 -> 3 张/段，
+    // 第三次喷射起每次 +2 力量。2026-09-14 之前内核恒走 +2 那一支（高估敌人伤害；
+    // 那条注释记过「首遇那一场第一次喷吐是力量 +1」）。
     EnemyDef {
         name: "蜂群术士", max_hp: 145, start_status: &[(St::PersonalHive, 1)], loop_from: 0,
         machine: Some(&M_ENTOMANCER),
         moves: &[
-            EnemyMove { name: "蜂群", intent: "Attack", ops: &[EOp::Attack { base: 3, hits: 7 }] },
-            EnemyMove { name: "长矛", intent: "Attack", ops: &[EOp::Attack { base: 18, hits: 1 }] },
-            EnemyMove { name: "信息素喷吐", intent: "Buff",
+            EnemyMove { name: "蜜——蜂——！", intent: "Attack", ops: &[EOp::Attack { base: 3, hits: 7 }] },
+            EnemyMove { name: "矛击！", intent: "Attack", ops: &[EOp::Attack { base: 18, hits: 1 }] },
+            EnemyMove { name: "喷射信息素", intent: "Buff",
+                ops: &[EOp::SelfStatus { st: St::PersonalHive, amt: 1 },
+                       EOp::SelfStatus { st: St::Strength, amt: 1 }] },
+            EnemyMove { name: "喷射信息素", intent: "Buff",
                 ops: &[EOp::SelfStatus { st: St::Strength, amt: 2 }] },
         ],
     },
@@ -5823,9 +6544,13 @@ pub static ENEMIES: &[EnemyDef] = &[
     // `Attack:15` → `Attack:11, Defend:` → `Attack:5×3` → `Attack:8, Buff:, Defend:`。
     //
     // **开局自带活力火花 2**（`AfterAddedToRoom`）：它给我牌组里每张技能牌挂污染，
-    // 而污染让我挨的每一次攻击 +1。两个 status 内核都**只映射不建模**，
-    // 理由（尤其是"建了会重复计数"）写在 `St::Tainted` 的注释里。
-    // **读这只怪的求解结果时要记得那一段**：求解器会高估技能牌。
+    // 而污染让我挨的每一次攻击 +1。（这里原来写着「两个 status 内核都只映射不建模」，
+    // 2026-09-14 核对时已经过期了。）今天的样子：活力火花**降维建了** ——
+    // 打出技能牌时直接给我上污染（`POWERS` 里 `St::VitalSpark` 那条）；污染的伤害
+    // **只在预测路径上加**（`damage::apply_modifiers` 那个加法项），注入路径照打观测标签，
+    // 因为标签本来就含污染 —— 理由写在 `St::Tainted` 的注释里。
+    // **读这只怪的求解结果时仍然要记得**：单回合的 `Threat` 是同步那一刻冻住的，
+    // 线里每多打一张技能牌实际来袭就多一截，求解器会高估技能牌。
     EnemyDef {
         name: "感染棱柱", max_hp: 161, start_status: &[(St::VitalSpark, 2)], loop_from: 0,
         machine: None,
@@ -6154,10 +6879,10 @@ pub static ENEMIES: &[EnemyDef] = &[
     // 40-46 血（`ToughEnemies` 档 46-52），[实测] 三节 42 / 40 / 44。
     // 出场自带 `ReattachPower 25`。
     //
-    // **接续（死后复活 25 血）没建模，内核因此低估这一场** —— 见 `St::Reattach`。
-    // [实测] 2026-08-27：我靠"三节要死就同一回合死"绕过了它 ——
-    // 只要场上没有别的节活着，`DoReattach` 里那个 `AreAllOtherSegmentsDead()`
-    // 就不会让它回来。**这条战术是内核给不了的，因为内核根本没有这个机制。**
+    // **接续 2026-09-14 建了**（死后第二个敌人回合回 25 血，规则见 `POWERS` 的 `St::Reattach`）。
+    // 在那之前内核低估这一场。[实测] 2026-08-27 那一局我靠"三节要死就同一回合死"
+    // 绕过了它；`act2_f28_decimillipede` 那一局没绕开，两节各复活了一次 —— 那两次就是这条规则的证据，
+    // 也说明**窗口其实是两个我方回合**，不是同一回合。
     EnemyDef {
         name: "残杀千足虫", max_hp: 42, start_status: &[(St::Reattach, 25)], loop_from: 0,
         machine: Some(&M_DECIMILLIPEDE),
@@ -6169,6 +6894,9 @@ pub static ENEMIES: &[EnemyDef] = &[
             EnemyMove { name: "缠绕", intent: "Attack",
                 ops: &[EOp::Attack { base: 8, hits: 1 },
                        EOp::PlayerStatus { st: St::Weak, amt: 1 }] },
+            // 3 = 重接（[源码] `REATTACH_MOVE`，`HealIntent`）。回血那一下在 `St::ReattachDue`
+            // 的回合开始规则里已经做完了，这一手本身什么都不做 —— 和幻象的「复苏」同构。
+            EnemyMove { name: "重接", intent: "Heal", ops: &[EOp::Nothing] },
         ],
     },
     // 61 [源码+实测] 青蛙骑士 `FrogKnight`（第 3 幕杂兵，遭遇 `FrogKnightNormal`）
@@ -6273,11 +7001,8 @@ pub static ENEMIES: &[EnemyDef] = &[
     },
     // 64 [源码] 实验体 `TestSubject`（第 3 幕 Boss，遭遇 `TestSubjectBoss`）
     //
-    // A1 血量三阶段：
-    //   Form 1 (单头): 111 HP (ToughEnemies 档 111，基础 100)
-    //   Form 2 (双头): 212 HP (ToughEnemies 档 212，基础 200)
-    //   Form 3 (三头): 313 HP (ToughEnemies 档 313，基础 300)
-    //   总计 636 HP。
+    // [实测 A1/A3] 三阶段 100 / 200 / 300，总计 600 HP。
+    // [源码] ToughEnemies 档 111 / 212 / 313（复活血量的进阶映射尚未接入）。
     //
     // 伤害与效果（A1 档）：
     //   Phase 1: 啃咬 20、头槌猛击 14 + 易伤 1（两者交替）
@@ -6285,7 +7010,7 @@ pub static ENEMIES: &[EnemyDef] = &[
     //   Phase 3: 撕裂 10×3 -> 猛扑 45 -> 灼热咆哮（塞 3 灼伤 + 2 力量）-> 撕裂
     //
     // Powers:
-    //   开局自带激怒 2（贯穿三阶段，每打 1 张技能 +2 力量）、适生力 1（死后复活进下一阶段）。
+    //   开局自带激怒 2（仅第一阶段，每打 1 张技能 +2 力量）、适生力 1（死后复活进下一阶段）。
     //   阶段 2 获得剧痛刺击 1（未格挡伤害塞伤口）。
     //   阶段 3 获得复仇宿敌 1（每隔一回合获得 1 层无实体）。
     EnemyDef {
@@ -6394,17 +7119,24 @@ pub static ENEMIES: &[EnemyDef] = &[
             EnemyMove { name: "巨大化", intent: "Buff", ops: &[EOp::SelfStatus { st: St::Strength, amt: 3 }] },
         ],
     },
-    // 69 [源码] 瀑布巨兽 `WaterfallGiant`（第 1 幕 Boss）
+    // 69 [源码+实测] 瀑布巨兽 `WaterfallGiant`（第 1 幕 Boss）
     //
-    // A0/A2：血量 240（ToughEnemies 为 250）。
+    // A0/A2：血量 240（ToughEnemies 为 250）。6 / 7 两手的名字取自游戏本地化表（2026-09-15），
+    // 前六手沿用旧名（游戏里叫 增压 / 践踏 / 撞击 / 虹吸 / 压力炮 / 增压）。
     // 出招：
-    // 0: 加压：蒸汽喷发 +15
+    // 0: 加压：蒸汽喷发 +15（A9 +20）
     // 1: 重踏：15 点伤害 + 玩家虚弱 1 + 蒸汽喷发 +3
     // 2: 撞击：10 点伤害 + 蒸汽喷发 +3
-    // 3: 虹吸：自身回血 10 + 蒸汽喷发 +3
-    // 4: 高压枪：20 点伤害（每用一次基础+5）+ 蒸汽喷发 +3
+    // 3: 虹吸：自身回血 10（A8 15）+ 蒸汽喷发 +3
+    // 4: 高压枪：20 点伤害（A9 23）+ 蒸汽喷发 +3；打完之后这门炮**永久** +5
     // 5: 升压：13 点伤害 + 蒸汽喷发 +3
-    // 循环：0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 1 ...
+    // 6: 即将爆发（死后）：不打人，把蒸汽喷发层数记成爆炸伤害、移除蒸汽喷发
+    // 7: 爆炸：打记下的那么多，然后自杀
+    // 循环：0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 1 ...；死亡规则把它强制进 6（`POWERS` 的蒸汽喷发）
+    //
+    // [实测] `act1_f17_waterfall_giant`（A2）：第 4 -> 5 回合 174 -> 184（虹吸 +10）· 高压枪第 5 回合 20、
+    // 第 10 回合 25 · 砍死之后 999999999 血、第 11 回合意图 Stun、第 12 回合 DeathBlow 42（= 15 + 9 × 3）。
+    // 2026-09-15 之前内核这三处都没建（回血 / +5 / 死后），方向全是乐观。
     EnemyDef {
         name: "瀑布巨兽", max_hp: 240, start_status: &[], loop_from: 0,
         machine: Some(&M_WATERFALL_GIANT),
@@ -6412,9 +7144,13 @@ pub static ENEMIES: &[EnemyDef] = &[
             EnemyMove { name: "加压", intent: "Buff", ops: &[EOp::SelfStatus { st: St::SteamEruption, amt: 15 }] },
             EnemyMove { name: "重踏", intent: "Attack", ops: &[EOp::Attack { base: 15, hits: 1 }, EOp::PlayerStatus { st: St::Weak, amt: 1 }, EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
             EnemyMove { name: "撞击", intent: "Attack", ops: &[EOp::Attack { base: 10, hits: 1 }, EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
-            EnemyMove { name: "虹吸", intent: "Heal", ops: &[EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
-            EnemyMove { name: "高压枪", intent: "Attack", ops: &[EOp::Attack { base: 20, hits: 1 }, EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
+            EnemyMove { name: "虹吸", intent: "Heal", ops: &[EOp::Heal(10), EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
+            // 攻击在前、+5 在后（[源码] `CurrentPressureGunDamage += PressureGunIncrease` 写在 `DamageCmd` 之后）
+            EnemyMove { name: "高压枪", intent: "Attack", ops: &[EOp::AttackPlusSelfStatus { base: 20, hits: 1, per: St::PressureGunGrowth }, EOp::SelfStatus { st: St::PressureGunGrowth, amt: 5 }, EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
             EnemyMove { name: "升压", intent: "Attack", ops: &[EOp::Attack { base: 13, hits: 1 }, EOp::SelfStatus { st: St::SteamEruption, amt: 3 }] },
+            EnemyMove { name: "即将爆发", intent: "Stun", ops: &[EOp::SelfStatusPerStack { st: St::EruptionDamage, amt: 1, per: St::SteamEruption }, EOp::ClearSelfStatus(St::SteamEruption)] },
+            // 爆炸是**攻击**（`DamageCmd.Attack(..).FromMonster(this)`）：它身上的虚弱、我的格挡都照常算
+            EnemyMove { name: "爆炸", intent: "DeathBlow", ops: &[EOp::AttackPlusSelfStatus { base: 0, hits: 1, per: St::EruptionDamage }, EOp::KillSelf] },
         ],
     },
     // 70 [源码+实测] 地道虫 `Tunneler`（第 2 幕杂兵）
@@ -6612,19 +7348,584 @@ pub static ENEMIES: &[EnemyDef] = &[
                        EOp::PlayerStatus { st: St::Vulnerable, amt: 3 }] },
         ],
     },
+    // ---- 2026-09-13 第 3 幕补敌人（批 1 + 批 2）--------------------------------
+    // **全部 [源码]，没有一条实录**：数值取低进阶档（`GetValueIfAscension(level, 高, 低)`
+    // 的第二个数），第一次实战打出时对拍才判它。名字（怪物名和招式名）取自游戏本地化表；
+    // 图鉴里隐藏的招式没有译名，照抄 [源码] 的 id。
+    //
+    // 82 [源码] 史莱姆狂战士 `SlimedBerserker`（第 3 幕杂兵，`SlimedBerserkerNormal`）
+    // 血量 261（`ToughEnemies` 281）—— 2026-08-14 旧 advisor 记过一次 261，对得上。
+    // 四手定环，**起手就是 10 张黏液进弃牌堆**；连击 5×4、窒息 33 是 `DeadlyEnemies` 档。
+    // 黏液 1 费能打、打了消耗（见可打出性那条测试）—— 10 张等于往牌组里掺一副垃圾。
+    EnemyDef {
+        name: "史莱姆狂战士", max_hp: 261, start_status: &[], loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "喷吐脓水", intent: "StatusCard",
+                ops: &[EOp::AddCardToDiscard { card: card::SLIMED, count: 10 }] },
+            EnemyMove { name: "狂怒连击", intent: "Attack", ops: &[EOp::Attack { base: 4, hits: 4 }] },
+            // `WeakPower` 的施加者是 null，对内核没有区别（没有"谁挂的虚弱"这回事）
+            EnemyMove { name: "汲取之拥", intent: "Debuff",
+                ops: &[EOp::PlayerStatus { st: St::Weak, amt: 3 },
+                       EOp::SelfStatus { st: St::Strength, amt: 3 }] },
+            EnemyMove { name: "SMOTHER", intent: "Attack", ops: &[EOp::Attack { base: 30, hits: 1 }] },
+        ],
+    },
+    // 83 [源码] 机甲骑士 `MechaKnight`（第 3 幕精英，`MechaKnightElite`）
+    // 血量 300（`ToughEnemies` 320）—— 2026-08-14 旧 advisor 记过 300。开局人工制品 3。
+    // 冲锋 25 只出一次，之后 喷火器(4 张灼伤进**手牌**) -> 举起蓄力(15 格挡 + 5 力量) -> 重斩 35 定环。
+    // **力量每三手 +5 永久叠**，重斩 35/40/45…；灼伤在手上回合末各烫 2 点（`HAND_END`），
+    // 手满了溢出进弃牌堆（见 `EOp::AddCardToHand`）。伤害 `DeadlyEnemies` 档 30 / 40。
+    EnemyDef {
+        name: "机甲骑士", max_hp: 300, start_status: &[(St::Artifact, 3)], loop_from: 1, machine: None,
+        moves: &[
+            EnemyMove { name: "冲锋", intent: "Attack", ops: &[EOp::Attack { base: 25, hits: 1 }] },
+            EnemyMove { name: "喷火器", intent: "StatusCard",
+                ops: &[EOp::AddCardToHand { card: card::BURN, count: 4 }] },
+            EnemyMove { name: "举起蓄力", intent: "Defend",
+                ops: &[EOp::Block(15), EOp::SelfStatus { st: St::Strength, amt: 5 }] },
+            EnemyMove { name: "重斩", intent: "Attack", ops: &[EOp::Attack { base: 35, hits: 1 }] },
+        ],
+    },
+    // 84 [源码] 电球头 `GlobeHead`（第 3 幕杂兵，`GlobeHeadNormal`）
+    // 血量 148（`ToughEnemies` 158）。开局**流电 6**：我每打出一张能力牌挨 6 点（见 `St::Galvanic`）。
+    // 三手定环：电击掌 13 + 脆弱 2 -> 生成闪电 6×3 -> 电流爆发 16 + 自身力量 2 -> …
+    // 伤害 `DeadlyEnemies` 档 14 / 7 / 17。
+    EnemyDef {
+        name: "电球头", max_hp: 148, start_status: &[(St::Galvanic, 6)], loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "电击掌", intent: "Attack",
+                ops: &[EOp::Attack { base: 13, hits: 1 },
+                       EOp::PlayerStatus { st: St::Frail, amt: 2 }] },
+            EnemyMove { name: "生成闪电", intent: "Attack", ops: &[EOp::Attack { base: 6, hits: 3 }] },
+            EnemyMove { name: "GALVANIC_BURST", intent: "Attack",
+                ops: &[EOp::Attack { base: 16, hits: 1 },
+                       EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+        ],
+    },
+    // 85 [源码] 咬人卷轴 `ScrollOfBiting`（第 3 幕，`ScrollsOfBitingNormal` 4 卷 / `ScrollsOfBitingWeak` 3 卷）
+    // 血量 30–37 **每卷重掷**（`ToughEnemies` 33–39），内核点值取 33。
+    // 开局**纸伤难愈 2**：每被它打穿一段，我 −2 最大生命，而且带出这场仗（见 `St::PaperCuts`）。
+    // 出招机器和「起手按槽位错开」那条近似见 `M_SCROLL_OF_BITING`。伤害 `DeadlyEnemies` 档 16 / 6×2。
+    EnemyDef {
+        name: "咬人卷轴", max_hp: 33, start_status: &[(St::PaperCuts, 2)], loop_from: 0,
+        machine: Some(&M_SCROLL_OF_BITING),
+        moves: &[
+            EnemyMove { name: "大啃", intent: "Attack", ops: &[EOp::Attack { base: 14, hits: 1 }] },
+            EnemyMove { name: "咀嚼", intent: "Attack", ops: &[EOp::Attack { base: 5, hits: 2 }] },
+            EnemyMove { name: "更多牙齿", intent: "Buff",
+                ops: &[EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+        ],
+    },
+    // 86 [源码] 失落之物 `TheLost`（第 3 幕杂兵，和遗忘之物同场 `TheLostAndForgottenNormal`）
+    // 血量 93（`ToughEnemies` 99）。开局**抢夺力量**：两手定环
+    //   致残雾霾（我 −2 力量、它 +2 力量）-> 眼部激光 4×2（`DeadlyEnemies` 5×2）-> …
+    // **它死了才把偷走的力量还给我**（见 `St::PossessStrength` / `Amt::OwnerStacksOf`）。
+    // 我带人工制品时那 −2 被挡掉、它照样 +2（[源码] 两句 `Apply` 互不相干）。
+    EnemyDef {
+        name: "失落之物", max_hp: 93, start_status: &[(St::PossessStrength, 1)], loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "致残雾霾", intent: "Debuff",
+                ops: &[EOp::PlayerStatus { st: St::Strength, amt: -2 },
+                       EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+            EnemyMove { name: "眼部激光", intent: "Attack", ops: &[EOp::Attack { base: 4, hits: 2 }] },
+        ],
+    },
+    // 87 [源码] 遗忘之物 `TheForgotten`（和失落之物同场）
+    // 血量 106（`ToughEnemies` 111）。开局**抢夺速度**：两手定环
+    //   瘴气（我 −2 敏捷 -> 它 8 格挡 -> 它 +2 敏捷）-> 恐惧 13 + 它自己的敏捷 -> …
+    // **op 的顺序就是 [源码] 的顺序，别调**：格挡在加敏捷**之前**，所以格挡 8 / 10 / 12…
+    // 而恐惧在加敏捷**之后**，15 / 17 / 19…（`DeadlyEnemies` 基础 15）。
+    // 意图签名是 `Debuff, Defend, Buff` 和 `Attack`。
+    EnemyDef {
+        name: "遗忘之物", max_hp: 106, start_status: &[(St::PossessSpeed, 1)], loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "瘴气", intent: "Debuff",
+                ops: &[EOp::PlayerStatus { st: St::Dexterity, amt: -2 },
+                       EOp::Block(8),
+                       EOp::SelfStatus { st: St::Dexterity, amt: 2 }] },
+            EnemyMove { name: "恐惧", intent: "Attack",
+                ops: &[EOp::AttackPlusSelfStatus { base: 13, hits: 1, per: St::Dexterity }] },
+        ],
+    },
+    // ---- 2026-09-14 第 3 幕骑士团（批 3）------------------------------------------
+    // **全部 [源码]，没有一条实录。** 三只同场（`KnightsElite`，站位 first/second/third =
+    // 连枷 / 幽灵 / 魔法）。2026-08-14 旧 advisor 记过的血量 101 / 93 / 82 对得上。
+    // 名字（怪物和招式）取自游戏本地化表；图鉴里隐藏的招式照抄 [源码] id。
+    //
+    // 88 [源码] 连枷骑士 `FlailKnight`：血量 101（`ToughEnemies` 108）。
+    // 起手撞击 15，之后三手随机：战争吟唱（+3 力量，不连出）/ 连枷 9×2 / 撞击 15（各最多连出两次）。
+    // 伤害 `DeadlyEnemies` 档 10×2 / 17。**力量永久叠** —— 三只里越拖越疼的是它。
+    EnemyDef {
+        name: "连枷骑士", max_hp: 101, start_status: &[], loop_from: 0,
+        machine: Some(&M_FLAIL_KNIGHT),
+        moves: &[
+            EnemyMove { name: "撞击", intent: "Attack", ops: &[EOp::Attack { base: 15, hits: 1 }] },
+            EnemyMove { name: "连枷", intent: "Attack", ops: &[EOp::Attack { base: 9, hits: 2 }] },
+            EnemyMove { name: "战争吟唱", intent: "Buff",
+                ops: &[EOp::SelfStatus { st: St::Strength, amt: 3 }] },
+        ],
+    },
+    // 89 [源码] 幽灵骑士 `SpectralKnight`：血量 93（`ToughEnemies` 97）。
+    // 起手**恶咒**（我身上挂 `St::Hex`：从下个回合末起，没打出去的牌**全部消耗**），
+    // 然后灵魂斩击 15，之后随机：灵魂斩击（最多连出两次）/ 灵魂火焰 3×3（不连出）。
+    // 伤害 `DeadlyEnemies` 档 17 / 4×3。**它死了才解咒**（`St::HexCaster`）——
+    // 这一只的威胁不在伤害上，在牌组被一回合一回合吃掉。
+    EnemyDef {
+        name: "幽灵骑士", max_hp: 93, start_status: &[], loop_from: 0,
+        machine: Some(&M_SPECTRAL_KNIGHT),
+        moves: &[
+            EnemyMove { name: "恶咒", intent: "Debuff",
+                ops: &[EOp::PlayerStatus { st: St::Hex, amt: 2 }] },
+            EnemyMove { name: "灵魂斩击", intent: "Attack", ops: &[EOp::Attack { base: 15, hits: 1 }] },
+            EnemyMove { name: "灵魂火焰", intent: "Attack", ops: &[EOp::Attack { base: 3, hits: 3 }] },
+        ],
+    },
+    // 90 [源码] 魔法骑士 `MagiKnight`：血量 82（`ToughEnemies` 89）。
+    // 定环：强力护盾（6 + 自己 5 格挡）-> 抑制 -> 撞击 10 -> PREP（5 格挡）-> 魔法炸弹 35 -> 撞击 -> …
+    // **抑制**把我本场所有已升级的牌降级，它死了才升回来（`EOp::DowngradeUpgradedCards`）。
+    // **魔法炸弹前一手总是 PREP**（加格挡）—— 看到它加格挡，下个敌人回合就是 35。
+    // 伤害 `DeadlyEnemies` 档 7 / 11 / 40；两处格挡 `ToughEnemies` 档 9。
+    EnemyDef {
+        name: "魔法骑士", max_hp: 82, start_status: &[], loop_from: 2, machine: None,
+        moves: &[
+            EnemyMove { name: "强力护盾", intent: "Attack",
+                ops: &[EOp::Attack { base: 6, hits: 1 }, EOp::Block(5)] },
+            EnemyMove { name: "抑制", intent: "Debuff",
+                ops: &[EOp::PlayerStatus { st: St::Dampen, amt: 1 }, EOp::DowngradeUpgradedCards] },
+            EnemyMove { name: "撞击", intent: "Attack", ops: &[EOp::Attack { base: 10, hits: 1 }] },
+            EnemyMove { name: "PREP", intent: "Defend", ops: &[EOp::Block(5)] },
+            EnemyMove { name: "魔法炸弹", intent: "Attack", ops: &[EOp::Attack { base: 35, hits: 1 }] },
+        ],
+    },
+    // ---- 2026-09-14 第 2 幕（批 4）----------------------------------------------------
+    // 91 [源码] 熟睡甲虫 `SlumberingBeetle`（**全部 [源码]，没有实录**；名字取自游戏本地化表）
+    //
+    // 只在 `SlumberingBeetleNormal` 出现，和盛碗虫（石）+ 盛碗虫（丝）同场（站位 first / second / third）。
+    // 血量 86（`ToughEnemies` 89，不是区间）。开局 **覆甲 15**（`ToughEnemies` 18 ——
+    // 生成器认不出开局 status 里的数，和青蛙骑士同一个欠账，见 `data/ascension.json`）+ **熟睡 3**。
+    //
+    //   0 打鼾（`SleepIntent`）：什么都不做
+    //   1 出击（`SingleAttackIntent` + `BuffIntent`）：16（`DeadlyEnemies` 18）+ 自身力量 2（写死）
+    //   2 醒来（被打醒的那一手，`StunIntent`）：移除覆甲。[源码] 是 `CreatureCmd.Stun(WakeUpMove,
+    //     "ROLL_OUT_MOVE")` 临时造的 `STUNNED` 态，不在 `GenerateMoveStateMachine` 里，
+    //     只能被熟睡那条规则强制打进去（`TOp::OwnerForceMove(2)`）。意图字符串没实测过
+    //
+    // 两种醒法都**移除覆甲**（`WakeUpMove`），差在醒来的那个敌人回合打不打人：
+    //   · 自己回合末熟睡减到 0：当场醒（覆甲在同一个回合末已经给过格挡），下一个敌人回合直接出击
+    //   · 被打穿减到 0：被击晕，下一个敌人回合「醒来」（不打人），再下一个起出击
+    // 醒了之后**永远出击**，力量每手 +2。**打法是先清两只盛碗虫、别碰它** —— 打穿它一下就少睡一回合。
+    EnemyDef {
+        name: "熟睡甲虫", max_hp: 86, start_status: &[(St::PlatedArmor, 15), (St::Slumber, 3)],
+        loop_from: 0, machine: Some(&M_SLUMBERING_BEETLE),
+        moves: &[
+            EnemyMove { name: "打鼾", intent: "Sleep", ops: &[EOp::Nothing] },
+            EnemyMove { name: "出击", intent: "Attack",
+                ops: &[EOp::Attack { base: 16, hits: 1 }, EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+            EnemyMove { name: "醒来", intent: "Stun", ops: &[EOp::ClearSelfStatus(St::PlatedArmor)] },
+        ],
+    },
+    // ---- 2026-09-17 第 1 幕（批 2）------------------------------------------------
+    // 92 [源码] 乐加维林族母 `LagavulinMatriarch`（**全部 [源码]，没有实录**；
+    // 名字和招式名取自游戏本地化表 `LAGAVULIN_MATRIARCH.*`）
+    //
+    // `LagavulinMatriarchBoss` 单怪，**第 1 幕暗港三个 Boss 之一** ⇒ 约占所有局的 1/6。
+    // 血量 222（`ToughEnemies` 233，`Min == Max` 不是区间）。开局 **覆甲 12 + 沉睡 3**
+    // （[源码] `AfterAddedToRoom -> Sleep()`；两个数都不吃进阶）。
+    //
+    //   0 沉睡（`SleepIntent`）：什么都不做
+    //   1 斩击（`SingleAttackIntent`）：19（`DeadlyEnemies` 21）
+    //   2 开膛破肚（`MultiAttackIntent`）：9×2（`DeadlyEnemies` 10×2）
+    //   3 斩击2（`SingleAttackIntent` + `DefendIntent`）：12（`DeadlyEnemies` 14）
+    //     + 格挡 12（`ToughEnemies` 14）。**本地化表里没有 SLASH2 这个 key**
+    //     （图鉴只列 SLASH），名字照无厌沙虫「鞭挞2」的老办法取
+    //   4 灵魂汲取（`DebuffIntent` + `BuffIntent`）：我 −2 力量 −2 敏捷、它 +2 力量（都不吃进阶）
+    //   5 醒来（被打醒的那一手，`StunIntent`）：**什么都不做** —— [源码] `WakeUpMove` 只播动画，
+    //     覆甲是沉睡自己摘的。和熟睡甲虫的「醒来」不一样，那一手真的清覆甲。意图字符串没实测过
+    //
+    // 两种醒法，差的是**那一回合的覆甲墙**和**要不要白打一手**：
+    //   · 自己回合末沉睡减到 0：覆甲在同一个回合末的**更早一档**就被摘了 ⇒ 那一回合**没有墙**，
+    //     下一个敌人回合直接斩击
+    //   · 被打穿：覆甲当场没（我方回合里就没了），被击晕 ⇒ 下一个敌人回合「醒来」不打人，再之后斩击
+    // 所以**打穿它是划算的**：省掉一堵墙，还白赚一个不挨打的回合。难点是开局那 12 点覆甲
+    // 每个敌人回合末都补满（覆甲自己每个敌人回合开始 −1：12/11/10…）。
+    EnemyDef {
+        name: "乐加维林族母", max_hp: 222,
+        start_status: &[(St::PlatedArmor, 12), (St::Asleep, 3)],
+        loop_from: 0, machine: Some(&M_LAGAVULIN_MATRIARCH),
+        moves: &[
+            EnemyMove { name: "沉睡", intent: "Sleep", ops: &[EOp::Nothing] },
+            EnemyMove { name: "斩击", intent: "Attack", ops: &[EOp::Attack { base: 19, hits: 1 }] },
+            EnemyMove { name: "开膛破肚", intent: "Attack", ops: &[EOp::Attack { base: 9, hits: 2 }] },
+            EnemyMove { name: "斩击2", intent: "Attack",
+                ops: &[EOp::Attack { base: 12, hits: 1 }, EOp::Block(12)] },
+            EnemyMove { name: "灵魂汲取", intent: "Debuff",
+                ops: &[EOp::PlayerStatus { st: St::Strength, amt: -2 },
+                       EOp::PlayerStatus { st: St::Dexterity, amt: -2 },
+                       EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+            EnemyMove { name: "醒来", intent: "Stun", ops: &[EOp::Nothing] },
+        ],
+    },
+    // ---- 2026-09-17 第 1 幕（批 3）------------------------------------------------
+    // 93 [源码] 墨影幻灵 `Vantom`（**全部 [源码]，没有实录**；名字取自 `VANTOM.*`）
+    //
+    // `VantomBoss` 单怪，**第 1 幕密林三个 Boss 之一** ⇒ 约占所有局的 1/6。
+    // 血量 173（`ToughEnemies` 183，`Min == Max`）。开局 **滑溜 8**（`ToughEnemies` 9 ——
+    // 开局 status 里的数进阶生成器认不出，和青蛙骑士 / 熟睡甲虫同一个欠账，见 `data/ascension.json`）。
+    //
+    //   0 墨迹（`SingleAttackIntent`）：7（`DeadlyEnemies` 8）
+    //   1 墨水长枪（`MultiAttackIntent`）：6×2（`DeadlyEnemies` 7×2）
+    //   2 肢解（`SingleAttackIntent` + `StatusIntent(3)`）：26（`DeadlyEnemies` 30）+ 3 张伤口进**弃牌堆**
+    //   3 准备（`BuffIntent`）：自身力量 +2（写死）
+    // 四手定环，起点墨迹 —— 纯确定性，所以不用机器。
+    //
+    // **这场仗的节奏是滑溜，不是血量**：前 8 次打穿各只掉 1 血（`St::Slippery`），
+    // 所以开局那 8 层是一堵 8 次命中的墙，多段牌把它拆得最快 —— 一段 26 点和一段 2 点
+    // 付的价钱一样。清完之后才是 165 血的普通 Boss。
+    EnemyDef {
+        name: "墨影幻灵", max_hp: 173, start_status: &[(St::Slippery, 8)],
+        loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "墨迹", intent: "Attack", ops: &[EOp::Attack { base: 7, hits: 1 }] },
+            EnemyMove { name: "墨水长枪", intent: "Attack", ops: &[EOp::Attack { base: 6, hits: 2 }] },
+            EnemyMove { name: "肢解", intent: "Attack",
+                ops: &[EOp::Attack { base: 26, hits: 1 },
+                       EOp::AddCardToDiscard { card: card::WOUND, count: 3 }] },
+            EnemyMove { name: "准备", intent: "Buff",
+                ops: &[EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+        ],
+    },
+    // 94 [源码] 墨宝 `Inklet`（**全部 [源码]，没有实录**；名字取自 `INKLET.*`）
+    //
+    // `InkletsNormal` **三只同场**，中间那只起手旋风（见 `M_INKLET`）。
+    // 血量 11–17（`ToughEnemies` 12–18）—— **是区间**，这里的 `max_hp` 取中位 14，
+    // 真实血量合成路径从 `asc::hp_range` 掷、对拍路径从观测灌。
+    // 开局 **滑溜 1**：每只都要多挨一次命中才开始掉血，三只就是三次。
+    //
+    //   0 刺击（`SingleAttackIntent`）：3（`DeadlyEnemies` 4）
+    //   1 旋风（`MultiAttackIntent`）：2×3（`DeadlyEnemies` 3×3）
+    //   2 锐利凝视（`SingleAttackIntent`）：10（`DeadlyEnemies` 11）—— 图鉴里隐藏的那一手
+    EnemyDef {
+        name: "墨宝", max_hp: 14, start_status: &[(St::Slippery, 1)],
+        loop_from: 0, machine: Some(&M_INKLET),
+        moves: &[
+            EnemyMove { name: "刺击", intent: "Attack", ops: &[EOp::Attack { base: 3, hits: 1 }] },
+            EnemyMove { name: "旋风", intent: "Attack", ops: &[EOp::Attack { base: 2, hits: 3 }] },
+            EnemyMove { name: "锐利凝视", intent: "Attack", ops: &[EOp::Attack { base: 10, hits: 1 }] },
+        ],
+    },
+    // ---- 2026-09-19 第 1 幕（批 4）------------------------------------------------
+    // 95 [源码] 鬼祟珊瑚群 `SkulkingColony`（**全部 [源码]，没有实录**；名字取自 `SKULKING_COLONY.*`）
+    //
+    // `SkulkingColonyElite` 单怪，**第 1 幕暗港精英**。血量 75（`ToughEnemies` 80，`Min == Max`）。
+    // 开局 **硬化外壳 20**（`AfterAddedToRoom`，写死、不吃进阶）：
+    // **每个回合最多掉 20 血，双方各自的回合各算一份**（见 `St::HardenedShell`）。
+    // 余额挂 `start_status`（开局那一刻 = 上限），上限走 `ENEMY_PRIVATE_MARKERS`（两条路径都要）。
+    //
+    //   0 猛冲（`SingleAttackIntent`）：14（`DeadlyEnemies` 16）
+    //   1 猛冲2：同上。[源码] `ZOOM_MOVE_2` 和 `ZOOM_MOVE` 调的是同一个 `ZoomMove`；
+    //     **本地化表里没有 ZOOM_2 这个 key**，名字照「鞭挞2」「斩击2」的老办法取
+    //   2 惯性（`SingleAttackIntent` + `BuffIntent`）：9（A9 11）+ 自身力量 2（A9 4）
+    //   3 穿刺戳击（`MultiAttackIntent`）：7×2（A9 8×2）
+    // 四手定环、起点猛冲 —— 纯确定性，不用机器（和墨影幻灵同一个处置）。
+    //
+    // **这场仗的节奏是回合数，不是血量**：75 血至少要 4 个我方回合（20+20+20+15），
+    // 一个回合打出去的第 21 点起全是白打。**所以每回合打满 20 就该转去挡**。
+    // 敌人回合里荆棘 / 火焰屏障反弹的伤害吃的是敌人回合那一份额度，**不占**我下一回合的 20。
+    EnemyDef {
+        name: "鬼祟珊瑚群", max_hp: 75, start_status: &[(St::HardenedShell, 20)],
+        loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "猛冲", intent: "Attack", ops: &[EOp::Attack { base: 14, hits: 1 }] },
+            EnemyMove { name: "猛冲2", intent: "Attack", ops: &[EOp::Attack { base: 14, hits: 1 }] },
+            EnemyMove { name: "惯性", intent: "Attack",
+                ops: &[EOp::Attack { base: 9, hits: 1 }, EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+            EnemyMove { name: "穿刺戳击", intent: "Attack", ops: &[EOp::Attack { base: 7, hits: 2 }] },
+        ],
+    },
+    // ---- 2026-09-19 第 1 幕（批 5，暗港杂兵）----------------------------------------
+    // **全部 [源码]，没有实录**；名字取自游戏本地化表（`*.name` / `*.moves.*.title`）。
+    //
+    // 96 [源码] 幽灵船 `HauntedShip`（`HauntedShipNormal` 单怪）。血量 63（`ToughEnemies` 67，`Min == Max`）。
+    //   0 纠缠（`DebuffIntent` + `StatusIntent(5)`）：我虚弱 3 + **5 张晕眩进弃牌堆**（都不吃进阶）
+    //   1 扫击（`SingleAttackIntent`）：13（A9 14）
+    //   2 践踏（`MultiAttackIntent`）：4×3（A9 5×3）
+    // 起点纠缠，之后扫击 / 践踏交替（[源码] `HAUNT -> SWIPE -> STOMP -> SWIPE`）⇒ `loop_from: 1`。
+    EnemyDef {
+        name: "幽灵船", max_hp: 63, start_status: &[], loop_from: 1, machine: None,
+        moves: &[
+            EnemyMove { name: "纠缠", intent: "Debuff",
+                ops: &[EOp::PlayerStatus { st: St::Weak, amt: 3 },
+                       EOp::AddCardToDiscard { card: card::DAZED, count: 5 }] },
+            EnemyMove { name: "扫击", intent: "Attack", ops: &[EOp::Attack { base: 13, hits: 1 }] },
+            EnemyMove { name: "践踏", intent: "Attack", ops: &[EOp::Attack { base: 4, hits: 3 }] },
+        ],
+    },
+    // 97 [源码] 蟾蜍蝌蚪 `Toadpole`（`ToadpolesWeak` **两只同场**，第 1 幕暗港的弱遭遇）。
+    // 血量 21–25（`ToughEnemies` 22–26）—— 区间，`max_hp` 取中位 23，合成路径从 `asc::hp_range` 掷。
+    //   0 吐刺（`MultiAttackIntent`）：**先**给自己 −2 荆棘，再 3×3（A9 4×3）
+    //   1 旋转（`SingleAttackIntent`）：7（A9 8）
+    //   2 带刺（`BuffIntent`）：自身荆棘 +2（不吃进阶）
+    // 环是 旋转 -> 带刺 -> 吐刺 -> 旋转，起点按站位（前面那只带刺、后面那只旋转），见 `M_TOADPOLE`。
+    // 所以**带刺之后的那个我方回合打它要吃 2 点反弹**，吐刺出完刺就收回去了。
+    // 荆棘归零时 [源码] 整个移除（`ThornsPower` 不许负数）；环里吐刺永远接在带刺后面，
+    // 内核的 `SelfStatus` 不夹 0 在这里碰不到。
+    EnemyDef {
+        name: "蟾蜍蝌蚪", max_hp: 23, start_status: &[], loop_from: 0, machine: Some(&M_TOADPOLE),
+        moves: &[
+            EnemyMove { name: "吐刺", intent: "Attack",
+                ops: &[EOp::SelfStatus { st: St::Thorns, amt: -2 }, EOp::Attack { base: 3, hits: 3 }] },
+            EnemyMove { name: "旋转", intent: "Attack", ops: &[EOp::Attack { base: 7, hits: 1 }] },
+            EnemyMove { name: "带刺", intent: "Buff", ops: &[EOp::SelfStatus { st: St::Thorns, amt: 2 }] },
+        ],
+    },
+    // 98 [源码] 化石追踪者 `FossilStalker`（`FossilStalkerNormal` 单怪）。
+    // 血量 51–53（`ToughEnemies` 54–56），`max_hp` 取中位 52。
+    // 开局 **吮吸 3**（写死）：它的攻击每打穿一段 +3 力量 ⇒ **多段的甩动最要挡**。
+    //   0 冲撞（`SingleAttackIntent` + `DebuffIntent`）：9（A9 11）+ 我脆弱 1
+    //   1 缠上（`SingleAttackIntent`）：12（A9 14）—— 起手这一手
+    //   2 甩动（`MultiAttackIntent`）：3×2（A9 4×2）
+    // 之后每一手三选一等权、同一手最多连出两次，见 `M_FOSSIL_STALKER`。
+    EnemyDef {
+        name: "化石追踪者", max_hp: 52, start_status: &[(St::Suck, 3)],
+        loop_from: 0, machine: Some(&M_FOSSIL_STALKER),
+        moves: &[
+            EnemyMove { name: "冲撞", intent: "Attack",
+                ops: &[EOp::Attack { base: 9, hits: 1 }, EOp::PlayerStatus { st: St::Frail, amt: 1 }] },
+            EnemyMove { name: "缠上", intent: "Attack", ops: &[EOp::Attack { base: 12, hits: 1 }] },
+            EnemyMove { name: "甩动", intent: "Attack", ops: &[EOp::Attack { base: 3, hits: 2 }] },
+        ],
+    },
+    // 99 [源码] 地精佣兵 `GremlinMerc`（`GremlinMercNormal`：开局只有它一只）。
+    // 血量 47–49（`ToughEnemies` 51–53），`max_hp` 取中位 48。
+    // 开局 **意外 1**（死时召唤卑鄙地精 + 胖地精，规则在 `POWERS`）+ **偷窃 20**（只偷金币，印记）。
+    //
+    // **它的三个伤害数挂的是 `ToughEnemies`（A8）不是 `DeadlyEnemies`（A9）**——
+    // [源码] `GimmeDamage` / `DoubleSmashDamage` / `HeheDamage` 三个都写的
+    // `GetValueIfAscension(AscensionLevel.ToughEnemies, …)`，照抄，`dump_ascension.py` 会按源码的门认。
+    //   0 拿来（`MultiAttackIntent`）：7×2（A8 8×2）+ 偷金币
+    //   1 双重猛击（`MultiAttackIntent` + `DebuffIntent`）：6×2（A8 7×2）+ 我虚弱 2
+    //   2 嘿嘿（`SingleAttackIntent` + `BuffIntent`）：8（A8 9）+ 自身力量 2（写死）
+    // 三手定环、起点拿来 —— 纯确定性，不用机器。
+    EnemyDef {
+        name: "地精佣兵", max_hp: 48, start_status: &[(St::Surprise, 1), (St::Thievery, 20)],
+        loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "拿来", intent: "Attack", ops: &[EOp::Attack { base: 7, hits: 2 }] },
+            EnemyMove { name: "双重猛击", intent: "Attack",
+                ops: &[EOp::Attack { base: 6, hits: 2 }, EOp::PlayerStatus { st: St::Weak, amt: 2 }] },
+            EnemyMove { name: "嘿嘿", intent: "Attack",
+                ops: &[EOp::Attack { base: 8, hits: 1 }, EOp::SelfStatus { st: St::Strength, amt: 2 }] },
+        ],
+    },
+    // 100 [源码] 卑鄙地精 `SneakyGremlin`（只由地精佣兵的意外召唤出来）。
+    // 血量 10–14（`ToughEnemies` 11–15）；召唤时的血量写在意外那条规则里（中位 12），这里的 `max_hp` 同值。
+    //   0 醒来（`StunIntent`）：什么都不做 —— 被召唤出来的第一个敌人回合
+    //   1 冲撞（`SingleAttackIntent`）：9（A9 10），之后**一直**冲撞（`FollowUpState` 指向自己）
+    EnemyDef {
+        name: "卑鄙地精", max_hp: 12, start_status: &[], loop_from: 1, machine: None,
+        moves: &[
+            EnemyMove { name: "醒来", intent: "Stun", ops: &[EOp::Nothing] },
+            EnemyMove { name: "冲撞", intent: "Attack", ops: &[EOp::Attack { base: 9, hits: 1 }] },
+        ],
+    },
+    // 101 [源码] 胖地精 `FatGremlin`（只由地精佣兵的意外召唤出来）。
+    // 血量 13–17（`ToughEnemies` 14–18）；召唤血量中位 15，同上。
+    //   0 醒来（`StunIntent`）：什么都不做
+    //   1 逃跑（`EscapeIntent`）：[源码] `CreatureCmd.Escape` —— **离场**，身上的盗窃（偷走的金币）跟着带走。
+    //     **内核近似成原地不动**（`EOp::Nothing`，之后一直重复），和偷窃草蜢的逃跑同一个处置：
+    //     内核没有「离场」这个动作，而用 `KillSelf` 会让它「死」一次，点燃地精之角那类死亡触发，是错的。
+    //     **方向**：它不打人，只是要我多花 15 点伤害收掉它才算打完（悲观，只费回合不费血 ——
+    //     除非卑鄙地精还活着，那时多拖的每个回合都多挨一下 9）。
+    EnemyDef {
+        name: "胖地精", max_hp: 15, start_status: &[], loop_from: 1, machine: None,
+        moves: &[
+            EnemyMove { name: "醒来", intent: "Stun", ops: &[EOp::Nothing] },
+            EnemyMove { name: "逃跑", intent: "Escape", ops: &[EOp::Nothing] },
+        ],
+    },
+    // ---- 2026-09-19 第 1 幕批 6（密林杂兵）。**全部 [源码]，一条实录都没有**；名字取自本地化表
+    // （`VINE_SHAMBLER.*` / `ASSASSIN_RUBY_RAIDER.*` / `BRUTE_RUBY_RAIDER.*`，简中那一份）。
+    //
+    // 102 [源码] 藤蔓蹒跚者 `VineShambler`（`VineShamblerNormal` 单怪）。血量 61（A8 64，`Min == Max`）。
+    // 三手定环，**起点是挥击**（`new MonsterMoveStateMachine(list, moveState2)`，不是列表里的第一个）：
+    //   0 挥击（`MultiAttackIntent`）：6×2（A9 7×2）
+    //   1 紧绕藤蔓（`SingleAttackIntent` + `CardDebuffIntent`）：8（A9 9），**打完**给我缠结 1（不吃进阶）
+    //     —— 下一个我方回合攻击牌 +1 费，见 `St::Tangled`
+    //   2 大啃（`SingleAttackIntent`）：16（A9 18）
+    EnemyDef {
+        name: "藤蔓蹒跚者", max_hp: 61, start_status: &[], loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "挥击", intent: "Attack", ops: &[EOp::Attack { base: 6, hits: 2 }] },
+            EnemyMove { name: "紧绕藤蔓", intent: "Attack",
+                ops: &[EOp::Attack { base: 8, hits: 1 }, EOp::PlayerStatus { st: St::Tangled, amt: 1 }] },
+            EnemyMove { name: "大啃", intent: "Attack", ops: &[EOp::Attack { base: 16, hits: 1 }] },
+        ],
+    },
+    // 103 [源码] 劫掠者刺客 `AssassinRubyRaider`（`RubyRaidersNormal` 五选三）。
+    // 血量 18–23（A8 19–24），`max_hp` 取偏低的中位 20（合成路径从 `asc::hp_range` 掷，这个数只是兜底）。
+    //   0 致命射击（`SingleAttackIntent`）：10（A9 11），`FollowUpState` 指向自己 —— 一直这一手
+    EnemyDef {
+        name: "劫掠者刺客", max_hp: 20, start_status: &[], loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "致命射击", intent: "Attack", ops: &[EOp::Attack { base: 10, hits: 1 }] },
+        ],
+    },
+    // 104 [源码] 劫掠者暴徒 `BruteRubyRaider`（同上）。血量 30–33（A8 31–34），`max_hp` 取 31。
+    //   0 殴打（`SingleAttackIntent`）：7（A9 8）—— 起手这一手
+    //   1 怒吼（`BuffIntent`）：自身力量 +3（`_roarStrength` 常量，不吃进阶），不打人
+    // 两手交替 ⇒ 殴打 7 / 10 / 13 …… 每两个回合涨 3。
+    EnemyDef {
+        name: "劫掠者暴徒", max_hp: 31, start_status: &[], loop_from: 0, machine: None,
+        moves: &[
+            EnemyMove { name: "殴打", intent: "Attack", ops: &[EOp::Attack { base: 7, hits: 1 }] },
+            EnemyMove { name: "怒吼", intent: "Buff",
+                ops: &[EOp::SelfStatus { st: St::Strength, amt: 3 }] },
+        ],
+    },
 ];
 
 /// 实验体三个形态的最大生命（A1 非进阶档；`ToughEnemies` 是 111/212/313）。
 /// **复活规则和 [`remaining_hp_including_revives`] 共用这三个数**，别在别处再抄。
 pub const TEST_SUBJECT_FORM_HP: [i32; 3] = [100, 200, 300];
 
+/// [源码] RespawnMove grants PainfulStabs in form 2, Nemesis in form 3.
+/// These observed powers distinguish the two identical 10x3 intent labels.
+pub fn move_matches_form(def: u16, mv: usize, e: &crate::state::Entity) -> bool {
+    if def != enemy::TEST_SUBJECT_BOSS { return true; }
+    if !e.alive() { return mv == 0; }
+    if e.get(St::Nemesis) > 0 { return (4..=6).contains(&mv); }
+    if e.get(St::PainfulStabs) > 0 { return mv == 3; }
+    (1..=2).contains(&mv)
+}
+
 /// 区分形态 1 和形态 2 的门槛（形态 1 的最大生命 ≤ 这个数）。
 /// 取在 100 和 200 中间，进阶档的 111/212 也照样分得开。
 pub const TEST_SUBJECT_FORM1_MAX: i32 = 150;
 
+/// 知识恶魔「知识的诅咒」的三次二选一（[源码] `KnowledgeDemon._curseOfKnowledgeSets` +
+/// `_disintegrationDamageValues = {6, 7, 8}`，都不吃进阶）。
+/// 第 k 次按 `State::curse_policy` 的第 k 位挑：1 = 瓦解，0 = 另一边。
+pub static KNOWLEDGE_CURSES: [CurseSet; 3] = [
+    CurseSet { disintegration: 6, other: St::MindRot, other_amt: 1, other_max_energy: 0 },
+    CurseSet { disintegration: 7, other: St::Sloth, other_amt: 3, other_max_energy: 0 },
+    CurseSet { disintegration: 8, other: St::WasteAway, other_amt: 1, other_max_energy: -1 },
+];
+
+/// `State::curse_policy` 的默认值：**第 2 次选瓦解，第 1、3 次选另一边**。
+///
+/// [玩家判定] 2026-09-14：「第一个都可以，第二一般选瓦解，第三个看情况」。
+/// 所以只有第 2 位是判定，第 1、3 位是 `[判断]`（第 1 位随手取了心灵腐化；第 3 位要看局面，
+/// 那正是 `advise` 单场问法把 8 种选法全摆出来的原因）。
+/// **它只决定没人问的时候怎么打**：整幕链、跨回合推演、`fight_eval` 这类验收台。
+pub const DEFAULT_CURSE_POLICY: u8 = 0b010;
+
+/// 知识的诅咒**已经落下过几次** —— 从玩家身上的诅咒 status 反推，不另存计数器。
+///
+/// 反推得出来是因为三件事同时成立：诅咒**按顺序**发生（已经出过的是一段前缀）·
+/// 三组的「另一边」是三个不同的 status · 瓦解三档 6 / 7 / 8 的子集和互不相同。
+/// 于是和身上的量对得上的前缀长度**是唯一的**。
+///
+/// 对不上的只有两种情况：**人工制品挡掉过一次**（四个都是 debuff），或者瓦解另有来源（今天没有）。
+/// 那时退回「身上看得见的最后一次」—— 源码的计数器照样加了一，内核会少数一次，
+/// 下一次诅咒重复同一组（已知近似）。
+pub fn curses_taken(p: &crate::state::Entity, sets: &[CurseSet]) -> usize {
+    let dis = p.get(St::Disintegration);
+    let other = |k: usize| p.get(sets[k].other) > 0;
+    for m in (0..=sets.len()).rev() {
+        if (m..sets.len()).any(|k| other(k)) {
+            continue;
+        }
+        let want: i32 = (0..m).filter(|&k| !other(k)).map(|k| sets[k].disintegration).sum();
+        if want == dis {
+            return m;
+        }
+    }
+    let last_other = (0..sets.len()).rev().find(|&k| other(k)).map_or(0, |k| k + 1);
+    last_other.max(usize::from(dis > 0))
+}
+
+/// 这只敌人的出招里有没有「知识的诅咒」那种由玩家二选一的招（`advise` 靠它决定要不要摆 8 种选法）。
+pub fn offers_curse_choice(def: u16) -> bool {
+    enemy_def(def).moves.iter().any(|m| m.ops.iter().any(|op| matches!(op, EOp::CurseOfKnowledge(_))))
+}
+
+/// 瀑布巨兽死后锁的血量（[源码] `WaterfallGiant.TriggerAboutToBlowState`：`SetMaxAndCurrentHp(999999999m)`）。
+///
+/// **它本身就是「锁血等自爆」这个阶段的判据**：最大生命是观测量，从战斗中途同步进来也不会错相 ——
+/// 和实验体拿最大生命判形态是同一个做法，不另开私有标记。
+pub const ABOUT_TO_BLOW_HP: i32 = 999_999_999;
+/// 瀑布巨兽「即将爆发」在 `moves` 里的下标（死亡规则强制进这一手，见 `M_WATERFALL_GIANT`）。
+pub const WATERFALL_ABOUT_TO_BLOW_MOVE: u8 = 6;
+
+/// 这只敌人是不是在**锁血等自爆**（瀑布巨兽死后那两手）。
+#[inline]
+pub fn about_to_blow(e: &crate::state::Entity) -> bool {
+    e.max_hp >= ABOUT_TO_BLOW_HP
+}
+
+/// 「**这一个形态**还剩多少血」。锁血等自爆时是 **0**：它会自己炸死，那 999999999 不是要打的血 ——
+/// 当成血量的话，叶评估会以为砍死它**亏了**十亿血（求解器宁可不收人头，和下面那条是同一个坑），
+/// L3 那边「两边都死的仗谁把敌人打得更残」也会被这一个数淹掉。
+#[inline]
+pub fn hp_left_this_form(e: &crate::state::Entity) -> i32 {
+    if about_to_blow(e) {
+        0
+    } else {
+        e.hp.max(0)
+    }
+}
+
+/// 这只敌人**死的那一刻会召出来多少血**：它身上挂着的 `Hook::EnemyDied` 召唤规则
+/// （寄生物 4 × 19 · 意外 12 + 15 · 库存 k 层 ⇒ 后面还有 k 具 × 74）。**死了的不算**
+/// —— 尸体的召唤已经发生过了，召出来的那几只自己在场上。
+///
+/// 数字**从 `POWERS` 读**（召唤那条规则里的 `hp` / `count`），不在这里再抄一遍：
+/// 改召唤血量的人只改一处。表在第一次调用时筛一遍存下来 —— `eval` 每个叶子都要走这里，
+/// 不该每次都把整张 `POWERS` 扫一遍。
+pub fn death_summon_hp(e: &crate::state::Entity) -> i32 {
+    static RULES: std::sync::OnceLock<Vec<(St, TOp)>> = std::sync::OnceLock::new();
+    if !e.alive() {
+        return 0;
+    }
+    let rules = RULES.get_or_init(|| {
+        let mut v = Vec::new();
+        for p in POWERS.iter().filter(|p| p.hook == Hook::EnemyDied) {
+            for op in p.ops {
+                if matches!(op, TOp::SummonN { .. } | TOp::SummonCarryingSelfMinusOne { .. }) {
+                    v.push((p.st, *op));
+                }
+            }
+        }
+        v
+    });
+    let mut n = 0;
+    for (st, op) in rules {
+        let k = e.get(*st);
+        if k <= 0 {
+            continue;
+        }
+        n += match *op {
+            TOp::SummonN { hp, count, .. } => hp * count,
+            // 库存 k 的这一具死了换一具库存 k−1 的，…… 一直到库存 0 那一具死了才真死 ⇒ 还有 k 具
+            TOp::SummonCarryingSelfMinusOne { hp, .. } => hp * k,
+            _ => 0,
+        };
+    }
+    n
+}
+
 /// 「这只敌人还剩多少血才算**真的**打完」—— **含还没出场的形态**。
 ///
-/// 目前只有实验体的适生力（`St::Adaptable`）会让这个数大于当前血量。
+/// 两类会让这个数大于当前血量：实验体的适生力（`St::Adaptable`，复活成下一形态）和
+/// **死时召唤**（[`death_summon_hp`]：异蛙寄生虫 / 地精佣兵 / 巨斧机器人）；
+/// 瀑布巨兽锁血等自爆时它是 0（`hp_left_this_form`）。
+///
+/// > **死时召唤那一类 2026-09-19 才补**，补之前是同一个陷阱的另一种形状：砍死宿主那一下，
+/// > 这一项从「宿主剩的几点」跳到「召出来的那几只的满血」，求解器于是**不肯收掉宿主**。
+/// > 是建地精佣兵时照出来的（起手牌组打它 10 个回合、掉 76 血；补上之后 4 个回合、30 血），
+/// > 回头一查**早就在的异蛙寄生虫一直是这样**：实录 `act1_f12_elite_phrog` 玩家这一场 −1 血，
+/// > 内核重打 64 次死 57 次（89%）、11 个回合；补上之后 0 死、5 个回合、p50 掉 18。
+/// > 数字和归因见 verification-log 2026-09-19。
 ///
 /// **为什么 L2 的叶评估必须用这个数**：`eval` 拿"当前敌人血量"当进度，
 /// 而复活是**必然要来的** —— 用当前血量的话，砍掉最后那几点会让这一项
@@ -6637,7 +7938,7 @@ pub const TEST_SUBJECT_FORM1_MAX: i32 = 150;
 ///
 /// 这条是**游戏知识**，所以放在 `content` 而不是 L2（不变量：L2 不实现规则）。
 pub fn remaining_hp_including_revives(e: &crate::state::Entity) -> i32 {
-    let hp = e.hp.max(0);
+    let hp = hp_left_this_form(e) + death_summon_hp(e);
     if e.get(St::Adaptable) <= 0 {
         return hp;
     }
@@ -6672,6 +7973,34 @@ pub static ENEMY_START_PLAYER_STATUS: &[(&str, St, i32)] = &[
 /// 这只敌人开战时给玩家挂什么。查不到就是空。
 pub fn enemy_start_player_status(name: &str) -> impl Iterator<Item = (St, i32)> + '_ {
     ENEMY_START_PLAYER_STATUS.iter().filter(move |(n, _, _)| *n == name).map(|(_, st, v)| (*st, *v))
+}
+
+/// 敌人身上**游戏不报、规则要读**的身份标记，第三栏是层数。
+///
+/// 今天三条。两条是「施咒者」（层数 1）：恶咒和抑制挂在**我**身上，而它们要在**施咒者死时**解除 ——
+/// "施咒者是谁"（`PowerModel.Applier` / `DampenPower` 的 casters 集合）观测里没有。
+/// 标记挂在骑士身上，解除规则就能靠 `Hook::EnemyDied` 只让死的那一只触发（见 `POWERS`）。
+///
+/// 第三条是鬼祟珊瑚群的**硬化外壳上限**（层数 20）：mod 报的是 `DisplayAmount`（本回合余额），
+/// 而 `Amount` 本身观测里没有。[源码] `AfterAddedToRoom` 里写死 20、不吃进阶，所以按名字挂得出来。
+/// 层数 2026-09-19 为它从「恒为 1」放宽成一栏。
+///
+/// # 为什么是按名字索引的侧表，而不是 `EnemyDef::start_status`
+///
+/// **两个消费者，两条路径**：`step::begin_combat`（合成路径，按 def 名）和
+/// `replay::Replayer::sync`（对拍 / 实战路径，按观测到的名字）。后者一律把敌人安成
+/// `enemy::UNKNOWN`、读不到 `start_status` —— 放进 `start_status` 的话，对拍路径上
+/// 砍死幽灵骑士永远不解咒。和 `sync` 从观测补 `St::SlowSource` 是同一件事：
+/// **"谁是施咒者"是身份，不是预测。**
+pub static ENEMY_PRIVATE_MARKERS: &[(&str, St, i32)] = &[
+    ("幽灵骑士", St::HexCaster, 1),
+    ("魔法骑士", St::DampenCaster, 1),
+    ("鬼祟珊瑚群", St::HardenedShellCap, 20),
+];
+
+/// 这只敌人身上该挂哪些私有标记（和层数）。查不到就是空。
+pub fn enemy_private_markers(name: &str) -> impl Iterator<Item = (St, i32)> + '_ {
+    ENEMY_PRIVATE_MARKERS.iter().filter(move |(n, _, _)| *n == name).map(|(_, st, v)| (*st, *v))
 }
 
 #[inline]

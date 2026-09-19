@@ -2,7 +2,7 @@
 //!
 //! 重新生成：
 //! ```text
-//! & "D:\game mod\sts2sim\.venv\Scripts\python.exe" tools/dump_ascension.py
+//! & "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/dump_ascension.py
 //! ```
 //!
 //! 来源和口径写在 `tools/dump_ascension.py` 的文件头。三条要点：
@@ -63,7 +63,7 @@ pub static LEVEL_NAMES: &[(u8, &str)] = &[
     (10, "DoubleBoss"),
 ];
 
-/// 血量两档，73 只。
+/// 血量两档，96 只。
 pub static ASC_HP: &[AscHp] = &[
     AscHp { def: 4, name: "小啃兽", gate: 8, low: (42, 46), high: (44, 48) },  // Nibbit
     AscHp { def: 5, name: "旧日雕像", gate: 8, low: (127, 127), high: (132, 132) },  // BygoneEffigy
@@ -88,7 +88,7 @@ pub static ASC_HP: &[AscHp] = &[
     AscHp { def: 25, name: "盛碗虫（丝）", gate: 8, low: (40, 43), high: (41, 44) },  // BowlbugSilk
     AscHp { def: 26, name: "啃咬机", gate: 8, low: (60, 64), high: (63, 67) },  // Chomper
     AscHp { def: 27, name: "虱虫之祖", gate: 8, low: (134, 136), high: (138, 141) },  // LouseProgenitor
-    AscHp { def: 28, name: "螨虫", gate: 8, low: (61, 67), high: (64, 69) },  // Myte
+    AscHp { def: 28, name: "异螨", gate: 8, low: (61, 67), high: (64, 69) },  // Myte
     AscHp { def: 29, name: "直飞产卵虫", gate: 8, low: (124, 130), high: (126, 132) },  // Ovicopter
     AscHp { def: 30, name: "棘蟾", gate: 8, low: (116, 119), high: (121, 124) },  // SpinyToad
     AscHp { def: 31, name: "蜂后", gate: 8, low: (400, 400), high: (419, 419) },  // Queen
@@ -138,9 +138,32 @@ pub static ASC_HP: &[AscHp] = &[
     AscHp { def: 79, name: "双尾鼠", gate: 8, low: (17, 21), high: (18, 22) },  // TwoTailedRat
     AscHp { def: 80, name: "拳击构装体", gate: 8, low: (55, 55), high: (60, 60) },  // PunchConstruct
     AscHp { def: 81, name: "灵魂异鱼", gate: 8, low: (211, 211), high: (221, 221) },  // SoulFysh
+    AscHp { def: 82, name: "史莱姆狂战士", gate: 8, low: (261, 261), high: (281, 281) },  // SlimedBerserker
+    AscHp { def: 83, name: "机甲骑士", gate: 8, low: (300, 300), high: (320, 320) },  // MechaKnight
+    AscHp { def: 84, name: "电球头", gate: 8, low: (148, 148), high: (158, 158) },  // GlobeHead
+    AscHp { def: 85, name: "咬人卷轴", gate: 8, low: (30, 37), high: (33, 39) },  // ScrollOfBiting
+    AscHp { def: 86, name: "失落之物", gate: 8, low: (93, 93), high: (99, 99) },  // TheLost
+    AscHp { def: 87, name: "遗忘之物", gate: 8, low: (106, 106), high: (111, 111) },  // TheForgotten
+    AscHp { def: 88, name: "连枷骑士", gate: 8, low: (101, 101), high: (108, 108) },  // FlailKnight
+    AscHp { def: 89, name: "幽灵骑士", gate: 8, low: (93, 93), high: (97, 97) },  // SpectralKnight
+    AscHp { def: 90, name: "魔法骑士", gate: 8, low: (82, 82), high: (89, 89) },  // MagiKnight
+    AscHp { def: 91, name: "熟睡甲虫", gate: 8, low: (86, 86), high: (89, 89) },  // SlumberingBeetle
+    AscHp { def: 92, name: "乐加维林族母", gate: 8, low: (222, 222), high: (233, 233) },  // LagavulinMatriarch
+    AscHp { def: 93, name: "墨影幻灵", gate: 8, low: (173, 173), high: (183, 183) },  // Vantom
+    AscHp { def: 94, name: "墨宝", gate: 8, low: (11, 17), high: (12, 18) },  // Inklet
+    AscHp { def: 95, name: "鬼祟珊瑚群", gate: 8, low: (75, 75), high: (80, 80) },  // SkulkingColony
+    AscHp { def: 96, name: "幽灵船", gate: 8, low: (63, 63), high: (67, 67) },  // HauntedShip
+    AscHp { def: 97, name: "蟾蜍蝌蚪", gate: 8, low: (21, 25), high: (22, 26) },  // Toadpole
+    AscHp { def: 98, name: "化石追踪者", gate: 8, low: (51, 53), high: (54, 56) },  // FossilStalker
+    AscHp { def: 99, name: "地精佣兵", gate: 8, low: (47, 49), high: (51, 53) },  // GremlinMerc
+    AscHp { def: 100, name: "卑鄙地精", gate: 8, low: (10, 14), high: (11, 15) },  // SneakyGremlin
+    AscHp { def: 101, name: "胖地精", gate: 8, low: (13, 17), high: (14, 18) },  // FatGremlin
+    AscHp { def: 102, name: "藤蔓蹒跚者", gate: 8, low: (61, 61), high: (64, 64) },  // VineShambler
+    AscHp { def: 103, name: "劫掠者刺客", gate: 8, low: (18, 23), high: (19, 24) },  // AssassinRubyRaider
+    AscHp { def: 104, name: "劫掠者暴徒", gate: 8, low: (30, 33), high: (31, 34) },  // BruteRubyRaider
 ];
 
-/// 招式数值两档，160 条。
+/// 招式数值两档，221 条。
 pub static ASC_OPS: &[AscOp] = &[
     AscOp { def: 4, name: "小啃兽", mv: 0, mv_name: "撞击", op: 0, hits: false, gate: 9, low: 12, high: 13, prop: "ButtDamage" },
     AscOp { def: 4, name: "小啃兽", mv: 1, mv_name: "啃咬并戒备", op: 0, hits: false, gate: 9, low: 6, high: 7, prop: "SliceDamage" },
@@ -185,8 +208,9 @@ pub static ASC_OPS: &[AscOp] = &[
     AscOp { def: 27, name: "虱虫之祖", mv: 0, mv_name: "蛛网大炮", op: 0, hits: false, gate: 9, low: 9, high: 10, prop: "WebDamage" },
     AscOp { def: 27, name: "虱虫之祖", mv: 1, mv_name: "蜷缩生长", op: 0, hits: false, gate: 8, low: 14, high: 18, prop: "CurlBlock" },
     AscOp { def: 27, name: "虱虫之祖", mv: 2, mv_name: "扑击", op: 0, hits: false, gate: 9, low: 14, high: 16, prop: "PounceDamage" },
-    AscOp { def: 28, name: "螨虫", mv: 1, mv_name: "撕咬", op: 0, hits: false, gate: 9, low: 13, high: 15, prop: "BiteDamage" },
-    AscOp { def: 28, name: "螨虫", mv: 2, mv_name: "吸血", op: 0, hits: false, gate: 9, low: 4, high: 6, prop: "SuckDamage" },
+    AscOp { def: 28, name: "异螨", mv: 1, mv_name: "啃咬", op: 0, hits: false, gate: 9, low: 13, high: 15, prop: "BiteDamage" },
+    AscOp { def: 28, name: "异螨", mv: 2, mv_name: "吸吮", op: 0, hits: false, gate: 9, low: 4, high: 6, prop: "SuckDamage" },
+    AscOp { def: 28, name: "异螨", mv: 2, mv_name: "吸吮", op: 1, hits: false, gate: 9, low: 2, high: 3, prop: "SuckStrength" },
     AscOp { def: 29, name: "直飞产卵虫", mv: 1, mv_name: "摧毁", op: 0, hits: false, gate: 9, low: 16, high: 17, prop: "SmashDamage" },
     AscOp { def: 29, name: "直飞产卵虫", mv: 2, mv_name: "嫩化", op: 0, hits: false, gate: 9, low: 7, high: 8, prop: "TenderizerDamage" },
     AscOp { def: 29, name: "直飞产卵虫", mv: 3, mv_name: "营养糊", op: 0, hits: false, gate: 9, low: 3, high: 4, prop: "NutritionalPasteStrengthAmount" },
@@ -195,11 +219,15 @@ pub static ASC_OPS: &[AscOp] = &[
     AscOp { def: 31, name: "蜂后", mv: 1, mv_name: "为我燃烧", op: 1, hits: false, gate: 9, low: 1, high: 1, prop: "strengthAmount" },
     AscOp { def: 31, name: "蜂后", mv: 2, mv_name: "斩首", op: 0, hits: false, gate: 9, low: 3, high: 4, prop: "OffWithYourHeadDamage" },
     AscOp { def: 31, name: "蜂后", mv: 3, mv_name: "处决", op: 0, hits: false, gate: 9, low: 15, high: 18, prop: "ExecutionDamage" },
-    AscOp { def: 33, name: "知识恶魔", mv: 1, mv_name: "拍击", op: 0, hits: false, gate: 9, low: 17, high: 18, prop: "SlapDamage" },
-    AscOp { def: 33, name: "知识恶魔", mv: 2, mv_name: "知识淹没", op: 0, hits: false, gate: 9, low: 8, high: 9, prop: "KnowledgeOverwhelmingDamage" },
-    AscOp { def: 33, name: "知识恶魔", mv: 3, mv_name: "深思", op: 0, hits: false, gate: 9, low: 11, high: 13, prop: "PonderDamage" },
+    AscOp { def: 33, name: "知识恶魔", mv: 1, mv_name: "抽打", op: 0, hits: false, gate: 9, low: 17, high: 18, prop: "SlapDamage" },
+    AscOp { def: 33, name: "知识恶魔", mv: 2, mv_name: "知识过载", op: 0, hits: false, gate: 9, low: 8, high: 9, prop: "KnowledgeOverwhelmingDamage" },
+    AscOp { def: 33, name: "知识恶魔", mv: 3, mv_name: "思考", op: 0, hits: false, gate: 9, low: 11, high: 13, prop: "PonderDamage" },
+    AscOp { def: 33, name: "知识恶魔", mv: 3, mv_name: "思考", op: 2, hits: false, gate: 9, low: 2, high: 3, prop: "PonderStrength" },
+    AscOp { def: 34, name: "碾碎爪", mv: 0, mv_name: "摧折", op: 0, hits: false, gate: 9, low: 12, high: 14, prop: "ThrashDamage" },
     AscOp { def: 34, name: "碾碎爪", mv: 1, mv_name: "增幅打击", op: 0, hits: false, gate: 9, low: 4, high: 4, prop: "EnlargingStrikeDamage" },
     AscOp { def: 34, name: "碾碎爪", mv: 2, mv_name: "虫刺", op: 0, hits: false, gate: 9, low: 6, high: 7, prop: "BugStingDamage" },
+    AscOp { def: 34, name: "碾碎爪", mv: 3, mv_name: "适应", op: 0, hits: false, gate: 9, low: 2, high: 3, prop: "AdaptStrengthGain" },
+    AscOp { def: 34, name: "碾碎爪", mv: 4, mv_name: "戒备打击", op: 0, hits: false, gate: 9, low: 12, high: 14, prop: "GuardedStrikeDamage" },
     AscOp { def: 35, name: "火箭", mv: 0, mv_name: "瞄准镜", op: 0, hits: false, gate: 9, low: 3, high: 4, prop: "TargetingReticleDamage" },
     AscOp { def: 35, name: "火箭", mv: 1, mv_name: "精准光束", op: 0, hits: false, gate: 9, low: 18, high: 20, prop: "PrecisionBeamDamage" },
     AscOp { def: 35, name: "火箭", mv: 2, mv_name: "充能", op: 0, hits: false, gate: 9, low: 2, high: 3, prop: "ChargeUpStrengthGain" },
@@ -218,9 +246,9 @@ pub static ASC_OPS: &[AscOp] = &[
     AscOp { def: 41, name: "仪式兽", mv: 5, mv_name: "碾碎", op: 1, hits: false, gate: 9, low: 3, high: 4, prop: "CrushStrength" },
     AscOp { def: 42, name: "外骨骼虫", mv: 0, mv_name: "疾走", op: 0, hits: true, gate: 9, low: 3, high: 4, prop: "SkitterRepeats" },
     AscOp { def: 42, name: "外骨骼虫", mv: 1, mv_name: "大颚", op: 0, hits: false, gate: 9, low: 8, high: 9, prop: "MandiblesDamage" },
-    AscOp { def: 43, name: "蜂群术士", mv: 0, mv_name: "蜂群", op: 0, hits: true, gate: 9, low: 7, high: 8, prop: "BeesRepeat" },
-    AscOp { def: 43, name: "蜂群术士", mv: 0, mv_name: "蜂群", op: 0, hits: false, gate: 9, low: 3, high: 3, prop: "BeesDamage" },
-    AscOp { def: 43, name: "蜂群术士", mv: 1, mv_name: "长矛", op: 0, hits: false, gate: 9, low: 18, high: 20, prop: "SpearMoveDamage" },
+    AscOp { def: 43, name: "蜂群术士", mv: 0, mv_name: "蜜——蜂——！", op: 0, hits: true, gate: 9, low: 7, high: 8, prop: "BeesRepeat" },
+    AscOp { def: 43, name: "蜂群术士", mv: 0, mv_name: "蜜——蜂——！", op: 0, hits: false, gate: 9, low: 3, high: 3, prop: "BeesDamage" },
+    AscOp { def: 43, name: "蜂群术士", mv: 1, mv_name: "矛击！", op: 0, hits: false, gate: 9, low: 18, high: 20, prop: "SpearMoveDamage" },
     AscOp { def: 44, name: "感染棱柱", mv: 0, mv_name: "戳刺", op: 0, hits: false, gate: 9, low: 15, high: 17, prop: "JabDamage" },
     AscOp { def: 44, name: "感染棱柱", mv: 1, mv_name: "辐射", op: 0, hits: false, gate: 9, low: 11, high: 13, prop: "RadiateDamage" },
     AscOp { def: 44, name: "感染棱柱", mv: 1, mv_name: "辐射", op: 1, hits: false, gate: 9, low: 11, high: 13, prop: "RadiateBlock" },
@@ -276,6 +304,8 @@ pub static ASC_OPS: &[AscOp] = &[
     AscOp { def: 69, name: "瀑布巨兽", mv: 0, mv_name: "加压", op: 0, hits: false, gate: 9, low: 15, high: 20, prop: "PressurizeAmount" },
     AscOp { def: 69, name: "瀑布巨兽", mv: 1, mv_name: "重踏", op: 0, hits: false, gate: 9, low: 15, high: 16, prop: "StompDamage" },
     AscOp { def: 69, name: "瀑布巨兽", mv: 2, mv_name: "撞击", op: 0, hits: false, gate: 9, low: 10, high: 11, prop: "RamDamage" },
+    AscOp { def: 69, name: "瀑布巨兽", mv: 3, mv_name: "虹吸", op: 0, hits: false, gate: 8, low: 10, high: 15, prop: "SiphonHeal" },
+    AscOp { def: 69, name: "瀑布巨兽", mv: 4, mv_name: "高压枪", op: 0, hits: false, gate: 9, low: 20, high: 23, prop: "BasePressureGunDamage" },
     AscOp { def: 69, name: "瀑布巨兽", mv: 5, mv_name: "升压", op: 0, hits: false, gate: 9, low: 13, high: 14, prop: "PressureUpDamage" },
     AscOp { def: 70, name: "地道虫", mv: 0, mv_name: "咬击", op: 0, hits: false, gate: 9, low: 13, high: 15, prop: "BiteDamage" },
     AscOp { def: 70, name: "地道虫", mv: 1, mv_name: "钻地", op: 0, hits: false, gate: 8, low: 32, high: 37, prop: "BlockGain" },
@@ -302,6 +332,60 @@ pub static ASC_OPS: &[AscOp] = &[
     AscOp { def: 81, name: "灵魂异鱼", mv: 1, mv_name: "排气", op: 0, hits: false, gate: 9, low: 16, high: 17, prop: "DeGasDamage" },
     AscOp { def: 81, name: "灵魂异鱼", mv: 2, mv_name: "凝视", op: 0, hits: false, gate: 9, low: 7, high: 8, prop: "GazeDamage" },
     AscOp { def: 81, name: "灵魂异鱼", mv: 4, mv_name: "尖啸", op: 0, hits: false, gate: 9, low: 13, high: 15, prop: "ScreamDamage" },
+    AscOp { def: 82, name: "史莱姆狂战士", mv: 1, mv_name: "狂怒连击", op: 0, hits: false, gate: 9, low: 4, high: 5, prop: "PummelingDamage" },
+    AscOp { def: 82, name: "史莱姆狂战士", mv: 3, mv_name: "SMOTHER", op: 0, hits: false, gate: 9, low: 30, high: 33, prop: "SmotherDamage" },
+    AscOp { def: 83, name: "机甲骑士", mv: 0, mv_name: "冲锋", op: 0, hits: false, gate: 9, low: 25, high: 30, prop: "ChargeDamage" },
+    AscOp { def: 83, name: "机甲骑士", mv: 3, mv_name: "重斩", op: 0, hits: false, gate: 9, low: 35, high: 40, prop: "HeavyCleaveDamage" },
+    AscOp { def: 84, name: "电球头", mv: 0, mv_name: "电击掌", op: 0, hits: false, gate: 9, low: 13, high: 14, prop: "ShockingSlapDamage" },
+    AscOp { def: 84, name: "电球头", mv: 1, mv_name: "生成闪电", op: 0, hits: false, gate: 9, low: 6, high: 7, prop: "ThunderStrikeDamage" },
+    AscOp { def: 84, name: "电球头", mv: 2, mv_name: "GALVANIC_BURST", op: 0, hits: false, gate: 9, low: 16, high: 17, prop: "GalvanicBurstDamage" },
+    AscOp { def: 85, name: "咬人卷轴", mv: 0, mv_name: "大啃", op: 0, hits: false, gate: 9, low: 14, high: 16, prop: "ChompDamage" },
+    AscOp { def: 85, name: "咬人卷轴", mv: 1, mv_name: "咀嚼", op: 0, hits: false, gate: 9, low: 5, high: 6, prop: "ChewDamage" },
+    AscOp { def: 86, name: "失落之物", mv: 0, mv_name: "致残雾霾", op: 1, hits: false, gate: 9, low: 2, high: 2, prop: "DebilitatingSmogStrengthStealAmount" },
+    AscOp { def: 86, name: "失落之物", mv: 1, mv_name: "眼部激光", op: 0, hits: false, gate: 9, low: 4, high: 5, prop: "EyeLasersDamage" },
+    AscOp { def: 87, name: "遗忘之物", mv: 0, mv_name: "瘴气", op: 2, hits: false, gate: 9, low: 2, high: 2, prop: "DebilitatingSmogDexStealAmount" },
+    AscOp { def: 87, name: "遗忘之物", mv: 1, mv_name: "恐惧", op: 0, hits: false, gate: 9, low: 13, high: 15, prop: "valueIfAscension" },
+    AscOp { def: 88, name: "连枷骑士", mv: 0, mv_name: "撞击", op: 0, hits: false, gate: 9, low: 15, high: 17, prop: "RamDamage" },
+    AscOp { def: 88, name: "连枷骑士", mv: 1, mv_name: "连枷", op: 0, hits: false, gate: 9, low: 9, high: 10, prop: "FlailDamage" },
+    AscOp { def: 89, name: "幽灵骑士", mv: 1, mv_name: "灵魂斩击", op: 0, hits: false, gate: 9, low: 15, high: 17, prop: "SoulSlashDamage" },
+    AscOp { def: 89, name: "幽灵骑士", mv: 2, mv_name: "灵魂火焰", op: 0, hits: false, gate: 9, low: 3, high: 4, prop: "SoulFlameDamage" },
+    AscOp { def: 90, name: "魔法骑士", mv: 0, mv_name: "强力护盾", op: 0, hits: false, gate: 9, low: 6, high: 7, prop: "PowerShieldDamage" },
+    AscOp { def: 90, name: "魔法骑士", mv: 0, mv_name: "强力护盾", op: 1, hits: false, gate: 8, low: 5, high: 9, prop: "PowerShieldBlock" },
+    AscOp { def: 90, name: "魔法骑士", mv: 2, mv_name: "撞击", op: 0, hits: false, gate: 9, low: 10, high: 11, prop: "SpearDamage" },
+    AscOp { def: 90, name: "魔法骑士", mv: 3, mv_name: "PREP", op: 0, hits: false, gate: 8, low: 5, high: 9, prop: "PowerShieldBlock" },
+    AscOp { def: 90, name: "魔法骑士", mv: 4, mv_name: "魔法炸弹", op: 0, hits: false, gate: 9, low: 35, high: 40, prop: "BombDamage" },
+    AscOp { def: 91, name: "熟睡甲虫", mv: 1, mv_name: "出击", op: 0, hits: false, gate: 9, low: 16, high: 18, prop: "RolloutDamage" },
+    AscOp { def: 92, name: "乐加维林族母", mv: 1, mv_name: "斩击", op: 0, hits: false, gate: 9, low: 19, high: 21, prop: "SlashDamage" },
+    AscOp { def: 92, name: "乐加维林族母", mv: 2, mv_name: "开膛破肚", op: 0, hits: false, gate: 9, low: 9, high: 10, prop: "DisembowelDamage" },
+    AscOp { def: 92, name: "乐加维林族母", mv: 3, mv_name: "斩击2", op: 0, hits: false, gate: 9, low: 12, high: 14, prop: "Slash2Damage" },
+    AscOp { def: 92, name: "乐加维林族母", mv: 3, mv_name: "斩击2", op: 1, hits: false, gate: 8, low: 12, high: 14, prop: "Slash2Block" },
+    AscOp { def: 93, name: "墨影幻灵", mv: 0, mv_name: "墨迹", op: 0, hits: false, gate: 9, low: 7, high: 8, prop: "InkBlotDamage" },
+    AscOp { def: 93, name: "墨影幻灵", mv: 1, mv_name: "墨水长枪", op: 0, hits: false, gate: 9, low: 6, high: 7, prop: "InkyLanceDamage" },
+    AscOp { def: 93, name: "墨影幻灵", mv: 2, mv_name: "肢解", op: 0, hits: false, gate: 9, low: 26, high: 30, prop: "DismemberDamage" },
+    AscOp { def: 94, name: "墨宝", mv: 0, mv_name: "刺击", op: 0, hits: false, gate: 9, low: 3, high: 4, prop: "JabDamage" },
+    AscOp { def: 94, name: "墨宝", mv: 1, mv_name: "旋风", op: 0, hits: false, gate: 9, low: 2, high: 3, prop: "WhirlwindDamage" },
+    AscOp { def: 94, name: "墨宝", mv: 2, mv_name: "锐利凝视", op: 0, hits: false, gate: 9, low: 10, high: 11, prop: "PiercingGazeDamage" },
+    AscOp { def: 95, name: "鬼祟珊瑚群", mv: 0, mv_name: "猛冲", op: 0, hits: false, gate: 9, low: 14, high: 16, prop: "ZoomDamage" },
+    AscOp { def: 95, name: "鬼祟珊瑚群", mv: 1, mv_name: "猛冲2", op: 0, hits: false, gate: 9, low: 14, high: 16, prop: "ZoomDamage" },
+    AscOp { def: 95, name: "鬼祟珊瑚群", mv: 2, mv_name: "惯性", op: 0, hits: false, gate: 9, low: 9, high: 11, prop: "InertiaDamage" },
+    AscOp { def: 95, name: "鬼祟珊瑚群", mv: 2, mv_name: "惯性", op: 1, hits: false, gate: 9, low: 2, high: 4, prop: "InertiaStrengthGain" },
+    AscOp { def: 95, name: "鬼祟珊瑚群", mv: 3, mv_name: "穿刺戳击", op: 0, hits: false, gate: 9, low: 7, high: 8, prop: "PiercingStabsDamage" },
+    AscOp { def: 96, name: "幽灵船", mv: 1, mv_name: "扫击", op: 0, hits: false, gate: 9, low: 13, high: 14, prop: "SwipeDamage" },
+    AscOp { def: 96, name: "幽灵船", mv: 2, mv_name: "践踏", op: 0, hits: false, gate: 9, low: 4, high: 5, prop: "StompDamage" },
+    AscOp { def: 97, name: "蟾蜍蝌蚪", mv: 0, mv_name: "吐刺", op: 1, hits: false, gate: 9, low: 3, high: 4, prop: "SpikeSpitDamage" },
+    AscOp { def: 97, name: "蟾蜍蝌蚪", mv: 1, mv_name: "旋转", op: 0, hits: false, gate: 9, low: 7, high: 8, prop: "WhirlDamage" },
+    AscOp { def: 98, name: "化石追踪者", mv: 0, mv_name: "冲撞", op: 0, hits: false, gate: 9, low: 9, high: 11, prop: "TackleDamage" },
+    AscOp { def: 98, name: "化石追踪者", mv: 1, mv_name: "缠上", op: 0, hits: false, gate: 9, low: 12, high: 14, prop: "LatchDamage" },
+    AscOp { def: 98, name: "化石追踪者", mv: 2, mv_name: "甩动", op: 0, hits: false, gate: 9, low: 3, high: 4, prop: "LashDamage" },
+    AscOp { def: 99, name: "地精佣兵", mv: 0, mv_name: "拿来", op: 0, hits: false, gate: 8, low: 7, high: 8, prop: "GimmeDamage" },
+    AscOp { def: 99, name: "地精佣兵", mv: 1, mv_name: "双重猛击", op: 0, hits: false, gate: 8, low: 6, high: 7, prop: "DoubleSmashDamage" },
+    AscOp { def: 99, name: "地精佣兵", mv: 2, mv_name: "嘿嘿", op: 0, hits: false, gate: 8, low: 8, high: 9, prop: "HeheDamage" },
+    AscOp { def: 100, name: "卑鄙地精", mv: 1, mv_name: "冲撞", op: 0, hits: false, gate: 9, low: 9, high: 10, prop: "TackleDamage" },
+    AscOp { def: 102, name: "藤蔓蹒跚者", mv: 0, mv_name: "挥击", op: 0, hits: false, gate: 9, low: 6, high: 7, prop: "SwipeDamage" },
+    AscOp { def: 102, name: "藤蔓蹒跚者", mv: 1, mv_name: "紧绕藤蔓", op: 0, hits: false, gate: 9, low: 8, high: 9, prop: "GraspingVinesDamage" },
+    AscOp { def: 102, name: "藤蔓蹒跚者", mv: 2, mv_name: "大啃", op: 0, hits: false, gate: 9, low: 16, high: 18, prop: "ChompDamage" },
+    AscOp { def: 103, name: "劫掠者刺客", mv: 0, mv_name: "致命射击", op: 0, hits: false, gate: 9, low: 10, high: 11, prop: "KillshotDamage" },
+    AscOp { def: 104, name: "劫掠者暴徒", mv: 0, mv_name: "殴打", op: 0, hits: false, gate: 9, low: 7, high: 8, prop: "BeatDamage" },
 ];
 
 /// 这一招的这个 op，在进阶 `asc` 下是什么样。
@@ -342,10 +426,18 @@ fn patch(op: EOp, v: i32, hits_field: bool) -> EOp {
                 EOp::AttackPlusStackHits { base: v, hits, per }
             }
         }
+        EOp::AttackPlusSelfStatus { base, hits, per } => {
+            if hits_field {
+                EOp::AttackPlusSelfStatus { base, hits: v, per }
+            } else {
+                EOp::AttackPlusSelfStatus { base: v, hits, per }
+            }
+        }
         EOp::Block(_) => EOp::Block(v),
         EOp::SelfStatus { st, .. } => EOp::SelfStatus { st, amt: v },
         EOp::PlayerStatus { st, .. } => EOp::PlayerStatus { st, amt: v },
         EOp::AddCardToDiscard { card, .. } => EOp::AddCardToDiscard { card, count: v },
+        EOp::Heal(_) => EOp::Heal(v),
         other => other,
     }
 }

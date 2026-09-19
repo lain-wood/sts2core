@@ -21,8 +21,8 @@
   "AssassinRubyRaider": {
    "key": "ASSASSIN_RUBY_RAIDER",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "劫掠者刺客",
+   "source": "alias",
    "note": null
   },
   "AxeRubyRaider": {
@@ -110,8 +110,8 @@
   "BruteRubyRaider": {
    "key": "BRUTE_RUBY_RAIDER",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "劫掠者暴徒",
+   "source": "alias",
    "note": null
   },
   "BygoneEffigy": {
@@ -307,15 +307,15 @@
   "FatGremlin": {
    "key": "FAT_GREMLIN",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "胖地精",
+   "source": "alias",
    "note": null
   },
   "FlailKnight": {
    "key": "FLAIL_KNIGHT",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "连枷骑士",
+   "source": "alias",
    "note": null
   },
   "Flyconid": {
@@ -339,8 +339,8 @@
   "FossilStalker": {
    "key": "FOSSIL_STALKER",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "化石追踪者",
+   "source": "alias",
    "note": null
   },
   "FrogKnight": {
@@ -373,15 +373,15 @@
   "GlobeHead": {
    "key": "GLOBE_HEAD",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "电球头",
+   "source": "alias",
    "note": null
   },
   "GremlinMerc": {
    "key": "GREMLIN_MERC",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "地精佣兵",
+   "source": "alias",
    "note": null
   },
   "Guardbot": {
@@ -394,8 +394,8 @@
   "HauntedShip": {
    "key": "HAUNTED_SHIP",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "幽灵船",
+   "source": "alias",
    "note": null
   },
   "HunterKiller": {
@@ -419,8 +419,8 @@
   "Inklet": {
    "key": "INKLET",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "墨宝",
+   "source": "alias",
    "note": null
   },
   "KinFollower": {
@@ -451,8 +451,8 @@
   "LagavulinMatriarch": {
    "key": "LAGAVULIN_MATRIARCH",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "乐加维林族母",
+   "source": "alias",
    "note": null
   },
   "LeafSlimeM": {
@@ -503,8 +503,8 @@
   "MagiKnight": {
    "key": "MAGI_KNIGHT",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "魔法骑士",
+   "source": "alias",
    "note": null
   },
   "Mawler": {
@@ -519,8 +519,8 @@
   "MechaKnight": {
    "key": "MECHA_KNIGHT",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "机甲骑士",
+   "source": "alias",
    "note": null
   },
   "MultiAttackMoveMonster": {
@@ -540,7 +540,7 @@
   "Myte": {
    "key": "MYTE",
    "observed_names": [],
-   "kernel_enemy": "螨虫",
+   "kernel_enemy": "异螨",
    "source": "alias",
    "note": null
   },
@@ -656,8 +656,8 @@
   "ScrollOfBiting": {
    "key": "SCROLL_OF_BITING",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "咬人卷轴",
+   "source": "alias",
    "note": null
   },
   "Seapunk": {
@@ -697,15 +697,15 @@
   "SkulkingColony": {
    "key": "SKULKING_COLONY",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "鬼祟珊瑚群",
+   "source": "alias",
    "note": null
   },
   "SlimedBerserker": {
    "key": "SLIMED_BERSERKER",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "史莱姆狂战士",
+   "source": "alias",
    "note": null
   },
   "SlitheringStrangler": {
@@ -729,8 +729,8 @@
   "SlumberingBeetle": {
    "key": "SLUMBERING_BEETLE",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "熟睡甲虫",
+   "source": "alias",
    "note": null
   },
   "SnappingJaxfruit": {
@@ -745,8 +745,8 @@
   "SneakyGremlin": {
    "key": "SNEAKY_GREMLIN",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "卑鄙地精",
+   "source": "alias",
    "note": null
   },
   "SoulFysh": {
@@ -770,8 +770,8 @@
   "SpectralKnight": {
    "key": "SPECTRAL_KNIGHT",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "幽灵骑士",
+   "source": "alias",
    "note": null
   },
   "SpinyToad": {
@@ -809,7 +809,8 @@
   "TestSubject": {
    "key": "TEST_SUBJECT",
    "observed_names": [
-    "实验体 #C10"
+    "实验体 #C10",
+    "实验体 #C12"
    ],
    "kernel_enemy": "实验体",
    "source": "trace",
@@ -839,8 +840,8 @@
   "TheForgotten": {
    "key": "THE_FORGOTTEN",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "遗忘之物",
+   "source": "alias",
    "note": null
   },
   "TheInsatiable": {
@@ -855,8 +856,8 @@
   "TheLost": {
    "key": "THE_LOST",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "失落之物",
+   "source": "alias",
    "note": null
   },
   "TheObscura": {
@@ -880,8 +881,8 @@
   "Toadpole": {
    "key": "TOADPOLE",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "蟾蜍蝌蚪",
+   "source": "alias",
    "note": null
   },
   "TorchHeadAmalgam": {
@@ -958,15 +959,15 @@
   "Vantom": {
    "key": "VANTOM",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "墨影幻灵",
+   "source": "alias",
    "note": null
   },
   "VineShambler": {
    "key": "VINE_SHAMBLER",
    "observed_names": [],
-   "kernel_enemy": null,
-   "source": null,
+   "kernel_enemy": "藤蔓蹒跚者",
+   "source": "alias",
    "note": null
   },
   "WaterfallGiant": {

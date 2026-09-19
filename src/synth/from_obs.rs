@@ -89,6 +89,8 @@ impl Extracted {
             potions: &self.potions,
             potion_slots: self.potion_slots,
             ascension: self.ascension,
+            // 实录里选过的诅咒是观测量，但开局第 0 帧还没选 —— 验收台一律按默认选法打
+            curse_policy: crate::content::DEFAULT_CURSE_POLICY,
             seed,
         }
     }

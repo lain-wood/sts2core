@@ -19,32 +19,54 @@ pub enum Action {
 pub const MAX_ACTIONS: usize = 128;
 
 /// Effective energy cost, accounting for 踩踏's discount and 无情猛攻's free attack.
+///
+/// 层次照 [源码] `CardEnergyCost.GetWithModifiers`：**本地**改费（这一张实例自己的：免费 / 狂乱逃离的增量 /
+/// 踩踏的减费，都不夹 0）-> **全局**钩子（缠结 +N）-> `Late` 钩子（无情猛攻置 0）-> 最后夹 0 一次。
+/// 缠结为 0 时逐字等于加它之前的样子（免费那一支原来直接 return 0，现在是 `max(0, 0 − 踩踏减的)` = 0）。
 pub fn effective_cost(s: &State, hand_ix: usize) -> i32 {
     let inst = s.cards[s.hand[hand_ix] as usize];
     let d = card(inst.id);
     let base = if inst.upgraded() { d.cost_upg } else { d.cost };
     // 这一张实例本回合免费（技能药水生成的牌）。挂在实例上，不是牌名上。
-    if inst.flags & F_FREE_THIS_TURN != 0 {
-        return 0;
-    }
+    // [源码] `SetToFreeThisTurn` 是一条**本地**的「置 0」，全局钩子照样加在它上面 ——
+    // 所以缠结下药水 / 地狱之刃给的免费攻击牌要 1 费，不是 0。
+    let free = inst.flags & F_FREE_THIS_TURN != 0;
     // X 费：**花光当前所有能量**（[源码] `CapturedXValue = 当前能量`）。
     // 放在免费之后：免费的 X 费牌 X = 0，和游戏一致（捕获的是"要花的能量"）。
     if crate::content::costs_x(inst.id) {
-        return s.energy.max(0);
+        return if free { 0 } else { s.energy.max(0) };
     }
+    // 无情猛攻是 `TryModifyEnergyCostInCombatLate`：在缠结**之后**置 0，所以它压过缠结。
     if matches!(d.kind, Kind::Attack) && s.free_attack > 0 {
         return 0;
     }
     // 这一张实例的费用增量（狂乱逃离）。放在免费/X 费之后、减费之前：
     // 免费压倒一切，而减费是在"这张牌现在要多少钱"的基础上再减。
-    let mut c = base + inst.cost_delta as i32;
+    let mut c = if free { 0 } else { base + inst.cost_delta as i32 };
     if d.cost_minus_attacks {
         c -= s.attacks_played;
     }
+    // 缠结加在**夹 0 之前**：踩踏减到 −1 再 +1 是 0，不是 1（本地改费不夹 0，见 [源码] `LocalCostModifier.Modify`）。
+    c += tangled_cost_addend(&s.player, inst.id);
     if c < 0 {
         c = 0;
     }
     c
+}
+
+/// 缠结给这张牌加多少费（[源码] `TangledPower.TryModifyEnergyCostInCombat`：带「缠身」的牌 +`Amount`，
+/// 而挂上那一刻全部攻击牌都带上了）。X 费牌 0 —— `GetWithModifiers` 对 `CostsX` 提前 return，钩子根本不跑。
+///
+/// **两个客户共用这一份**：`effective_cost`（内核自己算费）和 `replay::sync`（mod 报的费用是
+/// `GetAmountToSpend`，**已经含缠结**，要先扣掉再判「这张实例被永久改过费」—— 不扣的话
+/// 每张攻击牌记成 `cost_delta = +1`，内核再加一遍缠结，双算）。
+#[inline]
+pub fn tangled_cost_addend(player: &Entity, id: u16) -> i32 {
+    if matches!(card(id).kind, Kind::Attack) && !crate::content::costs_x(id) {
+        player.get(St::Tangled)
+    } else {
+        0
+    }
 }
 
 /// 这一刻**还能不能出牌**（轰鸣，[源码] `RingingPower.ShouldPlay`）。
@@ -57,7 +79,10 @@ pub fn effective_cost(s: &State, hand_ix: usize) -> i32 {
 /// **只挡牌，不挡药水** —— `ShouldPlay` 的入参是 `CardModel`。
 #[inline]
 pub fn cards_locked(s: &State) -> bool {
-    s.player.get(St::Ringing) > 0 && s.cards_played > 0
+    (s.player.get(St::Ringing) > 0 && s.cards_played > 0)
+        // 懒惰（知识恶魔的诅咒，[源码] `SlothPower.ShouldPlay => cardsPlayedThisTurn < Amount`）：
+        // 本回合打满 N 张就锁死。和轰鸣同一类（"这一回合最多出几张"），收在同一个判据里。
+        || (s.player.get(St::Sloth) > 0 && s.cards_played >= s.player.get(St::Sloth))
 }
 
 /// 选牌候选去重：**同一张牌的两个副本完全可互换**，展开两次是白搜。
@@ -250,7 +275,7 @@ fn scaled_base(s: &State, base: i32, scale: Scale, tgt: usize) -> i32 {
         // 不分区，所以直接数它就是"整个牌组"。
         Scale::PerStrikeCard(n) => {
             let c = (0..s.n_cards as usize)
-                .filter(|&i| card(s.cards[i].id).name.contains("打击"))
+                .filter(|&i| crate::content::is_strike(s.cards[i].id))
                 .count() as i32;
             base + n * c
         }
@@ -385,6 +410,8 @@ fn hit_enemy_with(s: &mut State, tgt: usize, face: i32, powered: bool, hook_dept
     if !s.enemies[tgt].alive() {
         s.last_damage = 0;
         s.last_kill = false;
+        s.last_hit_attack = false;
+        s.last_hit_unblocked = false;
         return;
     }
     let d = if powered {
@@ -406,6 +433,11 @@ fn hit_enemy_with(s: &mut State, tgt: usize, face: i32, powered: bool, hook_dept
     }
     let prev_block = s.enemies[tgt].block;
     let through = absorb(&mut s.enemies[tgt], d);
+    // 这一下的两个性质，给 `EnemyDamaged` 上的规则读（`TCond::LastHitWasAttack` /
+    // `LastHitUnblocked`）。和 `last_kill` 同一类，所以在点火**之前**写好：
+    // 人体蜂房只认攻击、不管打没打穿；熟睡只认打穿、不管是不是攻击。
+    s.last_hit_attack = powered;
+    s.last_hit_unblocked = through > 0;
     // 狂宴读这个。放在 `absorb` 之后、触发钩子之前 —— 钩子里可能再打死别人，
     // 那不该算成"这一下打死的"。
     s.last_kill = !s.enemies[tgt].alive();
@@ -452,9 +484,9 @@ fn hit_enemy_unpowered(s: &mut State, tgt: usize, face: i32, hook_depth: u8) {
 /// 因为凶恶是按"给出去几次易伤"触发的 —— 闪电霹雳给全体易伤时
 /// **每个敌人各触发一次**，不是整张牌只触发一次。
 fn apply_status(s: &mut State, tgt: Tgt, st: St, amt: i32, target: usize, src: Source) {
-    // 减力量（黑暗镣铐/凌虐）也是 debuff，人工制品该挡得住它。
-    // **未实测**，但"人工制品挡不住减力量"会让内核高估玩家，选保守的那边。
-    let debuff = is_debuff(st) || (st == St::Strength && amt < 0);
+    // 减力量（黑暗镣铐/凌虐）/ 减敏捷也是 debuff，人工制品挡得住。
+    // [源码] `GetTypeForAmount` 定的，见 `damage::is_debuff_amount`。
+    let debuff = crate::damage::is_debuff_amount(st, amt);
     let amt = modify_status_amount_received(s, matches!(tgt, Tgt::Me), st, amt);
     let mut landed_on_enemies = 0;
     match tgt {
@@ -534,6 +566,18 @@ pub(crate) fn fire(s: &mut State, hook: Hook, depth: u8) {
     fire_ctx(s, hook, depth, usize::MAX);
 }
 
+/// Restore a vanished reviving enemy by applying its real death rules in an
+/// isolated state. Player death rewards must not be repeated during sync.
+pub(crate) fn reviving_enemy_snapshot(def: u16, max_hp: i32, adaptable: i32, asc: u8) -> Entity {
+    let mut scratch = State::new(1, 1);
+    scratch.ascension = asc;
+    scratch.add_enemy(def, max_hp);
+    scratch.enemies[0].hp = 0;
+    scratch.enemies[0].set(St::Adaptable, adaptable);
+    fire_ctx(&mut scratch, Hook::EnemyDied, 0, 0);
+    scratch.enemies[0]
+}
+
 /// `ctx` 是"跟这次触发有关的那个敌人"的下标：`Attacked` 用它表示攻击者，
 /// 让火焰屏障知道该反伤谁。其他钩子传 `usize::MAX`。
 fn fire_ctx(s: &mut State, hook: Hook, depth: u8, ctx: usize) {
@@ -556,14 +600,18 @@ fn fire_ctx(s: &mut State, hook: Hook, depth: u8, ctx: usize) {
         // 不带这条的话，敌人蜷身获得格挡会触发**我的**势不可当，
         // 而那一下又把蜷身打醒：两条规则各自没错，合起来是个无限环。
         // [实测] 2026-09-12 整幕链的一条链上真的绕进去了（栈爆在工作线程里）。
-        let only_ctx =
-            matches!(hook, Hook::EnemyDamaged | Hook::EnemyAttacked | Hook::EnemyDied | Hook::GainBlock);
+        // `AttackUnblocked` 的 `ctx` 是攻击者，持有者就是它本身（纸伤难愈只认自己打穿的）。
+        let only_ctx = matches!(
+            hook,
+            Hook::EnemyDamaged | Hook::EnemyAttacked | Hook::EnemyDied | Hook::GainBlock | Hook::AttackUnblocked
+        );
         // `AllyDied` 正好相反：**除了 ctx 之外**的活敌人才触发
         let except_ctx = hook == Hook::AllyDied;
         // 玩家侧照常触发的钩子。`EnemyDamaged` 是唯一的例外
         // —— `EnemyDied` 玩家是要触发的（地精之角）。
         // `GainBlock` 那一条是"获得格挡的不是我就不发作"，见上面。
-        let player_fires = !matches!(hook, Hook::EnemyDamaged | Hook::EnemyAttacked | Hook::AllyDied)
+        let player_fires =
+            !matches!(hook, Hook::EnemyDamaged | Hook::EnemyAttacked | Hook::AllyDied | Hook::AttackUnblocked)
             && !(hook == Hook::GainBlock && ctx != usize::MAX);
         // **`Attacked` 只在玩家侧触发。** 它的语义就是"我挨了一下攻击"
         //（唯一的触发点是 `take_attack_hit`，那是玩家专用的），
@@ -654,6 +702,15 @@ fn tcond_holds(s: &State, who: Owner, c: TCond, stacks: i32, self_st: St) -> boo
         // 只对玩家有意义（敌人没有手牌这个概念），而这个 status 只有
         // 尖叫酒壶发得出来、只发给玩家。
         TCond::HandEmpty => s.n_hand == 0,
+        // 刚打出的那张。`last_played_card` 在 `resolve_played_card` 开头写好，
+        // `CardPlayed` 在同一个函数末尾点火 —— 读到的就是触发这次的那一张。
+        TCond::LastPlayedKindIs(k) => {
+            (s.last_played_card as usize) < s.n_cards as usize
+                && card(s.cards[s.last_played_card as usize].id).kind == k
+        }
+        // 刚落地的那一下。两个字段由 `hit_enemy_with` 在点 `EnemyDamaged` 之前写好。
+        TCond::LastHitWasAttack => s.last_hit_attack,
+        TCond::LastHitUnblocked => s.last_hit_unblocked,
     }
 }
 
@@ -680,6 +737,7 @@ fn run_ops(
             Amt::TurnNumber => s.turn,
             Amt::CardsPlayed => s.cards_played,
             Amt::HandCardsTimesStacks => s.n_hand as i32 * stacks,
+            Amt::OwnerStacksOf(st) => owner_ref(s, who).get(st).max(0),
         };
         match *op {
             TOp::If { cond, then } => {
@@ -772,10 +830,14 @@ fn run_ops(
                     }
                 }
             }
+            // **从 0 往上回，不从负数往上回。** `absorb` 允许血量变成负数（超杀），
+            // 而 [源码] 生物的血量夹在 0。以前没区别（活人的血量不会是负的），
+            // 接续给尸体回血之后有了：超杀 8 点砍死的那一节，接续回来要是 25 不是 17。
             TOp::OwnerHeal(amt) => {
                 let v = val(amt);
                 let e = owner_mut(s, who);
-                e.hp = (e.hp + v).min(e.max_hp);
+                e.hp = (e.hp.max(0) + v).min(e.max_hp);
+                if matches!(who, Owner::Player) { refresh_hp_threshold_strength(s); }
             }
             // 带骨肉。阈值向下取整，和 [源码] 的 `(int)(MaxHp * pct/100)` 一致。
             TOp::OwnerHealIfHpAtMost { pct, amt } => {
@@ -784,6 +846,7 @@ fn run_ops(
                 if e.hp <= e.max_hp * pct / 100 {
                     e.hp = (e.hp + v).min(e.max_hp);
                 }
+                if matches!(who, Owner::Player) { refresh_hp_threshold_strength(s); }
             }
             TOp::OwnerEnergy(amt) => {
                 if matches!(who, Owner::Player) {
@@ -819,15 +882,50 @@ fn run_ops(
             }
             // 凋萎存在：往**手牌**塞牌。走 `spawn_card` 收口 ——
             // 新生成的凋萎要继承场上同名牌的层数，那条规则只能有一份。
+            // 手牌满了溢出进弃牌堆，见 `add_generated_to_hand`。
             TOp::AddCardToHand { card, count } => {
                 for _ in 0..count {
-                    // 手牌满 10 张就别造了 —— 守在 `spawn_card` **之前**，
-                    // 否则会造出一张不在任何牌堆里的幽灵实例。
-                    if (s.n_hand as usize) >= crate::state::MAX_HAND {
+                    if !add_generated_to_hand(s, card) {
                         break;
                     }
+                }
+            }
+            // 剧痛刺击：伤口进弃牌堆。和敌人招式的 `EOp::AddCardToDiscard` 同一条路。
+            TOp::AddCardToDiscard { card, count } => {
+                for _ in 0..count {
                     let Some(ix) = spawn_card(s, card) else { break };
-                    s.to_hand(ix);
+                    s.to_discard(ix);
+                }
+            }
+            // 人体蜂房：晕眩进抽牌堆随机位置。和敌人招式的 `EOp::AddCardToDraw` 同一条路。
+            TOp::AddCardToDraw { card, amt } => {
+                let n = val(amt);
+                for _ in 0..n {
+                    let Some(ix) = spawn_card(s, card) else { break };
+                    s.to_draw_random(ix);
+                }
+            }
+            // 纸伤难愈。和卡牌的 `Op::LoseMaxHp` 共用一份实现。
+            TOp::PlayerLoseMaxHp(amt) => {
+                let v = val(amt);
+                player_lose_max_hp(s, v, depth + 1);
+            }
+            // 流电。`Unpowered`、走格挡、不是攻击。
+            TOp::DamagePlayer(amt) => {
+                let face = val(amt);
+                damage_player_unpowered(s, face, depth + 1);
+            }
+            // 恶咒 / 抑制的施咒者死了：把我身上那个 debuff 摘掉。
+            TOp::PlayerClearStatus(st) => s.player.set(st, 0),
+            // 抑制解除：`F_DAMPENED` 的牌升回去。[源码] `DampenPower.AfterRemoved` 按记下的
+            // 层数逐级 `CardCmd.Upgrade`，而那个函数对**已经是升级态**的牌（抑制期间又被
+            // 武装升了一次的）直接跳过 —— 内核的升级只有一级，置位就是同一件事。
+            TOp::RestoreDampenedCards => {
+                for i in 0..s.n_cards as usize {
+                    let c = &mut s.cards[i];
+                    if c.flags & crate::state::F_DAMPENED != 0 {
+                        c.flags = (c.flags & !crate::state::F_DAMPENED) | F_UPGRADED;
+                    }
                 }
             }
             // 一次性 status 打完就清零（蜷身）。**必须放在最后一条 op**，
@@ -897,11 +995,9 @@ fn run_ops(
                     // 敌人身上的荆棘 ⇒ 打回给我。**走格挡但不走
                     // `take_attack_hit`**：反弹伤害是 `Unpowered`，
                     // 既不该再触发一次 `Attacked`，也不该唤醒孤注一掷。
-                    Owner::Enemy(_) => {
-                        let through = absorb(&mut s.player, face);
-                        s.hp_lost_this_turn += through;
-                        after_player_hp_lost(s, through, depth + 1);
-                    }
+                    // 和流电共用 `damage_player_unpowered`（2026-09-13 起它也过无实体，
+                    // 照 `TOp::DamageAttacker` 自己文档里写的那条）。
+                    Owner::Enemy(_) => damage_player_unpowered(s, face, depth + 1),
                 }
             }
             // 惊逃：回合结束随机打出手牌里 N 张**可打出的攻击牌**。
@@ -1039,7 +1135,7 @@ fn run_ops(
                 // [实测] 2026-09-09 `bin/synth_audit`：`act3_f48_boss_aeonglass_2026-09-06`
                 // 第 0 帧永世沙漏是 `人工制品 2 · 虚弱 0`（红面具那 1 层被吃掉了），
                 // 内核给的是 `人工制品 3 · 虚弱 1`。
-                let debuff = is_debuff(st) || (st == St::Strength && v < 0);
+                let debuff = crate::damage::is_debuff_amount(st, v);
                 for e in 0..s.n_enemies as usize {
                     if s.enemies[e].alive() && !artifact_absorbs(&mut s.enemies[e], debuff) {
                         s.enemies[e].add(st, v);
@@ -1056,34 +1152,62 @@ fn run_ops(
     }
 }
 
-/// 回合结束时，手牌里那些"留在手上就会发作"的牌（灼伤/腐朽/羞耻/感染/瓦解），
-/// 以及虚无（晕眩/笨拙，留在手上就自我消耗）。
+/// 回合结束时手牌的两段结算，**顺序照 [源码] `CombatManager.DoTurnEnd`**：
 ///
-/// 先把要消耗的收集起来再统一处理：边遍历手牌边改手牌是经典的下标漂移坑。
+/// 1. 先把**虚无**的牌消耗掉 —— 晕眩/笨拙自带的，以及身上有**恶咒**时手里所有别的牌
+/// 2. 再让"留在手上就发作"的牌发作（灼伤/腐朽/羞耻/感染/瓦解/凋萎/呼唤/毒素）
+///
+/// 分组按**进来那一刻的快照**做（源码是先遍历一遍分成两个列表）：
+/// **带回合末发作效果的牌不算虚无**（源码是 `if HasTurnEndInHandEffect … else if Ethereal`），
+/// 所以恶咒不会把灼伤消耗掉，灼伤照样烫人。消耗时黑暗之拥抽上来的牌不在快照里、不发作。
+///
+/// **顺序有后果**：虚无消耗触发的无惧疼痛格挡，要赶在灼伤那几点之前落地。
+/// 2026-09-14 之前这里是"先发作、后消耗"—— 晕眩 + 灼伤 + 无惧疼痛时少挡一次。
+///
+/// 两段都在弃手牌 / 保留**之前**（源码第二阶段才 `FlushPlayerHand`），
+/// 所以带保留（`F_RETAIN`）或均衡留下的牌照样被恶咒消耗。
 fn resolve_hand_end(s: &mut State) {
+    let hexed = s.player.get(St::Hex) > 0;
     let mut to_void = [0u8; MAX_CARDS];
     let mut n_void = 0usize;
+    let mut to_fire = [0u8; MAX_CARDS];
+    let mut n_fire = 0usize;
 
     for i in 0..s.n_hand as usize {
         let cix = s.hand[i];
         let id = s.cards[cix as usize].id;
-        let Some(def) = HAND_END.iter().find(|d| d.card == id) else { continue };
-        if !def.ops.is_empty() {
-            let inst = s.cards[cix as usize];
-            resolve_ops(s, def.ops, inst, cix as usize, 0, Source::Card);
-        }
-        if def.void {
-            to_void[n_void] = cix;
-            n_void += 1;
+        match HAND_END.iter().find(|d| d.card == id) {
+            Some(def) if !def.ops.is_empty() => {
+                to_fire[n_fire] = cix;
+                n_fire += 1;
+            }
+            Some(def) if def.void || hexed => {
+                to_void[n_void] = cix;
+                n_void += 1;
+            }
+            None if hexed => {
+                to_void[n_void] = cix;
+                n_void += 1;
+            }
+            _ => {}
         }
     }
 
     for &cix in &to_void[..n_void] {
-        // 手牌里找到它现在的位置再拿走 —— 前面的 op 可能已经动过手牌
+        // 手牌里找到它现在的位置再拿走 —— 前一张的消耗触发可能已经动过手牌
         if let Some(i) = (0..s.n_hand as usize).find(|&i| s.hand[i] == cix) {
             let c = s.take_from_hand(i);
             exhaust_card(s, c);
         }
+    }
+
+    for &cix in &to_fire[..n_fire] {
+        if !(0..s.n_hand as usize).any(|i| s.hand[i] == cix) {
+            continue;
+        }
+        let inst = s.cards[cix as usize];
+        let Some(def) = HAND_END.iter().find(|d| d.card == inst.id) else { continue };
+        resolve_ops(s, def.ops, inst, cix as usize, 0, Source::Card);
     }
 }
 
@@ -1118,6 +1242,60 @@ fn spawn_card(s: &mut State, id: u16) -> Option<u8> {
     Some(ix)
 }
 
+/// **凭空造一张牌塞进手牌，手牌满了进弃牌堆。** 返回 `false` = 牌位满了，调用方该停。
+///
+/// [源码] `CardPileCmd.Add`：`isFullHandAdd = targetPile.Type == Hand && Count >= MaxCardsInHand`
+/// 时 `targetPile = Discard` —— **溢出不是丢掉**。机甲骑士一次塞 4 张灼伤，
+/// 手牌 8 张时进手 2 张、进弃牌堆 2 张，洗牌之后照样烫人。
+///
+/// 两个调用者：敌人招式 `EOp::AddCardToHand`（火焰喷射）和触发器
+/// `TOp::AddCardToHand`（凋萎存在）。后者 2026-09-13 之前是"满了就不造"，
+/// 和源码不一致 —— 它走的也是 `AddToCombatAndPreview(.., PileType.Hand, ..)`。
+fn add_generated_to_hand(s: &mut State, id: u16) -> bool {
+    let Some(ix) = spawn_card(s, id) else { return false };
+    if (s.n_hand as usize) < crate::state::MAX_HAND {
+        s.to_hand(ix);
+    } else {
+        s.to_discard(ix);
+    }
+    true
+}
+
+/// 玩家失去最大生命。
+///
+/// [源码] `CreatureCmd.LoseMaxHp`：先算新上限，**当前血高于新上限时把差额当伤害扣掉**
+/// （`Unblockable`），再把上限设过去。走伤害那条路是关键 —— 百年积木就是这么被
+/// 至亮之焰触发的（2026-08-27 第 2 幕第 19 层实测，见 verification-log）。
+///
+/// 卡牌（`Op::LoseMaxHp`）和敌人的能力（`TOp::PlayerLoseMaxHp`，纸伤难愈）共用这一份。
+fn player_lose_max_hp(s: &mut State, n: i32, depth: u8) {
+    if n <= 0 {
+        return;
+    }
+    let new_max = (s.player.max_hp - n).max(1);
+    if s.player.hp > new_max {
+        let d = s.player.hp - new_max;
+        s.player.hp = new_max;
+        s.hp_lost_this_turn += d;
+        after_player_hp_lost(s, d, depth);
+    }
+    s.player.max_hp = new_max;
+    refresh_hp_threshold_strength(s);
+}
+
+/// 敌人那一侧的**非攻击**伤害打到我身上（敌人的荆棘反弹 / 流电）。
+///
+/// `Unpowered`：不吃力量、不过攻防乘区，**只过难以杀灭和无实体**，然后走格挡。
+/// **不走 `take_attack_hit`** —— 那条路会再触发一次 `Attacked`（火焰屏障）、
+/// 唤醒孤注一掷、点纸伤难愈，而这类伤害不是攻击，三样都不该发作。
+/// 掉血照样记进 `after_player_hp_lost`（百年积木看的是"真掉了血"）。
+fn damage_player_unpowered(s: &mut State, face: i32, depth: u8) {
+    let d = crate::damage::apply_modifiers_unpowered(face, &s.player);
+    let through = absorb(&mut s.player, d);
+    s.hp_lost_this_turn += through;
+    after_player_hp_lost(s, through, depth);
+}
+
 /// 给玩家加能量。**所有回合内的加能量路径都必须走这里** ——
 /// [源码] 侧那几笔全都过 `PlayerCmd.GainEnergy`，而 `NoEnergyGainPower`
 /// 挂在 `ModifyEnergyGain` 上，也就是挂在那个收口点上。
@@ -1145,9 +1323,26 @@ pub(crate) fn exhaust_card(s: &mut State, c: u8) {
 
 fn player_lose_hp_at(s: &mut State, n: i32, depth: u8) {
     s.player.hp -= n;
+    refresh_hp_threshold_strength(s);
     s.hp_lost_this_turn += n;
     fire(s, Hook::PlayerLoseHp, depth);
     after_player_hp_lost(s, n, depth);
+}
+
+/// [源码] RedSkull compares decimal HP against 50% of maximum HP.
+pub fn hp_threshold_active(player: &Entity) -> bool {
+    player.hp * 2 <= player.max_hp
+}
+
+/// Called at HP changes, before later damage/status hooks. The latch prevents
+/// repeated awards; removing the bonus also happens when healing above half.
+fn refresh_hp_threshold_strength(s: &mut State) {
+    let amount = s.player.get(St::RedSkull);
+    if amount <= 0 { return; }
+    let active = hp_threshold_active(&s.player);
+    if active == (s.player.get(St::RedSkullActive) > 0) { return; }
+    s.player.set(St::RedSkullActive, i32::from(active));
+    apply_status(s, Tgt::Me, St::Strength, if active { amount } else { -amount }, 0, Source::Potion);
 }
 
 /// 玩家**真的掉了血**之后的触发点（今天只有百年积木）。
@@ -1164,6 +1359,7 @@ fn player_lose_hp_at(s: &mut State, n: i32, depth: u8) {
 #[inline]
 fn after_player_hp_lost(s: &mut State, through: i32, depth: u8) {
     if through > 0 {
+        refresh_hp_threshold_strength(s);
         // **数的是次数，不是血量**（扯碎的段数读它）。收在这里正是因为上面
         // 那段注释列的三条路都汇到这个函数 —— [源码] 那边的判据
         // （`DamageReceivedEntry` 且 `UnblockedDamage > 0`）同样不分来源。
@@ -1204,7 +1400,8 @@ fn resolve_ops(s: &mut State, ops: &[Op], inst: CardInst, cix: usize, target: us
     };
     // 伤害加值：暴走/痛殴攒在实例上的那一份（`CardInst::bonus`）
     // **加上**附魔给的（锋利 = Amount）。两者同一档，都在力量之前。
-    let bonus = inst.bonus as i32 + crate::content::ench_damage_add(&inst);
+    let bonus = inst.bonus as i32 + crate::content::ench_damage_add(&inst)
+        + tagged_attack_bonus(&s.player, crate::content::is_strike(inst.id));
     // 面板伤害：**药水不吃力量/腐化/锋利**，卡牌吃。
     // **防御方那一侧也分来源**（[源码] `IsPoweredAttack`）：药水是
     // `ValueProp.Unpowered`，不吃易伤/虚弱/缓慢/缩小，只吃难以杀灭和无实体。
@@ -1320,21 +1517,10 @@ fn resolve_ops(s: &mut State, ops: &[Op], inst: CardInst, cix: usize, target: us
             Op::GainMaxHp(n) => {
                 s.player.max_hp += n;
                 s.player.hp += n;
+                refresh_hp_threshold_strength(s);
             }
-            // [源码] `CreatureCmd.LoseMaxHp`：先算新上限，**当前血高于新上限时
-            // 把差额当伤害扣掉**（`Unblockable`），再把上限设过去。
-            // 走伤害那条路是关键 —— 百年积木就是这么被至亮之焰触发的
-            // （2026-08-27 第 2 幕第 19 层实测，见 verification-log）。
-            Op::LoseMaxHp(n) => {
-                let new_max = (s.player.max_hp - n).max(1);
-                if s.player.hp > new_max {
-                    let d = s.player.hp - new_max;
-                    s.player.hp = new_max;
-                    s.hp_lost_this_turn += d;
-                    after_player_hp_lost(s, d, 0);
-                }
-                s.player.max_hp = new_max;
-            }
+            // 规则在 `player_lose_max_hp`（纸伤难愈那条触发器也走它）。
+            Op::LoseMaxHp(n) => player_lose_max_hp(s, n, 0),
             // 跃跃欲试：手牌里每有一张攻击牌给 `per` 点能量。
             // 打出时这张牌自己已经离手（和急躁那条 `NoAttackInHand` 同样的前提）。
             Op::EnergyPerAttackInHand { per } => {
@@ -1680,6 +1866,7 @@ fn resolve_ops(s: &mut State, ops: &[Op], inst: CardInst, cix: usize, target: us
             Op::FreeNextAttack => s.free_attack += 1,
             Op::Heal(n) => {
                 s.player.hp = (s.player.hp + n).min(s.player.max_hp);
+                refresh_hp_threshold_strength(s);
             }
             // 拳斗。紧跟在伤害 op 后面读 `last_damage`。
             // 和别处的格挡一样走 `card_block`（这是从**卡牌**获得的格挡，吃脆弱）。
@@ -1833,6 +2020,7 @@ fn try_fairy(s: &mut State) -> bool {
         if s.potions[i] == potion::FAIRY {
             s.potions[i] = potion::NONE;
             s.player.hp = (s.player.max_hp * 3 / 10).max(1);
+            refresh_hp_threshold_strength(s);
             return true;
         }
     }
@@ -2125,6 +2313,11 @@ pub(crate) fn take_attack_hit(s: &mut State, attacker: usize, d: i32) {
     // 百年积木：**真掉了血**才算。和下面的火焰屏障正好是一对反例 ——
     // 一个看"血少没少"，一个看"挨没挨打"，所以是两个钩子而不是一个带条件的钩子。
     after_player_hp_lost(s, through, 0);
+    // 纸伤难愈 / 剧痛刺击：**攻击者自己的**能力，这一段真的打穿了才发作。
+    // 收在这里的理由和失衡一样：注入式敌人回合也走这条路。
+    if through > 0 && attacker < s.n_enemies as usize {
+        fire_ctx(s, Hook::AttackUnblocked, 0, attacker);
+    }
     // 火焰屏障。**每一段各触发一次**（玩家确认），
     // 且不看这一下有没有被格挡吃掉 —— 它自带 12 点格挡，
     // 要求"真掉血才反伤"等于两个效果互相抵消。
@@ -2135,6 +2328,9 @@ pub(crate) fn take_attack_hit(s: &mut State, attacker: usize, d: i32) {
 ///
 /// 两条敌人回合的路径共用它，见 [`take_attack_hit`]。
 fn begin_enemy_turn(s: &mut State) {
+    // 敌人这一边的回合开始，**最早一档**（[源码] `BeforeSideTurnStart`，在清格挡之前）。
+    // 两条敌人回合路径都走这里，所以注入式威胁下硬化外壳也照样回满。见 `Hook::SideTurnStart`。
+    fire(s, Hook::SideTurnStart, 0);
     for e in 0..s.n_enemies as usize {
         if s.enemies[e].get(St::Burrowed) == 0 {
             s.enemies[e].block = 0;
@@ -2206,8 +2402,19 @@ fn eval_cond(s: &State, e: usize, used: u32, c: ECond) -> Option<bool> {
         ECond::HpAtMost(n) => Some(s.enemies[e].hp <= n),
         ECond::MaxHpAtMost(n) => Some(s.enemies[e].max_hp <= n),
         ECond::SlotIs(n) => Some(e == n as usize),
+        // 代表元提示不是事实：集合照「哪一支都可能」算，挑哪一个归 `initial_move`。
+        ECond::SlotRep(_) => None,
         ECond::OffBalance => Some(s.enemies[e].get(St::OffBalance) > 0),
         ECond::NotOffBalance => Some(s.enemies[e].get(St::OffBalance) == 0),
+        ECond::CursesTakenBelow(sets, n) => {
+            Some(crate::content::curses_taken(&s.player, sets) < n as usize)
+        }
+        ECond::CursesTakenAtLeast(sets, n) => {
+            Some(crate::content::curses_taken(&s.player, sets) >= n as usize)
+        }
+        // 读的是**推进指针那一刻**的层数，和游戏掷招的时点差着敌人回合末，见 `ECond` 的文档。
+        ECond::SelfStatusAtLeast(st, n) => Some(s.enemies[e].get(st) >= n),
+        ECond::SelfStatusBelow(st, n) => Some(s.enemies[e].get(st) < n),
     }
 }
 
@@ -2366,6 +2573,10 @@ fn pick_next(s: &mut State, e: usize) -> u8 {
 /// 这一条不是锦上添花：树枝史莱姆（中）源码的 initialState 就是「吐黏液」
 /// 而不是那个随机分支；飞蝇菌子的开局池也比之后的小（易伤孢子不在里面）。
 /// 不接这一条，固定循环表和机器在第一手上就是一样的，那这套东西白做了一半。
+///
+/// **代表元逐只挑、而约束可以是整场的**：几只同类由遭遇的一个随机数错开起手时
+/// （残杀千足虫三节两两不同），逐只取最低位会让它们全从同一手起、整场同相。
+/// 那种开局写成 `ECond::SlotRep`：集合不变，这里按槽位挑（2026-09-15）。
 pub fn initial_move(s: &State, e: usize) -> u8 {
     let def = enemy_def(s.enemy_def[e]);
     let Some(m) = def.machine else { return 0 };
@@ -2374,9 +2585,54 @@ pub fn initial_move(s: &State, e: usize) -> u8 {
         Next::Go(i) => i,
         // 开局的随机分支：内核**不掷骰**，因为对拍那条路要的是集合不是样本。
         // rollout 想采样的话走 `pick_next`，那时已经有当前手了。
-        // 这里取集合最低位 —— 确定性的一个代表元。
-        n => resolve_set(s, e, &empty, 0, n).trailing_zeros() as u8,
+        // 这里取集合里的一个确定性代表元：有槽位提示且它在集合里就取它，否则取最低位。
+        // 「在集合里」这一条让确定成立的分支优先 —— 那时集合只剩那一支。
+        n => {
+            let set = resolve_set(s, e, &empty, 0, n);
+            if let Next::Cond(cs) = n {
+                let hinted = cs.iter().find(|(c, to)| {
+                    matches!(c, ECond::SlotRep(k) if *k as usize == e) && set & (1u32 << to) != 0
+                });
+                if let Some(&(_, to)) = hinted {
+                    return to;
+                }
+            }
+            set.trailing_zeros() as u8
+        }
     }
+}
+
+/// **这一手在当前局面下，出招机器走不走得到。** 给实况对齐挑签名歧义用
+/// （`Replayer::identify_enemies`）：两手签名逐字相同时，排掉「进它的边全是条件边、
+/// 而那些条件在当前局面下都确定不成立」的那一手。
+///
+/// 今天唯一的歧义是蜂群术士的喷射信息素（按蜂房层数拆成两手，都是 `Buff`）。
+///
+/// **只会说「走不到」，不会说「一定是它」**：
+/// * 没机器（定环）、有 `Go` / `Rand` 边进它、或者**没有任何边进它**（只能被强制打进去的
+///   击晕 / 醒来那一类）⇒ 一律 `true`
+/// * 条件边判不出来（`ECond::Unknown`）⇒ 算走得到
+///
+/// 对齐那一刻没有出招记录，所以 `Repeat` / `cooldown` 不看、`used` 当 0。
+pub fn move_reachable_now(s: &State, e: usize, def_id: u16, m: usize) -> bool {
+    let def = enemy_def(def_id);
+    let Some(mc) = def.machine else { return true };
+    let empty = [u8::MAX; ENEMY_HIST];
+    let mut saw_cond = false;
+    for n in std::iter::once(mc.start).chain(mc.after.iter().copied()) {
+        match n {
+            Next::Go(i) if i as usize == m => return true,
+            Next::Rand(bs) if bs.iter().any(|b| b.to as usize == m) => return true,
+            Next::Cond(cs) if cs.iter().any(|(_, to)| *to as usize == m) => {
+                saw_cond = true;
+                if resolve_set(s, e, &empty, 0, n) & (1u32 << m) != 0 {
+                    return true;
+                }
+            }
+            _ => {}
+        }
+    }
+    !saw_cond
 }
 
 /// **开局允许集合**。和 [`allowed_next`] 分开是因为问的是两件事：
@@ -2439,6 +2695,28 @@ fn advance_move(s: &mut State, e: usize) {
     }
 }
 
+/// 知识的诅咒落地：第 k 次（k 从我身上的诅咒 status 反推）按 `curse_policy` 第 k 位挑一边。
+///
+/// **不是 `Pending`**：[源码] 这个选牌屏开在敌人回合中间，而 `step(EndTurn)` 是原子的 ——
+/// 让它停在半路等玩家选，planner 的回合边界拆分和 rollout 的闭环都得改。
+/// 这个选择的价值全在后面几个回合，单回合求解器本来也定不了价，所以做成**策略参数**：
+/// L3 把 8 种选法配对比，实战里由玩家选。
+///
+/// 四个诅咒都是 debuff，人工制品挡得住；挡掉之后内核反推不出这一次（见 `content::curses_taken`）。
+fn apply_curse_choice(s: &mut State, sets: &[crate::ops::CurseSet]) {
+    let k = crate::content::curses_taken(&s.player, sets);
+    let Some(set) = sets.get(k) else { return };
+    if artifact_absorbs(&mut s.player, true) {
+        return;
+    }
+    if s.curse_policy & (1u8 << k) != 0 {
+        s.player.add(St::Disintegration, set.disintegration);
+    } else {
+        s.player.add(set.other, set.other_amt);
+        s.base_energy += set.other_max_energy;
+    }
+}
+
 fn enemy_turn(s: &mut State) {
     begin_enemy_turn(s);
     // 敌人整边开始（[源码] `AfterSideTurnStart(CombatSide.Enemy)`）。
@@ -2457,10 +2735,16 @@ fn enemy_turn(s: &mut State) {
         let def = enemy_def(s.enemy_def[e]);
         let mi = current_move_ix(def, s, e);
         let mv = &def.moves[mi];
+        // 出招之前的指针。出到一半被改了招（反伤打死瀑布巨兽）就不推进，见循环末尾。
+        let ptr = s.enemy_move[e];
         // **进阶收口点之一。** A8 抬血量/格挡、A9 抬伤害/段数，`asc < 8` 时
         // `adjust` 逐字返回原 op（一次表都不查），所以 A1/A2 的语料逐字节不变。
         // 读 `EnemyMove::ops` 的地方一共八处，全部要走这一层 ——
         // 漏一处的表现是那条路径**静默地**按低进阶算。
+        //
+        // `landed`：这一手里上一条 `PlayerStatus` 有没有真的落地（没被人工制品吃掉）。
+        // 唯一的读者是 `EOp::DowngradeUpgradedCards`（抑制的 `AfterApplied`）。
+        let mut landed = false;
         for (oi, op) in mv.ops.iter().enumerate() {
             let op = crate::asc::adjust(s.enemy_def[e], mi, oi, s.ascension, *op);
             match op {
@@ -2487,7 +2771,11 @@ fn enemy_turn(s: &mut State) {
                 }
                 // 敌人也走收口。势不可当只挂在玩家身上，但收口本身要完整 ——
                 // 「有一条路径没走收口」正是这类触发器静默失效的唯一原因。
-                EOp::Block(n) => gain_block(s, Owner::Enemy(e), n, 0),
+                // 敌人招式的格挡吃它自己的敏捷（遗忘之物），见 `damage::monster_block`。
+                EOp::Block(n) => {
+                    let b = crate::damage::monster_block(n, &s.enemies[e]);
+                    gain_block(s, Owner::Enemy(e), b, 0)
+                }
                 EOp::SelfStatus { st, amt } => s.enemies[e].add(st, amt),
                 // 巨斧机器人的启动：力量 = 6 − 3×库存（[源码] `3 * (2 - StockAmount)`）
                 EOp::SelfStatusPerStack { st, amt, per } => {
@@ -2510,9 +2798,46 @@ fn enemy_turn(s: &mut State) {
                     }
                     s.enemies[e].set(St::Vigor, 0);
                 }
+                // 恐惧：每段基础伤害吃自己那个 status 的层数（遗忘之物的敏捷）。
+                // 其余逐字同 `EOp::Attack`（活力、多段中途被反伤打死就停）。
+                EOp::AttackPlusSelfStatus { base, hits, per } => {
+                    let face = base
+                        + s.enemies[e].get(per)
+                        + s.enemies[e].get(St::Strength)
+                        + s.enemies[e].get(St::Vigor);
+                    for _ in 0..hits {
+                        if !s.enemies[e].alive() {
+                            break;
+                        }
+                        let d = apply_modifiers(face, &s.enemies[e], &s.player);
+                        take_attack_hit(s, e, d);
+                    }
+                    s.enemies[e].set(St::Vigor, 0);
+                }
+                // 减力量/减敏捷也吃人工制品（失落之物/遗忘之物偷属性），见 `is_debuff_amount`。
                 EOp::PlayerStatus { st, amt } => {
-                    if !artifact_absorbs(&mut s.player, is_debuff(st)) {
+                    landed = !artifact_absorbs(&mut s.player, crate::damage::is_debuff_amount(st, amt));
+                    if landed {
                         s.player.add(st, amt);
+                    }
+                }
+                // 思考的回血，封顶在最大生命。
+                EOp::Heal(n) => {
+                    let en = &mut s.enemies[e];
+                    en.hp = (en.hp.max(0) + n).min(en.max_hp);
+                }
+                // 知识的诅咒：选哪边照 `curse_policy`，见 `apply_curse_choice`。
+                EOp::CurseOfKnowledge(sets) => apply_curse_choice(s, sets),
+                // 抑制：挂上的那一刻把本场所有已升级的牌降级、记下是谁（`F_DAMPENED`）。
+                // **只有上一条 `PlayerStatus` 真的落地才发作**，理由见 `EOp::DowngradeUpgradedCards`。
+                EOp::DowngradeUpgradedCards => {
+                    if landed {
+                        for i in 0..s.n_cards as usize {
+                            let c = &mut s.cards[i];
+                            if c.flags & F_UPGRADED != 0 {
+                                c.flags = (c.flags & !F_UPGRADED) | crate::state::F_DAMPENED;
+                            }
+                        }
                     }
                 }
                 // 召唤。优先复用死掉的槽位，否则往后加 —— 不这么做的话
@@ -2558,6 +2883,14 @@ fn enemy_turn(s: &mut State) {
                         s.to_draw_random(ix);
                     }
                 }
+                // 火焰喷射：塞手牌，满了溢出进弃牌堆（见 `add_generated_to_hand`）。
+                EOp::AddCardToHand { card, count } => {
+                    for _ in 0..count {
+                        if !add_generated_to_hand(s, card) {
+                            break;
+                        }
+                    }
+                }
                 // 剧烈增强：把**本场所有**凋萎各 +3 伤害（[源码] `FakeUpgrade`
                 // 逐张调 `UpgradeValueBy(3m)`）。扫的是 `s.cards` 也就是本场
                 // 全部实例，对应 [源码] 的 `PlayerCombatState.AllCards`
@@ -2590,10 +2923,22 @@ fn enemy_turn(s: &mut State) {
                     }
                 }
                 EOp::ClearSelfStatus(st) => s.enemies[e].set(st, 0),
+                // 自杀（瀑布巨兽的爆炸）。和被打死一样点两条边，见 `hit_enemy_with`。
+                EOp::KillSelf => {
+                    s.enemies[e].hp = 0;
+                    fire_ctx(s, Hook::EnemyDied, 0, e);
+                    fire_ctx(s, Hook::AllyDied, 0, e);
+                }
                 EOp::Nothing => {}
             }
         }
-        advance_move(s, e);
+        // **这一手出到一半被改了招 ⇒ 指针不推进。** 来路是它自己出招时被反伤打死、死亡规则把它
+        // 强制到下一手（瀑布巨兽 -> 即将爆发）。[源码] 那一手带 `MustPerformOnceBeforeTransitioning`：
+        // 推进的话「即将爆发」被跳过、直接爆炸。我方回合里改的招不走这条 —— 那时指针在出招**之前**
+        // 就改好了，`ptr` 读到的已经是新的。
+        if s.enemy_move[e] == ptr {
+            advance_move(s, e);
+        }
         if s.player.hp <= 0 {
             break;
         }
@@ -2604,7 +2949,22 @@ fn enemy_turn(s: &mut State) {
     // 放在循环**外面**是照抄源码的 side 级钩子 —— 放进循环里会变成
     // "每只敌人行动完各触发一次全场"，多只电击机器人时会成倍加力量。
     if s.player.hp > 0 {
+        // 三档依次发（[源码] `Hook.BeforeSideTurnEnd` 里 VeryEarly -> Early，
+        // 之后才是 `AfterSideTurnEnd`）：
+        //   最早一档：**沉睡**在最后一个睡眠回合把覆甲摘掉 —— 族母因此拿不到那一回合的墙
+        //   早一档  ：敌人的**覆甲**给格挡
+        //   晚一档  ：**熟睡**减层、醒来移除覆甲
+        // 顺序写在钩子里，不靠表内先后。
+        fire(s, Hook::EnemyTurnEndVeryEarly, 0);
+        fire(s, Hook::EnemyTurnEndEarly, 0);
         fire(s, Hook::EnemyTurnEnd, 0);
+    }
+    // 「本回合被强制改招」到这里用完了（`St::MoveForcedThisTurn` 的文档：敌人整边行动完之后清）。
+    // 注入路径在读到它的那一刻清；**这条完整路径 2026-09-14 之前一处都不清** —— 我方回合里被强制
+    // 换过招的敌人（耕地 / 尖叫 / 钻地 / 被打醒的熟睡甲虫）从此带着它，之后每个回合求解器叶子上的
+    // 注入威胁都把那只敌人这一手跳过（乐观）。建熟睡甲虫时发现的。
+    for e in 0..s.n_enemies as usize {
+        s.enemies[e].set(St::MoveForcedThisTurn, 0);
     }
 }
 
@@ -2629,6 +2989,9 @@ fn enemy_turn(s: &mut State) {
 /// 这个函数加一句 `open_hand`，两条路径不可能长歪。
 /// 和当初为 L2 加 `end_turn_with_incoming` 是同一个先例。
 fn start_player_turn_before_draw(s: &mut State) {
+    // 我这一边的回合开始，**最早一档**（[源码] `BeforeSideTurnStart`）：
+    // 清格挡、能量回满、`TurnStart`（水银沙漏 / 滚石打敌人）全在它后面。见 `Hook::SideTurnStart`。
+    fire(s, Hook::SideTurnStart, 0);
     s.turn += 1;
     // 壁垒：「格挡不再在你的回合开始时消失。」
     if s.player.get(St::Barricade) == 0 {
@@ -2668,11 +3031,14 @@ fn start_player_turn_before_draw(s: &mut State) {
 
 /// 抽开局手牌（5 张）。**跨回合 planner 的机会节点就插在它前面。**
 ///
-/// 那个 5 是写死的：内核今天没有"每回合抽几张"的修饰器
-///（清晰/稳定血清那类药水没建，理由在 `ops.rs::POTIONS` 表头）。
-/// 将来有了，改这一处。
+/// 那个 5 是基础张数。今天唯一**减**它的是心灵腐化（知识恶魔的诅咒）；
+/// 加它的佩尔之血挂在 `TurnStart` 上先抽。清晰/稳定血清那类药水没建，
+/// 理由在 `ops.rs::POTIONS` 表头 —— 将来有了，改这一处。
 pub fn open_hand(s: &mut State) {
-    s.draw_n(5);
+    // 心灵腐化（知识恶魔的诅咒，[源码] `MindRotPower.ModifyHandDraw => max(0, count − Amount)`）。
+    // 佩尔之血那 +1 挂在 `TurnStart` 上先抽了，这里只减基础那 5 张 ——
+    // 合起来和源码的 `max(0, 5 + 1 − Amount)` 相同（`Amount` 只来自一次诅咒，1 层）。
+    s.draw_n((5 - s.player.get(St::MindRot)).max(0) as _);
     // 手牌发下来之后才发作的那几件（风箱/骨茶升级手牌）。**必须在这里，
     // 不能挂 `TurnStart`** —— 那个钩子在抽牌之前，升级的是一手空牌。
     fire(s, Hook::HandDrawn, 0);
@@ -2741,6 +3107,7 @@ fn injected_enemy_turn(s: &mut State, inc: &Incoming, live: bool) {
             continue;
         }
         let (base, hits) = inc[e];
+        let ptr = s.enemy_move[e];
         for _ in 0..hits {
             // 攻击者可能在多段攻击中途被反伤打死，和 `enemy_turn` 同一条判断
             if !s.enemies[e].alive() || s.player.hp <= 0 {
@@ -2759,7 +3126,11 @@ fn injected_enemy_turn(s: &mut State, inc: &Incoming, live: bool) {
         }
         // 出招指针照常推进：跨回合 rollout 换成 `EnemyDef` 预测威胁时，
         // 下一回合要接着这个指针往下猜。
-        advance_move(s, e);
+        // **挨打途中被改了招就不推进**（反伤打死瀑布巨兽），理由同 `enemy_turn`。那个
+        // `MoveForcedThisTurn` 留着：下一个注入回合读到它，跳过伤害再推进 —— 正好是「即将爆发」不打人。
+        if s.enemy_move[e] == ptr {
+            advance_move(s, e);
+        }
         if s.player.hp <= 0 {
             break;
         }
@@ -2881,6 +3252,13 @@ fn end_turn_impl(mut s: State, inc: Option<(&Incoming, bool)>, open: bool) -> St
             let c = s.take_from_hand(i);
             s.to_discard(c);
         }
+    }
+    // 回合末**最后一步**（[源码] `AfterSideTurnEndLate`，第二阶段弃完手牌之后）：瓦解。
+    // 在敌人出手之前，所以这一回合剩下的格挡先吃它。
+    fire(&mut s, Hook::TurnEndLate, 0);
+    check_over(&mut s);
+    if s.combat_over {
+        return s;
     }
     match inc {
         Some((i, live)) => injected_enemy_turn(&mut s, i, live),
@@ -3042,6 +3420,11 @@ pub fn step(mut s: State, a: Action) -> State {
             if s.pending != Pending::None {
                 return s;
             }
+            // 懒惰：`legal_actions` 不给打，`step` 也要原样返回（不变量 5）。
+            // 轰鸣故意没收进来：它一直只在 `legal_actions` 那一侧，改它要单独过一遍对拍。
+            if s.player.get(St::Sloth) > 0 && s.cards_played >= s.player.get(St::Sloth) {
+                return s;
+            }
             let i = hand as usize;
             if i >= s.n_hand as usize {
                 return s;
@@ -3154,6 +3537,7 @@ pub fn grant_relics(s: &mut State, relics: &[(&RelicDef, Option<i32>)]) {
 
 /// Set up a combat: shuffle the draw pile and open the first hand.
 pub fn begin_combat(mut s: State) -> State {
+    refresh_hp_threshold_strength(&mut s);
     let n = s.n_draw as usize;
     for i in (1..n).rev() {
         let j = next_below(&mut s.rng.shuffle, i + 1);
@@ -3191,6 +3575,11 @@ pub fn begin_combat(mut s: State) -> State {
         // 只装挂自己身上的，那一类走 `content::ENEMY_START_PLAYER_STATUS`。
         for (st, amt) in crate::content::enemy_start_player_status(def.name) {
             s.player.add(st, amt);
+        }
+        // 游戏不报、规则要读的身份标记（骑士团的施咒者）。对拍路径在 `replay::sync` 里按
+        // 观测到的名字挂同一张表，见 `content::ENEMY_PRIVATE_MARKERS`。
+        for (st, v) in crate::content::enemy_private_markers(def.name) {
+            s.enemies[e].set(st, v);
         }
     }
     // **开局朝右。** [源码] `SurroundedPower._facing` 是个没有初始化式的

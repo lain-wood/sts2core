@@ -2,5 +2,24 @@
  "note": "手写的进阶数值映射，给 tools/dump_ascension.py 认不出来的那些用。生成器按 (种类, 低进阶值) 去认内核的 op；候选个数和 [源码] 的用点数对不上就整条跳过，跳过的全表在 data/ascension.json 的 `unmatched` 里。",
  "format": "键是 `<MonsterClass>.<PropertyName>`（和 unmatched 里的 cls/prop 一致），值是一组目标：`{\"mv\": 招式下标, \"op\": 该招式 ops 里的下标, \"field\": \"value\" | \"hits\"}`。下标以 content.rs 的 ENEMIES 为准，写错了 `asc_table_indices_still_point_at_the_named_enemy` 和 `asc_ops_low_value_still_matches_the_kernel_op` 会红。",
  "rule": "**只填能查清的**。「2 个候选」多半是内核里两手恰好同值，回 [源码] 看那个属性到底用在哪一手；「判不出种类」要先看它是不是根本不属于招式（实验体的三段形态血、结实的卵的孵化血都是血量，该走 ASC_HP 那条路而不是这里）。查不清就留着 —— 方向是低估敌人，比填错安全。",
- "values": {}
+ "values": {
+  "TheForgotten.valueIfAscension": [
+   {"mv": 1, "op": 0, "field": "value", "why": "[源码] `TheForgotten.DreadDamage` 的 getter 里先 `int valueIfAscension = GetValueIfAscension(DeadlyEnemies, 15, 13)` 再加自己的敏捷 —— 进阶值藏在局部变量里，生成器按属性名判不出种类。它只有一个用点：恐惧（mv 1）那条 `AttackPlusSelfStatus` 的 base。2026-09-13 填，敌人本身同日进表。"}
+  ],
+  "Crusher.ThrashDamage": [
+   {"mv": 0, "op": 0, "field": "value", "why": "[源码] `Crusher.ThrashDamage`（A9 14 / 12）只用在 `THRASH_MOVE` = 摧折（mv 0）。生成器报「2 个候选」是因为戒备打击（mv 4）的基础伤害恰好也是 12。2026-09-14 填。"}
+  ],
+  "Crusher.GuardedStrikeDamage": [
+   {"mv": 4, "op": 0, "field": "value", "why": "[源码] `Crusher.GuardedStrikeDamage`（A9 14 / 12）只用在 `GUARDED_STRIKE_MOVE` = 戒备打击（mv 4）的攻击；同一手那 18 点格挡是写死的 `18m`，不吃进阶。候选撞车的原因同上。2026-09-14 填。"}
+  ],
+  "Crusher.AdaptStrengthGain": [
+   {"mv": 3, "op": 0, "field": "value", "why": "[源码] `Crusher.AdaptStrengthGain`（A9 3 / 2）只用在 `ADAPT_MOVE` = 适应（mv 3）。另外两个候选是虫刺（mv 2）的虚弱 2 / 脆弱 2，那两个在源码里是写死的 `2m`，不吃进阶。2026-09-14 填。"}
+  ],
+  "WaterfallGiant.SiphonHeal": [
+   {"mv": 3, "op": 0, "field": "value", "why": "[源码] `WaterfallGiant.SiphonHeal`（A8 `ToughEnemies` 15 / 10）只用在 `SIPHON_MOVE` = 虹吸（mv 3）的 `CreatureCmd.Heal(SiphonHeal × 玩家数)`。生成器「判不出种类」是因为回血不在它认得的那几种 op 里（`asc::patch` 的 `Heal` 分支同日补）；内核 2026-09-15 之前这一手连回血都没建。2026-09-15 填（第 1 幕批 1）。"}
+  ],
+  "WaterfallGiant.BasePressureGunDamage": [
+   {"mv": 4, "op": 0, "field": "value", "why": "[源码] `WaterfallGiant.BasePressureGunDamage`（A9 23 / 20）是高压枪的**起点**：`AfterAddedToRoom` 里 `CurrentPressureGunDamage = BasePressureGunDamage`，之后每打一次 `+= PressureGunIncrease`（5，写死不吃进阶）。只用在 `PRESSURE_GUN_MOVE` = 高压枪（mv 4）那条 `AttackPlusSelfStatus` 的 base。2026-09-15 填（第 1 幕批 1）。"}
+  ]
+ }
 }

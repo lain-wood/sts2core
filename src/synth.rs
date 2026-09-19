@@ -132,6 +132,9 @@ pub struct FightSpec<'a> {
     /// 它是战斗内的 `Op::GainMaxEnergy`。这一栏装的是**开局就有**的那个数。
     pub base_energy: i32,
     pub ascension: u8,
+    /// 知识恶魔那三次二选一怎么选（`State::curse_policy` 的位掩码）。**局外给**：
+    /// 那是玩家的决策，不是游戏规则。没人问的时候用 `content::DEFAULT_CURSE_POLICY`。
+    pub curse_policy: u8,
     pub seed: u64,
 }
 
@@ -151,6 +154,7 @@ impl<'a> FightSpec<'a> {
             potion_slots: 3,
             base_energy: crate::solver::BASE_ENERGY,
             ascension: 0,
+            curse_policy: crate::content::DEFAULT_CURSE_POLICY,
             seed,
         }
     }
@@ -253,6 +257,7 @@ pub fn build(spec: &FightSpec) -> Built {
     let mut s = State::new(spec.hp, spec.seed);
     s.player.max_hp = spec.max_hp;
     s.ascension = spec.ascension;
+    s.curse_policy = spec.curse_policy;
     // 能量上限。`State::new` 给的是 3，这里照调用方说的来 ——
     // `begin_combat` 里 `start_player_turn` 会拿它回满。
     s.base_energy = spec.base_energy;

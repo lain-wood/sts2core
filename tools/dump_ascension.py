@@ -91,7 +91,7 @@ def strip_comments(s: str) -> str:
 
 # 一条 alternation，一次扫完，才拿得到 op 在 `ops: &[..]` 里的真实下标
 KERNEL_OP = re.compile(
-    r"EOp::(?P<kind>Attack|AttackPlusStackHits) \{ base: (?P<base>-?\d+), hits: (?P<hits>-?\d+)"
+    r"EOp::(?P<kind>Attack|AttackPlusStackHits|AttackPlusSelfStatus) \{ base: (?P<base>-?\d+), hits: (?P<hits>-?\d+)"
     r"|EOp::Block\((?P<block>-?\d+)\)"
     r"|EOp::(?P<sk>SelfStatus|PlayerStatus) \{ st: St::(?P<st>\w+), amt: (?P<amt>-?\d+)"
     r"|EOp::AddCardToDiscard \{[^}]*?count: (?P<n>-?\d+)")
@@ -438,10 +438,18 @@ fn patch(op: EOp, v: i32, hits_field: bool) -> EOp {
                 EOp::AttackPlusStackHits { base: v, hits, per }
             }
         }
+        EOp::AttackPlusSelfStatus { base, hits, per } => {
+            if hits_field {
+                EOp::AttackPlusSelfStatus { base, hits: v, per }
+            } else {
+                EOp::AttackPlusSelfStatus { base: v, hits, per }
+            }
+        }
         EOp::Block(_) => EOp::Block(v),
         EOp::SelfStatus { st, .. } => EOp::SelfStatus { st, amt: v },
         EOp::PlayerStatus { st, .. } => EOp::PlayerStatus { st, amt: v },
         EOp::AddCardToDiscard { card, .. } => EOp::AddCardToDiscard { card, count: v },
+        EOp::Heal(_) => EOp::Heal(v),
         other => other,
     }
 }

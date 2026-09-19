@@ -210,7 +210,10 @@ fn move_has_non_attack_ops(s: &State) -> bool {
         // 而进阶只改数值，从来不换 `EOp` 的变体。读 `ops` 的八处里唯一一个例外。
         for op in mv.ops {
             match op {
-                EOp::Attack { .. } | EOp::AttackPlusStackHits { .. } | EOp::Nothing => {}
+                EOp::Attack { .. }
+                | EOp::AttackPlusStackHits { .. }
+                | EOp::AttackPlusSelfStatus { .. }
+                | EOp::Nothing => {}
                 _ => return true,
             }
         }

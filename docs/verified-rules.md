@@ -152,6 +152,36 @@
 
 ---
 
+### 1.8 打击木偶与红头骨
+
+* **打击木偶**：`[源码] StrikeDummy.ModifyDamageAdditive` 只认 `CardTag.Strike`，
+  有源攻击每段 +3；在卡面基础值乘区之后、虚弱/易伤乘区之前。
+  内核 `content::STRIKE_CARDS` 是已支持卡牌的标签表，也供完美打击计数。
+  `[实测] act3_f48_boss_test_subject_2026-09-15` 的帧9/11/18/30 钉住此前的伤害缺口。
+* **红头骨**：`[源码] RedSkull` 在血量 ≤ 最大血量的一半时施加力量3，回血越过阈值时移除3；
+  后续继续掉血不能重复施加。走当前生命变化入口，卡牌失血、敌人攻击、回血都适用。
+  `[实测]` 同一场跌到49/98时力量3→6。同步只恢复私有生效标记，力量本身照抄观测。
+* **芒果 / 宾邦**：`[源码] Mango.AfterObtained` 增加最大生命14；
+  `BingBong.AfterCardChangedPiles` 复制新加入主牌组的牌。这些是局外效果，
+  牌组/血量快照已包含结果，战斗层不重复施加。
+* **痊愈药水**：`[源码+实测] CureAll` 先获得1能量，再抽2张；目标是玩家自身。
+
+守卫见 `src/test_subject_tests.rs`：包含乘区顺序、非打击牌/药水不吃加成、半血整数边界、
+敌人攻击触发、继续受伤不重复增加、回血撤销，以及完整实录单步验证。
+
+### 1.9 实验体的意图与复活窗口同步
+
+* `[实测]` 第二阶段连环爪击是10×3→10×4→10×5；`ClawGrowth` 为私有量，
+  实况同步从已经亮出的段数恢复。`[源码]` 该计数在攻击后增加，不显示额外Buff意图。
+* `[源码+实测]` 第二阶段的剧痛刺击和第三阶段的复仇宿敌区分两手同为10×3的招式。
+  单回合威胁、rollout 和 D=2 的威胁入口均读取递增段数。
+* 实录敌人预测从**上一手**的计数与操作推进；最大生命变化且上一形态带适生力，
+  表明期间经历了复苏，应从复苏后继推进。篡改当前观测的段数会使测试失败。
+* `[实测]` 敌人在复活窗口完全消失。同步保留最后已知形态，在隔离状态中执行同一份死亡规则，
+  恢复下一个形态与私有标记；不重发玩家击杀奖励。只有规划路径恢复敌人定义，注入对拍仍用UNKNOWN。
+
+这里的实录是A1/A3；A8以上复活血量的进阶映射仍是已知缺口，不能用这些测试证明A10正确。
+
 ## 2. 玩家判定（卡面读不出来的那些）
 
 **卡面文本对触发类交互是欠定的。** 遇到「每当…时」/ 多目标 / 牌堆顺序这类判定，
@@ -640,7 +670,513 @@ if (!(amount <= 0m) && creature == base.Owner) { ... }
 
 ---
 
+## 2.12 第 3 幕六只敌人带进来的规则（2026-09-13，**全部 `[源码]`，未实测**）
+
+史莱姆狂战士 · 机甲骑士 · 电球头 · 咬人卷轴 · 失落之物 · 遗忘之物。
+**名字（怪物和招式）取自游戏本地化表**（`SlayTheSpire2.pck` 里的 `*.name` /
+`*.moves.*.title`），不是推的；图鉴里隐藏的招式没有译名，照抄源码 id。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| **流电**：我每打出一张**能力牌**（没有别的 affliction 的），挨 `Amount` 点 `Unpowered` 伤害，走格挡、不是攻击 | `GalvanicPower.AfterCardPlayed` | `galvanic_hurts_the_player_for_power_cards_only_and_goes_through_block` |
+| **纸伤难愈**：它的攻击**每打穿一段**，我失去 `Amount` 点最大生命；被格挡吃光的那段不算；只认它自己打穿的 | `PaperCutsPower.AfterDamageGiven` | `paper_cuts_costs_max_hp_per_unblocked_hit_of_its_own_on_both_turn_paths` |
+| **剧痛刺击**：同一个「打穿」判据，每段塞 `Amount` 张伤口进弃牌堆（源码是整条攻击数段数再乘，总数相同） | `PainfulStabsPower.AfterAttack` | `painful_stabs_adds_one_wound_per_unblocked_hit` |
+| **抢夺力量/速度**：偷走的属性**只在小偷自己死时**还回来 | `PossessStrengthPower.AfterDeath`（`creature == Owner`） | `possess_returns_what_was_stolen_only_when_the_thief_itself_dies` |
+| **负数的力量/敏捷是 debuff**，人工制品挡得住（小偷自己那 +2 照加） | `PowerModel.GetTypeForAmount`：`Counter && AllowNegative && amount < 0` ⇒ `Debuff` | `player_artifact_blocks_the_strength_steal_but_the_thief_still_gains` |
+| **敌人招式的格挡吃它自己的敏捷** | `DexterityPower.ModifyBlockAdditive` 的门是 `IsPoweredCardOrMonsterMoveBlock` | `the_forgotten_block_and_dread_grow_with_the_dexterity_it_steals` |
+| **往手牌塞的牌，手满了溢出进弃牌堆**（不是丢掉）—— 凋萎存在那条路原来是"满了不造"，一起改对 | `CardPileCmd.Add`：`isFullHandAdd` ⇒ `targetPile = Discard` | `mecha_knight_flamethrower_overflows_into_discard_when_the_hand_is_full` |
+
+两条**有意的近似**，方向写清楚：
+
+* **退还量读小偷自己的力量/敏捷**，不是源码那张私有字典（观测里没有、`sync` 带不过来）。
+  两者只在「我的人工制品挡掉了偷窃」（多还，乐观）和「我永久削了它的力量」（少还，悲观）时分岔。
+* **咬人卷轴的起手相位固定 `num = 0`**（源码是遭遇级随机数）。第 1 回合总是先大啃后咀嚼，
+  纸伤难愈按打穿段数算 ⇒ **偏悲观**；`synth_audit` 的开局第一手在真实录像上约 2/3 会报集合外。
+  （同形状的千足虫 2026-09-15 改用 `ECond::SlotRep`，允许集合不塌，见 §2.14。卷轴没跟着换：一条实录都没有，
+  集合外那条代价在它身上还是假设。）
+
+---
+
+## 2.13 骑士团带进来的规则（2026-09-14，**全部 `[源码]`，未实测**）
+
+连枷骑士 · 幽灵骑士 · 魔法骑士（`KnightsElite` 三只同场）。名字同样取自游戏本地化表。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| **回合末先消耗虚无的牌，再让"留在手上就发作"的牌发作**；带发作效果的牌**不算虚无**；两段都在弃手牌/保留之前 | `CombatManager.DoTurnEnd`：`if HasTurnEndInHandEffect … else if Ethereal`，先 `Exhaust` 列表后 `OnTurnEndInHandWrapper`；`FlushPlayerHand` 在第二阶段 | `ethereal_exhausts_happen_before_turn_end_in_hand_effects` |
+| **恶咒**：身上有它时手里每一张（没有别的 affliction 的）牌都虚无 —— 带保留的也照样消耗，灼伤那类发作牌不受影响 | `HexPower.TryModifyKeywordsInCombat` + `Hexed` | `hex_exhausts_every_card_left_in_hand_except_turn_end_effect_cards` |
+| **恶咒只在施咒者自己死时解除** | `HexPower.AfterDeath`：`creature == Applier` | `hex_lifts_only_when_the_spectral_knight_itself_dies` |
+| **抑制**：挂上那一刻把本场所有已升级的牌降级；施咒者死光才升回去（期间被再升过的不重复升） | `DampenPower.AfterApplied` / `AfterDeath` / `AfterRemoved`（`CardCmd.Upgrade` 跳过不可升级的） | `dampen_downgrades_upgraded_cards_until_the_magi_knight_dies` |
+| **恶咒、抑制都是 debuff**，人工制品挡掉就什么都不发生（抑制的降级挂在 `AfterApplied` 上） | 两者 `PowerType.Debuff` | `artifact_blocks_dampen_and_nothing_is_downgraded` |
+
+一条**有意的缺口**，方向写清楚：
+
+* **抑制降过哪几张，只有合成路径知道**（`CardInst` 的 `F_DAMPENED`）。对拍 / 实战路径从观测灌牌名，
+  降过级的牌看起来就是没升级的牌 —— `solve --live` 那一回合里砍死魔法骑士，内核看不见升回来的牌
+  （**低估自己**）；将来录到这一场时，`verify` 在魔法骑士死掉那一帧会报手牌身份不一致。
+  补法是拿观测里的 `deck`（第 4 个补丁的主牌组）按牌名配对推回来，同名多张时欠定。
+
+「谁是施咒者」观测里没有（恶咒/抑制挂在**我**身上，`Applier` 不报）。内核在骑士身上挂私有标记，
+合成路径（`begin_combat`）和对拍路径（`sync`）都按**名字**从 `content::ENEMY_PRIVATE_MARKERS` 挂 ——
+和 `sync` 从观测补 `SlowSource` 同一个道理：这是身份，不是预测。
+
+---
+
+## 2.14 残杀千足虫的接续（2026-09-14，`[源码]` **+ 实录两次复活**）
+
+| 规则 | 源码出处 | 证据 | 守卫 |
+|---|---|---|---|
+| **三节起手两两不同，Front / Middle / Back 是同一方向的轮换**（`num / num+1 / num+2`，`num` 是遭遇级随机数 ⇒ 单看一节三手都可能）（2026-09-15） | `DecimillipedeElite.GenerateMonsters` + `DecimillipedeSegment` 的 `StarterMoveIdx % 3` -> 扭动 / 壮硕 / 缠绕 | 第 0 帧 `act2_f28` 壮硕/缠绕/扭动（`num = 1`）· `act2_f30` 扭动/壮硕/缠绕（`num = 0`）；反方向两条都对不上 | `decimillipede_segments_open_staggered_by_slot_but_each_first_move_stays_open` |
+| 一节被砍死**不移出战斗、打不到**；别的节全死了战斗才结束 | `ReattachPower.ShouldCreatureBeRemovedFromCombatAfterDeath` / `ShouldAllowHitting` / `ShouldOwnerDeathTriggerFatal` | `act2_f28_decimillipede` | `killing_the_other_segments_inside_the_reattach_window_ends_the_fight` |
+| **死后第二个敌人回合**回 `Amount` = **25** 血（不是回满）；超杀不扣回血量 | `SetMoveImmediate(DeadState)` -> `DEAD_MOVE` -> `REATTACH_MOVE` -> `Heal(Amount)` | 第 3 回合砍死 -> 第 5 回合 25/44；第 5 回合砍死 -> 第 7 回合 25/40 | `a_decimillipede_segment_reattaches_with_25_hp_on_the_second_enemy_turn` |
+| 死亡剥离**连力量一起清**，只留接续本身 | `ShouldPowerBeRemovedAfterOwnerDeath` 默认 true | 死前缠绕 `Attack:10`，回来 `Attack:8` | 同上 |
+| 重接之后等权随机三选一，再回到三手循环 | `RandomBranchState`（`CannotRepeat`，上一手是重接 ⇒ 三条都放行） | 复活后第一手分别是缠绕、壮硕，之后照循环 | — |
+| 对拍路径：尸体整只不在观测里，倒计时从「最后一次被看见是第几回合」推 | — | 节 1 第 4 回合那几帧 `enemies` 里没有它 | `sync_keeps_a_vanished_segment_as_a_corpse_owed_a_reattach` |
+
+**战术推论：窗口是两个我方回合** —— 砍死一节的那一回合 + 下一回合结束之前把别的节全砍掉，它就回不来。
+
+有意的近似和缺口，方向写清楚：
+
+* **回血发生在敌人回合开始**，不在它自己那一手（和适生力 / 幻象同一个简化，死人不出手）。
+* **被荆棘 / 火焰屏障在敌人回合里反伤打死的那一节**，源码要再晚一回合回来；对拍路径分不开，早回来一回合（悲观）。
+* **叶评估不数尸体欠的 25**（乐观）：计入会让求解器不愿收掉低血的节，要自己的 A/B。
+* **合成路径上三节的起手固定 `num = 0`**（扭动 / 壮硕 / 缠绕；2026-09-15 之前是三节全从扭动起、整场同相）。
+  写法是 `ECond::SlotRep`：`initial_move` 按槽位挑，`allowed_initial` 仍然三手全开 ——
+  **没用咬人卷轴的 `SlotIs`**，那会让 `synth_audit` 在 `act2_f28`（`num = 1`）上三节全报集合外。
+  代价是出手顺序和「哪一节先攒力量」跟槽位绑死；换 `num` 量过，见 verification-log 09-15。
+* **最大血量没调成偶数且互不相同**（[源码] `AfterAddedToRoom`，要遭遇级参数）。
+
+---
+
+## 2.15 知识恶魔（2026-09-14，**`[源码]` + 玩家判定，未实测**）
+
+名字取自游戏本地化表：知识恶魔 · 知识的诅咒 / 抽打 / 知识过载 / 思考；
+四个诅咒 `DISINTEGRATION_POWER` 瓦解 · `MIND_ROT_POWER` 心灵腐化 · `SLOTH_POWER` 懒惰 · `WASTE_AWAY_POWER` 虚脱。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| 出招：诅咒 -> 抽打 -> 知识过载 -> 思考 -> **诅咒不到 3 次回诅咒，否则回抽打** | `GenerateMoveStateMachine`（`_curseOfKnowledgeCounter < 3`） | `knowledge_demon_curses_three_times_then_cycles_without_the_curse` |
+| 思考：11 伤害 + **回 30 血**（× 玩家数）+ 力量 2 | `PonderMove` | `knowledge_demon_ponder_heals_30_and_gains_strength` |
+| 思考的意图是 攻击 + 回血 + 强化 | `new MoveState(..., SingleAttackIntent, HealIntent, BuffIntent)` | `knowledge_demon_ponder_signature_is_attack_heal_buff` |
+| 知识的诅咒**不打人**，二选一**不能跳过**；三组 瓦解 6 / 心灵腐化 1 · 瓦解 7 / 懒惰 3 · 瓦解 8 / 虚脱 1，都不吃进阶 | `CurseOfKnowledge` · `_curseOfKnowledgeSets` · `_disintegrationDamageValues` · `FromChooseACardScreen(canSkip = false)` | `curse_policy_bits_pick_the_side_of_each_curse` |
+| 瓦解：**我的回合末最后一步**（弃完手牌之后、敌人出手之前）受 `Amount` 点 `Unpowered` 伤害，**走格挡**；`Counter`，会叠 | `DisintegrationPower.AfterSideTurnEndLate`；`Hook.AfterTurnEnd` 在 `FlushPlayerHand` 之后，先 `AfterSideTurnEnd` 后 `…Late` | `disintegration_eats_my_leftover_block_before_the_enemy_attacks` |
+| 心灵腐化：回合开始那一手少抽 `Amount` 张（`max(0, …)`） | `MindRotPower.ModifyHandDraw` | `mind_rot_draws_one_fewer_card_at_turn_start` |
+| 懒惰：本回合打出满 `Amount` 张之后不能再打（自动打出也拦） | `SlothPower.ShouldPlay` / `BeforeCardPlayed` | `sloth_stops_the_fourth_card_in_a_turn` |
+| 虚脱：最大能量 −`Amount` | `WasteAwayPower.ModifyMaxEnergy`（和薪火之源同一个口子） | 同第一条 |
+| 诅咒出过几次**从我身上的 status 反推**（前缀长度唯一） | —（内核自己的做法，源码是私有计数器） | `curses_taken_reads_the_prefix_back_from_my_statuses` |
+
+**玩家判定**（2026-09-14）：「崩解那一下，回合末剩的格挡真的挡得住，并且是先结算」——
+内核读成「**在敌人出手之前**、这回合的格挡还在的时候结算」，和源码时点一致。
+「实战第一个都可以，第二一般选瓦解，第三个看情况」—— 进了 `content::DEFAULT_CURSE_POLICY = 0b010`
+（只有第 2 位是判定，第 1、3 位是 `[判断]`）。
+
+**选法是策略参数，不是 `Pending`**（`State::curse_policy`）：选牌屏开在敌人回合中间，而 `step(EndTurn)` 是原子的；
+这个选择的价值全在后面几个回合，单回合求解器定不了价。`advise` 的单场问法把 8 种选法配对比一遍。
+
+有意的近似和缺口：
+
+* **人工制品挡掉一次诅咒**之后内核反推不出那一次，下一次会重复同一组（源码计数器照样加一）。
+* **懒惰只拦 `legal_actions` 和 `step` 的出牌**；破灭 / 倾泻 / 惊逃那类自动打出没拦（源码拦）—— 组合罕见，方向是高估自己。
+* **推演不看局面换选法**：8 种里每一种都是从开局定死的。
+* 旧的 `瓦解` **卡牌**（`content::CARDS`，状态牌 + `HAND_END` 6 点）是之前照卡面猜的：[源码] 那张牌只在选牌屏上出现，
+  `OnChosen` 挂 power，**从来不进手牌**。它不影响任何路径，没删。
+
+---
+
+## 2.16 蜂群术士（2026-09-14，`[源码]` **+ 实录一场**）
+
+名字取自游戏本地化表：蜂群术士 · 蜜——蜂——！/ 矛击！/ 喷射信息素；`PERSONAL_HIVE_POWER` 人体蜂房。
+
+| 规则 | 源码出处 | 证据 | 守卫 |
+|---|---|---|---|
+| 人体蜂房：**每一段攻击**命中塞 `Amount` 张晕眩进**抽牌堆随机位置**；**挡住也塞**；药水 / 遗物 / 荆棘 / 能力牌不塞 | `PersonalHivePower.AfterDamageReceived`（`IsPoweredAttack`，没有 `UnblockedDamage` 门） | `act2_f27_elite_entomancer`：五张攻击各 +1、两瓶药水 +0 | `personal_hive_dazes_every_attack_hit_but_not_potions` · `personal_hive_dazed_counts_match_the_entomancer_trace` |
+| 出招：蜜——蜂——！-> 矛击！-> 喷射信息素 -> …，起点蜜——蜂——！ | `GenerateMoveStateMachine`（`initialState = moveState2`） | `--predict-enemy` 2/2 | — |
+| 喷射信息素：蜂房 < 3 时蜂房 +1、力量 +1；否则只加力量 2（两个数不吃进阶） | `SpitMove` | **无实录**（那一场没活到喷射） | `entomancer_spit_branches_on_hive_stacks` |
+
+内核的做法和它的前提：
+
+* **喷射拆成两手**（下标 2 / 3），分支是矛击！之后的条件边（`ECond::SelfStatusBelow` / `SelfStatusAtLeast`）。
+  等价的前提是「内核判的那一刻（矛击！出完）到游戏判的那一刻（喷射执行）之间，没有别的东西改蜂房」—— 今天成立。
+* **两手的意图签名逐字相同**，实况对齐靠 `step::move_reachable_now` 排掉当前层数走不到的那一支
+  （`move_reachable_now_rules_out_the_spit_branch_the_hive_forbids`）。
+
+**`verify` 看不见晕眩**：一步对拍不比抽牌堆。上表那条实录对拍是单独的测试，不在九条验收里。
+
+有意的近似和缺口：
+
+* **打死它的那一下不塞**（规则挂在 `EnemyDamaged`，死了不发）。源码塞，但仗已经打完了。
+* **牌位上限 `MAX_CARDS` = 128**：满了就不再塞（`spawn_card` 返回 `None`）。三层蜂房配多段牌的长仗碰得到，方向是乐观。
+* **叶评估不给晕眩定价**（代价在后面几个回合）：求解器仍然会高估多段牌 —— 只是推演里现在真的会被晕眩卡手。
+
+### 2.16.1 敌人的覆甲在**早一档**给格挡
+
+[源码] `PlatingPower.BeforeSideTurnEndEarly` 给格挡，早于 `AfterSideTurnEnd` 那一档（熟睡减层 / 醒来移除覆甲，见 §2.17）。
+内核拆出 `Hook::EnemyTurnEndEarly`，敌人覆甲给格挡那条挂上去 —— 和 `TurnEndVeryEarly` / `TurnEnd` 同一个理由：顺序写进钩子，不靠 `POWERS` 的表内先后。
+对既有内容惰性：拆完之后 Glory / Underdocks（青蛙骑士 / 下水道蚌所在）的整幕链逐行不变。
+
+---
+
+## 2.17 异螨 / 熟睡甲虫（2026-09-14，**全部 `[源码]`，未实测**）
+
+名字取自游戏本地化表：`MYTE` 异螨 · 浓毒 / 啃咬 / 吸吮；`SLUMBERING_BEETLE` 熟睡甲虫 · 打鼾 / 出击 / 醒来；`SLUMBER_POWER` 熟睡。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| 异螨定环 浓毒 -> 啃咬 13 -> 吸吮 4 + 力量 2；**起手按站位**：first 浓毒、second 吸吮 | `Myte.GenerateMoveStateMachine`（初始态是读 `SlotName` 的条件分支） | `mytes_open_by_slot_and_toxic_goes_into_the_hand` |
+| 浓毒往**手牌**塞 2 张毒素（写死，不吃进阶；手满溢出进弃牌堆） | `ToxicMove`：`AddToCombatAndPreview<Toxic>(.., PileType.Hand, 2)` | 同上 |
+| 熟睡甲虫开局覆甲 15 + 熟睡 3；醒了之后**永远出击** 16 + 力量 2 | `AfterAddedToRoom` · `RolloutMove`（`FollowUpState` 指向自己） | `slumbering_beetle_left_alone_sleeps_three_enemy_turns_then_rolls_out` |
+| 熟睡**自己回合末** −1；归零当场醒：移除覆甲（那个回合末的格挡已经给过），下一个敌人回合出击 | `SlumberPower.AfterSideTurnEnd` -> `WakeUpMove` | 同上 |
+| 熟睡**被打穿** −1（`UnblockedDamage != 0`，**不分是不是攻击**；被格挡吃掉的不算）；归零是**击晕换招**：下一个敌人回合「醒来」（移除覆甲、不打人），之后出击 | `SlumberPower.AfterDamageReceived` -> `CreatureCmd.Stun(WakeUpMove, "ROLL_OUT_MOVE")` | `slumbering_beetle_woken_by_damage_is_stunned_one_turn_then_rolls_out` |
+
+**打法推论**（和用户给的一致）：这一场先清两只盛碗虫、别碰甲虫 —— 打穿它一下就少睡一个回合。
+
+### 2.17.1 游戏在**我方回合开始**才掷下一手，内核在出完招那一刻就推进
+
+[源码] `CombatManager.StartTurn`（玩家那一边）里 `enemy.PrepareForNextTurn` -> `MonsterModel.RollMove` ->
+`MonsterMoveStateMachine.FindNextMoveState`；而内核的 `step::advance_move` 在 `enemy_turn` 里每只敌人出完招立刻推进。
+**两者之间隔着敌人回合末的钩子**和我方回合开始的 `BeforeSideTurnStart`。
+
+今天全表只有熟睡甲虫的条件读的是那几个钩子会改的量（熟睡在 `AfterSideTurnEnd` −1）：
+[源码] 条件是 `HasPower<SlumberPower>`，内核写成 **`熟睡 ≥ 2`**（`M_SLUMBERING_BEETLE`）。
+「掷的那一刻还有熟睡」⇔「推进那一刻熟睡 ≥ 2」；`--predict-enemy` 拿我方回合开头的观测判下一手，那一刻也还没减 ——
+同一个阈值两条路都对。写成 ≥ 1，回合末醒来之后会**多睡一回合**。
+
+**以后再加「条件读 status」的敌人，先查那个 status 会不会在敌人回合末 / 我方回合开始被改。**
+
+### 2.17.2 完整路径上「本回合被强制改招」原来不清
+
+`St::MoveForcedThisTurn` 的文档一直写着「敌人整边行动完之后清」，但只有注入路径清它。完整路径（`step(EndTurn)`）上，
+我方回合里被强制换过招的敌人（耕地 / 尖叫 / 钻地 / 被打醒的熟睡甲虫）从此带着它 ⇒ 之后每个回合求解器叶子上的注入威胁
+都把那只敌人这一手跳过（乐观）。2026-09-14 在 `enemy_turn` 末尾补上
+（`a_forced_move_flag_does_not_outlive_the_enemy_turn_on_the_full_path`）。
+千足虫接续那条规则里紧跟着清一次的写法（§2.14）**仍然需要**：它挂在敌人回合开始，注入路径在同一个敌人回合里就会读到。
+
+有意的近似和缺口：
+
+* **站位用槽位号近似**（`ECond::SlotIs`，和外骨骼虫同一个）：`MytesNormal` 两格按出场顺序就是 0 / 1。
+* **熟睡甲虫的 A8 覆甲 18 没进 `asc`**：生成器认不出开局 status 里的数（青蛙骑士同一个欠账），高进阶低估一截墙。
+* 「醒来」的意图字符串 `Stun` 没实测过（盛碗虫（石）的晕眩同一条）。
+* 注入路径不执行「醒来」的 op（它只结算伤害），单回合叶子上覆甲还挂着 —— 叶子不看敌人的覆甲层数，没有影响。
+
+---
+
+## 2.18 盛碗虫两场的构成是**分布**（2026-09-14，`[源码]`）
+
+roadmap 上这一条挂着「要用户拍板：这算不算挑一组自洽的解」，用户 09-14 的批 4 方案里点了它（理由：源码里的分布完全确定）。
+
+| 遭遇 | [源码] | 进表的样子 |
+|---|---|---|
+| `BowlbugsNormal` | 石站 first；工蜂从 `_workerValidCounts`（卵 / 丝 / 蜜各上限 1）`Rng.NextItem` 抽两次，抽过的不再进候选 | 三支等权：石+卵+丝 · 石+卵+蜜 · 石+丝+蜜 |
+| `BowlbugsWeak` | 石站 odd；另一只 `Rng.NextItem(Bugs)`，`Bugs = { 卵, 蜜 }` | 两支等权：石+卵 · 石+蜜 |
+
+**这不是挑代表值**：全部分支和权重都列出来，整幕链每个样本按权重抽一支（`Table::resolve_sampled`，
+`pick` 由 `(种子基, 样本, 房间)` 派生、和血量掷点不共用一个数）。严格的 `Table::resolve` 照旧拒绝这两场 ——
+单场问法（`advise` 的 `question: fight`）要调用方直接给场上敌人的名字。
+
+数据落在 `data/encounters_overrides.json` 的 `distributions`（手写），`dump_encounters.py` 并进 `encounters.json` 的 `variants`，
+过两道自检：每只怪都是真实的怪物类；解析器看得见的候选全都出现在某一支里。
+
+三处口径跟着改（守卫 `bowlbug_encounters_are_a_distribution_sampled_by_weight`）：
+
+* **覆盖率**要**每一支**都开得出才算这一场开得出（`Table::can_open`，Python 那边同口径）
+* **认遭遇**：观测到的构成落在某一支上 ⇒ 算「唯一命中」；**不退回宽口径** —— 不在任何一支里说明那张分布表错了，报「表里没有」更响
+* **站位**不进分布：这几只盛碗虫都没有看站位的招式
+
+### 2.18.1 第 1 幕六场跟进（2026-09-15，第 1 幕批 0，`[源码]`）
+
+用户 09-15 点的（「照盛碗虫的先例进表」）。两类，**别混**：
+
+| 遭遇 | [源码] | 进表的样子 |
+|---|---|---|
+| `CorpseSlugsNormal` / `CorpseSlugsWeak` | 3 / 2 只噬尸蛞蝓恒定；`EnsureCorpseSlugsStartWithDifferentMoves` 只错开 `StarterMoveIdx` | **`encounters` override**（多重集确定，严格的 `resolve` 就认） |
+| `TwoTailedRatsNormal` | 3 只双尾鼠恒定（third / fourth / fifth）；随机的只有 `StarterMoveIndex` 错开 | 同上 |
+| `FlyconidNormal` | 飞蝇菌子 + `NextItem(_mediumSlimes)` | 分布：两支等权（+ 树叶（中）/ + 树枝（中）） |
+| `SlimesWeak` | 小史莱姆 `ToList` 抽一只、`Remove`、再抽 ⇒ **一树叶一树枝恒定**；中史莱姆二选一 | 分布：两支等权 |
+| `SlitheringStranglerNormal` | 先三选一 `SecondaryEnemyType`；中史莱姆那支二选一；小史莱姆那支对静态数组**放回**抽两次 | 分布，12 份：贾克斯果 4 · 树叶（中）2 · 树枝（中）2 · 两树叶（小）1 · 一树叶一树枝（小）2 · 两树枝（小）1 |
+
+**两处小史莱姆的抽法正好是一对反例**：`SlimesWeak` 抽完从列表里删掉（不放回，恒定一对），
+`SlitheringStranglerNormal` 直接对静态数组 `NextItem` 两次（放回，抽得出两只同名）。照一个写另一个就错。
+起手相位仍然是出招机器的事（蛞蝓 / 双尾鼠按集合建），不进遭遇表。
+
+`RubyRaidersNormal`（5 选 3、各上限 1 ⇒ 10 支等权）2026-09-19 刺客 / 暴徒进表时一起填了，见 §2.25。
+
+守卫 `act1_random_encounters_resolve_or_sample_by_source_weights`。
+
+---
+
+## 2.19 瀑布巨兽：打死它不算赢（2026-09-15，第 1 幕批 1，`[源码]` **+ 实录一场**）
+
+招式名取自游戏本地化表：`WATERFALL_GIANT.moves.ABOUT_TO_BLOW` 即将爆发 · `EXPLODE` 爆炸。
+证据是 `act1_f17_waterfall_giant`（A2，70 帧，三段全在里面）。
+
+| 规则 | 源码出处 | 实录 | 守卫 |
+|---|---|---|---|
+| 虹吸回血 10（A8 15），封顶最大生命 | `SiphonMove`：`Heal(SiphonHeal × 玩家数)` | 第 4 -> 5 回合 174 -> 184 | `waterfall_giant_siphon_heals_and_its_pressure_gun_grows_by_five` |
+| 高压枪从 20（A9 23）起，**每打一次 +5**，+5 在攻击之后 | `AfterAddedToRoom` 设初值 · `PressureGunMove` 末尾 `+= PressureGunIncrease` | 第 5 回合 20 · 第 10 回合 25 | 同上 |
+| **被击杀 ⇒ 锁成 999999999 血**：别的 power 随死亡摘掉、蒸汽喷发留着，下一手强制「即将爆发」 | `SteamEruptionPower.AfterDeath` -> `TriggerAboutToBlowState`（`SetMaxAndCurrentHp` + `SetMoveImmediate(.., forceTransition: true)`）· `ShouldPowerBeRemovedAfterOwnerDeath => false` | 死后那一帧 999999999 / 999999999、蒸汽喷发 42 | `waterfall_giant_killed_is_about_to_blow_then_explodes_for_its_steam` |
+| 「即将爆发」不打人：蒸汽喷发层数记成爆炸伤害，移除蒸汽喷发 | `AboutToBlowMove` | 第 11 回合意图 `Stun`；第 12 回合蒸汽喷发没了 | 同上 |
+| 「爆炸」是**攻击**（它身上的虚弱、我的格挡照算），打完 `Kill` 自己 ⇒ 战斗结束 | `ExplodeMove`：`DamageCmd.Attack(SteamEruptionDamage).FromMonster(this)` + `CreatureCmd.Kill` | 第 12 回合 `DeathBlow:42`（= 15 + 9 × 3），之后战斗结束 | 同上 |
+| **自己出招途中**被反伤打死：这一手剩下的 op 照样落地，但指针**不推进**（先「即将爆发」再爆炸） | `AboutToBlowState.MustPerformOnceBeforeTransitioning = true` | — | `waterfall_giant_dying_to_thorns_mid_attack_still_winds_up_before_exploding` |
+
+内核侧的四个做法：
+
+* **锁血阶段的判据就是最大生命 = 999999999**（`content::ABOUT_TO_BLOW_HP` / `about_to_blow`），不另开标记 ——
+  它是观测量，从战斗中途同步进来不会错相，和实验体拿最大生命判形态同一个做法。
+  锁血期间 `content::hp_left_this_form` / `remaining_hp_including_revives` 数 **0**：它会自己炸死，
+  当成血量的话叶评估会以为砍死它亏了十亿血（求解器不肯收人头），`rollout` 的 `enemy_hp_left` 也走这个函数
+  （不然 L3「两边都死的仗谁把敌人打得更残」会被这一个数淹掉）。
+  `solver::enemy_wall`（只给斩杀延伸用）**故意照读原始血量**：锁血的它打不死，按 0 读会误触斩杀。
+* **和适生力不一样，血当场就回来**：从死的那一刻起它就是活的（打得到、上得了 debuff），
+  「还在场上」那三处口径一处没碰。
+* **「出招途中被改了招就不推进」是通用规则**，两条敌人回合路径都有（`step::enemy_turn` / `injected_enemy_turn`
+  比出招前后的指针）。[源码] 依据是内核建了的**每一个**强制改招目标都带 `MustPerformOnceBeforeTransitioning`：
+  `CreatureCmd.Stun` 造的 `STUNNED` 状态写死带它（`Creature.StunInternal`；尖叫 / 耕地 / 钻地 / 熟睡 / 失衡 / 贪食都走这条），
+  直接 `SetMoveImmediate` 的几个各自也带（幻象复活 · 千足虫 `DeadState` · 实验体 `RESPAWN_MOVE` · 瀑布巨兽 `ABOUT_TO_BLOW_MOVE`）；
+  带它的状态没打过就不会被 `RollMove` 转走（`MoveState.CanTransitionAway`）。内核在出完招的那一刻就推进，所以要自己拦。
+  **例外只有一个，内核还没建**：女王的 `SetMoveImmediate(EnragedState)` 不带这个标记 —— 建女王时别套这条。
+  注入路径上 `MoveForcedThisTurn` 留着：下一个注入回合读到它、跳过那个过期的伤害再推进 —— 正好是这类招都不打人。
+  **它顺带修了实验体**：在它自己出招时被火焰屏障 / 荆棘打死，以前指针从「复苏」推进过去，复活那个回合就直接出手；
+  现在先复苏。地道虫出招时被反伤打破钻地格挡同理（没有实录也没有单测）。读数和归因见 verification-log 09-15 批 1。
+* **两个私有计数器**（`St::PressureGunGrowth` / `St::EruptionDamage`，游戏不报、不进 `ALL_ST`）
+  由 `replay::infer_private_attack_counter` 从**这一手**的意图标签反推（正着算一遍签名、逐个值试，和痛殴加值同一招），
+  在 `identify_enemies` 对齐指针时做 —— 不做的话高压枪 25 逐字对不上，按类型退回会对到同样是 `Attack + Buff` 的撞击上。
+  守卫 `waterfall_giant_private_counters_are_recovered_from_the_intent_label`。
+
+有意的缺口：
+
+* **注入路径不执行非攻击 op**（设计如此），所以 L2 叶子上「即将爆发」没有把层数搬进爆炸伤害；跨回合那几层走完整路径，不受影响。
+* **`verify --predict-enemy` 在它死后那两帧照旧对不上**：那条诊断路径不重放我方出牌、看不见「死了」（和耕地闸门同一个局限）；
+  它也不带着私有量往后走，所以第二次高压枪那一帧的 +5 在那条路径上推不出来。
+
+---
+
+## 2.20 乐加维林族母的沉睡（2026-09-17，第 1 幕批 2，**全部 `[源码]`，未实测**）
+
+名字取自游戏本地化表（`LAGAVULIN_MATRIARCH.*` / `ASLEEP_POWER.title`）：
+沉睡 · 斩击 · 开膛破肚 · 灵魂汲取 · 醒来。图鉴里没有 `SLASH2` 的译名，
+内核照无厌沙虫「鞭挞2」的老办法叫**斩击2**。
+
+血量 222（A8 233，`Min == Max`）。开局 **覆甲 12 + 沉睡 3**，两个数都不吃进阶。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| 睡着时什么都不做；沉睡还在就接着睡（`SLEEP_BRANCH`） | `GenerateMoveStateMachine`：`ConditionalBranchState(HasPower<AsleepPower>)` | `lagavulin_left_alone_sleeps_three_turns_and_loses_the_last_wall` |
+| **被打穿一下整条沉睡就没了**：覆甲当场移除 + 击晕换招，之后接斩击 | `AsleepPower.AfterDamageReceived`（`UnblockedDamage != 0` ⇒ `Remove<PlatingPower>` + `Stun(WakeUpMove, "SLASH_MOVE")` + `Remove(this)`） | `lagavulin_woken_by_damage_loses_plating_at_once_and_is_stunned` |
+| **最后一个睡眠回合拿不到覆甲那堵墙**：沉睡 ≤ 1 时在覆甲给格挡**之前**把覆甲摘掉 | `AsleepPower.BeforeSideTurnEndVeryEarly`，而覆甲给格挡是 `BeforeSideTurnEndEarly`（§2.16.1） | 同上第一条（第 3 个敌人回合末格挡 **0**） |
+| 自己回合末 −1，归零自然醒；**醒来那一手不碰覆甲** | `AfterSideTurnEnd` -> `Decrement` -> `WakeUpMove`，而 `WakeUpMove` 只播动画 | 同上 |
+| 醒后四手定环：斩击 19（A9 21）-> 开膛破肚 9×2（A9 10×2）-> 斩击2 12（A9 14）+ 格挡 12（A8 14）-> 灵魂汲取 | 五个 `MoveState` 的 `FollowUpState` | `lagavulin_awake_cycle_is_four_moves_and_soul_siphon_swings_two_strength` |
+| 灵魂汲取：我 −2 力量 −2 敏捷、它 +2 力量（都不吃进阶），不打人 | `SoulSiphonMove` | 同上 |
+
+**和熟睡甲虫的熟睡（§2.17）逐条不同，别照着改**：那个被打穿是 −1 层、覆甲是**醒来那一手**清的
+（所以醒来那一回合的 13 点格挡照给）；这个被打穿是**整条清零**、覆甲由沉睡自己摘（所以那一回合 **0** 格挡）。
+两条压在同一个钩子上就只剩 `POWERS` 的表内顺序 —— 反向突变量过：把它挪到 `EnemyTurnEndEarly`，
+守卫当场红在「第 3 个敌人回合末的格挡 左 10 / 右 0」。
+
+**`Hook::EnemyTurnEndVeryEarly` 是为这一条加的**（[源码] `Hook.BeforeSideTurnEnd` 里
+VeryEarly -> Early -> Before 三档依次跑），沉睡是它唯一的消费者 —— 和玩家侧的
+`TurnEndVeryEarly`（奥利哈钢）是对称的两档。
+
+**条件边的阈值是 `沉睡 ≥ 2`**，和熟睡甲虫**同一条时点换算**（§2.17.1）：游戏在我方回合开始才掷下一手，
+那时敌人回合末的 −1 已经发生；内核在出完沉睡那一刻就推进指针。写成 ≥ 1 它会多睡一回合（乐观）。
+
+> **打法**：开局那 12 点覆甲每个敌人回合末补满（覆甲自己每回合 −1：12/11/10…），
+> 打不穿就醒不了。**打穿是划算的** —— 省掉那一堵墙，还白赚一个「醒来」不打人的回合；
+> 而让它睡满，第 3 个回合末它本来就拿不到墙，下一手直接 19 点砍过来。
+
+## 2.21 滑溜：封的是掉血，不是伤害（2026-09-17，第 1 幕批 3，**全部 `[源码]`，未实测**）
+
+墨影幻灵（`VANTOM`，密林 Boss，173 血 / A8 183，开局**滑溜 8** / A8 9）和
+墨宝（`INKLET`，`InkletsNormal` 三只，11–17 血 / A8 12–18，开局**滑溜 1**）。
+名字取自本地化表；`SLIPPERY_POWER.title` = 滑溜，卡面原话
+「这个生物下一次要失去生命值时，只会失去 1 点生命。」
+
+**这一条是这一批的全部重点：滑溜 ≠ 无实体。**
+
+| | 滑溜 `SlipperyPower` | 无实体 `IntangiblePower` |
+|---|---|---|
+| `ModifyHpLostAfterOsty` | 有（掉血封顶 1） | 有 |
+| `ModifyDamageCap` | **没有** | 有（伤害本身封顶 1） |
+| 26 点打在 8 点格挡上 | 格挡**清零**，掉 1 血 | 伤害先压成 1，格挡只掉 1 |
+
+而 `CreatureCmd.Damage` 的顺序是 `DamageBlockInternal`（扣格挡）-> `Hook.ModifyHpLost`（封顶）
+-> `LoseHpInternal`，所以内核的消费点在 **`damage::absorb`**，不在 `apply_modifiers`。
+建错地方会让它的格挡永远掉不下去 —— 而那是这一整场仗的节奏。
+守卫 `slippery_caps_hp_loss_not_damage_so_block_still_takes_the_full_hit`；
+反向突变（改成无实体那样在扣格挡之前封顶）当场红。
+
+`DamageResult.UnblockedDamage` 是**封顶之后**的那个数（`LoseHpInternal(unblockedDamage)`），
+`wasFullyBlocked` 判的也是它 —— 所以「打穿了没有」这条门不受封顶顺序影响。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| 每**打穿一次** −1 层（`UnblockedDamage >= 1`，不分是不是攻击），归零即移除 | `SlipperyPower.AfterDamageReceived` | `slippery_is_paid_in_hits_not_in_damage` |
+| 墨影幻灵四手定环：墨迹 7（A9 8）-> 墨水长枪 6×2（A9 7×2）-> 肢解 26（A9 30）+ 3 张伤口进**弃牌堆** -> 准备（自身力量 +2） | `Vantom.GenerateMoveStateMachine` · `DismemberMove` 的 `AddToCombatAndPreview<Wound>(.., PileType.Discard, 3)` | `vantom_cycle_is_four_moves_and_dismember_adds_three_wounds_to_the_discard` |
+| 墨宝：刺击 3（A9 4）-> 随机（锐利凝视 10 / A9 11 \| 旋风 2×3 / A9 3×3）-> 刺击 -> … | `Inklet.GenerateMoveStateMachine` | `the_middle_inklet_opens_with_whirlwind_and_the_others_jab` |
+| **中间那只起手旋风**，另外两只起手刺击 —— 遭遇本身一个随机数都没掷 | `InkletsNormal.GenerateMonsters` 只给中间那只 `MiddleInklet = true` | 同上 |
+
+> **起手用 `ECond::SlotIs` 不是 `SlotRep`。** 两者的差别是「遭遇掷没掷骰子」：
+> 千足虫是 [源码] `Rng.NextInt(3)` 决定三节从哪一手错开（所以是**代表元提示**，§2.14），
+> 而这里三只的起手是写死的 —— 开局允许集合因此是**单元素**，守卫里有一条钉着这件事。
+>
+> 源码里那个 `INIT_RAND` 分支**是死代码**（既没进 `list`、也不是 initialState），照抄它是错的。
+
+**打法：段数是货币。** 8 层滑溜是一堵**要 8 次命中**的墙，一段 26 点和一段 2 点付的价钱一样 ——
+多段牌（旋风斩 / 双重打击 / 墨水长枪那类）在这只 Boss 身上的实际效率比面板高得多。
+三只墨宝各 1 层，等于每只都要多挨一次命中才开始掉血。
+
+**已知偏差，方向是乐观**：`solver::enemy_wall` / `optimistic_damage` / `horizon`
+这几个启发式按**血量**算，看不见「前 8 次打穿只掉 8 点血」。真的推演（`step`）是对的，
+偏的只有叶评估和地平线 —— 求解器会高估自己啃穿这堵墙的速度。
+
+---
+
+## 2.22 硬化外壳：一个回合累计封顶，双方各算一份（2026-09-19，第 1 幕批 4，**全部 `[源码]`，未实测**）
+
+鬼祟珊瑚群（`SKULKING_COLONY`，暗港精英，75 血 / A8 80，`Min == Max`）开局**硬化外壳 20**
+（`AfterAddedToRoom` 写死，不吃进阶）。名字取自本地化表：猛冲 · 惯性 · 穿刺戳击，
+`HARDENED_SHELL_POWER.title` = 硬化外壳。`ZOOM_MOVE_2` 本地化表里没有，照老办法叫**猛冲2**。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| 每次掉血封成 `min(漏过格挡的, Amount − 本回合已掉)`；**在扣完格挡之后**（格挡照常被打满） | `ModifyHpLostBeforeOstyLate` · `CreatureCmd.Damage` 里 `DamageBlockInternal` 在 `ModifyHpLost` 之前 | `hardened_shell_caps_hp_loss_per_turn_after_block_not_per_hit` |
+| 「已掉」加的是 `result.UnblockedDamage`（**封过之后**的实际掉血） | `AfterDamageReceived`（`WasFullyBlocked` 那次不加） | 同上 |
+| **任何一边**的回合开始清零，而且在**最早一档**（早于清格挡、能量回满、`AfterSideTurnStart`） | `BeforeSideTurnStart`（不看 `side`）· `CombatManager.StartTurn` 的顺序 | `hardened_shell_refills_at_each_side_turn_start_before_anything_hits_it` |
+| mod 报的是 `DisplayAmount` = `max(0, Amount − 已掉)`，**余额** | `HardenedShellPower.DisplayAmount` · mod `BuildPowers` 的 `["amount"] = power.DisplayAmount` | `sync_reads_the_hardened_shell_balance_and_puts_the_cap_back_by_name` |
+| 四手定环：猛冲 14（A9 16）-> 猛冲2 14 -> 惯性 9（A9 11）+ 力量 2（A9 4）-> 穿刺戳击 7×2（A9 8×2） | `GenerateMoveStateMachine`（四个 `FollowUpState` 一个环） | `skulking_colony_cycle_is_zoom_zoom_inertia_piercing_stabs` |
+
+**和难以杀灭（`DamageCap`）不是一回事**：那个是每一下封顶（`ModifyDamageCap`，扣格挡之前），
+这个是一个回合累计、扣完格挡之后。和滑溜（§2.21）同一格，排在它前面（`BeforeOstyLate` 早于 `AfterOsty`）。
+
+内核的四个做法：
+
+* **存余额，不存 `Amount`**（`St::HardenedShell`）：观测里那个数就是余额，`sync` 从中途接进来一格不用换算，
+  `verify` 逐字段比的也正是「这一下该吃掉多少」。上限 20 观测里没有，是内核私有的 `St::HardenedShellCap`，
+  两条路径都按名字从 `content::ENEMY_PRIVATE_MARKERS` 挂（那张表为它从「层数恒为 1」放宽成带层数的一栏）。
+* **`damage::absorb` 的门是上限不是余额** —— 余额扣到 0 正是外壳最硬的时候。反向突变量过：门换成余额，三条守卫当场红。
+* **回满挂在新钩子 `Hook::SideTurnStart` 上**（两边的回合开始各点一次火，最早一档）。挂在 `TurnStart` 上的话
+  水银沙漏 / 滚石那几点算进哪个回合的额度就只剩 `POWERS` 的表内顺序；反向突变（挪到 `TurnStart`）当场红在
+  「荆棘 3 + 水银沙漏 3 一点都没打进去：左 55 / 右 49」。
+* **扣完格挡之后才封** —— 反向突变（改成扣格挡之前封）只有「余额 0 也照样把格挡打光」那一句红，
+  前面两下的数两种建法一样。**那一句存在的全部理由就是这个**（和滑溜那条是同一个教训）。
+
+> **打法**：75 血至少 4 个我方回合（20+20+20+15），一个回合的第 21 点起全是白打 —— **打满 20 就转去挡**。
+> 敌人回合里荆棘 / 火焰屏障反弹给它的伤害吃的是**敌人回合那一份**额度，不占我下一回合的 20。
+
+**已知偏差（乐观）**：和滑溜同一条 —— `solver::horizon` / `optimistic_damage` 按血量算，看不见每回合 20 的天花板，
+地平线偏短（能力牌的钱偏低）。真的推演（`step`）是对的；单回合求解器也看得见（打满 20 之后再出攻击牌叶子上不掉血）。
+
+---
+
+## 2.23 暗港杂兵（2026-09-19，第 1 幕批 5，**全部 `[源码]`，未实测**）
+
+四场：`HauntedShipNormal` · `ToadpolesWeak` · `FossilStalkerNormal` · `GremlinMercNormal`（七只怪，名字取自本地化表）。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| 幽灵船：起手纠缠（我虚弱 3 + 5 张晕眩进**弃牌堆**，都不吃进阶），之后扫击 13（A9 14）/ 践踏 4×3（A9 5×3）交替 | `HAUNT -> SWIPE -> STOMP -> SWIPE` · `AddToCombatAndPreview<Dazed>(.., Discard, 5)` | `haunted_ship_haunts_once_then_alternates_swipe_and_stomp` |
+| 蟾蜍蝌蚪：前面那只起手带刺、后面那只起手旋转（遭遇写死 `IsFront`，**一个随机数都没掷** ⇒ `SlotIs`）；环 旋转 7 -> 带刺（荆棘 +2）-> 吐刺（**先**荆棘 −2 再 3×3） | `ToadpolesWeak.GenerateMonsters` · `Toadpole.GenerateMoveStateMachine` | `toadpoles_open_by_slot_and_retract_their_spikes_before_spitting` |
+| 化石追踪者：开局吮吸 3；起手缠上 12（A9 14），之后每一手三选一等权（冲撞 9 + 我脆弱 1 / 缠上 / 甩动 3×2），**同一手最多连出两次** | `AddBranch(state, 2)` = `(state, maxRepeats)` ⇒ `CanRepeatXTimes(2)`；`StateLog` 只记招式（分支态 `ShouldAppearInLogs => false`） | `fossil_stalker_sucks_strength_per_unblocked_hit_after_the_attack` |
+| **吮吸**：它的一次攻击里**打穿了几段**就 +`Amount` × 段数 力量；被格挡吃光的段不算 | `SuckPower.AfterAttack`（`UnblockedDamage > 0` 逐段数） | 同上 |
+| 地精佣兵：三手定环 拿来 7×2 -> 双重猛击 6×2 + 我虚弱 2 -> 嘿嘿 8 + 自身力量 2；**伤害挂的是 `ToughEnemies`（A8）** 不是 `DeadlyEnemies` | `GimmeDamage` 等三个都是 `GetValueIfAscension(ToughEnemies, …)` | `killing_the_gremlin_merc_summons_two_gremlins_and_combat_goes_on` |
+| **意外**：地精佣兵死时召唤卑鄙地精、再召唤胖地精；**打死它不算赢** | `SurprisePower.AfterDeath` · `ShouldStopCombatFromEnding => true` | 同上 |
+| 卑鄙地精：醒来（不打人）-> 一直冲撞 9（A9 10）；胖地精：醒来 -> 一直逃跑 | `SPAWNED_MOVE` 两只都是初始态；`FollowUpState` 指向自己 | 同上 |
+| 这一批几手的意图签名（纠缠 = `Debuff` + `StatusCard:5` · 吐刺的 −2 荆棘**不**冒 `Buff` · 惯性 / 嘿嘿 = 攻击 + `Buff`） | 各 `MoveState` 的意图列表 | `act1_underdocks_batch_intent_signatures_match_the_source_intents` |
+
+**吮吸逐段给和 [源码] 的「打完一次给」等价**，前提是：敌人一手攻击的面板值（`base + 力量 + 活力`）
+在 `EOp::Attack` 开头**只算一次**。反向突变（挪进段循环里、每段重算）当场红在
+「3 + 3：左 71 / 右 74」—— **而且全库 464 条里只有这一条红**：「一手攻击的面板值只算一次」在此之前没有任何测试守着。
+
+有意的近似，方向写清楚：
+
+* **胖地精的逃跑近似成原地不动**（`EOp::Nothing`，和偷窃草蜢同一个处置）。[源码] 是 `CreatureCmd.Escape`（离场）；
+  内核没有「离场」，用 `KillSelf` 又会点燃地精之角那类死亡触发。**悲观**：多花 15 点伤害收掉它才算打完，不费血
+  （卑鄙地精还活着时例外 —— 多拖的每个回合多挨一下 9）。
+* **召唤血量是 `[判断]`**：卑鄙地精 10–14、胖地精 13–17（A8 各 +1），`SummonN` 只收一个数，取中位 12 / 15 ——
+  和寄生物的扭动虫取 19（17–21）同一个做法；A8 以上各低估 1。
+* **偷窃 / 盗窃只动金币**（`PlayerCmd.LoseGold` / 死时 `GoldReward`），战斗层没有金币 ⇒ 进 `MARKER_STATUSES`，只为和观测对齐。
+  盗窃的层数是偷到的金币数、内核给不出，不进 `ALL_ST`，召唤出来的胖地精身上也不挂。
+* **蝌蚪的荆棘不夹 0**：[源码] `ThornsPower` 不许负数、归零移除；内核的 `EOp::SelfStatus` 照加。
+  环里吐刺永远接在带刺后面（2 -> 0），碰不到。
+
+**顺带对出来的一处错名**：`replay::map_status` 原来把中文「偷窃」映射到 `SWIPE_POWER`（偷窃草蜢偷牌）——
+本地化表里 `SWIPE_POWER.title` 是「**顺走**」，「偷窃」是 `THIEVERY_POWER`。观测走的是英文 id，
+这个错名从没被踩到过；现在 `swipe | 顺走` / `thievery | 偷窃` 各归各。
+
+---
+
+## 2.24 死时召唤的宿主：「还要啃多少血」要把召出来的算上（2026-09-19，**L2 叶评估**）
+
+**这一条不是新机制，是一个早就在的 L2 错**：`content::remaining_hp_including_revives`（`eval` 里敌人血那一项、
+`horizon`、并列判据都读它）原来只认实验体的复活，**不认死时召唤**。砍死宿主那一下，这一项从
+「宿主剩的几点」**跳涨**到「召出来的那几只的满血」—— 于是求解器不肯收宿主，宁可站着挨打。
+和 2026-08-30 实验体那一次（「砍掉最后 4 点让这一项从 4 跳到 200」）是同一个陷阱的另一种形状。
+
+现在由 `content::death_summon_hp` 补上：宿主身上每一条 `Hook::EnemyDied` 召唤规则，
+`SummonN` 数 `hp × count`（寄生物 4 × 19 · 意外 12 + 15），`SummonCarryingSelfMinusOne` 数 `hp × 库存层数`
+（巨斧机器人：库存 k ⇒ 后面还有 k 具）。**数字从 `POWERS` 读，不另抄一份**；**死了的不算**（召唤已经发生过了）。
+
+| 证据 | 补之前 | 补之后 |
+|---|---|---|
+| 起手牌组打地精佣兵（`advise` 单场问法，A10，256 次） | 10 个回合 · 战损 p50 **76** | 4 个回合 · 战损 p50 **30** |
+| `fight_eval` 重打实录 `act1_f12_elite_phrog`（**玩家实际 −1 血**） | 死 **57/64**（89%）· 11 个回合 | 死 **0/64** · 5 个回合 · 战损 p50 18 |
+| `fight_eval` 重打 `act1_f15_new_elite`（也是异蛙寄生虫，玩家 13 血） | 死 37/64（58%） | 死 **0/64** |
+| `rollout`（求解器策略）从 `act1_f12_elite_phrog` 第 1 回合推 | 死 59/64 | 死 **0/64**，回合中位 5（实战剩 6） |
+
+| `solve` 验收台 `act3_f45_axebot` 回合 5（巨斧机器人，**库存**那一种召唤） | 求解线「只喝一瓶虚弱药水」，一张牌不打 | 剑柄打击+ -> 欺凌 -> 凌虐+ -> 虚弱药水 -> 头槌+ |
+
+守卫 `killing_a_death_summoning_host_never_raises_the_hp_left_to_chew`（三只宿主各砍一次，走真的 `step`）；
+反向突变（去掉召唤那一项）当场红。巨斧机器人那一项在整幕 / 单场的**死亡数**上量不出来
+（单独去掉它，整幕 3810 -> 3809、单场一条不动 —— 推演里本来就打得过），**但单回合线上看得见**（上表最后一行）。
+
+---
+
+## 2.25 密林杂兵：藤蔓蹒跚者的缠结 · 劫掠者刺客 / 暴徒（2026-09-19，第 1 幕批 6，**全部 `[源码]`，未实测**）
+
+两场：`VineShamblerNormal`（藤蔓蹒跚者单怪）· `RubyRaidersNormal`（五种劫掠者抽三）。名字取自本地化表的**简中**那一份
+（`BRUTE_RUBY_RAIDER.moves.ROAR.title` 在包里有「咆哮」「怒吼」两条，前者是日文那份；简中是**怒吼**）。
+`TANGLED_POWER.title` = 缠结（「缠绕」是 `CONSTRICT`，别混）。
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| 藤蔓蹒跚者 61 血（A8 64），三手定环，**起点是挥击**：挥击 6×2（A9 7×2）-> 紧绕藤蔓 8（A9 9）+ 缠结 1 -> 大啃 16（A9 18） | `GenerateMoveStateMachine` 的 `initialState = moveState2` | `vine_shambler_tangles_my_attacks_for_exactly_one_player_turn` |
+| 缠结：**我方攻击牌 +`Amount` 费**；X 费不吃；技能不吃 | `TangledPower.TryModifyEnergyCostInCombat`（只认带「缠身」affliction 的牌，挂上那一刻全部攻击牌都打标、之后进场的也打标）· `CardEnergyCost.GetWithModifiers` 对 `CostsX` 提前 return | `tangled_adds_to_attack_costs_after_local_modifiers_and_before_the_late_free_attack` |
+| **加在哪一层**：本地改费（免费置 0 / 狂乱逃离 / 踩踏减费，都不夹 0）-> **缠结** -> 无情猛攻（`Late`，置 0）-> 夹 0 一次 | `GetWithModifiers`：`_localModifiers` -> `Hook.ModifyEnergyCostInCombat`（先普通、后 `Late`）-> `Math.Max(0, …)` · `LocalCostModifier.Modify` 不夹 0 | 同上 |
+| 敌人回合里挂上，撑过我的下一个回合，**我的回合结束**摘掉 | `AfterSideTurnEnd`：`participants.Contains(Owner)` —— 敌人回合结束时 participants 是敌人 | `vine_shambler_tangles…` |
+| 是 debuff，人工制品挡得住 | `PowerType.Debuff` | 同上 |
+| 紧绕藤蔓的意图是 `Attack` + **`CardDebuff`**（不是 `Debuff`） | `SingleAttackIntent` + `CardDebuffIntent` | `act1_overgrowth_batch_intent_signatures_match_the_source_intents` |
+| **mod 报的手牌费用已经含缠结**（`GetAmountToSpend`），`sync` 先扣再判「这张实例被本地改过费」 | mod `GetCostDisplay` -> `card.EnergyCost.GetAmountToSpend()` | `sync_does_not_double_count_tangled_in_the_observed_hand_cost` |
+| 劫掠者刺客 18–23 血（A8 19–24），一直致命射击 10（A9 11） | `KillshotMove`，`FollowUpState` 指向自己 | `ruby_raider_brute_roars_every_other_turn_and_the_assassin_always_shoots` |
+| 劫掠者暴徒 30–33 血（A8 31–34），殴打 7（A9 8）/ 怒吼（自身力量 +3，常量）交替，起手殴打 | `BEAT -> ROAR -> BEAT`，`_roarStrength = 3` | 同上 |
+| `RubyRaidersNormal`：五种各上限 1、不放回抽 3 ⇒ **10 支等权** | `_raiderValidCounts` + `for (i < 3) Rng.NextItem(还没抽满的)` | `ruby_raiders_are_ten_equal_branches_of_three_distinct_raiders` |
+
+**三处和「照卡面写」会写错的地方，各自有一个分得开的样本钉着**（反向突变都当场红）：
+
+* **夹 0 之前加**：踩踏打过 4 张攻击，`3 − 4 + 1 = 0`；「夹完再加」给 1
+* **免费的攻击牌在缠结下要 1 费**：[源码] `SetToFreeThisTurn` 是一条**本地**的「置 0」，全局钩子照样加在上面。
+  内核原来对 `F_FREE_THIS_TURN` 直接 return 0 —— 缠结为 0 时两种写法逐字相同（`max(0, 0 − 踩踏减的)` = 0），所以改它不动任何旧读数
+* **`sync` 不扣就双算**：缠结下打击显示 2，照旧规则记成 `cost_delta = +1`，`effective_cost` 再加缠结 ⇒ 3。
+  同一个函数（`step::tangled_cost_addend`）给 `effective_cost` 和 `sync` 两个客户用；`verify` 那条「费用(内容表)」软差异也过它
+
+内核的两个做法：
+
+* **降成玩家 status，不建 affliction**：「全部攻击牌都带标」在内核里等价于「是攻击牌」，和轰鸣（`St::Ringing`）同一个处置。
+  唯一分不开的是**已经带着别的 affliction 的攻击牌**（`AfterCardEnteredCombat` 只给 `Affliction == null` 的打标）——
+  内核今天没有任何 affliction，碰不到；建女王的锁链（Bound）时要回来看这一条
+* **摘掉挂 `Hook::TurnEndLate`**：[源码] 那一句在 `FlushPlayerHand` 之后，`TurnEndLate` 是内核离它最近的一档。
+  两档之间没有任何东西读攻击牌的费用，这个选择改不了一个数
+
+**已知偏差**：L2 叶子的注入路径照设计不跑非攻击 op（§2.19 那条「有意的缺口」），所以单回合求解器看不见
+「这一手紧绕藤蔓会让我下一回合攻击贵 1」—— 那是下一回合的事，单回合本来就看不见。**缠结已经挂上的那一回合**它是看得见的
+（观测里有 `TANGLED_POWER`，`sync` 灌进来，`effective_cost` 照算）。
+
+> **打法**：缠结值的不是血是**回合** —— `advise` 单场问法（A10，256 次）把它摘掉对比：
+> 起手牌组 终点血量 p50 不动、p10 39 -> 30、回合 p50 3 -> 4；13 张带四张额外攻击牌的牌组战损 p50 23 -> **31**、回合 2 -> 3。
+> 紧绕藤蔓之后那一回合攻击贵 1，拖出来的那一回合正好吃大啃 16。**紧绕藤蔓那一回合前先把血量压低**，或者那一回合转去挡。
+
+---
+
 ## 3. 验证器抓到过的真错误
+
 
 **验证器的价值在它抓到的错误，不在那些 MATCH。** 这张表是「哪类 bug 会静默」的索引：
 
@@ -686,11 +1222,21 @@ if (!(amount <= 0m) && creature == base.Owner) { ... }
   **第一次实战打出时对拍才会判它**。「没实现」和「没验过」是两件事，
   **后者的数字大得多**。（比例要重数才能写，别沿用任何旧数字。）
 * **语料碰到了、内核却没建的敌人机制**（在 `KNOWN_UNMODELLED` 里，**对拍不报红**）：
-  `REATTACH_POWER` · `PAINFUL_STABS_POWER` · `PERSONAL_HIVE_POWER` ·
+  `REATTACH_POWER` · `PERSONAL_HIVE_POWER` ·
   `SWIPE_POWER` · `HATCH_POWER`。观测天天碰到，内核天天算错，
   而验收全绿 —— **那张表存在的意义就是把这件事变成可枚举的，而不是变成没有。**
-  （`SANDPIT_POWER` 2026-09-05、`ILLUSION_POWER` 2026-09-06 从这张表里建掉了，
-  见 §2.2 / §2.3。）
+  （`SANDPIT_POWER` 2026-09-05、`ILLUSION_POWER` 2026-09-06、
+  `PAINFUL_STABS_POWER` 2026-09-13 从这张表里建掉了，见 §2.2 / §2.3 / §2.12。）
+* **§2.12 / §2.13 那两批第 3 幕敌人一帧实录都没有**：数值、出招表、新机制全是 `[源码]`，
+  守着它们的只有单测。第一次实战遇到时录下来 —— **骑士团那场尤其要录**，
+  恶咒/抑制的观测 id（`HEX_POWER` / `DAMPEN_POWER`）是照类名推的，也没被观测确认过。
+* **§2.20–§2.23 第 1 幕四批（族母 / 幻灵 + 墨宝 / 珊瑚群 / 暗港杂兵）一帧实录都没有**。
+  观测 id（`HARDENED_SHELL_POWER` / `SUCK_POWER` / `SURPRISE_POWER` / `THIEVERY_POWER` / `HEIST_POWER`）是照类名推的；
+  **硬化外壳那一栏报的是余额**是从 mod 源码（`DisplayAmount`）读出来的，没有一帧观测确认过 ——
+  **鬼祟珊瑚群那场一定要录**：它是整批里唯一一个「观测量的含义」本身就是推断的。
+* **§2.25 第 1 幕批 6（藤蔓蹒跚者 / 劫掠者刺客 / 暴徒）一帧实录都没有**。`TANGLED_POWER` 是照类名推的；
+  「mod 报的手牌费用含缠结」是从 mod 源码（`GetAmountToSpend`）读出来的 —— **藤蔓蹒跚者那场值得录一次**，
+  紧绕藤蔓之后那一帧的手牌费用就是那条 `sync` 扣法的第一个真样本。
 * ~~雾菇的复活~~ **2026-09-06 结掉了**，见 §2.3 —— 它是幻象自己的复活，
   而结掉它靠的是已有的源码和已有的那一场实录，没有新数据。
 * **抽牌堆抽空之后那次洗牌**：游戏的 `Rng.Shuffle` 状态没暴露，不可知。

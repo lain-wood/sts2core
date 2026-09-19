@@ -36,7 +36,12 @@ pub const ENEMY_HIST: usize = 4;
 /// **128 → 144（2026-09-09）**：一天里加了 10 个（三批遗物 7 个 + 贪食 +
 /// 古茶具的武装标记 + 开局升级手牌），119 → 129 顶破了 128。
 /// 代价照规矩实测记在 CLAUDE.md 的「今天的读数」里。
-pub const N_STATUS: usize = 144;
+/// **144 → 148**：打击木偶、红头骨及其阈值记账。State +48 字节，仍低于 4KB。
+/// **148 → 164（2026-09-17）**：第 1 幕批 2/批 3 各要一格（沉睡 / 滑溜），而 148 格
+/// **一格不剩**（`St::ALL` 正好 148 条）。照旧一次给 16 格，免得每建一只敌人都来动这里 ——
+/// roadmap 上第 1 幕剩下的批 4/5/6 还要 7 格，150 + 7 = 157 仍在这一档里。
+/// 代价照规矩实测记在 CLAUDE.md 的「今天的读数」里。
+pub const N_STATUS: usize = 164;
 
 /// Status / power slots. Indexed into `Entity::status`.
 ///
@@ -288,28 +293,23 @@ pub enum St {
     MrStruggles,
     /// 人体蜂房（[源码] `PersonalHivePower`，蜂群术士开局自带 1 层）。
     ///
-    /// **已知但内核没建模。** 语义：被一次 `IsPoweredAttack()` 的伤害命中时，
-    /// 往我的**抽牌堆随机位置**塞 `Amount` 张晕眩。判据是
-    /// `props.HasFlag(Move) && !props.HasFlag(Unpowered)`，所以
+    /// 语义：被一次 `IsPoweredAttack()` 的伤害命中时，往我的**抽牌堆随机位置**塞 `Amount` 张晕眩。
+    /// 判据是 `props.HasFlag(Move) && !props.HasFlag(Unpowered)`，所以
     /// **卡牌攻击的每一段命中各触发一次**，而遗物/药水伤害不触发
     /// （第2幕第27层实测：火焰药水 20 点没塞晕眩，抱抱先生也没有）。
-    /// 层数由它的信息素喷吐从 1 涨到最多 3。
+    /// 层数由它的喷射信息素从 1 涨到最多 3。
     ///
-    /// **原来记的"没建的原因"已经不成立了**（2026-08-25 复核）：那句话说
-    /// 「内核分不出 powered」，而 2026-08-22 那轮已经把这一维穿进了伤害管线
-    /// （`hit_enemy_with` 的 `powered` 参数 + `damage::apply_modifiers_unpowered`）。
-    /// **今天真正还欠的是两样**：把 `powered` 传进 `Hook::EnemyDamaged`
-    /// （`fire_ctx` 现在不带它），以及一个「往抽牌堆随机位置塞 N 张」的 op。
-    /// 映射它只是为了别让整帧降级成 UNKNOWN
-    /// （和 `Minion` / `Illusion` 同一条理由）。
+    /// **2026-09-14 建了**：规则在 `POWERS`（`Hook::EnemyDamaged` + `TCond::LastHitWasAttack` +
+    /// `TOp::AddCardToDraw`）。建之前它在 `KNOWN_UNMODELLED` 里，求解器看不见多段牌的代价。
     ///
-    /// **战术后果记在这里，因为求解器看不见**：对带这个 status 的敌人，
-    /// 多段攻击的真实代价远高于面板伤害（焚烧+ 五段 = 五张晕眩），
-    /// 该用少段大伤害和药水。
+    /// **战术后果**：对带这个 status 的敌人，多段攻击的真实代价远高于面板伤害
+    /// （焚烧+ 五段 × 3 层 = 十五张晕眩），该用少段大伤害和药水。
     PersonalHive,
     /// 污染（[源码] `TaintedPower`，感染棱柱的活力火花挂在我每张技能牌上）。
     ///
-    /// **已知但内核没建模行为。** 语义：我身上每层污染，让我挨的
+    /// **伤害只在预测路径上建了**（`damage::apply_modifiers` 的加法项）。
+    /// 这里原来写着「已知但内核没建模行为」，2026-09-14 核对时已经过期；
+    /// 下面「为什么不能照着建」那段讲的是**注入路径**为什么至今不加。语义：我身上每层污染，让我挨的
     /// **每一次** `IsPoweredAttack()` 伤害 **+1**（`ModifyDamageAdditive`），
     /// 在**敌人回合结束时整个移除**（不是每回合掉一层）。
     ///
@@ -327,9 +327,11 @@ pub enum St {
     /// 要修得让 `Threat` 带上"同步那一刻的污染层数"，那是 L2 的接口改动。
     Tainted,
     /// 活力火花（[源码] `VitalSparkPower`，感染棱柱开局自带 2 层）。
-    /// **已知但内核没建模。** 它给我牌组里**每一张技能牌**挂 `Tainted` 附魔
+    /// 它给我牌组里**每一张技能牌**挂 `Tainted` 附魔
     /// （含中途进场的），层数 = 它自己的层数；脉动那一手还会给自己再 +2。
-    /// 牌级附魔这个系统内核没有（和轰鸣同一处降维），只映射名字和层数。
+    /// 牌级附魔这个系统内核没有（和轰鸣同一处降维），所以**降维建了**：
+    /// 我打出技能牌时直接给我上等量污染（`POWERS` 那条，`Hook::PlayerSkill`）。
+    /// （这里原来写着「已知但内核没建模」，2026-09-14 核对时已经过期。）
     VitalSpark,
     /// 黑暗镣铐（[源码] `DarkShackles`）：**本回合**让一名敌人失去 N 点力量。
     /// 游戏用两个 status 表示（`DARK_SHACKLES_POWER` 记账 + `STRENGTH_POWER` 变负），
@@ -523,14 +525,12 @@ pub enum St {
     CrabRage,
     /// 接续（[源码] `ReattachPower`，残杀千足虫每一节出场自带 25）。
     ///
-    /// **已知但内核没建模行为，方向是乐观的**：一节死掉之后不会被移出战斗，
-    /// 隔一手走 `REATTACH_MOVE`，**只要还有别的节活着就回满 25 血**
-    /// （`DoReattach` 里 `if (!AreAllOtherSegmentsDead())`）。
-    /// 内核里敌人死了就是死了，所以它会**低估这一场**。
-    ///
-    /// 要建得先有"尸体留在场上 + 死亡后仍然走出招表"这套东西 ——
-    /// 和雾菇的复活是同一个洞，一起记在 roadmap 的「故意没做」里。
-    /// 这一栏只做标记，**不进 `replay::ALL_ST`**（内核产生不出这个量）。
+    /// 一节死掉之后不移出战斗，**死后第二个敌人回合回 25 血**（层数就是回血量，不是回满），
+    /// 只要那时还有别的节活着；别的节全死了战斗就结束。
+    /// **2026-09-14 建了**：规则在 `POWERS`（`Hook::EnemyDied` 置倒计时 +
+    /// `St::ReattachDue` 在 `Hook::EnemyTurnStart` 数完回血），证据是
+    /// `act2_f28_decimillipede` 里的两次复活。在那之前内核里死了就是死了，**低估这一场**。
+    /// 层数是观测量（游戏报 `REATTACH_POWER`），进 `replay::ALL_ST`。
     Reattach,
     /// 光耀（[源码] `RadiancePower`，明耀酊剂给的）。
     ///
@@ -671,7 +671,8 @@ pub enum St {
     /// 两处都是这样。不拦的话求解器会以为它照打不误。
     ///
     /// 内核私有量，游戏不报 ⇒ **故意不在** `replay::ALL_ST` 里。
-    /// 用完当帧就清（敌人整边行动完之后）。
+    /// 用完当帧就清：注入路径在读到它的那一刻清，完整路径（`enemy_turn`）在敌人整边行动完之后清
+    /// （后一处 2026-09-14 才补，之前完整路径上它一直挂着）。
     MoveForcedThisTurn,
     // ---- 钢笔尖（`PEN_NIB`）。三个 status 分工不同，**缺一条都会静默算错**：
     //      在场标记 / 跨战斗计数器 / 这一次出牌的翻倍标记。
@@ -745,6 +746,172 @@ pub enum St {
     /// （和臂甲/坚定不移同一类，登记在 `RULE_MODIFIERS`）。
     /// 用完当场清零，`content::spent_once_per_combat` 认得它。
     RuinedHelmet,
+    // ---- 2026-09-13 第 3 幕补敌人（批 2）。四个都是**观测量**（游戏报成 power），
+    //      所以一律进 `replay::ALL_ST`。
+    /// 流电（[源码] `GalvanicPower`，电球头开局 6 层）：我每打出一张**能力牌**，
+    /// 挨层数那么多点伤害（`Unpowered`，走格挡）。规则在 `POWERS`（`Hook::CardPlayed`）。
+    Galvanic,
+    /// 纸伤难愈（[源码] `PaperCutsPower`，咬人卷轴开局 2 层）：它的攻击**每打穿一段**，
+    /// 我失去层数那么多点**最大生命**。规则在 `POWERS`（`Hook::AttackUnblocked`）。
+    ///
+    /// **跨场带着走**：最大生命是局内状态，整幕链要把它传进下一场（`synth::act`）。
+    PaperCuts,
+    /// 抢夺力量（[源码] `PossessStrengthPower`，失落之物开局 1 层，`Single`）。
+    /// 层数只是个标记；**偷了多少**读它自己的力量，见 `Amt::OwnerStacksOf`。
+    /// 自己死时还给我（`Hook::EnemyDied`）。
+    PossessStrength,
+    /// 抢夺速度（[源码] `PossessSpeedPower`，遗忘之物开局 1 层）。和上一条逐字同构，偷的是敏捷。
+    PossessSpeed,
+    // ---- 2026-09-14 第 3 幕骑士团（批 3）。前两个是观测量（进 `ALL_ST`），后两个是内核私有标记。
+    /// 恶咒（[源码] `HexPower`，幽灵骑士给**我**挂的，`Single`，面板层数 2）。
+    ///
+    /// 身上有它时，我所有没有别的 affliction 的牌都带「邪咒」⇒ **虚无**：回合结束时
+    /// 还在手上就消耗。规则修饰，消费点 `step::resolve_hand_end`；
+    /// 施咒者死了解除（`St::HexCaster` 那条规则）。`PowerType.Debuff`，人工制品挡得住。
+    Hex,
+    /// 抑制（[源码] `DampenPower`，魔法骑士给**我**挂的）。挂上那一刻本场所有已升级的牌降级
+    /// （`EOp::DowngradeUpgradedCards`，记在 `F_DAMPENED`），之后它**只是个印记**；
+    /// 施咒者死了升回去（`St::DampenCaster` 那条规则）。`PowerType.Debuff`。
+    Dampen,
+    /// 幽灵骑士身上的「施咒者」标记。**内核私有**（恶咒挂在我身上，`Applier` 游戏不报），
+    /// 故意不进 `ALL_ST`。来源是 `content::ENEMY_PRIVATE_MARKERS`，合成和对拍两条路都按名字挂。
+    HexCaster,
+    /// 魔法骑士身上的「施咒者」标记，同上。
+    DampenCaster,
+    // ---- 2026-09-14 第 2 幕残杀千足虫的接续。内核私有，故意不进 `ALL_ST`。
+    /// 接续的**复活倒计时**（残杀千足虫一节被砍死时置 2）。
+    ///
+    /// [源码] 一节死了先 `SetMoveImmediate(DeadState)`：死后**第一个**敌人回合走
+    /// `DEAD_MOVE`（什么都不做），**第二个**才走 `REATTACH_MOVE` 回血。
+    /// 所以每个敌人回合开始减 1，减到 0 回 `St::Reattach` 层数那么多血，规则在 `POWERS`。
+    ///
+    /// 游戏不报这个量（尸体整只不在观测里），对拍路径由 `Replayer` 按
+    /// 「它消失了几个回合」推回来，见 `Replayer::reattach_owed`。
+    ReattachDue,
+    // ---- 2026-09-14 知识恶魔的四个诅咒，全挂在**我**身上。都是观测量（游戏报成 power），进 `ALL_ST`。
+    //      中文名取自游戏本地化表 `*_POWER.title`。落地走 `EOp::CurseOfKnowledge`。
+    /// 瓦解（[源码] `DisintegrationPower`，`Counter`）：我的回合结束的**最后一步**受 `Amount` 点
+    /// `Unpowered` 伤害，走格挡。规则在 `POWERS`（`Hook::TurnEndLate`）。三次都选它是 6+7+8 = 21。
+    Disintegration,
+    /// 心灵腐化（[源码] `MindRotPower.ModifyHandDraw`）：回合开始那一手少抽 `Amount` 张。
+    /// 规则修饰，消费点 `step::open_hand`。
+    MindRot,
+    /// 懒惰（[源码] `SlothPower.ShouldPlay`）：每回合最多打出 `Amount` 张牌。
+    /// 规则修饰，消费点 `step::cards_locked`（`legal_actions`）+ `step` 的 `PlayCard`。
+    Sloth,
+    /// 虚脱（[源码] `WasteAwayPower.ModifyMaxEnergy`）：最大能量 −`Amount`。
+    /// **印记**：效果在选中的那一刻落在 `State::base_energy` 上（和薪火之源同一个做法），
+    /// 对拍路径观测到的 `max_energy` 本来就减过了。
+    WasteAway,
+    // ---- 2026-09-14 第 2 幕熟睡甲虫。观测量（游戏报 `SLUMBER_POWER`，本地化名「熟睡」），进 `ALL_ST`。
+    /// 熟睡（[源码] `SlumberPower`，`Counter`，熟睡甲虫开局 3 层）。
+    ///
+    /// 两处减层：**它自己的回合末** −1（`AfterSideTurnEnd`）、**被打穿**
+    /// （`UnblockedDamage != 0`，不分是不是攻击）−1。减到 0 就醒：
+    /// 回合末醒的直接移除覆甲；被打醒的是**击晕换招**（下一手「醒来」移除覆甲，再之后一直出击）。
+    /// 规则在 `POWERS`，打鼾之后去哪在 `M_SLUMBERING_BEETLE`。
+    Slumber,
+    /// [源码] StrikeDummy: additive damage for CardTag.Strike attacks.
+    StrikeDummy,
+    /// [源码] RedSkull: strength while current HP <= half max HP.
+    RedSkull,
+    /// Private bookkeeping: the threshold strength has already been applied.
+    RedSkullActive,
+    // ---- 2026-09-15 第 1 幕瀑布巨兽（批 1）。两个都是**内核私有量**：游戏不报、不进 `ALL_ST`，
+    // 同步时从它**这一手**的意图标签反推（`replay::infer_private_attack_counter`）。
+    /// 瀑布巨兽的高压枪**已经涨过多少**（[源码] `CurrentPressureGunDamage += PressureGunIncrease`，
+    /// 每打一次 +5，写在攻击**之后**）。消费点是高压枪那一手 `EOp::AttackPlusSelfStatus` 的 `per`。
+    PressureGunGrowth,
+    /// 瀑布巨兽「即将爆发」记下的**爆炸伤害**（[源码] `AboutToBlowMove`：
+    /// `SteamEruptionDamage = 蒸汽喷发层数`，随后移除蒸汽喷发）。消费点是「爆炸」那一手的 `per`。
+    EruptionDamage,
+    // ---- 2026-09-17 第 1 幕批 2（乐加维林族母）。观测量（游戏报 `ASLEEP_POWER`），进 `ALL_ST`。
+    /// 沉睡（[源码] `AsleepPower`，`Counter`，乐加维林族母开局 3 层）。
+    /// 本地化表原话：「在失去生命时或在 {Amount} 回合后苏醒。」
+    ///
+    /// **和熟睡甲虫的熟睡（[`St::Slumber`]）不是同一个 power**，三处不一样：
+    /// * 减层只有**一处**（自己回合末 −1），被打穿是**直接清零**、不是减 1 ——
+    ///   所以打穿一下它就醒，不是"少睡一回合"
+    /// * 移除覆甲的**不是醒来那一手**（[源码] `WakeUpMove` 只播动画），而是沉睡自己：
+    ///   被打穿那一刻当场移除，或者最后一个睡眠回合在 `BeforeSideTurnEndVeryEarly` 移除
+    /// * 因此**最后一个睡眠回合拿不到覆甲那堵墙** —— 覆甲给格挡在 `BeforeSideTurnEndEarly`，
+    ///   排在它后面。`Hook::EnemyTurnEndVeryEarly` 就是为这一条加的，它是唯一的消费者
+    ///
+    /// 规则在 `POWERS` 三条，出招条件（`沉睡 ≥ 2`）在 `M_LAGAVULIN_MATRIARCH`。
+    Asleep,
+    // ---- 2026-09-17 第 1 幕批 3（墨影幻灵 + 墨宝）。观测量（游戏报 `SLIPPERY_POWER`），进 `ALL_ST`。
+    /// 滑溜（[源码] `SlipperyPower`，`Counter`；墨影幻灵开局 8 层、墨宝 1 层）。
+    /// 本地化表原话：「这个生物下一次要失去生命值时，只会失去 1 点生命。」
+    ///
+    /// **它封的是掉血，不是伤害** —— 这是它和无实体唯一但要命的区别：
+    /// [源码] `SlipperyPower` 只实现了 `ModifyHpLostAfterOsty`（掉血封顶 1），
+    /// 而 `IntangiblePower` **另外还有** `ModifyDamageCap => 1`（伤害本身封顶 1）。
+    /// 而伤害管线里格挡是先扣的（`CreatureCmd`：`DamageBlockInternal` -> `ModifyHpLost` -> `LoseHpInternal`），
+    /// 所以：**它的格挡照常被打满，只有漏过格挡的那一截被压成 1**。
+    /// 建成无实体那样（在 `apply_modifiers` 里封顶）会让它的格挡永远掉不下去。
+    /// 消费点因此在 `damage::absorb`，不在 `apply_modifiers`。
+    ///
+    /// 减层：**每一次打穿减 1**（`UnblockedDamage >= 1`，不分是不是攻击），规则在 `POWERS`。
+    /// 于是**段数就是货币**：8 层滑溜要 8 次打穿才啃得动，一段 26 点和一段 2 点付的价钱一样。
+    ///
+    /// **已知偏差（乐观）**：`solver::enemy_wall` / `optimistic_damage` 那几个启发式按血量算，
+    /// 看不见「前 8 次打穿只掉 8 点血」。真的推演（`step`）是对的，偏的只有叶评估和地平线。
+    Slippery,
+    // ---- 2026-09-19 第 1 幕批 4（鬼祟珊瑚群）。一个观测量（进 `ALL_ST`）+ 一个内核私有的上限。
+    /// 硬化外壳**这个回合还剩多少**（[源码] `HardenedShellPower.DisplayAmount`
+    /// = `Amount − damageReceivedThisTurn`，夹到 ≥ 0）。本地化表原话「每回合最多只能失去 {Amount} 点生命」。
+    ///
+    /// **存的是余额，不是 `Amount`**：mod 报的是 `power.DisplayAmount`，所以观测里这一栏就是余额 ——
+    /// 存成余额，`sync` 从战斗中途接进来一格不用换算，`verify` 逐字段比的也正是「这一下该吃掉多少」。
+    /// 上限（`Amount` = 20）观测里没有，在 [`St::HardenedShellCap`]。
+    ///
+    /// **它封的是一个回合里累计的掉血，不是每一下**（和难以杀灭 `DamageCap` 不是一回事）：
+    /// [源码] `ModifyHpLostBeforeOstyLate` 返回 `min(amount, Amount − 已掉)`，
+    /// 而「已掉」在 `AfterDamageReceived` 里加 `UnblockedDamage`（封过之后的实际掉血）。
+    /// 所以和滑溜一样**在扣完格挡之后**才封：格挡照常被打满。消费点 `damage::absorb`。
+    ///
+    /// 清零（回满到上限）在**双方各自回合开始的最早一档**（[源码] `BeforeSideTurnStart`，
+    /// 不分哪一边）—— 规则挂在 `Hook::SideTurnStart`。所以敌人回合里荆棘 / 火焰屏障
+    /// 反弹给它的伤害吃的是**敌人回合那一份**额度，不占我下一个回合的。
+    HardenedShell,
+    /// 硬化外壳的**上限**（[源码] `Amount`，`AfterAddedToRoom` 写死 20，不吃进阶）。
+    /// **内核私有**，故意不进 `ALL_ST`：游戏只报余额。
+    /// 来源是 `content::ENEMY_PRIVATE_MARKERS`（按名字挂，合成和对拍两条路都走它），
+    /// 两处读它：`damage::absorb` 拿它当「这只身上有没有外壳」的门（余额可以是 0，
+    /// 余额那一格判不了），`Hook::SideTurnStart` 那条规则拿它回满余额。
+    HardenedShellCap,
+    // ---- 2026-09-19 第 1 幕批 5（暗港杂兵）。四个都是观测量（游戏报成 power），中文名取自本地化表 `*_POWER.title`。
+    /// 吮吸（[源码] `SuckPower`，`Counter`，化石追踪者开局 3 层）：它的一次攻击里**每打穿一段**，
+    /// 它 +`Amount` 力量。规则挂 `Hook::AttackUnblocked`。
+    ///
+    /// [源码] 是 `AfterAttack`（整条攻击打完才数「几段打穿」再一次给），内核逐段给 ——
+    /// **两者等价**：敌人攻击的面板值（`base + 力量`）在 `EOp::Attack` 开头只算一次，
+    /// 这一段给的力量本来就进不了同一手的下一段。
+    Suck,
+    /// 意外（[源码] `SurprisePower`，地精佣兵开局 1 层，`Single`）：**它死时召唤卑鄙地精 + 胖地精**，
+    /// 并且挡住「打死它就赢」（`ShouldStopCombatFromEnding`）。规则挂 `Hook::EnemyDied`，
+    /// 和异蛙寄生虫的寄生物同一个形状。
+    Surprise,
+    /// 偷窃（[源码] `ThieveryPower`，地精佣兵开局 20）：它每出一手攻击偷我 `Amount` 金币。
+    /// **战斗层没有金币**，这一栏只是和观测对齐的印记（`content::MARKER_STATUSES`）。
+    /// 注意 `SWIPE_POWER`（偷窃草蜢偷牌）的本地化名是「顺走」，**不是**「偷窃」。
+    Thievery,
+    /// 盗窃（[源码] `HeistPower`，意外召唤出的胖地精身上，层数 = 地精佣兵偷到的金币）：
+    /// 它死时把金币还给我。同样**只是印记**；层数是金币数、内核给不出，所以不进 `ALL_ST`。
+    Heist,
+    // ---- 2026-09-19 第 1 幕批 6（密林杂兵）。观测量（游戏报 `TANGLED_POWER`），中文名取自本地化表。
+    /// 缠结（[源码] `TangledPower`，`Counter`，`PowerType.Debuff`）：藤蔓蹒跚者的紧绕藤蔓打完给我挂 1 层。
+    /// **我方攻击牌的费用 +`Amount`**，到**我的**回合结束消失。
+    ///
+    /// 真实机制是牌级的「缠身」affliction（挂上那一刻给全部攻击牌打标、之后进场的攻击牌也打标，
+    /// 费用钩子只认带标的牌），而「全部攻击牌都带标」在内核里等价于「是攻击牌」—— 所以和 `St::Ringing`
+    /// 同一个处置：降成玩家 status，消费点是 `step::effective_cost` 一行（[源码] `TryModifyEnergyCostInCombat`
+    /// 是**全局**钩子：本地改费之后、`FreeAttackPower` 那个 `Late` 之前、夹 0 之前）。
+    /// X 费牌不吃它（[源码] `GetWithModifiers` 对 `CostsX` 提前 return）。
+    ///
+    /// 消失挂 `Hook::TurnEndLate`（[源码] `AfterSideTurnEnd`，`participants` 含我 ⇒ 只有我的回合结束才摘）。
+    /// **mod 报的手牌费用已经含它**（`GetAmountToSpend`），`sync` 要先扣掉，见 `step::tangled_cost_addend`。
+    Tangled,
 }
 
 impl St {
@@ -797,6 +964,15 @@ impl St {
         St::PenNibCount, St::PenNibArmed, St::ScreamingFlagon, St::CloakClasp,
         St::HornCleat, St::Ravenous, St::UpgradeOpeningHand, St::JeweledMask, St::StoneCracker,
         St::BloodVial, St::Pantograph, St::TeaSet, St::RuinedHelmet,
+        St::Galvanic, St::PaperCuts, St::PossessStrength, St::PossessSpeed,
+        St::Hex, St::Dampen, St::HexCaster, St::DampenCaster,
+        St::ReattachDue, St::Disintegration, St::MindRot, St::Sloth,
+        St::WasteAway, St::Slumber, St::StrikeDummy, St::RedSkull, St::RedSkullActive,
+        St::PressureGunGrowth, St::EruptionDamage,
+        St::Asleep, St::Slippery,
+        St::HardenedShell, St::HardenedShellCap,
+        St::Suck, St::Surprise, St::Thievery, St::Heist,
+        St::Tangled,
     ];
 
     /// 这个下标叫什么（`St` 自带的 `Debug` 名）。超出 [`St::ALL`] 就是 `None`，
@@ -869,6 +1045,15 @@ pub const F_CORRUPT: u8 = 1 << 3;
 /// 内核没有牌生成模型，所以这个 flag **不由内核自己设**，而是
 /// `replay::sync` 按观测到的费用设（游戏是唯一权威，它说这张 0 费就是 0 费）。
 pub const F_FREE_THIS_TURN: u8 = 1 << 4;
+/// **这一张被抑制降过级**（[源码] `DampenPower` 记下的 `downgradedCardsToOldUpgradeLevels`）。
+///
+/// 魔法骑士挂抑制时，已升级的牌清掉 `F_UPGRADED`、打上这一位；它死了再升回去
+/// （`TOp::RestoreDampenedCards`）。内核的升级只有一级，所以记"降没降过"就够了。
+///
+/// **只有合成路径知道这一位。** 对拍 / 实战路径从观测灌牌名，降过级的牌看起来就是一张
+/// 没升级的牌 —— 于是 `solve --live` 那一回合里砍死魔法骑士，内核看不见升回来的那几张
+/// （方向是低估自己），`verify` 在"魔法骑士死掉那一帧"会报手牌身份不一致。
+pub const F_DAMPENED: u8 = 1 << 5;
 
 impl CardInst {
     pub const EMPTY: CardInst =
@@ -990,6 +1175,7 @@ pub mod potion {
     /// 明耀酊剂（[源码] `RadiantTincture`）：+1 能量，并挂 3 层光耀。
     /// **接在末尾**，理由同上面能力药水那条：这些常数是 `POTIONS` 的下标。
     pub const RADIANT_TINCTURE: u8 = 22;
+    pub const CURE_ALL: u8 = 23;
     pub const UNKNOWN: u8 = 255;
 }
 
@@ -1121,6 +1307,13 @@ pub struct State {
     /// 紧接着的上一次攻击有没有**打死**目标（狂宴读它）。
     /// 和 `last_damage` 同一类：由 `hit_enemy_with` 写，只在紧跟其后的 op 里有意义。
     pub last_kill: bool,
+    /// 上一下打到敌人身上的伤害**是不是攻击**（[源码] `props.IsPoweredAttack()`）。
+    /// 人体蜂房读它：卡牌攻击的每一段都算，药水 / 遗物 / 荆棘 / 能力牌的伤害不算。
+    /// 和 `last_kill` 同一类：由 `hit_enemy_with` 写，只在紧跟其后的触发里有意义。
+    pub last_hit_attack: bool,
+    /// 上一下有没有**打穿格挡**（[源码] `DamageResult.UnblockedDamage > 0`）。
+    /// 熟睡读它（被打穿才减层），**不分是不是攻击**。同上，只在紧跟其后的触发里有意义。
+    pub last_hit_unblocked: bool,
     /// 刚打出的那张牌在 `cards` 里的下标（杂耍要复制它）。
     /// 和 `last_damage` 同一类：只在紧跟其后的触发里有意义。
     pub last_played_card: u8,
@@ -1178,6 +1371,13 @@ pub struct State {
     /// 所以全部既有对拍（都是 A1/A2）逐字节不变。
     /// `sync` 从 trace 的 `run.ascension` 灌它；L3 自己开仗时由调用方给。
     pub ascension: u8,
+    /// **知识恶魔那三次二选一怎么选**：第 k 位 = 第 k 次知识的诅咒选瓦解（1）还是另一边（0）。
+    ///
+    /// 那是**玩家的决策**，不是游戏规则 —— 所以它是一个**策略参数**，不是 `Pending`：
+    /// 游戏的选牌屏开在敌人回合中间，而 `step(EndTurn)` 是原子的。`step` 照它执行
+    /// （`EOp::CurseOfKnowledge`），L3 把 8 种选法配对比，L2 不给它定价（价值全在后面几个回合）。
+    /// 默认 `content::DEFAULT_CURSE_POLICY`；对拍路径用不到它（选完的结果是观测量）。
+    pub curse_policy: u8,
     /// 每只敌人**最近几手的下标**，新的在 `[0]`。给出招机器的
     /// `CannotRepeat` / `CanRepeatXTimes` / `cooldown` 用。
     ///
@@ -1219,6 +1419,8 @@ impl State {
             n_enemies: 0,
             last_damage: 0,
             last_kill: false,
+            last_hit_attack: false,
+            last_hit_unblocked: false,
             last_played_card: 0,
             last_x: 0,
             cards_played: 0,
@@ -1232,6 +1434,7 @@ impl State {
             potions: [0; MAX_POTIONS],
             potion_slots: 3,
             ascension: 0,
+            curse_policy: crate::content::DEFAULT_CURSE_POLICY,
             enemy_hist: [[u8::MAX; ENEMY_HIST]; MAX_ENEMIES],
             enemy_used: [0; MAX_ENEMIES],
             rng: Rng::new(seed),

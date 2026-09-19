@@ -35,6 +35,10 @@ traces/_advise_ctx.json
 traces/_seed_sweep.json
 traces/_t5.json
 traces/raw_*/
+# 原始帧（整理成 act*.json 之前录下来的）和一次验收跑出来的日志目录。
+# 结论已经写进 docs/verification-log.md；原件只留在本地。
+traces/raw/
+traces/reports_*/
 
 # ---------------------------------------------------------------------------
 # data/ 里的东西**全部跟踪**，尽管其中一半是生成的。分两类：

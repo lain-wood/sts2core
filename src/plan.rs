@@ -1554,12 +1554,14 @@ fn next_spike(s: &State) -> i32 {
             let mut d = 0;
             for (oi, op) in def.moves[m].ops.iter().enumerate() {
                 // 进阶收口，见 `asc::adjust`
-                if let EOp::Attack { base, hits } =
-                    crate::asc::adjust(s.enemy_def[e], m, oi, s.ascension, *op)
-                {
-                    let face = base + s.enemies[e].get(St::Strength);
-                    d += crate::damage::apply_modifiers(face, &s.enemies[e], &s.player) * hits;
-                }
+                let (base, hits) = match crate::asc::adjust(s.enemy_def[e], m, oi, s.ascension, *op) {
+                    EOp::Attack { base, hits } => (base, hits),
+                    EOp::AttackPlusSelfStatus { base, hits, per } => (base + s.enemies[e].get(per), hits),
+                    EOp::AttackPlusStackHits { base, hits, per } => (base, hits + s.enemies[e].get(per)),
+                    _ => continue,
+                };
+                let face = base + s.enemies[e].get(St::Strength);
+                d += crate::damage::apply_modifiers(face, &s.enemies[e], &s.player) * hits;
             }
             best = best.max(d);
         }

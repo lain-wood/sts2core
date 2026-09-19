@@ -8,26 +8,86 @@
   },
   "DecimillipedeElite": {
    "monsters": ["DecimillipedeSegmentFront", "DecimillipedeSegmentMiddle", "DecimillipedeSegmentBack"],
-   "why": "[源码] 三节恒定；随机的只有 `StarterMoveIdx = Rng.NextInt(3)`，三节按 num / num+1 / num+2 错开起手。**注意**：内核今天让所有敌人从第 0 手起，这一场的起手相位是随机且错开的 —— 那是 L1 的欠账，不是构成的不确定。"
+   "why": "[源码] 三节恒定；随机的只有 `StarterMoveIdx = Rng.NextInt(3)`，三节按 num / num+1 / num+2 错开起手。起手相位是出招机器的事（`M_DECIMILLIPEDE` 的 `ECond::SlotRep`，2026-09-15），不是构成的不确定。"
   },
   "ScrollsOfBitingNormal": {
    "monsters": ["ScrollOfBiting", "ScrollOfBiting", "ScrollOfBiting", "ScrollOfBiting"],
-   "why": "[源码] 四卷恒定；随机的只有前三卷的 `StarterMoveIdx`（num / num+1 / num+2），**第四卷写死 2**。起手相位同上，是 L1 的欠账。"
+   "why": "[源码] 四卷恒定；随机的只有前三卷的 `StarterMoveIdx`（num / num+1 / num+2），**第四卷写死 2**。起手相位是出招机器的事（`M_SCROLL_OF_BITING` 的 `ECond::SlotIs`，固定 num = 0），不是构成的不确定。"
   },
   "ScrollsOfBitingWeak": {
    "monsters": ["ScrollOfBiting", "ScrollOfBiting", "ScrollOfBiting"],
    "why": "[源码] 三卷恒定；随机的只有 `StarterMoveIdx` 错开。"
+  },
+  "CorpseSlugsNormal": {
+   "monsters": ["CorpseSlug", "CorpseSlug", "CorpseSlug"],
+   "why": "[源码] 三只恒定；随机的只有 `CorpseSlug.EnsureCorpseSlugsStartWithDifferentMoves`：`num = Rng.NextInt(3)`，三只按 num / num+1 / num+2 错开 `StarterMoveIdx`（鞭击 / 吞噬 / 黏液）。起手相位是出招机器的事（`M_CORPSE_SLUG` 按集合建），不是构成的不确定。2026-09-15 填（第 1 幕批 0）。"
+  },
+  "CorpseSlugsWeak": {
+   "monsters": ["CorpseSlug", "CorpseSlug"],
+   "why": "[源码] 两只恒定；随机的只有同一个 `EnsureCorpseSlugsStartWithDifferentMoves`（num / num+1）。2026-09-15 填。"
+  },
+  "TwoTailedRatsNormal": {
+   "monsters": ["TwoTailedRat", "TwoTailedRat", "TwoTailedRat"],
+   "why": "[源码] 三只恒定（站 third / fourth / fifth，前两格留给呼叫增援）；随机的只有 `StarterMoveIndex`：`num = Rng.NextInt(3)`，三只 num / num+1 / num+2（抓挠 / 病咬 / 尖啸）。起手相位是出招机器的事（`M_TWO_TAILED_RAT` 按集合建），不是构成的不确定。2026-09-15 填。"
   }
  },
- "deliberately_not_overridden": {
-  "FlyconidNormal": "Flyconid + **随机一只**中史莱姆（`Rng.NextItem(_mediumSlimes)`）",
-  "SlimesWeak": "两只**互不相同**的小史莱姆（从 2 个的池里抽完就是全取）+ **随机一只**中史莱姆",
-  "RubyRaidersNormal": "从 5 种劫掠者里**抽 3 只**，每种有各自的上限（`_raiderValidCounts`）",
-  "SlitheringStranglerNormal": "先 `Rng.NextItem` 掷一个 `SecondaryEnemyType`（闪光贾克斯果 / 中史莱姆 / 两只小史莱姆），再在分支里各自随机",
-  "BowlbugsNormal": "盛碗虫（石）+ **抽 2 只**工蜂（`_workerValidCounts`）",
-  "BowlbugsWeak": "盛碗虫（石）+ **随机一只** `Bugs`",
-  "CorpseSlugsNormal": "Underdocks（备选幕，没解锁也没打过），先不读",
-  "CorpseSlugsWeak": "同上",
-  "TwoTailedRatsNormal": "同上"
- }
+ "distributions_note": "构成随机、但**分布本身在 [源码] 里完全确定**的那几场（2026-09-14 起）：把 `GenerateMonsters` 的随机过程逐支枚举完，列出**全部**构成和相对权重，由 L3 按权重抽（`synth::encounters::Table::resolve_sampled`）。**这不是挑一个代表值** —— 上面 rule 那条禁令照旧：枚举不完、或者要靠判断才定得下权重的，一律不填。脚本自检两条：每只怪都是真实的怪物类；解析器看得见的候选全部出现在某一支里（候选多出来一只说明这张表过期了）。",
+ "distributions": {
+  "BowlbugsNormal": {
+   "variants": [
+    {"weight": 1, "monsters": ["BowlbugRock", "BowlbugEgg", "BowlbugSilk"]},
+    {"weight": 1, "monsters": ["BowlbugRock", "BowlbugEgg", "BowlbugNectar"]},
+    {"weight": 1, "monsters": ["BowlbugRock", "BowlbugSilk", "BowlbugNectar"]}
+   ],
+   "why": "[源码] 石恒定站 first；工蜂从 `_workerValidCounts`（卵 / 丝 / 蜜 各上限 1）里 `Rng.NextItem` 抽两次，抽过的不再进候选 ⇒ 不放回抽 2。6 种有序结果各 1/6，按多重集并成 3 种各 1/3。站位（middle / last）随抽取顺序变，但这三只都没有看站位的招式，所以只列多重集。"
+  },
+  "BowlbugsWeak": {
+   "variants": [
+    {"weight": 1, "monsters": ["BowlbugRock", "BowlbugEgg"]},
+    {"weight": 1, "monsters": ["BowlbugRock", "BowlbugNectar"]}
+   ],
+   "why": "[源码] 石恒定站 odd；另一只 `Rng.NextItem(Bugs)`，`Bugs = { 卵, 蜜 }` 等权。（`Bugs` 是属性不是字段，解析器的 `choice_fields` 看不见它 —— 所以这一条只能手填。）"
+  },
+  "FlyconidNormal": {
+   "variants": [
+    {"weight": 1, "monsters": ["LeafSlimeM", "Flyconid"]},
+    {"weight": 1, "monsters": ["TwigSlimeM", "Flyconid"]}
+   ],
+   "why": "[源码] 飞蝇菌子恒定；另一只 `Rng.NextItem(_mediumSlimes)`，`_mediumSlimes = { 树叶（中）, 树枝（中）}` 等权。三种怪都没有看站位的招式，只列多重集。2026-09-15 填（第 1 幕批 0）。"
+  },
+  "SlimesWeak": {
+   "variants": [
+    {"weight": 1, "monsters": ["LeafSlimeS", "LeafSlimeM", "TwigSlimeS"]},
+    {"weight": 1, "monsters": ["LeafSlimeS", "TwigSlimeM", "TwigSlimeS"]}
+   ],
+   "why": "[源码] 小史莱姆从 `_smallSlimes.ToList()`（树叶 / 树枝各一）里 `NextItem` 抽一只、`Remove` 掉、再从剩下那一只里抽 ⇒ **两只小的恒定是树叶 + 树枝**，随机的只有谁站前；中史莱姆 `Rng.NextItem(_mediumSlimes)` 等权二选一。四种史莱姆都没有看站位的招式，只列多重集。2026-09-15 填。"
+  },
+  "RubyRaidersNormal": {
+   "variants": [
+    {"weight": 1, "monsters": ["AxeRubyRaider", "AssassinRubyRaider", "BruteRubyRaider"]},
+    {"weight": 1, "monsters": ["AxeRubyRaider", "AssassinRubyRaider", "CrossbowRubyRaider"]},
+    {"weight": 1, "monsters": ["AxeRubyRaider", "AssassinRubyRaider", "TrackerRubyRaider"]},
+    {"weight": 1, "monsters": ["AxeRubyRaider", "BruteRubyRaider", "CrossbowRubyRaider"]},
+    {"weight": 1, "monsters": ["AxeRubyRaider", "BruteRubyRaider", "TrackerRubyRaider"]},
+    {"weight": 1, "monsters": ["AxeRubyRaider", "CrossbowRubyRaider", "TrackerRubyRaider"]},
+    {"weight": 1, "monsters": ["AssassinRubyRaider", "BruteRubyRaider", "CrossbowRubyRaider"]},
+    {"weight": 1, "monsters": ["AssassinRubyRaider", "BruteRubyRaider", "TrackerRubyRaider"]},
+    {"weight": 1, "monsters": ["AssassinRubyRaider", "CrossbowRubyRaider", "TrackerRubyRaider"]},
+    {"weight": 1, "monsters": ["BruteRubyRaider", "CrossbowRubyRaider", "TrackerRubyRaider"]}
+   ],
+   "why": "[源码] `_raiderValidCounts` 五种劫掠者（斧手 / 刺客 / 暴徒 / 弩手 / 追踪手）各上限 1；`for (i < 3)` 每次从「还没抽满上限的」里 `Rng.NextItem` 抽一只 ⇒ **不放回抽 3**。60 种有序结果各 1/60，按多重集并成 C(5,3) = 10 种、各 6/60 = 1/10。`GenerateMonsters` 给每只的站位都是 `null`，五种怪也都没有看站位的招式，所以只列多重集。2026-09-19 填（第 1 幕批 6：刺客 / 暴徒进表之后）。"
+  },
+  "SlitheringStranglerNormal": {
+   "variants": [
+    {"weight": 4, "monsters": ["SnappingJaxfruit", "SlitheringStrangler"]},
+    {"weight": 2, "monsters": ["LeafSlimeM", "SlitheringStrangler"]},
+    {"weight": 2, "monsters": ["TwigSlimeM", "SlitheringStrangler"]},
+    {"weight": 1, "monsters": ["LeafSlimeS", "LeafSlimeS", "SlitheringStrangler"]},
+    {"weight": 2, "monsters": ["LeafSlimeS", "TwigSlimeS", "SlitheringStrangler"]},
+    {"weight": 1, "monsters": ["TwigSlimeS", "TwigSlimeS", "SlitheringStrangler"]}
+   ],
+   "why": "[源码] 蛇行扼杀者恒定（`list5.Add` 在最后）；先 `Rng.NextItem(Enum.GetValues<SecondaryEnemyType>())` 三选一等权（闪光贾克斯果 / 中史莱姆 / 两只小史莱姆）。中史莱姆那支再 `NextItem(_mediumSlimes)` 二选一；小史莱姆那支对 `_smallSlimes` **放回**抽两次（数组没有删元素，和 `SlimesWeak` 的 `ToList` + `Remove` 不一样）⇒ 两只同名各占 1/4、一树叶一树枝占 1/2。按 12 份：贾克斯果 4 · 树叶（中）2 · 树枝（中）2 · 两只树叶（小）1 · 树叶 + 树枝（小）2 · 两只树枝（小）1。都没有看站位的招式，只列多重集。2026-09-15 填。"
+  }
+ },
+ "deliberately_not_overridden": {}
 }

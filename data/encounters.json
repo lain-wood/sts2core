@@ -19,7 +19,7 @@
  },
  "ascension_note": "序号即进阶数，`HasLevel => _level >= (int)level`。A8 ToughEnemies 抬敌人耐久 · A9 DeadlyEnemies 抬敌人输出 · A10 DoubleBoss **只给最后一幕**加第二个 Boss（[源码] RunManager：`i == State.Acts.Count - 1`）。逐条数值见 data/ascension.json。",
  "room_generation": "[源码] ActModel.GenerateRooms：前 weak_encounters 场从 AllWeakEncounters 抽，其余抽到 base_rooms 场；精英预抽 15 场；Boss 在 AllBossEncounters 里均匀取一个。抽取用 GrabBag（抽完才补袋）且 AddWithoutRepeatingTags 禁止相邻同 tag。",
- "overrides": "data/encounters_overrides.json（手写，解析器放弃的那几场；这次并入 4 条）",
+ "overrides": "data/encounters_overrides.json（手写，解析器放弃的那几场；这次并入 13 条）",
  "acts": {
   "Glory": {
    "index": 2,
@@ -219,8 +219,8 @@
    ],
    "monsters": null,
    "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "source": "override-distribution",
+   "note": "[源码] 石恒定站 first；工蜂从 `_workerValidCounts`（卵 / 丝 / 蜜 各上限 1）里 `Rng.NextItem` 抽两次，抽过的不再进候选 ⇒ 不放回抽 2。6 种有序结果各 1/6，按多重集并成 3 种各 1/3。站位（middle / last）随抽取顺序变，但这三只都没有看站位的招式，所以只列多重集。",
    "all_possible": [
     "BowlbugRock"
    ],
@@ -231,7 +231,34 @@
      "BowlbugSilk",
      "BowlbugNectar"
     ]
-   }
+   },
+   "note_decompiled": "构成含随机（`Rng`）",
+   "variants": [
+    {
+     "weight": 1,
+     "monsters": [
+      "BowlbugRock",
+      "BowlbugEgg",
+      "BowlbugSilk"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "BowlbugRock",
+      "BowlbugEgg",
+      "BowlbugNectar"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "BowlbugRock",
+      "BowlbugSilk",
+      "BowlbugNectar"
+     ]
+    }
+   ]
   },
   "BowlbugsWeak": {
    "room_type": "Monster",
@@ -241,13 +268,30 @@
    ],
    "monsters": null,
    "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "source": "override-distribution",
+   "note": "[源码] 石恒定站 odd；另一只 `Rng.NextItem(Bugs)`，`Bugs = { 卵, 蜜 }` 等权。（`Bugs` 是属性不是字段，解析器的 `choice_fields` 看不见它 —— 所以这一条只能手填。）",
    "all_possible": [
     "BowlbugRock"
    ],
    "all_possible_note": null,
-   "choice_fields": {}
+   "choice_fields": {},
+   "note_decompiled": "构成含随机（`Rng`）",
+   "variants": [
+    {
+     "weight": 1,
+     "monsters": [
+      "BowlbugRock",
+      "BowlbugEgg"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "BowlbugRock",
+      "BowlbugNectar"
+     ]
+    }
+   ]
   },
   "BygoneEffigyElite": {
    "room_type": "Elite",
@@ -341,15 +385,20 @@
    "tags": [
     "Slugs"
    ],
-   "monsters": null,
-   "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "monsters": [
+    "CorpseSlug",
+    "CorpseSlug",
+    "CorpseSlug"
+   ],
+   "exact": true,
+   "source": "override",
+   "note": "[源码] 三只恒定；随机的只有 `CorpseSlug.EnsureCorpseSlugsStartWithDifferentMoves`：`num = Rng.NextInt(3)`，三只按 num / num+1 / num+2 错开 `StarterMoveIdx`（鞭击 / 吞噬 / 黏液）。起手相位是出招机器的事（`M_CORPSE_SLUG` 按集合建），不是构成的不确定。2026-09-15 填（第 1 幕批 0）。",
    "all_possible": [
     "CorpseSlug"
    ],
    "all_possible_note": null,
-   "choice_fields": {}
+   "choice_fields": {},
+   "note_decompiled": "构成含随机（`Rng`）"
   },
   "CorpseSlugsWeak": {
    "room_type": "Monster",
@@ -357,15 +406,19 @@
    "tags": [
     "Slugs"
    ],
-   "monsters": null,
-   "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "monsters": [
+    "CorpseSlug",
+    "CorpseSlug"
+   ],
+   "exact": true,
+   "source": "override",
+   "note": "[源码] 两只恒定；随机的只有同一个 `EnsureCorpseSlugsStartWithDifferentMoves`（num / num+1）。2026-09-15 填。",
    "all_possible": [
     "CorpseSlug"
    ],
    "all_possible_note": null,
-   "choice_fields": {}
+   "choice_fields": {},
+   "note_decompiled": "构成含随机（`Rng`）"
   },
   "CubexConstructNormal": {
    "room_type": "Monster",
@@ -412,7 +465,7 @@
    ],
    "exact": true,
    "source": "override",
-   "note": "[源码] 三节恒定；随机的只有 `StarterMoveIdx = Rng.NextInt(3)`，三节按 num / num+1 / num+2 错开起手。**注意**：内核今天让所有敌人从第 0 手起，这一场的起手相位是随机且错开的 —— 那是 L1 的欠账，不是构成的不确定。",
+   "note": "[源码] 三节恒定；随机的只有 `StarterMoveIdx = Rng.NextInt(3)`，三节按 num / num+1 / num+2 错开起手。起手相位是出招机器的事（`M_DECIMILLIPEDE` 的 `ECond::SlotRep`，2026-09-15），不是构成的不确定。",
    "all_possible": [
     "DecimillipedeSegmentBack",
     "DecimillipedeSegmentFront",
@@ -550,8 +603,8 @@
    ],
    "monsters": null,
    "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "source": "override-distribution",
+   "note": "[源码] 飞蝇菌子恒定；另一只 `Rng.NextItem(_mediumSlimes)`，`_mediumSlimes = { 树叶（中）, 树枝（中）}` 等权。三种怪都没有看站位的招式，只列多重集。2026-09-15 填（第 1 幕批 0）。",
    "all_possible": [
     "Flyconid"
    ],
@@ -561,7 +614,24 @@
      "LeafSlimeM",
      "TwigSlimeM"
     ]
-   }
+   },
+   "note_decompiled": "构成含随机（`Rng`）",
+   "variants": [
+    {
+     "weight": 1,
+     "monsters": [
+      "LeafSlimeM",
+      "Flyconid"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "TwigSlimeM",
+      "Flyconid"
+     ]
+    }
+   ]
   },
   "FogmogNormal": {
    "room_type": "Monster",
@@ -1079,8 +1149,8 @@
    "tags": [],
    "monsters": null,
    "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "source": "override-distribution",
+   "note": "[源码] `_raiderValidCounts` 五种劫掠者（斧手 / 刺客 / 暴徒 / 弩手 / 追踪手）各上限 1；`for (i < 3)` 每次从「还没抽满上限的」里 `Rng.NextItem` 抽一只 ⇒ **不放回抽 3**。60 种有序结果各 1/60，按多重集并成 C(5,3) = 10 种、各 6/60 = 1/10。`GenerateMonsters` 给每只的站位都是 `null`，五种怪也都没有看站位的招式，所以只列多重集。2026-09-19 填（第 1 幕批 6：刺客 / 暴徒进表之后）。",
    "all_possible": [
     "AssassinRubyRaider",
     "AxeRubyRaider",
@@ -1097,7 +1167,90 @@
      "CrossbowRubyRaider",
      "TrackerRubyRaider"
     ]
-   }
+   },
+   "note_decompiled": "构成含随机（`Rng`）",
+   "variants": [
+    {
+     "weight": 1,
+     "monsters": [
+      "AxeRubyRaider",
+      "AssassinRubyRaider",
+      "BruteRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "AxeRubyRaider",
+      "AssassinRubyRaider",
+      "CrossbowRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "AxeRubyRaider",
+      "AssassinRubyRaider",
+      "TrackerRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "AxeRubyRaider",
+      "BruteRubyRaider",
+      "CrossbowRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "AxeRubyRaider",
+      "BruteRubyRaider",
+      "TrackerRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "AxeRubyRaider",
+      "CrossbowRubyRaider",
+      "TrackerRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "AssassinRubyRaider",
+      "BruteRubyRaider",
+      "CrossbowRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "AssassinRubyRaider",
+      "BruteRubyRaider",
+      "TrackerRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "AssassinRubyRaider",
+      "CrossbowRubyRaider",
+      "TrackerRubyRaider"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "BruteRubyRaider",
+      "CrossbowRubyRaider",
+      "TrackerRubyRaider"
+     ]
+    }
+   ]
   },
   "ScrollsOfBitingNormal": {
    "room_type": "Monster",
@@ -1113,7 +1266,7 @@
    ],
    "exact": true,
    "source": "override",
-   "note": "[源码] 四卷恒定；随机的只有前三卷的 `StarterMoveIdx`（num / num+1 / num+2），**第四卷写死 2**。起手相位同上，是 L1 的欠账。",
+   "note": "[源码] 四卷恒定；随机的只有前三卷的 `StarterMoveIdx`（num / num+1 / num+2），**第四卷写死 2**。起手相位是出招机器的事（`M_SCROLL_OF_BITING` 的 `ECond::SlotIs`，固定 num = 0），不是构成的不确定。",
    "all_possible": [
     "ScrollOfBiting"
    ],
@@ -1279,8 +1432,8 @@
    ],
    "monsters": null,
    "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "source": "override-distribution",
+   "note": "[源码] 小史莱姆从 `_smallSlimes.ToList()`（树叶 / 树枝各一）里 `NextItem` 抽一只、`Remove` 掉、再从剩下那一只里抽 ⇒ **两只小的恒定是树叶 + 树枝**，随机的只有谁站前；中史莱姆 `Rng.NextItem(_mediumSlimes)` 等权二选一。四种史莱姆都没有看站位的招式，只列多重集。2026-09-15 填。",
    "all_possible": [
     "LeafSlimeM",
     "LeafSlimeS",
@@ -1297,7 +1450,26 @@
      "LeafSlimeM",
      "TwigSlimeM"
     ]
-   }
+   },
+   "note_decompiled": "构成含随机（`Rng`）",
+   "variants": [
+    {
+     "weight": 1,
+     "monsters": [
+      "LeafSlimeS",
+      "LeafSlimeM",
+      "TwigSlimeS"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "LeafSlimeS",
+      "TwigSlimeM",
+      "TwigSlimeS"
+     ]
+    }
+   ]
   },
   "SlitheringStranglerNormal": {
    "room_type": "Monster",
@@ -1305,8 +1477,8 @@
    "tags": [],
    "monsters": null,
    "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "source": "override-distribution",
+   "note": "[源码] 蛇行扼杀者恒定（`list5.Add` 在最后）；先 `Rng.NextItem(Enum.GetValues<SecondaryEnemyType>())` 三选一等权（闪光贾克斯果 / 中史莱姆 / 两只小史莱姆）。中史莱姆那支再 `NextItem(_mediumSlimes)` 二选一；小史莱姆那支对 `_smallSlimes` **放回**抽两次（数组没有删元素，和 `SlimesWeak` 的 `ToList` + `Remove` 不一样）⇒ 两只同名各占 1/4、一树叶一树枝占 1/2。按 12 份：贾克斯果 4 · 树叶（中）2 · 树枝（中）2 · 两只树叶（小）1 · 树叶 + 树枝（小）2 · 两只树枝（小）1。都没有看站位的招式，只列多重集。2026-09-15 填。",
    "all_possible": [
     "SlitheringStrangler",
     "SnappingJaxfruit"
@@ -1321,7 +1493,55 @@
      "LeafSlimeM",
      "TwigSlimeM"
     ]
-   }
+   },
+   "note_decompiled": "构成含随机（`Rng`）",
+   "variants": [
+    {
+     "weight": 4,
+     "monsters": [
+      "SnappingJaxfruit",
+      "SlitheringStrangler"
+     ]
+    },
+    {
+     "weight": 2,
+     "monsters": [
+      "LeafSlimeM",
+      "SlitheringStrangler"
+     ]
+    },
+    {
+     "weight": 2,
+     "monsters": [
+      "TwigSlimeM",
+      "SlitheringStrangler"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "LeafSlimeS",
+      "LeafSlimeS",
+      "SlitheringStrangler"
+     ]
+    },
+    {
+     "weight": 2,
+     "monsters": [
+      "LeafSlimeS",
+      "TwigSlimeS",
+      "SlitheringStrangler"
+     ]
+    },
+    {
+     "weight": 1,
+     "monsters": [
+      "TwigSlimeS",
+      "TwigSlimeS",
+      "SlitheringStrangler"
+     ]
+    }
+   ]
   },
   "SludgeSpinnerWeak": {
    "room_type": "Monster",
@@ -1643,15 +1863,20 @@
    "room_type": "Monster",
    "is_weak": false,
    "tags": [],
-   "monsters": null,
-   "exact": false,
-   "source": null,
-   "note": "构成含随机（`Rng`）",
+   "monsters": [
+    "TwoTailedRat",
+    "TwoTailedRat",
+    "TwoTailedRat"
+   ],
+   "exact": true,
+   "source": "override",
+   "note": "[源码] 三只恒定（站 third / fourth / fifth，前两格留给呼叫增援）；随机的只有 `StarterMoveIndex`：`num = Rng.NextInt(3)`，三只 num / num+1 / num+2（抓挠 / 病咬 / 尖啸）。起手相位是出招机器的事（`M_TWO_TAILED_RAT` 按集合建），不是构成的不确定。2026-09-15 填。",
    "all_possible": [
     "TwoTailedRat"
    ],
    "all_possible_note": null,
-   "choice_fields": {}
+   "choice_fields": {},
+   "note_decompiled": "构成含随机（`Rng`）"
   },
   "VantomBoss": {
    "room_type": "Boss",

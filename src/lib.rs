@@ -22,6 +22,9 @@ pub mod step;
 /// L3 的地基：合成战斗构造器（`(牌组, 遗物, 血量, 遭遇, 种子) -> State`）
 pub mod synth;
 
+#[cfg(test)]
+mod test_subject_tests;
+
 pub use state::{CardInst, Entity, Pending, Rng, St, State, F_CORRUPT, F_UPGRADED};
 pub use step::{
     begin_combat, end_turn_with_incoming, end_turn_with_live_incoming, legal_actions, step, Action,
@@ -402,7 +405,8 @@ mod tests {
                     TOp::OwnerStatus { st, .. }
                     | TOp::PlayerStatus { st, .. }
                     | TOp::AllEnemiesStatus { st, .. }
-                    | TOp::OwnerClearStatus(st) => out.push(*st),
+                    | TOp::OwnerClearStatus(st)
+                    | TOp::PlayerClearStatus(st) => out.push(*st),
                     TOp::If { cond, then } => {
                         match cond {
                             TCond::EveryNTurns { phase, .. } => out.push(*phase),
@@ -428,7 +432,8 @@ mod tests {
                 for op in m.ops {
                     match op {
                         EOp::SelfStatusPerStack { per, .. }
-                        | EOp::AttackPlusStackHits { per, .. } => referenced.push(*per),
+                        | EOp::AttackPlusStackHits { per, .. }
+                        | EOp::AttackPlusSelfStatus { per, .. } => referenced.push(*per),
                         _ => {}
                     }
                 }
@@ -2298,6 +2303,348 @@ mod tests {
         assert_eq!(after.enemies[1].hp, 100, "蟾蜍自己也没挨打");
     }
 
+    // ------------------------------------------------------------------
+    // 2026-09-13 第 3 幕补敌人（批 1 + 批 2）：新机制各自的守卫。
+    // 这六只一条实录都没有 —— **这些单测是它们今天唯一的检验面**。
+    // ------------------------------------------------------------------
+
+    /// 场上只有一只指定敌人、手里和牌堆全空（出招指针交给调用方）。
+    fn lone(def: u16, hp: i32) -> State {
+        let mut s = State::new(80, 13);
+        s.add_enemy(def, hp);
+        let mut s = begin_combat(s);
+        s.n_hand = 0;
+        s.n_draw = 0;
+        s.n_disc = 0;
+        s
+    }
+
+    /// 造一张牌**直接进手牌**（`add_card` 会顺手塞进抽牌堆，挪出来）。
+    fn give(s: &mut State, id: u16) -> u8 {
+        let c = s.add_card(id, 0, 0);
+        s.n_draw -= 1;
+        s.to_hand(c);
+        c
+    }
+
+    fn cards_named(s: &State, id: u16) -> usize {
+        (0..s.n_cards as usize).filter(|&i| s.cards[i].id == id).count()
+    }
+
+    /// 火焰喷射塞 4 张灼伤进**手牌**，**手满了溢出进弃牌堆，不是丢掉**。
+    ///
+    /// [源码] `CardPileCmd.Add`：`isFullHandAdd` 时 `targetPile = Discard`。
+    /// 用均衡把 8 张手牌留过回合边界，敌人出手时手里正好还剩 2 格。
+    #[test]
+    fn mecha_knight_flamethrower_overflows_into_discard_when_the_hand_is_full() {
+        let mut s = lone(enemy::MECHA_KNIGHT, 300);
+        for _ in 0..8 {
+            give(&mut s, card::DEFEND);
+        }
+        s.player.set(St::Entrench, 1);
+        s.enemy_move[0] = 1; // 喷火器（定环，第 1 手）
+        let s = step(s, Action::EndTurn);
+        assert_eq!(cards_named(&s, card::BURN), 4, "4 张一张不少 —— 满了是溢出，不是不造");
+        let in_hand = (0..s.n_hand as usize).filter(|&h| s.cards[s.hand[h] as usize].id == card::BURN).count();
+        assert_eq!(in_hand, 2, "手里只剩 2 格，另外 2 张去了弃牌堆");
+    }
+
+    /// 遗忘之物：瘴气**先加格挡、后偷敏捷**，恐惧吃的是偷完之后的敏捷。
+    ///
+    /// [源码] `MiasmaMove` 三句的顺序 + `DreadDamage => 13 + 自己的敏捷` +
+    /// `DexterityPower` 对怪物招式的格挡（`ValueProp.Move`）同样生效。
+    /// 两圈下来：格挡 8 -> 10，恐惧 15 -> 17，我的敏捷 −2 -> −4。
+    #[test]
+    fn the_forgotten_block_and_dread_grow_with_the_dexterity_it_steals() {
+        let mut s = lone(enemy::THE_FORGOTTEN, 106);
+        let mut seen = vec![];
+        for _ in 0..4 {
+            s = step(s, Action::EndTurn);
+            seen.push((s.enemies[0].block, s.enemies[0].get(St::Dexterity), s.player.get(St::Dexterity), s.player.hp));
+        }
+        assert_eq!(
+            seen,
+            vec![(8, 2, -2, 80), (0, 2, -2, 65), (10, 4, -4, 65), (0, 4, -4, 48)],
+            "逐回合（它的格挡, 它的敏捷, 我的敏捷, 我的血）"
+        );
+    }
+
+    /// 偷走的属性**只在小偷自己死时**还回来。
+    ///
+    /// [源码] `PossessStrengthPower.AfterDeath` 判 `creature == Owner`。
+    /// 同场两只：先杀遗忘之物只还敏捷，力量要等失落之物死了才还。
+    #[test]
+    fn possess_returns_what_was_stolen_only_when_the_thief_itself_dies() {
+        let mut s = State::new(80, 13);
+        s.add_enemy(enemy::THE_LOST, 93);
+        s.add_enemy(enemy::THE_FORGOTTEN, 106);
+        let mut s = begin_combat(s);
+        s.n_hand = 0;
+        s.n_draw = 0;
+        s = step(s, Action::EndTurn);
+        assert_eq!((s.player.get(St::Strength), s.player.get(St::Dexterity)), (-2, -2), "各偷 2");
+
+        // 力量 −2 的打击打 4 点：压到 1 血、清掉格挡，一刀一只
+        s.enemies[1].hp = 1;
+        s.enemies[1].block = 0;
+        give(&mut s, card::STRIKE);
+        s.energy = 3;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let mut s = step(s, Action::PlayCard { hand: ix, target: 1 });
+        assert!(!s.enemies[1].alive());
+        assert_eq!(s.player.get(St::Dexterity), 0, "遗忘之物死了 ⇒ 敏捷还回来");
+        assert_eq!(s.player.get(St::Strength), -2, "力量是失落之物偷的，不该跟着还");
+
+        s.enemies[0].hp = 1;
+        s.enemies[0].block = 0;
+        give(&mut s, card::STRIKE);
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert!(!s.enemies[0].alive());
+        assert_eq!(s.player.get(St::Strength), 0, "失落之物死了 ⇒ 力量还回来");
+    }
+
+    /// 我的人工制品挡得住「偷力量」那一下，**而它照样给自己 +2**。
+    ///
+    /// [源码] `PowerModel.GetTypeForAmount`：`Counter` 且 `AllowNegative` 的 power
+    /// 给负数就是 debuff。2026-09-13 之前敌人招式那条路只看 status 种类，
+    /// 负力量直接穿过人工制品。
+    #[test]
+    fn player_artifact_blocks_the_strength_steal_but_the_thief_still_gains() {
+        let mut s = lone(enemy::THE_LOST, 93);
+        s.player.set(St::Artifact, 1);
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.get(St::Strength), 0, "−2 被人工制品吃掉");
+        assert_eq!(s.player.get(St::Artifact), 0, "吃掉一次掉一层");
+        assert_eq!(s.enemies[0].get(St::Strength), 2, "它自己那 +2 和我挡没挡住无关");
+    }
+
+    /// 流电：打出**能力牌**挨 6 点、先吃格挡；技能牌不挨。
+    #[test]
+    fn galvanic_hurts_the_player_for_power_cards_only_and_goes_through_block() {
+        let mut s = lone(enemy::GLOBE_HEAD, 148);
+        give(&mut s, card::SHRUG_IT_OFF);
+        give(&mut s, card::DEMON_FORM);
+        s.energy = 10;
+        let ix = hand_ix_of(&s, card::SHRUG_IT_OFF);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert_eq!((s.player.hp, s.player.block), (80, 8), "技能牌不触发流电");
+        let ix = hand_ix_of(&s, card::DEMON_FORM);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert_eq!((s.player.hp, s.player.block), (80, 2), "能力牌挨 6 点，先吃格挡");
+    }
+
+    /// 纸伤难愈：**每打穿一段** −2 最大生命；被格挡完全吃掉的那一段不算；
+    /// **只认它自己打穿的**。注入式威胁（L2 的结算路径）和真敌人回合走同一个
+    /// `take_attack_hit`，两条都验。
+    #[test]
+    fn paper_cuts_costs_max_hp_per_unblocked_hit_of_its_own_on_both_turn_paths() {
+        let mut s = lone(enemy::SCROLL_OF_BITING, 33);
+        s.player.block = 5;
+        let mut inc = no_incoming();
+        inc[0] = (5, 2);
+        let after = end_turn_with_incoming(s, &inc);
+        assert_eq!(after.player.max_hp, 78, "第一段被 5 格挡吃光、不算；第二段打穿 −2");
+        assert_eq!(after.player.hp, 75);
+
+        let mut s = lone(enemy::SCROLL_OF_BITING, 33);
+        s.enemy_move[0] = 1; // 咀嚼 5×2
+        let after = step(s, Action::EndTurn);
+        assert_eq!(after.player.max_hp, 76, "真敌人回合：两段都打穿 −4");
+        assert_eq!(after.player.hp, 70);
+
+        let mut s = State::new(80, 13);
+        s.add_enemy(enemy::DUMMY, 100);
+        s.add_enemy(enemy::SCROLL_OF_BITING, 33);
+        let s = begin_combat(s);
+        let mut inc = no_incoming();
+        inc[0] = (6, 1);
+        let after = end_turn_with_incoming(s, &inc);
+        assert_eq!(after.player.max_hp, 80, "打穿我的是沙包，旁边卷轴的纸伤难愈不该发作");
+    }
+
+    /// 剧痛刺击：它每打穿一段塞 1 张伤口；被格挡吃光的那段不塞。
+    /// 伤口可能在下回合开局就被洗回来抽进手里，所以数的是全场实例。
+    #[test]
+    fn painful_stabs_adds_one_wound_per_unblocked_hit() {
+        let mut s = lone(enemy::TEST_SUBJECT_BOSS, 100);
+        s.enemies[0].set(St::PainfulStabs, 1);
+        s.player.block = 15;
+        let mut inc = no_incoming();
+        inc[0] = (10, 3);
+        let after = end_turn_with_incoming(s, &inc);
+        assert_eq!(cards_named(&after, card::WOUND), 2, "15 格挡：第一段吃光、第二段穿 5、第三段穿 10 ⇒ 2 张");
+        assert_eq!(after.player.hp, 65);
+    }
+
+    /// 咬人卷轴按槽位错开起手（大啃 / 咀嚼 / 更多牙齿，第四卷写死更多牙齿），
+    /// 以及咀嚼之后那个随机分支的 `CanRepeatXTimes(2)`。
+    /// 固定 `num = 0` 那条近似的代价写在 `M_SCROLL_OF_BITING` 上。
+    #[test]
+    fn scrolls_of_biting_start_staggered_by_slot_and_chew_at_most_twice() {
+        let mut s = State::new(80, 13);
+        for _ in 0..4 {
+            s.add_enemy(enemy::SCROLL_OF_BITING, 33);
+        }
+        let mut s = begin_combat(s);
+        let def = enemy_def(enemy::SCROLL_OF_BITING);
+        let starts: Vec<usize> = (0..4).map(|e| current_move_ix(def, &s, e)).collect();
+        assert_eq!(starts, vec![0, 1, 2, 2]);
+
+        s.enemy_move[0] = 1;
+        assert_eq!(allowed_next(&s, 0), 0b011, "咀嚼之后：大啃，或者再咀嚼一次");
+        s.enemy_hist[0][0] = 1;
+        assert_eq!(allowed_next(&s, 0), 0b001, "已经连着咀嚼两次 ⇒ 只能大啃");
+    }
+
+    /// 整幕链要把最大生命带进下一场 —— 结局里先得有这个数。
+    /// 5 张打击、3 点能量打不死 33 血的卷轴，第 1 回合的大啃 14 没有格挡可挡，必然打穿。
+    #[test]
+    fn rollout_outcome_reports_the_max_hp_the_fight_ended_with() {
+        let mut s = State::new(80, 13);
+        s.add_enemy(enemy::SCROLL_OF_BITING, 33);
+        for _ in 0..5 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let o = crate::rollout::rollout_outcome(begin_combat(s), 40);
+        assert!(!o.truncated, "{o:?}");
+        assert!(o.final_max_hp <= 78, "至少被打穿一次 −2：{o:?}");
+    }
+
+    // ------------------------------------------------------------------
+    // 2026-09-14 第 3 幕骑士团（批 3）：恶咒 / 抑制 / 回合末两段的顺序。
+    // ------------------------------------------------------------------
+
+    /// 回合末**先消耗虚无、后发作**（[源码] `CombatManager.DoTurnEnd`）。
+    ///
+    /// 晕眩被消耗 ⇒ 无惧疼痛给 3 格挡 ⇒ 灼伤那 2 点被挡住。
+    /// 2026-09-14 之前是先发作后消耗，这一回合会掉 2 血。
+    #[test]
+    fn ethereal_exhausts_happen_before_turn_end_in_hand_effects() {
+        let mut s = lone(enemy::DUMMY, 100);
+        give(&mut s, card::DAZED);
+        give(&mut s, card::BURN);
+        s.player.set(St::FeelNoPain, 3);
+        let after = end_turn_with_incoming(s, &no_incoming());
+        assert_eq!(after.player.hp, 80, "无惧疼痛的格挡先到，灼伤被挡住");
+        assert_eq!(after.n_exh, 1, "只有晕眩被消耗");
+    }
+
+    /// 恶咒：手里**每一张**没有回合末发作效果的牌都虚无 —— 连带保留的也消耗；
+    /// 灼伤不算虚无（`HasTurnEndInHandEffect` 那一支先截走），照样烫人、照样进弃牌堆。
+    #[test]
+    fn hex_exhausts_every_card_left_in_hand_except_turn_end_effect_cards() {
+        let mut s = lone(enemy::DUMMY, 100);
+        s.player.set(St::Hex, 2);
+        give(&mut s, card::STRIKE);
+        let kept = give(&mut s, card::DEFEND);
+        s.cards[kept as usize].flags |= F_RETAIN;
+        give(&mut s, card::BURN);
+        let after = end_turn_with_incoming(s, &no_incoming());
+        let mut exh: Vec<u16> = (0..after.n_exh as usize).map(|i| after.cards[after.exh[i] as usize].id).collect();
+        exh.sort();
+        assert_eq!(exh, vec![card::STRIKE, card::DEFEND], "打击和带保留的防御都被消耗");
+        assert_eq!(after.player.hp, 78, "灼伤没被恶咒消耗，照样烫 2 点");
+    }
+
+    /// 恶咒**只在幽灵骑士自己死时**解除；施咒者标记开局就挂好（合成路径）。
+    #[test]
+    fn hex_lifts_only_when_the_spectral_knight_itself_dies() {
+        let mut s = State::new(80, 13);
+        s.add_enemy(enemy::FLAIL_KNIGHT, 101);
+        s.add_enemy(enemy::SPECTRAL_KNIGHT, 93);
+        let mut s = begin_combat(s);
+        s.n_hand = 0;
+        s.n_draw = 0;
+        assert_eq!(s.enemies[1].get(St::HexCaster), 1, "开局就挂好施咒者标记");
+        assert_eq!(s.enemies[0].get(St::HexCaster), 0);
+        s.player.set(St::Hex, 2);
+
+        s.enemies[0].hp = 1;
+        give(&mut s, card::STRIKE);
+        s.energy = 3;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let mut s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert!(!s.enemies[0].alive());
+        assert_eq!(s.player.get(St::Hex), 2, "死的是连枷骑士 ⇒ 不解咒");
+
+        s.enemies[1].hp = 1;
+        give(&mut s, card::STRIKE);
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 1 });
+        assert_eq!(s.player.get(St::Hex), 0, "幽灵骑士死了 ⇒ 解咒");
+    }
+
+    /// 连枷骑士 + 魔法骑士、弃牌堆一张升过级的打击和一张没升过的，魔法骑士下一手是抑制。
+    fn magi_about_to_dampen(artifact: i32) -> (State, u8, u8) {
+        let mut s = State::new(80, 13);
+        s.add_enemy(enemy::FLAIL_KNIGHT, 101);
+        s.add_enemy(enemy::MAGI_KNIGHT, 82);
+        let mut s = begin_combat(s);
+        s.n_hand = 0;
+        s.n_draw = 0;
+        s.n_disc = 0;
+        let up = s.add_card(card::STRIKE, F_UPGRADED, 0);
+        s.n_draw -= 1;
+        s.to_discard(up);
+        let plain = s.add_card(card::STRIKE, 0, 0);
+        s.n_draw -= 1;
+        s.to_discard(plain);
+        s.enemy_move[1] = 1; // 抑制
+        s.player.set(St::Artifact, artifact);
+        (s, up, plain)
+    }
+
+    /// 抑制：本场已升级的牌降级并记下是谁；**魔法骑士自己死了**才升回去。
+    #[test]
+    fn dampen_downgrades_upgraded_cards_until_the_magi_knight_dies() {
+        let (s, up, plain) = magi_about_to_dampen(0);
+        let mut s = step(s, Action::EndTurn);
+        assert_eq!(s.player.get(St::Dampen), 1);
+        assert!(!s.cards[up as usize].upgraded(), "升过级的那张被降级");
+        assert_ne!(s.cards[up as usize].flags & F_DAMPENED, 0, "并且记下了");
+        assert_eq!(s.cards[plain as usize].flags & F_DAMPENED, 0, "没升过级的不记");
+
+        s.enemies[1].hp = 1;
+        s.enemies[1].block = 0;
+        give(&mut s, card::STRIKE);
+        s.energy = 3;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 1 });
+        assert!(!s.enemies[1].alive());
+        assert!(s.cards[up as usize].upgraded(), "魔法骑士死了 ⇒ 升回去");
+        assert_eq!(s.cards[up as usize].flags & F_DAMPENED, 0);
+        assert!(!s.cards[plain as usize].upgraded(), "本来就没升过的不会被白送一次升级");
+        assert_eq!(s.player.get(St::Dampen), 0);
+    }
+
+    /// 人工制品挡掉抑制 ⇒ `AfterApplied` 不发作，一张牌都不降。
+    #[test]
+    fn artifact_blocks_dampen_and_nothing_is_downgraded() {
+        let (s, up, _) = magi_about_to_dampen(1);
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.get(St::Dampen), 0);
+        assert_eq!(s.player.get(St::Artifact), 0, "吃掉一次掉一层");
+        assert!(s.cards[up as usize].upgraded(), "没挂上就不降级");
+    }
+
+    /// 三只骑士的开局第一手和几个分支（[源码] 状态机）。
+    #[test]
+    fn knights_open_and_branch_like_the_source() {
+        let mut s = State::new(80, 13);
+        s.add_enemy(enemy::FLAIL_KNIGHT, 101);
+        s.add_enemy(enemy::SPECTRAL_KNIGHT, 93);
+        s.add_enemy(enemy::MAGI_KNIGHT, 82);
+        let mut s = begin_combat(s);
+        let starts: Vec<usize> = (0..3).map(|e| current_move_ix(enemy_def(s.enemy_def[e]), &s, e)).collect();
+        assert_eq!(starts, vec![0, 0, 0], "连枷起手撞击 · 幽灵起手恶咒 · 魔法起手强力护盾");
+        assert_eq!(allowed_next(&s, 0), 0b111, "连枷骑士撞完进三选一");
+        assert_eq!(allowed_next(&s, 1), 0b010, "恶咒之后固定灵魂斩击");
+        assert_eq!(allowed_next(&s, 2), 0b010, "强力护盾之后是抑制");
+        s.enemy_hist[0][0] = 0;
+        assert_eq!(allowed_next(&s, 0), 0b110, "已经连着撞了两次 ⇒ 不能再撞");
+    }
+
 
     /// 选牌候选去重：弃牌堆里 4 张一样的打击只该岔出 1 条线。
     ///
@@ -2912,6 +3259,1349 @@ mod tests {
         for m in 1..=3u8 {
             assert!(seen[1..].contains(&m), "招 {m} 一次都没出现，等权分支不该这样");
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // 接续：残杀千足虫的一节砍死了不算完，死后第二个敌人回合 25 血回来
+    // -----------------------------------------------------------------------
+
+    /// 三节千足虫，起手指针摆成三种不同的招（和 [源码] 三节错开起手一致）。
+    fn decimillipede_trio() -> State {
+        let seg = def_id_of("残杀千足虫");
+        let mut s = State::new(200, 13);
+        for hp in [42, 40, 44] {
+            s.add_enemy(seg, hp);
+        }
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        for e in 0..3 {
+            s.enemy_move[e] = e as u8;
+        }
+        s
+    }
+
+    /// **三节起手按槽位错开，但单看一节三手都可能**（`ECond::SlotRep`，2026-09-15）。
+    ///
+    /// [源码] `DecimillipedeElite`：Front / Middle / Back = `num / num+1 / num+2`（`num = Rng.NextInt(3)`）；
+    /// `DecimillipedeSegment` 的 `StarterMoveIdx % 3` -> 扭动 / 壮硕 / 缠绕。三段断言各钉一种写法错：
+    /// * 实录的开局是内核起手的轮换 —— 等权 `Rand` 起手（`initial_move` 逐只取最低位，三节全是扭动、整场同相）
+    ///   和反方向的错开（`num / num+2 / num+1`）都在这里红；槽位对哪一节、轮换朝哪边，两条实录都分得开
+    /// * 起手 `[0, 1, 2]` —— 内核选的是 `num = 0` 那一支（另外两支同样是轮换，这一条只钉住选择）
+    /// * 允许集合三手全开 —— `SlotIs` 起手会把 `num = 0` 当成事实，`synth_audit` 在 `num != 0` 的实录上报集合外
+    #[test]
+    fn decimillipede_segments_open_staggered_by_slot_but_each_first_move_stays_open() {
+        let Some(t) = act_table() else { return };
+        let seg = def_id_of("残杀千足虫");
+        let enemies = t.resolve("DecimillipedeElite").unwrap();
+        assert!(enemies.len() == 3 && enemies.iter().all(|e| e.def == seg), "三节共用一个 EnemyDef");
+        let deck = synth_deck(10);
+        let s = crate::synth::build(&crate::synth::FightSpec::new(&deck, 80, &enemies, 1)).state;
+        let def = enemy_def(seg);
+        let starts: Vec<usize> = (0..3).map(|e| current_move_ix(def, &s, e)).collect();
+        // [实测] 第 0 帧 Front / Middle / Back 的意图 ——
+        // act2_f28：`Attack:6,Buff` / `Attack:8,Debuff` / `Attack:5×2`（num = 1）
+        // act2_f30：`Attack:5×2` / `Attack:6,Buff` / `Attack:8,Debuff`（num = 0）
+        for (trace, seen) in [("act2_f28_decimillipede", [1, 2, 0]), ("act2_f30_elite_decimillipede", [0, 1, 2])] {
+            assert!(
+                (0..3).any(|k| (0..3).all(|e| seen[e] == (starts[e] + k) % 3)),
+                "{trace} 的开局 {seen:?} 不是内核起手 {starts:?} 的轮换"
+            );
+        }
+        assert_eq!(starts, vec![0, 1, 2], "合成路径（遭遇表的出场顺序）：扭动 / 壮硕 / 缠绕");
+        for e in 0..3 {
+            assert_eq!(
+                crate::step::allowed_initial(&s, e),
+                0b111,
+                "槽位 {e}：num 是遭遇级随机数，单看一节三手都可能"
+            );
+        }
+    }
+
+    /// [源码] `ReattachPower` + `DecimillipedeSegment`：死后第一个敌人回合 `DEAD_MOVE`、
+    /// 第二个 `REATTACH_MOVE` 回 `Amount`（25）血，**不是回满**。
+    /// [实测] `act2_f28_decimillipede`：节 1 第 3 回合砍死、第 4 回合观测里没有、第 5 回合 25/44；
+    /// 死前缠绕标签 `Attack:10`（带力量 2），回来之后缠绕 `Attack:8` ⇒ 力量被死亡剥离了。
+    #[test]
+    fn a_decimillipede_segment_reattaches_with_25_hp_on_the_second_enemy_turn() {
+        let mut s = decimillipede_trio();
+        s.enemies[0].set(St::Strength, 2);
+        s.enemies[0].set(St::Vulnerable, 2);
+        // 1 血挨一刀打击 ⇒ 超杀到负数：回血必须从 0 往上回，不然回来是 20 不是 25
+        s.enemies[0].hp = 1;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert!(!s.enemies[0].alive(), "砍死那一帧它是死的、打不到");
+        assert!(!s.combat_over, "别的节还活着，战斗不该结束");
+        assert_eq!(s.enemies[0].get(St::Reattach), 25, "接续自己不被死亡剥离");
+        assert_eq!(s.enemies[0].get(St::Strength), 0, "力量被剥掉");
+        assert_eq!(s.enemies[0].get(St::Vulnerable), 0, "我上的易伤也被剥掉");
+
+        let s = step(s, Action::EndTurn);
+        assert!(!s.enemies[0].alive(), "死后第一个敌人回合是 DEAD_MOVE，还没回来");
+        assert!(!s.combat_over);
+
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[0].hp, 25, "第二个敌人回合回 25，不是回满 42");
+        assert_eq!(s.enemies[0].max_hp, 42, "最大生命不变");
+        assert_eq!(s.enemies[0].get(St::ReattachDue), 0);
+        assert!(s.enemy_move[0] <= 2, "重接那一手出完之后回到三手里随机");
+        assert_eq!(
+            s.enemies[0].get(St::MoveForcedThisTurn),
+            0,
+            "敌人回合开始时换招不该留下'意图过期'标记 —— 留着的话下一回合注入威胁会跳过它"
+        );
+    }
+
+    /// **窗口是两个我方回合**：砍死一节之后、它回来之前把别的节全砍掉，它就回不来 —— 战斗结束。
+    /// [源码] `ShouldOwnerDeathTriggerFatal => AreAllOtherSegmentsDead()`；内核里就是
+    /// `no_master_left`（非爪牙全死光），所以接续**不进** `any_enemy_present`。
+    #[test]
+    fn killing_the_other_segments_inside_the_reattach_window_ends_the_fight() {
+        let mut s = decimillipede_trio();
+        s.enemies[0].hp = 1;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        let mut s = step(s, Action::EndTurn);
+        assert!(!s.enemies[0].alive() && !s.combat_over, "下一个我方回合，尸体还在等");
+        s.enemies[1].hp = 1;
+        s.enemies[2].hp = 1;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 1 });
+        assert!(!s.combat_over, "还剩一节活着");
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 2 });
+        assert!(s.combat_over && !s.player_dead, "最后一节死的时候尸体还欠一次接续 —— 照样结束");
+    }
+
+    // -----------------------------------------------------------------------
+    // 知识恶魔：三次二选一的诅咒，选法是策略参数（`State::curse_policy`）
+    // -----------------------------------------------------------------------
+
+    fn knowledge_demon_vs(policy: u8) -> State {
+        let mut s = State::new(3000, 21);
+        s.add_enemy(enemy::KNOWLEDGE_DEMON, 379);
+        for _ in 0..12 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        s.curse_policy = policy;
+        begin_combat(s)
+    }
+
+    /// [源码] `KnowledgeDemon.GenerateMoveStateMachine`：诅咒 -> 抽打 -> 知识过载 -> 思考 ->
+    /// （诅咒不到 3 次 ? 诅咒 : 抽打）。所以第 1/5/9 回合诅咒，第 13 回合起只剩三手循环。
+    /// 默认选法 `0b010`：心灵腐化 / 瓦解 7 / 虚脱（[玩家判定] 第二次一般选瓦解）。
+    #[test]
+    fn knowledge_demon_curses_three_times_then_cycles_without_the_curse() {
+        let mut s = knowledge_demon_vs(crate::content::DEFAULT_CURSE_POLICY);
+        let mut seen = Vec::new();
+        for _ in 0..16 {
+            assert!(!s.combat_over, "这个测试不该打完");
+            seen.push(s.enemy_move[0]);
+            s = step(s, Action::EndTurn);
+        }
+        assert_eq!(seen, vec![0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 1]);
+        assert_eq!(s.player.get(St::MindRot), 1, "第 1 次：心灵腐化");
+        assert_eq!(s.player.get(St::Disintegration), 7, "第 2 次：瓦解 7");
+        assert_eq!(s.player.get(St::WasteAway), 1, "第 3 次：虚脱");
+        assert_eq!(s.player.get(St::Sloth), 0);
+        assert_eq!(s.base_energy, 2, "虚脱：最大能量 −1，永久");
+        assert_eq!(s.energy, 2);
+    }
+
+    /// `curse_policy` 的第 k 位 = 第 k 次选瓦解。瓦解是 `Counter`，三次都选就叠成 6+7+8。
+    #[test]
+    fn curse_policy_bits_pick_the_side_of_each_curse() {
+        let mut s = knowledge_demon_vs(0b111);
+        for _ in 0..10 {
+            s = step(s, Action::EndTurn);
+        }
+        assert_eq!(s.player.get(St::Disintegration), 6 + 7 + 8);
+        assert_eq!(s.player.get(St::MindRot) + s.player.get(St::Sloth) + s.player.get(St::WasteAway), 0);
+        assert_eq!(s.base_energy, 3, "没选虚脱，能量不动");
+
+        let mut s = knowledge_demon_vs(0b000);
+        for _ in 0..10 {
+            s = step(s, Action::EndTurn);
+        }
+        assert_eq!(s.player.get(St::Disintegration), 0);
+        assert_eq!(
+            (s.player.get(St::MindRot), s.player.get(St::Sloth), s.player.get(St::WasteAway)),
+            (1, 3, 1)
+        );
+    }
+
+    /// 思考：11 伤害 + **回 30 血** + 自身力量 2（[源码] `PonderMove`；wiki 那条没有回血）。
+    #[test]
+    fn knowledge_demon_ponder_heals_30_and_gains_strength() {
+        let mut s = knowledge_demon_vs(0);
+        s.enemy_move[0] = 3;
+        s.enemies[0].hp = 100;
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[0].hp, 130);
+        assert_eq!(s.enemies[0].get(St::Strength), 2);
+    }
+
+    /// 思考的意图签名是 攻击 + 回血 + 强化 三个 —— `identify_enemies` 靠它把实况对齐到这一手。
+    #[test]
+    fn knowledge_demon_ponder_signature_is_attack_heal_buff() {
+        let demon = crate::state::Entity::new(379);
+        let me = crate::state::Entity::new(80);
+        let sig = crate::replay::move_signature(enemy::KNOWLEDGE_DEMON, 3, &demon, &me, 0);
+        let want: Vec<(String, String)> = [("Attack", "11"), ("Heal", ""), ("Buff", "")]
+            .iter()
+            .map(|(a, b)| (a.to_string(), b.to_string()))
+            .collect();
+        assert_eq!(sig, want);
+    }
+
+    // ---- 蜂群术士（2026-09-14 批 3）----
+
+    /// 人体蜂房（[源码] `PersonalHivePower.AfterDamageReceived`）：**每一段攻击**塞层数那么多张晕眩
+    /// 进抽牌堆，**不看打没打穿**；药水的伤害（`Unpowered`）一张都不塞。
+    /// [实测] 2026-08-22 `act2_f27_elite_entomancer`（蜂房 1 层）：五张攻击各 +1、火焰药水 +0。
+    #[test]
+    fn personal_hive_dazes_every_attack_hit_but_not_potions() {
+        let mk = |hive: i32| {
+            let mut s = State::new(80, 5);
+            s.add_enemy(enemy::ENTOMANCER, 145);
+            for _ in 0..10 {
+                s.add_card(card::STRIKE, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.enemies[0].set(St::PersonalHive, hive);
+            s.energy = 10;
+            s
+        };
+        let dazed_in_draw = |s: &State| {
+            (0..s.n_draw as usize).filter(|&i| s.cards[s.draw[i] as usize].id == card::DAZED).count()
+        };
+
+        let mut s = mk(2);
+        give(&mut s, card::TWIN_STRIKE);
+        let ix = hand_ix_of(&s, card::TWIN_STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert_eq!(s.enemies[0].hp, 135);
+        assert_eq!(dazed_in_draw(&s), 4, "双重打击两段 × 蜂房 2 层");
+
+        let mut s = mk(1);
+        s.enemies[0].block = 50;
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert_eq!(s.enemies[0].hp, 145, "这一下全被格挡吃掉");
+        assert_eq!(dazed_in_draw(&s), 1, "挡住了也塞");
+
+        let mut s = mk(3);
+        s.potions[0] = crate::state::potion::FIRE;
+        let s = step(s, Action::UsePotion { slot: 0, target: 0 });
+        assert_eq!(s.enemies[0].hp, 125);
+        assert_eq!(dazed_in_draw(&s), 0, "火焰药水不是攻击");
+    }
+
+    /// 喷射信息素按蜂房层数分两支（[源码] `SpitMove`）：< 3 时蜂房 +1、力量 +1；≥ 3 时只加 2 力量。
+    /// 内核拆成下标 2 / 3 两手，由矛击！之后那条条件边挑（`M_ENTOMANCER`），喷射完回蜜——蜂——！。
+    #[test]
+    fn entomancer_spit_branches_on_hive_stacks() {
+        let def = crate::content::enemy_def(enemy::ENTOMANCER);
+        let spear_then_spit = |hive: i32| {
+            let mut s = with_enemy(enemy::ENTOMANCER, 145);
+            s.enemies[0].set(St::PersonalHive, hive);
+            s.enemy_move[0] = 1;
+            let s = step(s, Action::EndTurn);
+            let spit = crate::step::current_move_ix(def, &s, 0);
+            let s = step(s, Action::EndTurn);
+            (
+                spit,
+                s.enemies[0].get(St::PersonalHive),
+                s.enemies[0].get(St::Strength),
+                crate::step::current_move_ix(def, &s, 0),
+            )
+        };
+        assert_eq!(spear_then_spit(1), (2, 2, 1, 0), "蜂房 1：+1 蜂房 +1 力量");
+        assert_eq!(spear_then_spit(2), (2, 3, 1, 0), "蜂房 2：还是那一支，涨到 3");
+        assert_eq!(spear_then_spit(3), (3, 3, 2, 0), "蜂房 3：只加 2 力量");
+    }
+
+    /// 两支喷射信息素的意图签名逐字相同，实况对齐靠 `move_reachable_now` 排掉当前层数下走不到的那一支。
+    #[test]
+    fn move_reachable_now_rules_out_the_spit_branch_the_hive_forbids() {
+        use crate::step::move_reachable_now as reach;
+        let mut s = with_enemy(enemy::ENTOMANCER, 145);
+        let me = Entity::new(80);
+        assert_eq!(
+            crate::replay::move_signature(enemy::ENTOMANCER, 2, &s.enemies[0], &me, 0),
+            crate::replay::move_signature(enemy::ENTOMANCER, 3, &s.enemies[0], &me, 0),
+            "这正是需要筛子的原因"
+        );
+        s.enemies[0].set(St::PersonalHive, 1);
+        assert!(reach(&s, 0, enemy::ENTOMANCER, 2) && !reach(&s, 0, enemy::ENTOMANCER, 3));
+        s.enemies[0].set(St::PersonalHive, 3);
+        assert!(!reach(&s, 0, enemy::ENTOMANCER, 2) && reach(&s, 0, enemy::ENTOMANCER, 3));
+        assert!(reach(&s, 0, enemy::ENTOMANCER, 0), "有 Go 边进来的永远走得到");
+    }
+
+    // ---- 异螨 / 熟睡甲虫（2026-09-14 批 4，**全部 [源码]，没有实录**）----
+
+    /// 异螨起手按站位（[源码] 初始态是读 `SlotName` 的 `ConditionalBranchState`）：first 浓毒、
+    /// second 吸吮；之后 浓毒 -> 啃咬 -> 吸吮 定环。浓毒往**手牌**塞 2 张毒素。
+    #[test]
+    fn mytes_open_by_slot_and_toxic_goes_into_the_hand() {
+        let myte = def_id_of("异螨");
+        let def = crate::content::enemy_def(myte);
+        let name = |s: &State, e: usize| def.moves[crate::step::current_move_ix(def, s, e)].name;
+        let mut s = State::new(80, 5);
+        s.add_enemy(myte, 64);
+        s.add_enemy(myte, 64);
+        for _ in 0..10 {
+            s.add_card(card::DEFEND, 0, 0);
+        }
+        let s = begin_combat(s);
+        assert_eq!((name(&s, 0), name(&s, 1)), ("浓毒", "吸吮"), "first 先浓毒、second 先吸吮");
+
+        let s = step(s, Action::EndTurn);
+        let toxic_in_hand =
+            (0..s.n_hand as usize).filter(|&i| s.cards[s.hand[i] as usize].id == card::TOXIC).count();
+        assert_eq!(toxic_in_hand, 2, "浓毒塞手牌，新回合发牌之后还在手里");
+        assert_eq!(s.player.hp, 80 - 4, "吸吮 4");
+        assert_eq!(s.enemies[1].get(St::Strength), 2, "吸吮给自己 +2 力量");
+        assert_eq!((name(&s, 0), name(&s, 1)), ("啃咬", "浓毒"));
+    }
+
+    /// 瀑布巨兽（第 1 幕 Boss，2026-09-15 批 1）：虹吸回血 10（封顶最大生命）、高压枪每打一次 +5。
+    /// [实测] `act1_f17_waterfall_giant`：第 4 -> 5 回合 174 -> 184；高压枪第 5 回合 20、第 10 回合 25。
+    #[test]
+    fn waterfall_giant_siphon_heals_and_its_pressure_gun_grows_by_five() {
+        let giant = crate::content::enemy::WATERFALL_GIANT;
+        let def = crate::content::enemy_def(giant);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = State::new(500, 3);
+        s.add_enemy(giant, 240);
+        let mut s = begin_combat(s);
+        let mut lost = Vec::new();
+        for turn in 1..=10 {
+            let was = name(&s);
+            if was == "虹吸" {
+                s.enemies[0].hp = if turn == 4 { 174 } else { 235 };
+            }
+            let hp0 = s.player.hp;
+            s = step(s, Action::EndTurn);
+            lost.push((was, hp0 - s.player.hp));
+            if was == "虹吸" {
+                assert_eq!(s.enemies[0].hp, if turn == 4 { 184 } else { 240 }, "回血 10，封顶最大生命");
+            }
+        }
+        assert_eq!(
+            lost,
+            vec![
+                ("加压", 0),
+                ("重踏", 15),
+                ("撞击", 10),
+                ("虹吸", 0),
+                ("高压枪", 20),
+                ("升压", 13),
+                ("重踏", 15),
+                ("撞击", 10),
+                ("虹吸", 0),
+                ("高压枪", 25),
+            ]
+        );
+        assert_eq!(s.enemies[0].get(St::PressureGunGrowth), 10, "打过两次，再下一次是 30");
+        assert_eq!(s.enemies[0].get(St::SteamEruption), 42, "15 + 9 × 3，和实录死之前那一帧一致");
+    }
+
+    /// 瀑布巨兽被砍死**不算赢**：锁成 999999999 血、别的 status 随死亡摘掉、蒸汽喷发留着；
+    /// 下一个敌人回合「即将爆发」不打人、层数记成爆炸伤害；再下一个「爆炸」打那么多（它身上的虚弱照样压低），
+    /// 然后自杀，战斗这才结束。锁血期间叶评估数 0 血（它会自己炸死）。
+    #[test]
+    fn waterfall_giant_killed_is_about_to_blow_then_explodes_for_its_steam() {
+        use crate::content::{remaining_hp_including_revives, ABOUT_TO_BLOW_HP};
+        let giant = crate::content::enemy::WATERFALL_GIANT;
+        let def = crate::content::enemy_def(giant);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = State::new(500, 3);
+        s.add_enemy(giant, 240);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        for _ in 0..3 {
+            s = step(s, Action::EndTurn); // 加压 / 重踏 / 撞击
+        }
+        assert_eq!(s.enemies[0].get(St::SteamEruption), 21);
+        s.enemies[0].hp = 3;
+        s.enemies[0].set(St::Weak, 2);
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert!(!s.combat_over, "砍死它不算赢");
+        assert_eq!((s.enemies[0].hp, s.enemies[0].max_hp), (ABOUT_TO_BLOW_HP, ABOUT_TO_BLOW_HP));
+        assert_eq!(s.enemies[0].get(St::Weak), 0, "别的 status 随死亡摘掉");
+        assert_eq!(s.enemies[0].get(St::SteamEruption), 21, "蒸汽喷发自己留着");
+        assert_eq!(name(&s), "即将爆发");
+        assert_eq!(remaining_hp_including_revives(&s.enemies[0]), 0, "那十亿血不是要打的血");
+
+        let hp0 = s.player.hp;
+        let mut s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0, "即将爆发不打人");
+        assert_eq!(s.enemies[0].get(St::SteamEruption), 0);
+        assert_eq!(s.enemies[0].get(St::EruptionDamage), 21);
+        assert_eq!(name(&s), "爆炸");
+        assert!(!s.combat_over);
+
+        s.enemies[0].set(St::Weak, 2);
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 15, "爆炸是攻击：21 × 虚弱 0.75 = 15");
+        assert!(!s.enemies[0].alive(), "炸完自杀");
+        assert!(s.combat_over && !s.player_dead, "这时候才结束");
+    }
+
+    /// 它在**自己出招途中**被反伤打死：死亡规则把它强制到「即将爆发」，这一手打完**指针不推进**
+    /// （[源码] `AboutToBlowState.MustPerformOnceBeforeTransitioning`）—— 否则「即将爆发」被跳过、下一手直接爆炸。
+    /// 这一手剩下的 op 照样落地（重踏的 +3 蒸汽喷发）。注入式敌人回合（L2 叶子走的那条）同一条规矩。
+    #[test]
+    fn waterfall_giant_dying_to_thorns_mid_attack_still_winds_up_before_exploding() {
+        use crate::content::ABOUT_TO_BLOW_HP;
+        let giant = crate::content::enemy::WATERFALL_GIANT;
+        let def = crate::content::enemy_def(giant);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mk = || {
+            let mut s = State::new(500, 3);
+            s.add_enemy(giant, 240);
+            let mut s = step(begin_combat(s), Action::EndTurn); // 加压 ⇒ 蒸汽喷发 15，下一手重踏
+            s.enemies[0].hp = 2;
+            s.player.set(St::Thorns, 5);
+            s
+        };
+
+        let s = step(mk(), Action::EndTurn);
+        assert_eq!(s.player.hp, 500 - 15, "重踏照样打到");
+        assert_eq!(s.enemies[0].max_hp, ABOUT_TO_BLOW_HP, "被荆棘反弹打死 ⇒ 锁血");
+        assert_eq!(s.enemies[0].get(St::SteamEruption), 18, "重踏剩下的 +3 照样落地");
+        assert_eq!(name(&s), "即将爆发", "指针停住，不跟着重踏推进");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, 500 - 15, "即将爆发不打人");
+        assert_eq!(name(&s), "爆炸");
+
+        let mut inc = crate::step::NO_INCOMING;
+        inc[0] = (15, 1);
+        let s = crate::step::end_turn_with_incoming(mk(), &inc);
+        assert_eq!(name(&s), "即将爆发", "注入路径同一条规矩");
+        let hp0 = s.player.hp;
+        let s = crate::step::end_turn_with_incoming(s, &inc);
+        assert_eq!(s.player.hp, hp0, "强制改招标记留着 ⇒ 下一个注入回合跳过那个过期的 15");
+        assert_eq!(name(&s), "爆炸");
+    }
+
+    /// 瀑布巨兽的两个私有计数器从**这一手**的意图标签还原（`replay::infer_private_attack_counter`）。
+    /// [实测] `act1_f17_waterfall_giant`：帧 45 高压枪亮 25（涨过 5）· 帧 57 爆炸亮 42。
+    /// 不还原的话帧 45 逐字对不上任何一手，按类型退回会对到同样是 `Attack + Buff` 的撞击上。
+    #[test]
+    fn waterfall_giant_private_counters_are_recovered_from_the_intent_label() {
+        let Ok(src) = std::fs::read_to_string("traces/act1_f17_waterfall_giant.json") else { return };
+        let t = super::replay::parse_trace(&src).unwrap();
+        let giant = crate::content::enemy::WATERFALL_GIANT;
+        let def = crate::content::enemy_def(giant);
+        for (frame, want_move, st, v) in
+            [(45, "高压枪", St::PressureGunGrowth, 5), (57, "爆炸", St::EruptionDamage, 42)]
+        {
+            let obs = &t.frames[frame].obs;
+            let mut r = super::replay::Replayer::for_trace(&t);
+            let mut sy = r.sync(obs);
+            let ident = r.identify_enemies(&mut sy.state, obs);
+            let id = ident.iter().find(|i| i.def == Some(giant)).expect("认得出瀑布巨兽");
+            assert_eq!(id.move_ix.map(|m| def.moves[m].name), Some(want_move), "帧 {frame}");
+            assert_eq!(sy.state.enemies[id.slot].get(st), v, "帧 {frame}");
+        }
+    }
+
+    /// 熟睡甲虫没人碰：打鼾 3 个敌人回合，第 3 个回合末熟睡归零、覆甲移除，**第 4 个敌人回合出击**。
+    /// 覆甲在同一个回合末**先**给过格挡（[源码] `BeforeSideTurnEndEarly` 早于 `AfterSideTurnEnd`）。
+    ///
+    /// 机器那条条件边的阈值是 2 不是 1（时点换算，见 `M_SLUMBERING_BEETLE`）：
+    /// 写成 1 的话这条会在「第 4 个敌人回合出击」上红 —— 它会多睡一回合。
+    #[test]
+    fn slumbering_beetle_left_alone_sleeps_three_enemy_turns_then_rolls_out() {
+        let beetle = def_id_of("熟睡甲虫");
+        let def = crate::content::enemy_def(beetle);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = with_enemy(beetle, 86);
+        assert_eq!(s.enemies[0].block, 15, "敌人的覆甲开局给一次格挡");
+        let hp0 = s.player.hp;
+        for turn in 1..=3 {
+            assert_eq!(name(&s), "打鼾", "第 {turn} 个敌人回合");
+            s = step(s, Action::EndTurn);
+        }
+        assert_eq!(s.player.hp, hp0, "睡着不打人");
+        assert_eq!(s.enemies[0].get(St::Slumber), 0);
+        assert_eq!(s.enemies[0].get(St::PlatedArmor), 0, "醒来移除覆甲");
+        assert_eq!(s.enemies[0].block, 13, "覆甲 15 -> 14 -> 13，醒来那个回合末的格挡已经给过了");
+        assert_eq!(name(&s), "出击", "回合末醒的 ⇒ 下一手直接出击");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 16);
+        assert_eq!(s.enemies[0].get(St::Strength), 2);
+
+        // 对拍那条路拿我方回合开头的层数判下一手：2 层 ⇒ 回合末剩 1、还睡；1 层 ⇒ 回合末醒
+        let mut s = with_enemy(beetle, 86);
+        s.enemies[0].set(St::Slumber, 2);
+        assert_eq!(crate::step::allowed_next(&s, 0), 1 << 0);
+        s.enemies[0].set(St::Slumber, 1);
+        assert_eq!(crate::step::allowed_next(&s, 0), 1 << 1);
+    }
+
+    /// 熟睡被**打穿**才减（[源码] `UnblockedDamage != 0`，**不分是不是攻击**）：格挡吃掉的不算、药水打穿算。
+    /// 打穿到 0 是击晕换招：下一个敌人回合「醒来」（移除覆甲、不打人、回合末不再给格挡），再下一个起出击。
+    #[test]
+    fn slumbering_beetle_woken_by_damage_is_stunned_one_turn_then_rolls_out() {
+        let beetle = def_id_of("熟睡甲虫");
+        let def = crate::content::enemy_def(beetle);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mk = || {
+            let mut s = State::new(80, 5);
+            s.add_enemy(beetle, 86);
+            for _ in 0..10 {
+                s.add_card(card::STRIKE, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.energy = 10;
+            s
+        };
+
+        let s = mk();
+        let s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        assert_eq!(s.enemies[0].block, 9, "打击 6 全被 15 格挡吃掉");
+        assert_eq!(s.enemies[0].get(St::Slumber), 3, "被格挡吃掉的不算");
+
+        let mut s = mk();
+        s.enemies[0].block = 0;
+        s.potions[0] = crate::state::potion::FIRE;
+        let s = step(s, Action::UsePotion { slot: 0, target: 0 });
+        assert_eq!(s.enemies[0].get(St::Slumber), 2, "药水打穿也算");
+        assert_eq!(name(&s), "打鼾", "没减到 0 不换招");
+
+        let mut s = mk();
+        s.enemies[0].block = 0;
+        for _ in 0..3 {
+            s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        }
+        assert_eq!(s.enemies[0].get(St::Slumber), 0);
+        assert_eq!(name(&s), "醒来", "打穿到 0 ⇒ 击晕换招");
+        let hp0 = s.player.hp;
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0, "醒来那一手不打人");
+        assert_eq!(s.enemies[0].get(St::PlatedArmor), 0);
+        assert_eq!(s.enemies[0].block, 0, "覆甲没了，这个回合末不给格挡");
+        assert_eq!(name(&s), "出击");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 16);
+    }
+
+    /// 乐加维林族母没人碰：沉睡 3 个敌人回合，**第 3 个回合末拿不到覆甲那堵墙** ——
+    /// 沉睡在 `EnemyTurnEndVeryEarly` 就把覆甲摘了，而覆甲给格挡在 `EnemyTurnEndEarly`。
+    ///
+    /// 这一条是这只 Boss 和熟睡甲虫的分界：甲虫的覆甲是**醒来那一手**清的，
+    /// 那一回合的格挡已经给过了（13 点）；族母这里是 **0**。
+    /// 两个钩子压成一个的话这里会红。
+    #[test]
+    fn lagavulin_left_alone_sleeps_three_turns_and_loses_the_last_wall() {
+        let matriarch = def_id_of("乐加维林族母");
+        let def = crate::content::enemy_def(matriarch);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = with_enemy(matriarch, 222);
+        assert_eq!(s.enemies[0].block, 12, "敌人的覆甲开局给一次格挡");
+        let hp0 = s.player.hp;
+
+        for (turn, want_block, want_asleep) in [(1, 12, 2), (2, 11, 1), (3, 0, 0)] {
+            assert_eq!(name(&s), "沉睡", "第 {turn} 个敌人回合");
+            s = step(s, Action::EndTurn);
+            assert_eq!(s.enemies[0].block, want_block, "第 {turn} 个敌人回合末的格挡");
+            assert_eq!(s.enemies[0].get(St::Asleep), want_asleep, "第 {turn} 个敌人回合末的沉睡");
+        }
+        assert_eq!(s.player.hp, hp0, "睡着不打人");
+        assert_eq!(s.enemies[0].get(St::PlatedArmor), 0, "最后一个睡眠回合把覆甲摘了");
+        assert_eq!(name(&s), "斩击", "自然醒 ⇒ 下一手直接斩击，没有击晕");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 19);
+
+        // 对拍那条路拿我方回合开头的层数判下一手：2 层 ⇒ 回合末剩 1、还睡；1 层 ⇒ 回合末醒
+        let mut s = with_enemy(matriarch, 222);
+        s.enemies[0].set(St::Asleep, 2);
+        assert_eq!(crate::step::allowed_next(&s, 0), 1 << 0);
+        s.enemies[0].set(St::Asleep, 1);
+        assert_eq!(crate::step::allowed_next(&s, 0), 1 << 1);
+    }
+
+    /// 沉睡被**打穿**就整条没了（[源码] `Remove(this)`，不是减 1 层）：覆甲当场移除、击晕一回合。
+    /// 被格挡吃掉的不算 —— 开局那 12 点覆甲格挡正是这只 Boss 的第一道门槛。
+    #[test]
+    fn lagavulin_woken_by_damage_loses_plating_at_once_and_is_stunned() {
+        let matriarch = def_id_of("乐加维林族母");
+        let def = crate::content::enemy_def(matriarch);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mk = || {
+            let mut s = State::new(80, 5);
+            s.add_enemy(matriarch, 222);
+            for _ in 0..10 {
+                s.add_card(card::STRIKE, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.energy = 10;
+            s
+        };
+
+        let s = mk();
+        let s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        assert_eq!(s.enemies[0].block, 6, "打击 6 全被 12 格挡吃掉");
+        assert_eq!(s.enemies[0].get(St::Asleep), 3, "被格挡吃掉的不算");
+        assert_eq!(s.enemies[0].get(St::PlatedArmor), 12);
+
+        let mut s = mk();
+        s.enemies[0].block = 0;
+        let s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        assert_eq!(s.enemies[0].get(St::Asleep), 0, "打穿一下整条沉睡就没了");
+        assert_eq!(s.enemies[0].get(St::PlatedArmor), 0, "覆甲当场移除，我方回合里就没了");
+        assert_eq!(name(&s), "醒来", "击晕换招");
+        let hp0 = s.player.hp;
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0, "醒来那一手不打人");
+        assert_eq!(s.enemies[0].block, 0, "覆甲没了，这个回合末不给格挡");
+        assert_eq!(name(&s), "斩击");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 19);
+    }
+
+    /// 醒来之后的四手定环：斩击 -> 开膛破肚 -> 斩击2（带格挡）-> 灵魂汲取 -> 斩击…
+    /// 灵魂汲取给我 −2 力量 −2 敏捷、给它自己 +2 力量，所以下一圈的斩击是 21。
+    #[test]
+    fn lagavulin_awake_cycle_is_four_moves_and_soul_siphon_swings_two_strength() {
+        let matriarch = def_id_of("乐加维林族母");
+        let def = crate::content::enemy_def(matriarch);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = with_enemy(matriarch, 222);
+        // 直接从醒着的状态起步：沉睡摘掉、指针放到斩击
+        s.enemies[0].set(St::Asleep, 0);
+        s.enemies[0].set(St::PlatedArmor, 0);
+        s.enemies[0].block = 0;
+        s.enemy_move[0] = 1;
+
+        let hp0 = s.player.hp;
+        assert_eq!(name(&s), "斩击");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 19);
+        assert_eq!(name(&s), "开膛破肚");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 19 - 18, "9×2");
+        assert_eq!(name(&s), "斩击2");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 19 - 18 - 12);
+        assert_eq!(s.enemies[0].block, 12, "斩击2 自带 12 格挡");
+        assert_eq!(name(&s), "灵魂汲取");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 19 - 18 - 12, "灵魂汲取不打人");
+        assert_eq!(s.player.get(St::Strength), -2);
+        assert_eq!(s.player.get(St::Dexterity), -2);
+        assert_eq!(s.enemies[0].get(St::Strength), 2);
+        assert_eq!(name(&s), "斩击", "四手定环，转回斩击");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 19 - 18 - 12 - 21, "19 + 它自己的 2 点力量");
+    }
+
+    /// 滑溜封的是**掉血**不是伤害：格挡照常被打满，只有漏过格挡的那一截压成 1。
+    ///
+    /// 这一条是它和无实体的**唯一**区别，而两者差着一整场仗的节奏：
+    /// 无实体（`ModifyDamageCap => 1`）下 26 点只扣 1 点格挡，滑溜下格挡当场清零。
+    /// 建在 `apply_modifiers` 里的话这里会红。
+    #[test]
+    fn slippery_caps_hp_loss_not_damage_so_block_still_takes_the_full_hit() {
+        let mut e = Entity::new(100);
+        e.set(St::Slippery, 8);
+        e.block = 8;
+        let through = crate::damage::absorb(&mut e, 26);
+        assert_eq!(through, 1, "漏过格挡的 18 点压成 1");
+        assert_eq!(e.block, 0, "格挡照常被 26 点打满 —— 这一句无实体给不出");
+        assert_eq!(e.hp, 99);
+
+        // 完全被格挡吃掉 ⇒ 一点血都不掉，也不算一次"打穿"
+        let mut e = Entity::new(100);
+        e.set(St::Slippery, 8);
+        e.block = 30;
+        assert_eq!(crate::damage::absorb(&mut e, 26), 0);
+        assert_eq!(e.hp, 100);
+
+        // 没有滑溜就照常掉
+        let mut e = Entity::new(100);
+        e.block = 8;
+        assert_eq!(crate::damage::absorb(&mut e, 26), 18);
+        assert_eq!(e.hp, 82);
+    }
+
+    /// 滑溜**每打穿一次减 1 层**（不分是不是攻击），所以**段数是货币**：
+    /// 三段的旋风斩在墨影幻灵身上比一段的重击拆得快，尽管后者面板伤害高得多。
+    /// 层数清完之后才开始正常掉血。
+    #[test]
+    fn slippery_is_paid_in_hits_not_in_damage() {
+        let vantom = def_id_of("墨影幻灵");
+        let mk = |card_id: u16, n: usize| {
+            let mut s = State::new(80, 5);
+            s.add_enemy(vantom, 173);
+            for _ in 0..n {
+                s.add_card(card_id, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.energy = 30;
+            s
+        };
+
+        // 三张打击 = 三次打穿 ⇒ 掉 3 血、滑溜 8 -> 5
+        let mut s = mk(card::STRIKE, 6);
+        for _ in 0..3 {
+            s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        }
+        assert_eq!(s.enemies[0].get(St::Slippery), 5, "每次打穿减 1");
+        assert_eq!(s.enemies[0].hp, 170, "每次只掉 1 血，和打了多少无关");
+
+        // 打穿 8 次之后滑溜没了，第 9 下按真实伤害算。
+        // 一手只有 5 张，所以跨一个回合打（墨迹 7 点，和这一条无关）。
+        let mut s = mk(card::STRIKE, 15);
+        for _ in 0..5 {
+            s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        }
+        s = step(s, Action::EndTurn);
+        s.energy = 30;
+        for _ in 0..3 {
+            s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        }
+        assert_eq!(s.enemies[0].get(St::Slippery), 0, "8 次打穿把 8 层清光");
+        assert_eq!(s.enemies[0].hp, 173 - 8);
+        let s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        assert_eq!(s.enemies[0].hp, 173 - 8 - 6, "滑溜清完，打击照常打 6");
+    }
+
+    /// 墨影幻灵四手定环：墨迹 7 -> 墨水长枪 6×2 -> 肢解 26 + 3 张伤口进**弃牌堆** -> 准备（力量 +2）。
+    #[test]
+    fn vantom_cycle_is_four_moves_and_dismember_adds_three_wounds_to_the_discard() {
+        let vantom = def_id_of("墨影幻灵");
+        let def = crate::content::enemy_def(vantom);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = State::new(120, 3);
+        s.add_enemy(vantom, 173);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        let hp0 = s.player.hp;
+
+        assert_eq!(name(&s), "墨迹");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 7);
+        assert_eq!(name(&s), "墨水长枪");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 7 - 12, "6×2");
+        assert_eq!(name(&s), "肢解");
+        let wounds_before = (0..s.n_cards as usize).filter(|&i| s.cards[i].id == card::WOUND).count();
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 7 - 12 - 26);
+        let wounds = (0..s.n_cards as usize).filter(|&i| s.cards[i].id == card::WOUND).count();
+        assert_eq!(wounds, wounds_before + 3, "3 张伤口");
+        assert_eq!(name(&s), "准备");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[0].get(St::Strength), 2, "准备不打人，给自己 +2 力量");
+        assert_eq!(name(&s), "墨迹", "转回第一手");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 7 - 12 - 26 - 9, "7 + 力量 2");
+    }
+
+    /// 三只墨宝**中间那只起手旋风**，另外两只起手刺击（[源码] `InkletsNormal` 只给中间那只
+    /// `MiddleInklet = true`，遭遇本身一个随机数都没掷 ⇒ 起手是**确定**的，用 `SlotIs`）。
+    /// 之后刺击和「锐利凝视 | 旋风」交替。
+    #[test]
+    fn the_middle_inklet_opens_with_whirlwind_and_the_others_jab() {
+        let inklet = def_id_of("墨宝");
+        let def = crate::content::enemy_def(inklet);
+        let mut s = State::new(80, 3);
+        for _ in 0..3 {
+            s.add_enemy(inklet, 14);
+        }
+        let s = begin_combat(s);
+        let name = |s: &State, e: usize| def.moves[crate::step::current_move_ix(def, s, e)].name;
+        assert_eq!(name(&s, 0), "刺击");
+        assert_eq!(name(&s, 1), "旋风", "中间那只");
+        assert_eq!(name(&s, 2), "刺击");
+        // 开局允许集合也是单元素的 —— 起手确定，不是"哪一手都可能"
+        for e in 0..3 {
+            let set = crate::step::allowed_initial(&s, e);
+            assert_eq!(set.count_ones(), 1, "槽 {e} 的开局是确定的");
+        }
+        // 刺击之后是二选一，旋风 / 锐利凝视之后回刺击
+        let mut s2 = s;
+        s2.enemy_move[0] = 1;
+        assert_eq!(crate::step::allowed_next(&s2, 0), 1 << 0, "旋风 -> 刺击");
+        s2.enemy_move[0] = 2;
+        assert_eq!(crate::step::allowed_next(&s2, 0), 1 << 0, "锐利凝视 -> 刺击");
+        s2.enemy_move[0] = 0;
+        assert_eq!(crate::step::allowed_next(&s2, 0), (1 << 1) | (1 << 2), "刺击 -> 二选一");
+    }
+
+    // ---- 2026-09-19 第 1 幕批 4（鬼祟珊瑚群）/ 批 5（暗港杂兵）。全部 [源码]，没有实录。
+
+    /// 硬化外壳封的是**一个回合累计**的掉血（和难以杀灭的「每一下封顶」不是一回事），
+    /// 而且和滑溜一样在**扣完格挡之后**才封 —— 格挡照常被打满。
+    /// 门是**上限**不是余额：余额扣到 0 正是外壳最硬的时候，拿余额当门的话额度一用完外壳就「消失」了。
+    #[test]
+    fn hardened_shell_caps_hp_loss_per_turn_after_block_not_per_hit() {
+        let shell = |bal: i32| {
+            let mut e = Entity::new(75);
+            e.set(St::HardenedShellCap, 20);
+            e.set(St::HardenedShell, bal);
+            e
+        };
+        let mut e = shell(20);
+        e.block = 5;
+        assert_eq!(crate::damage::absorb(&mut e, 15), 10, "5 点格挡先吃，漏过的 10 全掉");
+        assert_eq!((e.block, e.hp, e.get(St::HardenedShell)), (0, 65, 10));
+        assert_eq!(crate::damage::absorb(&mut e, 15), 10, "余额只剩 10 —— 累计封顶，不是每一下 20");
+        assert_eq!((e.hp, e.get(St::HardenedShell)), (55, 0));
+        assert_eq!(crate::damage::absorb(&mut e, 30), 0, "余额 0：再打多少都不掉");
+        assert_eq!(e.hp, 55);
+
+        let mut e = shell(0);
+        e.block = 12;
+        assert_eq!(crate::damage::absorb(&mut e, 30), 0);
+        assert_eq!(e.block, 0, "余额 0 也照样把格挡打光 —— 无实体 / 难以杀灭给不出这一句");
+
+        // 没有上限标记 = 没有外壳：余额那一格是 0 也照常掉血
+        let mut e = Entity::new(75);
+        assert_eq!(crate::damage::absorb(&mut e, 30), 30);
+    }
+
+    /// 硬化外壳**双方各自的回合开始**都回满（[源码] `BeforeSideTurnStart`，不分哪一边），
+    /// 而且回满在**最早一档**（`Hook::SideTurnStart`）—— 早于水银沙漏那种回合开始就打敌人的规则。
+    ///
+    /// 三件事：我这个回合打满 20 之后再打是白打 · 敌人回合里荆棘反弹给它的伤害吃的是
+    /// 敌人回合那一份额度 · 下一个我方回合开头水银沙漏的 3 点算进**这个回合**的额度（余额 17）。
+    /// 把回满挂到 `TurnStart` 上的话（表里排在水银沙漏后面），后两句都会错。
+    #[test]
+    fn hardened_shell_refills_at_each_side_turn_start_before_anything_hits_it() {
+        let colony = def_id_of("鬼祟珊瑚群");
+        let mut s = State::new(80, 7);
+        s.add_enemy(colony, 75);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        assert_eq!(s.enemies[0].get(St::HardenedShell), 20, "开局余额 = 上限");
+        assert_eq!(s.enemies[0].get(St::HardenedShellCap), 20, "上限是按名字挂的私有标记");
+        s.energy = 10;
+        for _ in 0..4 {
+            s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        }
+        assert_eq!(s.enemies[0].hp, 55, "4 × 6 = 24，只掉得下 20");
+        assert_eq!(s.enemies[0].get(St::HardenedShell), 0);
+        let s5 = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        assert_eq!(s5.enemies[0].hp, 55, "额度用完，第 5 张白打");
+
+        let mut s = s;
+        s.player.set(St::Thorns, 3);
+        s.player.set(St::MercuryHourglass, 3);
+        let s = step(s, Action::EndTurn);
+        assert_eq!(
+            s.enemies[0].hp,
+            55 - 3 - 3,
+            "猛冲打我、荆棘反弹 3（敌人回合，额度刚回满）+ 水银沙漏 3（我的回合，额度又回满）"
+        );
+        assert_eq!(s.enemies[0].get(St::HardenedShell), 17, "我的回合开头先回满，水银沙漏那 3 点算进这个回合");
+    }
+
+    /// 鬼祟珊瑚群四手定环：猛冲 14 -> 猛冲 14 -> 惯性 9 + 力量 2 -> 穿刺戳击 7×2 -> 猛冲 …
+    #[test]
+    fn skulking_colony_cycle_is_zoom_zoom_inertia_piercing_stabs() {
+        let colony = def_id_of("鬼祟珊瑚群");
+        let def = crate::content::enemy_def(colony);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = State::new(200, 3);
+        s.add_enemy(colony, 75);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        let hp0 = s.player.hp;
+        assert_eq!(name(&s), "猛冲");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 14);
+        assert_eq!(name(&s), "猛冲2");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 28);
+        assert_eq!(name(&s), "惯性");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 37);
+        assert_eq!(s.enemies[0].get(St::Strength), 2, "惯性打完 +2 力量");
+        assert_eq!(name(&s), "穿刺戳击");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 37 - 18, "(7 + 2) × 2");
+        assert_eq!(name(&s), "猛冲", "四手定环");
+    }
+
+    /// 幽灵船：起手纠缠（我虚弱 3 + **5 张晕眩进弃牌堆**，不打人），之后扫击 13 / 践踏 4×3 交替。
+    #[test]
+    fn haunted_ship_haunts_once_then_alternates_swipe_and_stomp() {
+        let ship = def_id_of("幽灵船");
+        let def = crate::content::enemy_def(ship);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = State::new(120, 3);
+        s.add_enemy(ship, 63);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        let hp0 = s.player.hp;
+        assert_eq!(name(&s), "纠缠");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0, "纠缠不打人");
+        assert!(s.player.get(St::Weak) > 0, "给我挂了虚弱");
+        assert_eq!(cards_named(&s, card::DAZED), 5, "5 张晕眩");
+        assert_eq!(name(&s), "扫击");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 13);
+        assert_eq!(name(&s), "践踏");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 13 - 12, "4×3");
+        assert_eq!(name(&s), "扫击", "纠缠只出一次，之后扫击 / 践踏交替");
+        assert_eq!(cards_named(&s, card::DAZED), 5, "晕眩没再加");
+    }
+
+    /// 蟾蜍蝌蚪按站位起手（前面那只带刺、后面那只旋转 —— 遭遇写死的，开局允许集合单元素），
+    /// 环是 旋转 -> 带刺 -> 吐刺。**带刺之后打它吃 2 点反弹；吐刺先把刺收回去再打人。**
+    #[test]
+    fn toadpoles_open_by_slot_and_retract_their_spikes_before_spitting() {
+        let tp = def_id_of("蟾蜍蝌蚪");
+        let def = crate::content::enemy_def(tp);
+        let name = |s: &State, e: usize| def.moves[crate::step::current_move_ix(def, s, e)].name;
+        let mut s = State::new(80, 3);
+        s.add_enemy(tp, 23);
+        s.add_enemy(tp, 23);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let s = begin_combat(s);
+        assert_eq!(name(&s, 0), "带刺", "前面那只");
+        assert_eq!(name(&s, 1), "旋转", "后面那只");
+        for e in 0..2 {
+            assert_eq!(crate::step::allowed_initial(&s, e).count_ones(), 1, "槽 {e} 的开局是确定的");
+        }
+        let hp0 = s.player.hp;
+        let mut s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 7, "只有后面那只打人（旋转 7）");
+        assert_eq!(s.enemies[0].get(St::Thorns), 2, "前面那只长了 2 层刺");
+
+        s.energy = 5;
+        let hp1 = s.player.hp;
+        s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        assert_eq!(s.player.hp, hp1 - 2, "打长了刺的那只吃 2 点反弹");
+        assert_eq!(name(&s, 0), "吐刺");
+        assert_eq!(name(&s, 1), "带刺");
+        let hp2 = s.player.hp;
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[0].get(St::Thorns), 0, "吐刺先把刺收回去");
+        assert_eq!(s.enemies[1].get(St::Thorns), 2, "后面那只这一手才长刺");
+        assert_eq!(s.player.hp, hp2 - 9, "吐刺 3×3，带刺不打人");
+    }
+
+    /// 化石追踪者的吮吸：它的攻击**每打穿一段** +3 力量，被格挡吃光的那段不算；
+    /// **给的力量进不了同一手的下一段**（[源码] 在 `AfterAttack` 里一次给）。
+    /// 注入路径（L2 的结算）和真敌人回合走同一个 `take_attack_hit`，两条都验。
+    /// 顺带：起手缠上，之后三选一、同一手最多连出两次。
+    #[test]
+    fn fossil_stalker_sucks_strength_per_unblocked_hit_after_the_attack() {
+        let fs = def_id_of("化石追踪者");
+        let def = crate::content::enemy_def(fs);
+        let s = lone(fs, 52);
+        assert_eq!(def.moves[current_move_ix(def, &s, 0)].name, "缠上", "起手缠上");
+        assert_eq!(s.enemies[0].get(St::Suck), 3);
+
+        // 甩动 3×2：第一段被 4 点格挡吃光（剩 1），第二段穿 2
+        let mut s = lone(fs, 52);
+        s.enemy_move[0] = 2;
+        s.player.block = 4;
+        let after = step(s, Action::EndTurn);
+        assert_eq!(after.player.hp, 78);
+        assert_eq!(after.enemies[0].get(St::Strength), 3, "只有第二段打穿");
+
+        let mut s = lone(fs, 52);
+        s.enemy_move[0] = 2;
+        let after = step(s, Action::EndTurn);
+        assert_eq!(after.player.hp, 80 - 6, "3 + 3 —— 第二段没吃到第一段给的力量");
+        assert_eq!(after.enemies[0].get(St::Strength), 6, "两段都穿 +6");
+
+        let s = lone(fs, 52);
+        let mut inc = no_incoming();
+        inc[0] = (12, 1);
+        let after = end_turn_with_incoming(s, &inc);
+        assert_eq!(after.enemies[0].get(St::Strength), 3, "注入路径同样发作");
+
+        let mut s = lone(fs, 52);
+        s.enemy_move[0] = 2;
+        assert_eq!(allowed_next(&s, 0), 0b111, "三选一");
+        s.enemy_hist[0][0] = 2;
+        assert_eq!(allowed_next(&s, 0), 0b011, "已经连着甩了两次 ⇒ 不能再甩");
+    }
+
+    /// 地精佣兵：三手定环（拿来 7×2 -> 双重猛击 6×2 + 我虚弱 2 -> 嘿嘿 8 + 自身力量 2）；
+    /// **打死它不算赢**，冒出卑鄙地精 + 胖地精（[源码] `SurprisePower`）。
+    /// 两只都先醒来一手；卑鄙地精之后一直冲撞 9，胖地精之后一直「逃跑」（内核原地不动）。
+    #[test]
+    fn killing_the_gremlin_merc_summons_two_gremlins_and_combat_goes_on() {
+        let merc = def_id_of("地精佣兵");
+        let def = crate::content::enemy_def(merc);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = State::new(120, 3);
+        s.add_enemy(merc, 48);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        assert_eq!((s.enemies[0].get(St::Surprise), s.enemies[0].get(St::Thievery)), (1, 20));
+        let hp0 = s.player.hp;
+        assert_eq!(name(&s), "拿来");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 14);
+        assert_eq!(name(&s), "双重猛击");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 26);
+        assert!(s.player.get(St::Weak) > 0);
+        assert_eq!(name(&s), "嘿嘿");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 34);
+        assert_eq!(s.enemies[0].get(St::Strength), 2);
+        assert_eq!(name(&s), "拿来", "三手定环");
+
+        s.enemies[0].hp = 1;
+        s.energy = 5;
+        let s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        assert!(!s.enemies[0].alive());
+        assert!(!s.combat_over, "打死地精佣兵**不该**判成胜利");
+        let alive: Vec<(&str, i32)> = (0..s.n_enemies as usize)
+            .filter(|&i| s.enemies[i].alive())
+            .map(|i| (crate::content::enemy_def(s.enemy_def[i]).name, s.enemies[i].hp))
+            .collect();
+        assert_eq!(alive, vec![("卑鄙地精", 12), ("胖地精", 15)], "先卑鄙后胖；名字是连接键");
+        let hp1 = s.player.hp;
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp1, "召唤出来的第一个敌人回合两只都只是醒来");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp1 - 9, "卑鄙地精冲撞 9，胖地精逃跑不打人");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp1 - 18, "之后一直冲撞");
+    }
+
+    /// 这一批几手的**意图签名**要和 [源码] 的意图逐个对上 —— 对拍 / 实况对齐靠它认招。
+    /// 三个容易写错的：纠缠是 `Debuff` + `StatusCard:5`（塞牌是副作用、另起一个意图）·
+    /// 吐刺那 −2 荆棘不该冒出一个 `Buff` · 惯性是 攻击 + 强化。
+    #[test]
+    fn act1_underdocks_batch_intent_signatures_match_the_source_intents() {
+        let sig = |name: &str, mv: usize| {
+            let id = def_id_of(name);
+            crate::replay::move_signature(id, mv, &Entity::new(50), &Entity::new(80), 0)
+        };
+        let v = |xs: &[(&str, &str)]| xs.iter().map(|(a, b)| (a.to_string(), b.to_string())).collect::<Vec<_>>();
+        assert_eq!(sig("幽灵船", 0), v(&[("Debuff", ""), ("StatusCard", "5")]));
+        assert_eq!(sig("幽灵船", 2), v(&[("Attack", "4×3")]));
+        assert_eq!(sig("蟾蜍蝌蚪", 0), v(&[("Attack", "3×3")]));
+        assert_eq!(sig("蟾蜍蝌蚪", 2), v(&[("Buff", "")]));
+        assert_eq!(sig("化石追踪者", 0), v(&[("Attack", "9"), ("Debuff", "")]));
+        assert_eq!(sig("鬼祟珊瑚群", 2), v(&[("Attack", "9"), ("Buff", "")]));
+        assert_eq!(sig("鬼祟珊瑚群", 3), v(&[("Attack", "7×2")]));
+        assert_eq!(sig("地精佣兵", 1), v(&[("Attack", "6×2"), ("Debuff", "")]));
+        assert_eq!(sig("地精佣兵", 2), v(&[("Attack", "8"), ("Buff", "")]));
+        assert_eq!(sig("卑鄙地精", 0), v(&[("Stun", "")]));
+        assert_eq!(sig("胖地精", 1), v(&[("Escape", "")]));
+    }
+
+    /// 缠结的费用落在**哪一层**（[源码] `CardEnergyCost.GetWithModifiers`：本地改费 -> 全局钩子 -> `Late` -> 夹 0）。
+    /// 每一条都挑的是**两种建法给不同数**的样本：
+    ///
+    /// * 踩踏打过 4 张攻击：`3 − 4 + 1 = 0`（缠结在夹 0 **之前**）；夹完再加是 1
+    /// * 药水 / 地狱之刃给的「本回合免费」是本地的置 0，缠结照样加 ⇒ **1**；「免费就直接 return 0」是 0
+    /// * 无情猛攻是 `Late`，压过缠结 ⇒ 0
+    /// * X 费不吃它（`CostsX` 提前 return）· 技能牌不吃它
+    #[test]
+    fn tangled_adds_to_attack_costs_after_local_modifiers_and_before_the_late_free_attack() {
+        let mut s = lone(enemy::DUMMY, 100);
+        give(&mut s, card::STRIKE);
+        give(&mut s, card::DEFEND);
+        give(&mut s, card::STAMPEDE);
+        give(&mut s, card::WHIRLWIND);
+        let free = give(&mut s, card::STRIKE);
+        s.cards[free as usize].flags |= F_FREE_THIS_TURN;
+        s.energy = 3;
+        let cost = |s: &State| (0..5).map(|i| effective_cost(s, i)).collect::<Vec<_>>();
+        assert_eq!(cost(&s), vec![1, 1, 3, 3, 0], "没有缠结：打击 / 防御 / 踩踏 / 旋风斩（X = 能量）/ 免费打击");
+
+        s.player.set(St::Tangled, 1);
+        assert_eq!(cost(&s), vec![2, 1, 4, 3, 1], "缠结 1：攻击 +1，技能和 X 费不动，**免费的攻击也要 1**");
+        s.attacks_played = 3;
+        assert_eq!(effective_cost(&s, 2), 1, "踩踏 3 − 3 + 1");
+        s.attacks_played = 4;
+        assert_eq!(effective_cost(&s, 2), 0, "踩踏 3 − 4 + 1 = 0 —— 缠结加在夹 0 之前，不是 max(0, −1) + 1");
+        s.free_attack = 1;
+        assert_eq!(cost(&s)[0], 0, "无情猛攻是 Late 钩子，压过缠结");
+        assert_eq!(cost(&s)[3], 3, "X 费照旧是能量");
+    }
+
+    /// 藤蔓蹒跚者三手定环，**起点是挥击**：挥击 6×2 -> 紧绕藤蔓 8 + 缠结 1 -> 大啃 16 -> 挥击 …
+    /// 缠结是**敌人回合里**挂上的，撑过我的下一个回合（那一回合攻击牌 +1 费、能量照 2 扣），
+    /// **我的回合结束**摘掉（敌人回合结束不摘）；人工制品挡得住（`PowerType.Debuff`）。
+    #[test]
+    fn vine_shambler_tangles_my_attacks_for_exactly_one_player_turn() {
+        let vs = def_id_of("藤蔓蹒跚者");
+        let def = crate::content::enemy_def(vs);
+        let name = |s: &State| def.moves[crate::step::current_move_ix(def, s, 0)].name;
+        let mut s = State::new(120, 3);
+        s.add_enemy(vs, 61);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        let hp0 = s.player.hp;
+        assert_eq!(name(&s), "挥击", "起点是挥击，不是列表里排第一的紧绕藤蔓");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 12, "6×2");
+        assert_eq!(s.player.get(St::Tangled), 0);
+        assert_eq!(name(&s), "紧绕藤蔓");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 20);
+        assert_eq!(s.player.get(St::Tangled), 1, "打完给我挂缠结，撑到我的回合");
+        let h = hand_ix_of(&s, card::STRIKE) as usize;
+        assert_eq!(effective_cost(&s, h), 2);
+        s.energy = 3;
+        s = step(s, Action::PlayCard { hand: h as u8, target: 0 });
+        assert_eq!(s.energy, 1, "照 2 费扣");
+        assert_eq!(name(&s), "大啃");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 36, "大啃 16");
+        assert_eq!(s.player.get(St::Tangled), 0, "我的回合结束摘掉");
+        assert_eq!(effective_cost(&s, hand_ix_of(&s, card::STRIKE) as usize), 1, "下一回合恢复原价");
+        assert_eq!(name(&s), "挥击", "三手定环");
+
+        // 人工制品挡掉这一笔
+        let mut s = lone(vs, 61);
+        s.enemy_move[0] = 1;
+        s.player.set(St::Artifact, 1);
+        let s = step(s, Action::EndTurn);
+        assert_eq!((s.player.get(St::Tangled), s.player.get(St::Artifact)), (0, 0), "人工制品吃掉缠结");
+
+        // 注入路径（L2 叶子）照设计不跑非攻击 op；缠结只在真的敌人回合里挂上
+        let mut s = lone(vs, 61);
+        s.player.set(St::Tangled, 1);
+        let s = end_turn_with_incoming(s, &no_incoming());
+        assert_eq!(s.player.get(St::Tangled), 0, "两条回合结束路径都摘（共用 `end_turn_impl`）");
+    }
+
+    /// 劫掠者暴徒：殴打 7 -> 怒吼（+3 力量，不打人）-> 殴打 10 -> …；劫掠者刺客：一直致命射击 10。
+    #[test]
+    fn ruby_raider_brute_roars_every_other_turn_and_the_assassin_always_shoots() {
+        let brute = def_id_of("劫掠者暴徒");
+        let assassin = def_id_of("劫掠者刺客");
+        let mut s = State::new(200, 3);
+        s.add_enemy(brute, 31);
+        s.add_enemy(assassin, 20);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        let hp0 = s.player.hp;
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 7 - 10);
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 17 - 10, "怒吼不打人");
+        assert_eq!(s.enemies[0].get(St::Strength), 3);
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, hp0 - 27 - 10 - 10, "殴打 7 + 3");
+        s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[0].get(St::Strength), 6, "每两个回合 +3");
+    }
+
+    /// 批 6 这几手的意图签名。**紧绕藤蔓的副意图是 `CardDebuff` 不是 `Debuff`**（[源码] `CardDebuffIntent`）——
+    /// 落进通用的 `PlayerStatus` 臂会签成 `Debuff`，整只对不齐。
+    #[test]
+    fn act1_overgrowth_batch_intent_signatures_match_the_source_intents() {
+        let sig = |name: &str, mv: usize| {
+            let id = def_id_of(name);
+            crate::replay::move_signature(id, mv, &Entity::new(50), &Entity::new(80), 0)
+        };
+        let v = |xs: &[(&str, &str)]| xs.iter().map(|(a, b)| (a.to_string(), b.to_string())).collect::<Vec<_>>();
+        assert_eq!(sig("藤蔓蹒跚者", 0), v(&[("Attack", "6×2")]));
+        assert_eq!(sig("藤蔓蹒跚者", 1), v(&[("Attack", "8"), ("CardDebuff", "")]));
+        assert_eq!(sig("藤蔓蹒跚者", 2), v(&[("Attack", "16")]));
+        assert_eq!(sig("劫掠者刺客", 0), v(&[("Attack", "10")]));
+        assert_eq!(sig("劫掠者暴徒", 0), v(&[("Attack", "7")]));
+        assert_eq!(sig("劫掠者暴徒", 1), v(&[("Buff", "")]));
+    }
+
+    /// 完整路径（`step(EndTurn)`）的敌人回合打完，「本回合被强制改招」要清掉。
+    ///
+    /// 不清的话，之后每个回合求解器叶子上的注入威胁（`end_turn_with_live_incoming`）都把这只敌人跳过 ——
+    /// 被打醒的熟睡甲虫在推演的求解器眼里从此「不打人」。2026-09-14 之前只有注入路径清它。
+    #[test]
+    fn a_forced_move_flag_does_not_outlive_the_enemy_turn_on_the_full_path() {
+        let beetle = def_id_of("熟睡甲虫");
+        let mut s = State::new(80, 5);
+        s.add_enemy(beetle, 86);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        s.energy = 10;
+        s.enemies[0].block = 0;
+        for _ in 0..3 {
+            s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+        }
+        assert_eq!(s.enemies[0].get(St::MoveForcedThisTurn), 1, "打醒 = 击晕换招，标记挂上");
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.enemies[0].get(St::MoveForcedThisTurn), 0, "醒来那个敌人回合打完就用完了");
+
+        let mut inc = [(0, 0); crate::state::MAX_ENEMIES];
+        inc[0] = (16, 1);
+        let hp = s.player.hp;
+        let s = crate::step::end_turn_with_live_incoming(s, &inc);
+        assert_eq!(s.player.hp, hp - 16, "下一手出击要真的打进来");
+    }
+
+    /// **拿实录对拍晕眩的张数**：`act2_f27_elite_entomancer` 每一帧出牌 / 喝药水之后，
+    /// 内核四个牌区里的晕眩总数和抽牌堆张数，都要等于下一帧观测到的。
+    ///
+    /// **`verify` 看不见这件事** —— 一步对拍比手牌 / 弃牌堆 / 消耗堆 / 药水槽，**不比抽牌堆**，
+    /// 而人体蜂房塞的晕眩全进抽牌堆。建它之前三种对拍模式在这条实录上一直全绿。
+    /// 这份实录早于牌序补丁，所以只比张数、不比位置（剑柄打击抽上来的是不是晕眩，落在总数里）。
+    #[test]
+    fn personal_hive_dazed_counts_match_the_entomancer_trace() {
+        use crate::replay::{parse_trace, Act, Replayer};
+        let src = std::fs::read_to_string("traces/act2_f27_elite_entomancer.json").unwrap();
+        let t = parse_trace(&src).unwrap();
+        let mut r = Replayer::for_trace(&t);
+        let obs_dazed = |o: &crate::replay::Obs| {
+            let named = |n: &str| n == "晕眩";
+            o.hand.iter().filter(|c| named(&c.name)).count()
+                + o.draw.iter().filter(|n| named(n)).count()
+                + o.discard.iter().filter(|n| named(n)).count()
+                + o.exhaust.iter().filter(|n| named(n)).count()
+        };
+        let ker_dazed = |s: &State| {
+            let zone = |z: &[u8], n: u8| {
+                z[..n as usize].iter().filter(|&&c| s.cards[c as usize].id == card::DAZED).count()
+            };
+            zone(&s.hand, s.n_hand) + zone(&s.draw, s.n_draw) + zone(&s.disc, s.n_disc) + zone(&s.exh, s.n_exh)
+        };
+        let mut checked = 0;
+        for i in 0..t.frames.len() - 1 {
+            let (f, next) = (&t.frames[i], &t.frames[i + 1].obs);
+            if next.enemies.is_empty() {
+                break; // 战斗结束那一帧牌区被清空，没得比
+            }
+            let sy = r.sync(&f.obs);
+            let st = match &f.action {
+                Some(Act::Play { card_name, .. }) => {
+                    let h = (0..sy.state.n_hand as usize)
+                        .find(|&h| sy.names.get(sy.state.hand[h] as usize) == Some(card_name))
+                        .expect("手牌里找不到这张");
+                    step(sy.state, Action::PlayCard { hand: h as u8, target: 0 })
+                }
+                Some(Act::UsePotion { slot, .. }) => {
+                    step(sy.state, Action::UsePotion { slot: *slot as u8, target: 0 })
+                }
+                _ => continue,
+            };
+            assert_eq!(ker_dazed(&st), obs_dazed(next), "帧{i} {:?} 之后晕眩总数", f.action);
+            assert_eq!(st.n_draw as usize, next.draw.len(), "帧{i} 之后抽牌堆张数");
+            checked += 1;
+        }
+        assert!(checked >= 9, "这条实录里出牌 + 喝药水至少 9 次，只比了 {checked} 次");
+    }
+
+    /// [源码] `DisintegrationPower.AfterSideTurnEndLate` + [玩家判定] 2026-09-14：
+    /// **回合末剩的格挡先吃瓦解**，吃剩的才去挡敌人那一手；每个回合只发作一次。
+    #[test]
+    fn disintegration_eats_my_leftover_block_before_the_enemy_attacks() {
+        let mk = || {
+            let mut s = State::new(80, 5);
+            s.add_enemy(enemy::DUMMY, 100); // 沙包：每回合打 12
+            for _ in 0..10 {
+                s.add_card(card::STRIKE, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.player.set(St::Disintegration, 6);
+            s
+        };
+        let mut s = mk();
+        s.player.block = 10;
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.player.hp, 80 - (6 + 12 - 10), "格挡 10：瓦解吃 6，剩 4 挡沙包的 12");
+
+        let s = step(mk(), Action::EndTurn);
+        assert_eq!(s.player.hp, 80 - 6 - 12, "没有格挡：瓦解 6 + 沙包 12，只发作一次");
+    }
+
+    /// 懒惰 3：本回合打满 3 张之后，`legal_actions` 一张都不给打，`step` 也原样返回。
+    #[test]
+    fn sloth_stops_the_fourth_card_in_a_turn() {
+        let mut s = State::new(80, 5);
+        s.add_enemy(enemy::DUMMY, 100);
+        for _ in 0..10 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        s.player.set(St::Sloth, 3);
+        s.energy = 10;
+        for _ in 0..3 {
+            let ix = hand_ix_of(&s, card::STRIKE);
+            s = step(s, Action::PlayCard { hand: ix, target: 0 });
+        }
+        assert_eq!(s.cards_played, 3);
+        let (acts, n) = crate::step::legal_actions(&s);
+        assert!(
+            !acts[..n].iter().any(|a| matches!(a, Action::PlayCard { .. })),
+            "打满 3 张之后一张都不给打"
+        );
+        let ix = hand_ix_of(&s, card::STRIKE);
+        let t = step(s, Action::PlayCard { hand: ix, target: 0 });
+        assert_eq!(t.cards_played, 3, "step 也要拒绝（不变量 5：非法动作原样返回）");
+        assert_eq!(t.n_hand, s.n_hand);
+    }
+
+    /// 心灵腐化 1：回合开始那一手少抽 1 张。
+    #[test]
+    fn mind_rot_draws_one_fewer_card_at_turn_start() {
+        let mut s = State::new(80, 5);
+        s.add_enemy(enemy::DUMMY, 100);
+        for _ in 0..15 {
+            s.add_card(card::STRIKE, 0, 0);
+        }
+        let mut s = begin_combat(s);
+        s.player.set(St::MindRot, 1);
+        let s = step(s, Action::EndTurn);
+        assert_eq!(s.n_hand, 4);
+    }
+
+    /// 诅咒出过几次**从我身上的 status 反推**：已经出过的是一段前缀，
+    /// 三组的另一边各不相同、瓦解 6/7/8 的子集和互不相同 ⇒ 前缀长度唯一。
+    #[test]
+    fn curses_taken_reads_the_prefix_back_from_my_statuses() {
+        use crate::content::{curses_taken, KNOWLEDGE_CURSES as K};
+        let mk = |d: i32, m: i32, sl: i32, w: i32| {
+            let mut e = crate::state::Entity::new(80);
+            e.set(St::Disintegration, d);
+            e.set(St::MindRot, m);
+            e.set(St::Sloth, sl);
+            e.set(St::WasteAway, w);
+            e
+        };
+        assert_eq!(curses_taken(&mk(0, 0, 0, 0), &K), 0);
+        assert_eq!(curses_taken(&mk(6, 0, 0, 0), &K), 1);
+        assert_eq!(curses_taken(&mk(0, 1, 0, 0), &K), 1);
+        assert_eq!(curses_taken(&mk(7, 1, 0, 0), &K), 2);
+        assert_eq!(curses_taken(&mk(13, 0, 0, 0), &K), 2);
+        assert_eq!(curses_taken(&mk(6, 0, 3, 0), &K), 2);
+        assert_eq!(curses_taken(&mk(21, 0, 0, 0), &K), 3);
+        assert_eq!(curses_taken(&mk(14, 0, 3, 0), &K), 3);
+        assert_eq!(curses_taken(&mk(15, 1, 0, 0), &K), 3);
+        assert_eq!(curses_taken(&mk(0, 1, 3, 1), &K), 3);
     }
 
     // -----------------------------------------------------------------------
@@ -4257,6 +5947,9 @@ mod tests {
     fn every_relic_status_is_claimed_by_someone() {
         // 写死消费点的（不走 POWERS）。加一条就要在这里登记，理由写清楚。
         const CONSUMED_IN_CODE: &[St] = &[
+            // Strike tag damage, and the dynamic HP threshold strength hook.
+            St::StrikeDummy,
+            St::RedSkull,
             // 臂甲充能：`damage::card_block` 里消耗 —— 那是"从卡牌获得格挡"
             // 的唯一入口，所以药水/能力牌的格挡自动不吃翻倍
             St::VambraceCharge,
@@ -8017,6 +9710,36 @@ mod tests {
         assert_eq!(checked, 100, "表没扫全，只检了 {checked} 格");
     }
 
+    /// **收掉一只「死时召唤」的宿主，「还要啃多少血」不能变多。**
+    ///
+    /// 三只宿主各打一次（走真的 `step`：打击砍死、召唤在 `EnemyDied` 里发生）：
+    /// 砍之前这一只算「剩的几点 + 死时要召出来的」，砍之后召出来的那几只各自按满血算、
+    /// 尸体不再算 —— 前后之差正好是砍掉的那几点。
+    ///
+    /// 2026-09-19 之前 `remaining_hp_including_revives` 不数召唤，砍死宿主那一下这个和**跳涨**
+    /// （地精佣兵 5 -> 27、寄生物 5 -> 76、巨斧机器人 5 -> 74），求解器因此不肯收宿主：
+    /// 实录 `act1_f12_elite_phrog`（玩家 −1 血）内核重打 89% 死。
+    #[test]
+    fn killing_a_death_summoning_host_never_raises_the_hp_left_to_chew() {
+        let left = |s: &State| -> i32 {
+            (0..s.n_enemies as usize)
+                .filter(|&e| s.enemies[e].alive())
+                .map(|e| crate::content::remaining_hp_including_revives(&s.enemies[e]))
+                .sum()
+        };
+        for (name, hp_full) in [("地精佣兵", 48), ("异蛙寄生虫", 64), ("巨斧机器人", 74)] {
+            let mut s = lone(def_id_of(name), hp_full);
+            give(&mut s, card::STRIKE);
+            s.enemies[0].hp = 5;
+            let before = left(&s);
+            assert!(before > 5, "{name}：死时要召唤的血该算进去（{before}）");
+            let after = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::STRIKE), target: 0 });
+            assert!(!after.enemies[0].alive(), "{name}：宿主该死了");
+            assert!(!after.combat_over, "{name}：召唤出来了，仗没打完");
+            assert_eq!(left(&after), before - 5, "{name}：砍掉的正好是宿主剩的 5 点，一点都不该多出来");
+        }
+    }
+
     /// **打掉敌人的血，叶分数永远不该变低** —— 沿着**整条**掉血路径，
     /// 不只是"收人头"那一下。
     ///
@@ -9209,10 +10932,13 @@ mod tests {
                 (EOp::Attack { base, .. }, false) => base,
                 (EOp::AttackPlusStackHits { hits, .. }, true) => hits,
                 (EOp::AttackPlusStackHits { base, .. }, false) => base,
+                (EOp::AttackPlusSelfStatus { hits, .. }, true) => hits,
+                (EOp::AttackPlusSelfStatus { base, .. }, false) => base,
                 (EOp::Block(n), _) => n,
                 (EOp::SelfStatus { amt, .. }, _) => amt,
                 (EOp::PlayerStatus { amt, .. }, _) => amt,
                 (EOp::AddCardToDiscard { count, .. }, _) => count,
+                (EOp::Heal(n), _) => n,
                 _ => panic!(
                     "{} 的「{}」第 {} 个 op 是 {:?}，`asc::patch` 认不出来 —— 该重新生成表",
                     r.name, r.mv_name, r.op, op
@@ -9320,6 +11046,20 @@ mod tests {
                 "ENEMY_START_PLAYER_STATUS 里的「{name}」查不到敌人"
             );
             assert!(*amt != 0, "「{name}」给的 {st:?} 是 0 层，等于没写");
+        }
+    }
+
+    /// `ENEMY_PRIVATE_MARKERS` 的名字解析得到真敌人，**而且每个标记都有规则读它** ——
+    /// 否则标记挂上去什么都不做（两条路径都按名字挂，拼错就是静默失效）。
+    #[test]
+    fn enemy_private_markers_resolve_and_are_read_by_a_rule() {
+        for (name, st, v) in crate::content::ENEMY_PRIVATE_MARKERS {
+            assert!(crate::replay::enemy_id(name).is_some(), "ENEMY_PRIVATE_MARKERS 里的「{name}」查不到敌人");
+            assert!(*v > 0, "「{name}」的标记 {st:?} 是 {v} 层 —— `fire` 不发 0 层的规则，等于没挂");
+            assert!(
+                crate::content::POWERS.iter().any(|p| p.st == *st),
+                "「{name}」的标记 {st:?} 没有任何规则读它"
+            );
         }
     }
 
@@ -10117,6 +11857,155 @@ mod tests {
         crate::synth::encounters::Table::load("data").ok()
     }
 
+    /// 盛碗虫两场的构成是**分布**（`encounters_overrides.json` 的 `distributions`，[源码] 逐支枚举）：
+    /// 严格的 `resolve` 照旧拒绝；`resolve_sampled` 按权重抽一支；覆盖率要每一支都开得出；
+    /// 观测到的构成落在某一支上就认得死。2026-09-14 起 Hive 20/20。
+    #[test]
+    fn bowlbug_encounters_are_a_distribution_sampled_by_weight() {
+        let Some(t) = act_table() else { return };
+        use crate::content::enemy::{BOWLBUG_EGG as EGG, BOWLBUG_NECTAR as NECTAR, BOWLBUG_ROCK as ROCK, BOWLBUG_SILK as SILK};
+        use crate::synth::encounters::Unresolved;
+        assert!(
+            matches!(t.resolve("BowlbugsNormal"), Err(Unresolved::Inexact { .. })),
+            "严格的 resolve 答「这一场是哪几只」，分布没有唯一答案"
+        );
+        let comp = |key: &str, pick: u64| {
+            let mut d: Vec<u16> = t.resolve_sampled(key, pick).unwrap().iter().map(|e| e.def).collect();
+            d.sort_unstable();
+            d
+        };
+        let sorted = |mut v: Vec<u16>| {
+            v.sort_unstable();
+            v
+        };
+        let normal: Vec<Vec<u16>> = (0..3).map(|p| comp("BowlbugsNormal", p)).collect();
+        assert_eq!(
+            normal,
+            vec![sorted(vec![ROCK, EGG, SILK]), sorted(vec![ROCK, EGG, NECTAR]), sorted(vec![ROCK, SILK, NECTAR])],
+            "石 + 不放回抽两只工蜂，三支等权"
+        );
+        assert_eq!(comp("BowlbugsNormal", 3), normal[0], "pick 对总权重取模");
+        assert_eq!(
+            (0..2).map(|p| comp("BowlbugsWeak", p)).collect::<Vec<_>>(),
+            vec![sorted(vec![ROCK, EGG]), sorted(vec![ROCK, NECTAR])]
+        );
+        assert_eq!(comp("MytesNormal", 7), comp("MytesNormal", 0), "构成确定的遭遇不读 pick");
+
+        let hive = t.act_by_name("Hive").unwrap();
+        assert_eq!(t.coverage(hive), (20, 20));
+        let (exact, _) = t.identify(&[NECTAR, ROCK]);
+        assert!(exact.contains(&"BowlbugsWeak".to_string()), "落在分布的某一支上 ⇒ 认得死");
+    }
+
+    /// 第 1 幕批 0（2026-09-15）：怪都在表里、只是构成随机的六场进表。
+    ///
+    /// * 三场**多重集确定**（随机的只有起手相位）走 `encounters` override —— 严格的 `resolve` 就认
+    /// * 三场是**分布**，和盛碗虫同一条路：`resolve_sampled` 按权重抽，`pick` 对总权重取模
+    /// * 蛇行扼杀者的小史莱姆是**放回**抽 ⇒ 有两只同名的那一支（和 `SlimesWeak` 的不放回正好是一对）
+    #[test]
+    fn act1_random_encounters_resolve_or_sample_by_source_weights() {
+        let Some(t) = act_table() else { return };
+        use crate::content::enemy::{
+            CORPSE_SLUG as SLUG, FLYCONID, LEAF_SLIME_M as LM, LEAF_SLIME_S as LS,
+            SLITHERING_STRANGLER as SS, SNAPPING_JAXFRUIT as JAX, TWIG_SLIME_M as TM,
+            TWIG_SLIME_S as TS, TWO_TAILED_RAT as RAT,
+        };
+        use crate::synth::encounters::Unresolved;
+        let sorted = |mut v: Vec<u16>| {
+            v.sort_unstable();
+            v
+        };
+        let exact = |key: &str| sorted(t.resolve(key).unwrap().iter().map(|e| e.def).collect());
+        assert_eq!(exact("CorpseSlugsNormal"), vec![SLUG; 3]);
+        assert_eq!(exact("CorpseSlugsWeak"), vec![SLUG; 2]);
+        assert_eq!(exact("TwoTailedRatsNormal"), vec![RAT; 3]);
+
+        let comp = |key: &str, pick: u64| {
+            sorted(t.resolve_sampled(key, pick).unwrap().iter().map(|e| e.def).collect())
+        };
+        assert!(
+            matches!(t.resolve("SlitheringStranglerNormal"), Err(Unresolved::Inexact { .. })),
+            "分布没有唯一答案，严格的 resolve 照旧拒绝"
+        );
+        assert_eq!(
+            (0..2).map(|p| comp("FlyconidNormal", p)).collect::<Vec<_>>(),
+            vec![sorted(vec![FLYCONID, LM]), sorted(vec![FLYCONID, TM])]
+        );
+        assert_eq!(
+            (0..2).map(|p| comp("SlimesWeak", p)).collect::<Vec<_>>(),
+            vec![sorted(vec![LS, TS, LM]), sorted(vec![LS, TS, TM])],
+            "两只小的不放回抽完 ⇒ 恒定一树叶一树枝"
+        );
+        // 12 份：贾克斯果 4 · 树叶（中）2 · 树枝（中）2 · 两树叶（小）1 · 一树叶一树枝（小）2 · 两树枝（小）1
+        let mut counts: std::collections::BTreeMap<Vec<u16>, u32> = Default::default();
+        for p in 0..12 {
+            *counts.entry(comp("SlitheringStranglerNormal", p)).or_default() += 1;
+        }
+        let want: std::collections::BTreeMap<Vec<u16>, u32> = [
+            (sorted(vec![JAX, SS]), 4),
+            (sorted(vec![LM, SS]), 2),
+            (sorted(vec![TM, SS]), 2),
+            (sorted(vec![LS, LS, SS]), 1),
+            (sorted(vec![LS, TS, SS]), 2),
+            (sorted(vec![TS, TS, SS]), 1),
+        ]
+        .into_iter()
+        .collect();
+        assert_eq!(counts, want);
+
+        for key in [
+            "CorpseSlugsNormal",
+            "CorpseSlugsWeak",
+            "TwoTailedRatsNormal",
+            "FlyconidNormal",
+            "SlimesWeak",
+            "SlitheringStranglerNormal",
+        ] {
+            assert!(t.can_open(key), "{key} 应该开得出");
+        }
+        let (hits, _) = t.identify(&[SS, TS, TS]);
+        assert!(
+            hits.contains(&"SlitheringStranglerNormal".to_string()),
+            "放回抽出来的两只同名那一支也认得死"
+        );
+    }
+
+    /// `RubyRaidersNormal`：五种劫掠者不放回抽 3 ⇒ **10 支等权**，每支三只各不相同（批 6 进表）。
+    /// 实录 `act1_f12_seventh`（弩手 + 斧手 + 追踪手）要从「构成含随机」变成落在某一支上的唯一命中；
+    /// 密林两场都开得出 ⇒ 这一幕 22/22。
+    #[test]
+    fn ruby_raiders_are_ten_equal_branches_of_three_distinct_raiders() {
+        let Some(t) = act_table() else { return };
+        use crate::content::enemy::{
+            RAIDER_ASSASSIN, RAIDER_AXE, RAIDER_BRUTE, RAIDER_CROSSBOW, RAIDER_TRACKER, VINE_SHAMBLER,
+        };
+        let five = [RAIDER_AXE, RAIDER_ASSASSIN, RAIDER_BRUTE, RAIDER_CROSSBOW, RAIDER_TRACKER];
+        let comp = |pick: u64| {
+            let mut v: Vec<u16> = t.resolve_sampled("RubyRaidersNormal", pick).unwrap().iter().map(|e| e.def).collect();
+            v.sort_unstable();
+            v
+        };
+        let mut counts: std::collections::BTreeMap<Vec<u16>, u32> = Default::default();
+        for p in 0..10 {
+            *counts.entry(comp(p)).or_default() += 1;
+        }
+        assert_eq!(counts.len(), 10, "C(5,3) = 10 支");
+        assert!(counts.values().all(|&n| n == 1), "等权：每支在一轮 10 次里恰好一次");
+        for k in counts.keys() {
+            assert_eq!(k.len(), 3);
+            assert!(k.windows(2).all(|w| w[0] != w[1]), "每种上限 1：{k:?} 里不该有重复");
+            assert!(k.iter().all(|d| five.contains(d)));
+        }
+        assert!(t.can_open("RubyRaidersNormal"));
+        let hit = |defs: &[u16]| t.identify(defs).0.contains(&"RubyRaidersNormal".to_string());
+        assert!(hit(&[RAIDER_CROSSBOW, RAIDER_AXE, RAIDER_TRACKER]), "`act1_f12_seventh` 那一组");
+        assert!(hit(&[RAIDER_BRUTE, RAIDER_ASSASSIN, RAIDER_TRACKER]));
+        assert!(!hit(&[RAIDER_AXE, RAIDER_AXE, RAIDER_TRACKER]), "两只同名不在任何一支里");
+
+        let exact = t.resolve("VineShamblerNormal").unwrap();
+        assert_eq!(exact.iter().map(|e| e.def).collect::<Vec<_>>(), vec![VINE_SHAMBLER]);
+    }
+
     /// **休息处回多少血是 [源码] 定的，不是拍的。**
     ///
     /// `HealRestSiteOption.GetBaseHealAmount = MaxHp * 0.3m`，落地那一步
@@ -10170,26 +12059,35 @@ mod tests {
 
     /// **开不出来的那一场是"跳过并计数"，不是"不存在"。**
     ///
-    /// 第 1 幕 Underdocks 内核今天只开得出一半，所以这条链必然漏几场。
     /// 漏掉的场次要同时出现在两处：逐样本的 `unsimulated` 和报告里的
     /// `skipped` 原因清单 —— 少一处，读结论的人就看不见这个数是**乐观**的。
+    ///
+    /// 原来拿第 1 幕 Underdocks 当「必然漏几场」的那一幕，2026-09-19 批 4 / 批 5 之后它 20/20 了。
+    /// 换成**第 3 幕钉住女王**（今天唯一开不出来的 Boss，缺火炬头聚合体），路线 `MB`：
+    /// 每条链都必然走到它、必然漏它，不再靠抽序列碰运气。前面那一间弱怪（Glory 的弱怪池全开得出）
+    /// 不能省 —— 一场都开不出来的路线是**拒绝作答**（`NothingSimulable`），不是「漏了一场」。
+    /// 血给到 300 是为了让大部分链走得到女王（死在弱怪那一间的就不算漏）；
+    /// 起手牌组打第 3 幕弱怪，300 血也有链死 —— 实测 8 条里死 2 条，所以只要求「漏了」> 0。
+    /// 女王建掉那天这条要再换 —— 到时候看 `dump_encounters.py` 的覆盖率报告挑还缺的那一场。
     #[test]
     fn an_encounter_the_kernel_cannot_open_is_counted_not_hidden() {
         let Some(t) = act_table() else { return };
         use crate::synth::act::{evaluate_act, parse_rooms, ActCfg, ActPlan};
-        let rooms = parse_rooms("MMMMB").unwrap();
-        let plan = ActPlan::new("Underdocks", &rooms);
+        let rooms = parse_rooms("MB").unwrap();
+        let mut plan = ActPlan::new("Glory", &rooms);
+        plan.pin_boss = Some("QueenBoss");
         let cfg = ActCfg { samples: 8, ..ActCfg::default() };
         let deck = eval_deck(10);
         let enemies: [crate::synth::EnemySpec; 0] = [];
         let ev = evaluate_act(
-            &crate::synth::FightSpec::new(&deck, 80, &enemies, 99),
+            &crate::synth::FightSpec::new(&deck, 300, &enemies, 99),
             &plan,
             &t,
             &cfg,
         );
-        assert!(ev.refused.is_none());
-        assert!(ev.unsimulated.mean > 0.0, "这一幕开得出 {:?}，不可能一场都不漏", ev.coverage);
+        assert!(ev.refused.is_none(), "{:?}", ev.refused);
+        assert!(ev.deaths < 8, "一条链都没走到女王，这条测试就量不到「漏」");
+        assert!(ev.unsimulated.mean > 0.0, "这一幕开得出 {:?}，走到女王的链不可能一场都不漏", ev.coverage);
         assert!(!ev.skipped.is_empty(), "漏了却没有理由清单 = 静默地漏");
         assert!(ev.coverage.0 < ev.coverage.1, "覆盖率要和结论一起报");
         assert!(ev.missing_fights().is_some(), "漏了就要报那条偏差");

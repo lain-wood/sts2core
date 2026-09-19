@@ -4760,27 +4760,6 @@
    "detail": "['status'] = 4"
   },
   {
-   "cls": "Crusher",
-   "kernel": "碾碎爪",
-   "prop": "ThrashDamage",
-   "why": "2 个候选 / 源码 1 个用点",
-   "detail": "[(0, 0), (4, 0)]"
-  },
-  {
-   "cls": "Crusher",
-   "kernel": "碾碎爪",
-   "prop": "AdaptStrengthGain",
-   "why": "3 个候选 / 源码 1 个用点",
-   "detail": "[(2, 1), (2, 2), (3, 0)]"
-  },
-  {
-   "cls": "Crusher",
-   "kernel": "碾碎爪",
-   "prop": "GuardedStrikeDamage",
-   "why": "2 个候选 / 源码 1 个用点",
-   "detail": "[(0, 0), (4, 0)]"
-  },
-  {
    "cls": "FrogKnight",
    "kernel": "青蛙骑士",
    "prop": "PlatingAmount",
@@ -4809,13 +4788,6 @@
    "detail": "[(0, 0), (1, 0)]"
   },
   {
-   "cls": "KnowledgeDemon",
-   "kernel": "知识恶魔",
-   "prop": "PonderStrength",
-   "why": "3 个候选 / 源码 1 个用点",
-   "detail": "[(0, 0), (0, 1), (3, 1)]"
-  },
-  {
    "cls": "LivingFog",
    "kernel": "活雾",
    "prop": "AdvancedGasDamage",
@@ -4828,13 +4800,6 @@
    "prop": "SuperGasBlastDamage",
    "why": "2 个候选 / 源码 1 个用点",
    "detail": "[(0, 0), (2, 0)]"
-  },
-  {
-   "cls": "Myte",
-   "kernel": "螨虫",
-   "prop": "SuckStrength",
-   "why": "2 个候选 / 源码 1 个用点",
-   "detail": "[(0, 0), (2, 1)]"
   },
   {
    "cls": "PhantasmalGardener",
@@ -4856,6 +4821,13 @@
    "prop": "valueIfAscension",
    "why": "内核里找不到这个值",
    "detail": "['status'] = 8"
+  },
+  {
+   "cls": "SlumberingBeetle",
+   "kernel": "熟睡甲虫",
+   "prop": "PlatingAmount",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 15"
   },
   {
    "cls": "TerrorEel",
@@ -4914,18 +4886,11 @@
    "detail": ""
   },
   {
-   "cls": "WaterfallGiant",
-   "kernel": "瀑布巨兽",
-   "prop": "SiphonHeal",
-   "why": "判不出种类",
-   "detail": ""
-  },
-  {
-   "cls": "WaterfallGiant",
-   "kernel": "瀑布巨兽",
-   "prop": "BasePressureGunDamage",
-   "why": "判不出种类",
-   "detail": ""
+   "cls": "Vantom",
+   "kernel": "墨影幻灵",
+   "prop": "SlipperyAmt",
+   "why": "内核里找不到这个值",
+   "detail": "['status'] = 8"
   }
  ]
 }

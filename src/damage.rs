@@ -11,7 +11,8 @@
 //!   6. defender 缓慢 (Slow)      x(1 + 0.1 * cards played before this one)
 //!   7. 难以杀灭 (DamageCap)  min(d, cap)
 //!   8. 无实体 (Intangible)   d = 1
-//!   9. block absorbs, remainder hits HP
+//!   9. block absorbs, remainder hits HP —— 硬化外壳（本回合累计余额）和滑溜（压成 1）
+//!      封的都是**这一截**，格挡照常被打满，见 `absorb`
 //!
 //! **步骤 3.5-6 的乘区累乘，只在最后取整一次**（不是每步各取一次）。
 //! 见 `apply_modifiers` 的注释：怨恨那一帧证伪了逐步取整。
@@ -21,6 +22,11 @@
 //! intuition without a replay that disagrees.
 
 use crate::state::{Entity, St};
+
+/// [源码] StrikeDummy: additive bonus before Weak/Vulnerable, for tagged attacks.
+pub fn tagged_attack_bonus(attacker: &Entity, strike: bool) -> i32 {
+    if strike { attacker.get(St::StrikeDummy) } else { 0 }
+}
 
 /// Steps 1-3: the number the card *displays* in hand. Target-independent.
 ///
@@ -233,6 +239,26 @@ pub fn apply_modifiers_unpowered(face: i32, defender: &Entity) -> i32 {
 }
 
 /// Step 9. Returns damage that actually reached HP (used for on-HP-loss hooks).
+///
+/// **滑溜在这里，不在 `apply_modifiers` 里**（[源码] `SlipperyPower` 只实现
+/// `ModifyHpLostAfterOsty`，而无实体**另外**还有 `ModifyDamageCap`）。
+/// `CreatureCmd.Damage` 的顺序是 `DamageBlockInternal`（扣格挡）->
+/// `Hook.ModifyHpLost`（封顶）-> `LoseHpInternal`，所以：
+///
+/// * 格挡**照常被打满** —— 26 点打在 8 点格挡上，格挡照样清零
+/// * 漏过格挡的那一截压成 **1**，`UnblockedDamage` 也是压完之后的那个 1
+///   （源码的 `wasFullyBlocked` 判的就是压完之后的值）
+///
+/// 建在伤害那一格的话它的格挡永远掉不下去，而那是**这一整场仗的节奏**。
+///
+/// **硬化外壳也在这里**，而且排在滑溜**前面** —— 两者都是「扣完格挡之后封掉血」，
+/// 顺序照 [源码] `Hook.ModifyHpLost` 的四档：`BeforeOsty` -> `BeforeOstyLate`（硬化外壳）
+/// -> `AfterOsty`（滑溜）-> `AfterOstyLate`。今天没有一只敌人两个都带，顺序只是照抄。
+///
+/// 硬化外壳封的是**这个回合累计**的掉血：`min(漏过格挡的, 余额)`，然后余额减掉**实际掉的**
+/// （[源码] `AfterDamageReceived` 加的是 `result.UnblockedDamage`，封过之后的数）。
+/// 门是上限 [`St::HardenedShellCap`] 而不是余额 —— 余额扣到 0 正是它最要紧的时候，
+/// 拿余额当门的话，额度一用完外壳就「消失」了。
 #[inline]
 pub fn absorb(defender: &mut Entity, dmg: i32) -> i32 {
     if dmg <= 0 {
@@ -240,8 +266,18 @@ pub fn absorb(defender: &mut Entity, dmg: i32) -> i32 {
     }
     let blocked = dmg.min(defender.block);
     defender.block -= blocked;
-    let through = dmg - blocked;
+    let mut through = dmg - blocked;
+    let shell = defender.get(St::HardenedShellCap) > 0;
+    if shell {
+        through = through.min(defender.get(St::HardenedShell).max(0));
+    }
+    if through > 1 && defender.get(St::Slippery) > 0 {
+        through = 1;
+    }
     defender.hp -= through;
+    if shell {
+        defender.add(St::HardenedShell, -through);
+    }
     through
 }
 
@@ -328,5 +364,36 @@ pub fn artifact_absorbs(target: &mut Entity, is_debuff: bool) -> bool {
 
 #[inline]
 pub fn is_debuff(s: St) -> bool {
-    matches!(s, St::Vulnerable | St::Weak | St::Frail | St::Slow)
+    // 恶咒 / 抑制（骑士团）在 [源码] 里是 `PowerType.Debuff` —— 人工制品挡得住。
+    // 缠结（藤蔓蹒跚者）同样是 `PowerType.Debuff`。
+    // 这个函数今天只喂人工制品的判定（回合末掉层走 `step::decay` 自己那张表）。
+    matches!(s, St::Vulnerable | St::Weak | St::Frail | St::Slow | St::Hex | St::Dampen | St::Tangled)
+}
+
+/// **施加这一笔**算不算 debuff（人工制品挡不挡）—— 看的是数值，不只是种类。
+///
+/// [源码] `ArtifactPower` 判的是 `canonicalPower.GetTypeForAmount(amount)`，而
+/// `PowerModel.GetTypeForAmount` 对 `Counter` 型且 `AllowNegative` 的 power
+/// （力量 / 敏捷）**给负数时返回 Debuff**。所以「减力量 / 减敏捷」挡得住，
+/// 「加力量」挡不住。
+///
+/// 所有施加 status 的路径（卡牌、触发器、敌人招式）都走这一个判据 ——
+/// 2026-09-13 之前敌人招式那条只看种类，于是失落之物偷力量时人工制品不起作用。
+#[inline]
+pub fn is_debuff_amount(s: St, amt: i32) -> bool {
+    is_debuff(s) || (matches!(s, St::Strength | St::Dexterity) && amt < 0)
+}
+
+/// **敌人招式**给的格挡（`EOp::Block`），过它自己的敏捷。
+///
+/// [源码] `DexterityPower.ModifyBlockAdditive` 的门是
+/// `props.IsPoweredCardOrMonsterMoveBlock()` —— 敌人招式的格挡（`ValueProp.Move`）
+/// 一样吃敏捷。今天唯一带敏捷的敌人是遗忘之物（瘴气先加格挡、后偷敏捷，
+/// 于是 8 -> 10 -> 12…）。
+///
+/// **脆弱没有放进来**：内核里没有任何东西给敌人上脆弱，照抄一个没有消费者的
+/// 乘区等于加一个空钩子。有了再加。
+#[inline]
+pub fn monster_block(base: i32, owner: &Entity) -> i32 {
+    (base + owner.get(St::Dexterity)).max(0)
 }

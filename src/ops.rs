@@ -270,6 +270,19 @@ pub struct CardDef {
 /// 否则就是在给不存在的需求写代码。
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Hook {
+    /// **任何一边**的回合开始的**最早一档**：我的回合是清格挡、能量回满、`TurnStart` 之前；
+    /// 敌人回合是清敌人格挡、`EnemyTurnStart` 之前。两边各点一次火。
+    ///
+    /// [源码] `CombatManager.StartTurn` 里 `Hook.BeforeSideTurnStart(state, CurrentSide, …)`
+    /// 排在 `AfterTurnStart`（清格挡）/ `SetupPlayerTurn`（能量、抽牌）/ `AfterSideTurnStart` 所有这些之前，
+    /// 而且**不分哪一边**。
+    ///
+    /// 2026-09-19 为**硬化外壳**（鬼祟珊瑚群）加的，它是唯一的消费者：每一边的回合开始把
+    /// 「这个回合还能掉多少血」回满。**为什么不挂在 `TurnStart` / `EnemyTurnStart` 上**：
+    /// `TurnStart` 上有水银沙漏、滚石这些回合开始就打敌人的规则，压在同一个钩子上，
+    /// 那几点伤害算进哪一个回合的额度就只剩 `POWERS` 的表内顺序 —— 奥利哈钢那条注释明令禁止的那种。
+    /// [源码] 那几件是 `AfterSideTurnStart` / `AfterPlayerTurnStart`，本来就排在清零之后。
+    SideTurnStart,
     /// 我的回合开始（能量已回满、格挡已清零、抽牌**之前**）
     TurnStart,
     /// 我的回合开始、**手牌已经发到手上之后**（`step::open_hand` 末尾）。
@@ -293,6 +306,13 @@ pub enum Hook {
     GainBlock,
     /// 我的回合结束（弃手牌之前，敌人行动之前）
     TurnEnd,
+    /// 我的回合结束的**最后一步**：弃完手牌之后、敌人行动之前。
+    ///
+    /// [源码] `EndPlayerTurnPhaseTwoInternal` 先 `FlushPlayerHand`，再 `Hook.AfterTurnEnd` ——
+    /// 那里面先跑一遍 `AfterSideTurnEnd`、再跑一遍 `AfterSideTurnEndLate`。
+    /// 和 `TurnEnd` 分开，是因为那个在弃牌**之前**，灼伤那类手牌发作也排在它后面。
+    /// 2026-09-14 为瓦解（知识恶魔的诅咒）加的，它是唯一的消费者。
+    TurnEndLate,
     /// **敌人**回合结束（敌人全部行动完之后）。
     ///
     /// [源码] 对应 `AfterSideTurnEnd(CombatSide.Enemy)`。
@@ -303,6 +323,29 @@ pub enum Hook {
     /// 注意它和 `St::Sandpit` 想要的**不是**同一个钩子：
     /// 沙坑要的是敌人回合**开始**里更靠后的那一档（`AfterSideTurnStartLate`）。
     EnemyTurnEnd,
+    /// **敌人**回合结束的**早一档**：敌人全部行动完之后、`EnemyTurnEnd` 之前。
+    ///
+    /// [源码] 对应 `BeforeSideTurnEndEarly(CombatSide.Enemy)`，而 `EnemyTurnEnd` 是
+    /// `AfterSideTurnEnd` —— `CombatManager.EndEnemyTurnInternal` 先 `Hook.BeforeTurnEnd`
+    /// 再 `Hook.AfterTurnEnd`。
+    ///
+    /// 2026-09-14 为熟睡甲虫拆出来的，消费者是**敌人持有的覆甲给格挡**那一条：
+    /// 覆甲在早一档给格挡，熟睡在晚一档减层、醒来时把覆甲整个移除。压在同一个钩子上，
+    /// 先后就取决于 `POWERS` 的表内顺序（奥利哈钢那条注释明令禁止），排反了的后果是
+    /// 醒来那一回合**少一堵墙**。和 `TurnEndVeryEarly` / `TurnEnd` 是同一个做法。
+    EnemyTurnEndEarly,
+    /// **敌人**回合结束的**最早一档**：比 `EnemyTurnEndEarly` 还早。
+    ///
+    /// [源码] `Hook.BeforeSideTurnEnd` 里三档依次跑
+    /// `BeforeSideTurnEndVeryEarly` -> `BeforeSideTurnEndEarly` -> `BeforeSideTurnEnd`。
+    ///
+    /// 2026-09-17 为**沉睡**（乐加维林族母）加的，它是唯一的消费者：最后一个睡眠回合
+    /// 要在覆甲给格挡**之前**把覆甲摘掉（[源码] `AsleepPower.BeforeSideTurnEndVeryEarly`，
+    /// 而覆甲给格挡是 `BeforeSideTurnEndEarly`）。压在同一个钩子上就只剩表内顺序，
+    /// 而那是奥利哈钢那条注释明令禁止的；排反了的后果是族母**白拿一堵 10 点的墙**。
+    ///
+    /// 和玩家侧的 `TurnEndVeryEarly` 是对称的两档，两边各有一个消费者。
+    EnemyTurnEndVeryEarly,
     /// **敌人**回合开始（`begin_enemy_turn` 清完格挡之后，第一只出手之前）。
     ///
     /// [源码] 对应 `AfterSideTurnStart(CombatSide.Enemy)`。
@@ -386,6 +429,25 @@ pub enum Hook {
     /// 且不管这一下有没有被格挡完全吃掉。
     /// `run_trigger` 的 `ctx` 是攻击者的敌人下标。
     Attacked,
+    /// **持有者（敌人）这一下攻击打穿了玩家的格挡**。`ctx` = 攻击者，**只有它自己触发**。
+    /// 谁在用：纸伤难愈（咬人卷轴，掉最大生命）· 剧痛刺击（实验体阶段 2，塞伤口）。
+    ///
+    /// 和 `Attacked` 出自同一个触发点（`take_attack_hit`），拆开是因为三条都不一样，
+    /// 每条都是 [源码] 定的：
+    ///
+    /// | | `Attacked` | `AttackUnblocked`（本钩子）|
+    /// |---|---|---|
+    /// | 持有者 | 玩家（火焰屏障）| **打人的那只敌人** |
+    /// | 被格挡完全吃掉还算吗 | 算 | **不算**（`UnblockedDamage > 0`）|
+    /// | 谁触发 | 玩家侧 | 只有 `ctx` 那只 |
+    ///
+    /// **多段攻击每一段各判一次**。纸伤难愈是 `AfterDamageGiven`（本来就逐段）；
+    /// 剧痛刺击是 `AfterAttack` 里数「打穿了几段」再乘 —— 两种写法给出同一个总数，
+    /// 而伤口进弃牌堆，攻击中途没有任何东西读它。
+    ///
+    /// 两条敌人回合的路径（`enemy_turn` / `end_turn_with_incoming`）都走
+    /// `take_attack_hit`，所以注入式威胁下它也照样发作。
+    AttackUnblocked,
     /// 玩家**真的掉了血**（一次攻击里被格挡吃掉之后仍有伤害落到 HP 上）。
     ///
     /// 和 `Attacked` 分得很开：那个是"挨了一下"（火焰屏障要反伤，
@@ -445,6 +507,20 @@ pub enum Amt {
     /// [源码] `CloakClasp.BeforeSideTurnEnd` 是 `(int)(cards.Count * Block)`，
     /// 所以层数是**每张给几点**、不是总数 —— 和 `Stacks` 那一族的语义一致。
     HandCardsTimesStacks,
+    /// **持有者身上另一个 status 的当前层数**，夹到 ≥ 0（抢夺力量 / 抢夺速度的退还量）。
+    ///
+    /// [源码] `PossessStrengthPower` 私下记着一张「从谁身上偷了多少」的字典，
+    /// 自己死时逐条还回去。那张字典**观测里没有**（面板上 `POSSESS_STRENGTH_POWER`
+    /// 恒为 1），而 `sync` 每帧从观测重建、私有计数器带不过来 ——
+    /// 所以退还量读的是**它自己的力量/敏捷**：那一手偷 2、自己加 2，两边逐次相等。
+    ///
+    /// 两者**只在两种情况下分岔**，方向相反：
+    /// * 我的人工制品挡掉了那 −2（[源码] `GetTypeForAmount` 把负数的力量/敏捷算 debuff）
+    ///   —— 没偷到、它照样 +2 ⇒ 这里**多还**（乐观）
+    /// * 我永久削掉了它的力量 ⇒ 这里**少还**（悲观）
+    ///
+    /// 夹到 0 是因为「退还」不该变成再偷一次。
+    OwnerStacksOf(St),
 }
 
 /// 触发器里的条件。**每一条都有一件真遗物在用**，没有为将来预留的。
@@ -528,6 +604,25 @@ pub enum TCond {
     /// **时点是这条规则的全部内容**：挪到弃手牌之后它就恒真，
     /// 这件遗物会变成"每回合白给 20 点"。
     HandEmpty,
+    /// **刚打出的那张牌**是这一类（流电：只认能力牌）。
+    ///
+    /// 读 `State::last_played_card` —— 它在 `resolve_played_card` 开头写好，
+    /// 而 `Hook::CardPlayed` 在同一个函数末尾点火，读到的就是触发它的那一张。
+    ///
+    /// [源码] `GalvanicPower` 判的是 `cardPlay.Card.Affliction is Galvanized`，
+    /// 而 `BeforeCombatStart` + `AfterCardEnteredCombat` 给**每一张没有别的 affliction
+    /// 的能力牌**挂上它。内核没有 affliction 这个概念（今天也没有任何别的来源会给
+    /// 能力牌挂 affliction），所以等价于"能力牌全都算"。
+    LastPlayedKindIs(Kind),
+    /// **刚落地的那一下伤害是攻击**（[源码] `props.IsPoweredAttack()`）。人体蜂房。
+    ///
+    /// 读 `State::last_hit_attack`，`hit_enemy_with` 在点 `EnemyDamaged` 之前写好。
+    /// 卡牌攻击的每一段都算；药水 / 遗物 / 荆棘 / 能力牌的伤害（`Unpowered`）不算。
+    LastHitWasAttack,
+    /// **刚落地的那一下打穿了格挡**（[源码] `DamageResult.UnblockedDamage > 0`）。熟睡。
+    ///
+    /// 读 `State::last_hit_unblocked`，同上。**不分是不是攻击** —— 熟睡的门里没有 `IsPoweredAttack`。
+    LastHitUnblocked,
 }
 
 /// 触发时能做的事。刻意做得很小 —— 每多一条都要有一张真牌在等着它。
@@ -727,6 +822,37 @@ pub enum TOp {
     /// 判据是 `hp <= 0`；这一条判据是**回合数**。两条不能合并 ——
     /// 合并就得给 `check_over` 编一个假的"血量 0"，那样瓶中精灵会把它救回来。
     KillPlayer,
+    /// 敌人持有的能力**打我**（流电：我每打出一张能力牌挨 6 点）。
+    ///
+    /// [源码] `CreatureCmd.Damage(.., ValueProp.Unpowered | Move, ..)` ——
+    /// **走格挡、过难以杀灭/无实体、不是攻击**：不触发 `Attacked`（火焰屏障）、
+    /// 不唤醒孤注一掷。和敌人身上的荆棘（`TOp::DamageAttacker`）是同一条路，
+    /// 收口在 `step::damage_player_unpowered`。
+    DamagePlayer(Amt),
+    /// **玩家**失去最大生命（纸伤难愈：每次被打穿 −2）。
+    ///
+    /// 和卡牌的 `Op::LoseMaxHp` 共用 `step::player_lose_max_hp`：
+    /// [源码] `CreatureCmd.LoseMaxHp` 在「当前血 > 新上限」时把差额当伤害扣掉，
+    /// 那一下会唤醒百年积木 —— 两条路各写一份迟早长歪。
+    PlayerLoseMaxHp(Amt),
+    /// 往玩家**弃牌堆**塞 `count` 张牌（剧痛刺击：每段打穿塞 1 张伤口）。
+    ///
+    /// `count` 是编译期字段、不吃 `Amt`，和 `SummonN` 同一个理由：
+    /// 今天唯一的消费者层数恒为 1（[源码] `TestSubject` 那一句 `Apply<PainfulStabsPower>(1)`）。
+    /// 层数变了要回来改这一行。
+    AddCardToDiscard { card: u16, count: i32 },
+    /// 把**玩家**身上某个 status 清零（恶咒 / 抑制的施咒者死了）。
+    ///
+    /// 和 `OwnerClearStatus` 的区别就是清谁：规则挂在施咒者（敌人）身上，要摘的在我身上。
+    PlayerClearStatus(St),
+    /// 抑制解除：带 `F_DAMPENED` 的牌升回去（[源码] `DampenPower.AfterRemoved`）。
+    RestoreDampenedCards,
+    /// 往玩家**抽牌堆随机位置**塞 N 张牌（人体蜂房：挨一段攻击塞层数那么多张晕眩）。
+    ///
+    /// 和 `EOp::AddCardToDraw` 同一条路（`step::spawn_card` + `State::to_draw_random`，
+    /// 插进已知前缀里面时前缀跟着缩）。和 `TOp::AddCardToDiscard` 不同，**张数吃 `Amt`**：
+    /// 蜂房的层数会被喷射信息素从 1 涨到 3，写死就只对第一段。
+    AddCardToDraw { card: u16, amt: Amt },
 }
 
 /// 一条「什么 status 在什么时候做什么」的规则。
@@ -764,6 +890,14 @@ pub enum EOp {
     /// 「先 `AttackPlusStackHits`，再 `SelfStatus{per, +1}`」，顺序不能反。
     /// 3 → 4 → 5 → 6…… 这是阶段 2 的时钟；写死 3 段是**乐观**的。
     AttackPlusStackHits { base: i32, hits: i32, per: St },
+    /// 攻击，**每段基础伤害 = `base` + 自己 `per` 那个 status 的层数**（遗忘之物的恐惧）。
+    ///
+    /// [源码] `TheForgotten.DreadDamage => 13 + Creature.GetPowerAmount<DexterityPower>()`，
+    /// 意图是 `SingleAttackIntent(() => DreadDamage)` —— 观测标签里已经含它。
+    /// 每次瘴气偷走我 2 点敏捷加给自己，于是恐惧 13 -> 15 -> 17…
+    ///
+    /// **和 `AttackPlusStackHits` 必须分开**：那个加段数，这个加每段的伤害。
+    AttackPlusSelfStatus { base: i32, hits: i32, per: St },
     /// 把自己身上某个 status **清零**（不是减一层）。
     /// 盛碗虫（石）的晕眩用它清掉失衡标记（[源码] `IsOffBalance = false`）。
     /// 和 `SelfStatus { amt: -1 }` 的区别：那个在已经是 0 的时候会变成 -1，
@@ -781,6 +915,12 @@ pub enum EOp {
     /// 写成 `SelfStatus` 是**乐观**的（少算幻象那 16 点撞击的加成）。
     TeamStatus { st: St, amt: i32 },
     ClearSelfStatus(St),
+    /// **自己死掉**（[源码] `CreatureCmd.Kill(base.Creature)`）：血量归 0，照常点 `EnemyDied` / `AllyDied`。
+    ///
+    /// 消费者：瀑布巨兽「爆炸」打完之后自杀。那时它身上已经没有蒸汽喷发（「即将爆发」移除了），
+    /// 死亡规则不会再把它拉回来，战斗照常结束。
+    /// 气态炸弹的「自爆」[源码] 同样是打完就 `Kill` —— 内核那一手还没接上它，见 roadmap。
+    KillSelf,
     /// 往我的**抽牌堆**塞 N 张牌（噪音机器人的第二张眩晕）。
     ///
     /// **和 `AddCardToDiscard` 必须分开**：[源码] `Noisebot.NoiseMove` 是
@@ -792,6 +932,12 @@ pub enum EOp {
     ///
         /// 插入位置是随机的，内核按自己的 RNG 放（不变量 4：随机序列故意不一致）。
     AddCardToDraw { card: u16, count: i32 },
+    /// 往我的**手牌**塞 N 张牌（机甲骑士的火焰喷射：4 张灼伤）。
+    ///
+    /// **手牌满 10 张时溢出进弃牌堆，不是丢掉** —— [源码] `CardPileCmd.Add` 里
+    /// `isFullHandAdd` 时 `targetPile = Discard`。收口在 `step::add_generated_to_hand`，
+    /// 和凋萎存在的 `TOp::AddCardToHand` 共用。
+    AddCardToHand { card: u16, count: i32 },
     /// 把**本场所有**指定牌名的实例，伤害各 +`by`（永世沙漏的剧烈增强
     /// 把我持有的每一张凋萎 `FakeUpgrade()` 一次，各 +3）。
     ///
@@ -831,7 +977,35 @@ pub enum EOp {
     /// **不是消耗**：它走的是"移出战斗"，`CardExhausted` 那一串（无惧疼痛 /
     /// 黑暗之拥）**不该触发**。所以内核这条不许复用 `exhaust_card`。
     StealCard(i32),
+    /// 把本场**所有**已升级的牌降级，并记下是哪几张（`F_DAMPENED`）—— 魔法骑士的抑制。
+    ///
+    /// [源码] `DampenPower.AfterApplied`：`AllCards.Where(c => c.IsUpgraded)` 逐张
+    /// `CardCmd.Downgrade`。它挂在"抑制挂上了"之后，所以写成紧跟在
+    /// `PlayerStatus{抑制}` 后面的一条 op，**并且只有前一条 `PlayerStatus` 真的落地才发作**
+    /// —— 我带人工制品时抑制被吃掉，`AfterApplied` 根本不会被调用。
+    DowngradeUpgradedCards,
+    /// 敌人给自己回血，封顶在最大生命（知识恶魔的思考：[源码] `CreatureCmd.Heal(Creature, 30 × 玩家数)`）。
+    Heal(i32),
+    /// **知识的诅咒**：弹一个不能跳过的二选一，第 k 次用 `sets[k]`。
+    ///
+    /// k 从我身上的诅咒 status 反推（`content::curses_taken`），**选哪边照 `State::curse_policy`
+    /// 的第 k 位**：1 = 瓦解、0 = 另一边。为什么是策略参数而不是 `Pending`，见 `State::curse_policy`。
+    CurseOfKnowledge(&'static [CurseSet]),
     Nothing,
+}
+
+/// 知识的诅咒里的一组二选一（[源码] `KnowledgeDemon._curseOfKnowledgeSets` 的一项 +
+/// `_disintegrationDamageValues` 的对应档）。
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct CurseSet {
+    /// 选瓦解那一边：挂几层瓦解
+    pub disintegration: i32,
+    /// 另一边：挂哪个 status、几层
+    pub other: St,
+    pub other_amt: i32,
+    /// 另一边附带的**最大能量变化**（虚脱 −1）。[源码] 是 `ModifyMaxEnergy`，内核照薪火之源
+    /// 的做法在选中那一刻落到 `State::base_energy` 上，status 只当印记。
+    pub other_max_energy: i32,
 }
 
 pub struct EnemyMove {
@@ -940,6 +1114,20 @@ pub enum ECond {
     /// 槽0 疾走 / 槽1 大颚 / 槽2 激怒，和源码的 first/second/third 逐个对上。
     /// **第四格没见过**（那一格源码走随机分支），所以那条边仍然是未验证的。
     SlotIs(u8),
+    /// **起手的代表元提示**：这一支在槽位 n 上是内核挑的那一个，但**不算确定成立**。
+    ///
+    /// 给「遭遇掷一个随机数、几只同类按槽位错开起手」那种开局用（残杀千足虫：
+    /// [源码] `DecimillipedeElite` 给三节 `num / num+1 / num+2`，`num = Rng.NextInt(3)`）。
+    /// 那种开局有两个问题，答案不一样，这一个条件分开回答：
+    /// * **单看一只，第一手可能是什么**（`step::allowed_initial`，`synth_audit` 的开局第一手）：
+    ///   哪一手都可能 ⇒ 求值一律「判不了」，允许集合是所有分支
+    /// * **合成一场仗时挑哪一个**（`step::initial_move`）：几只必须错开 ⇒ 按槽位挑，
+    ///   等于把遭遇的随机数固定成 0
+    ///
+    /// 和 [`ECond::SlotIs`] 的差别就在第一问：`SlotIs` 会把「随机数固定成 0」当成事实报出去，
+    /// 真实录像上随机数不是 0 的那些场次，每一只都报集合外。
+    /// **只在 `Machine::start` 里有意义** —— 放进 `after` 的话 `pick_next` 取最低位，提示被静默忽略。
+    SlotRep(u8),
     /// 场上**活着的敌人（含它自己）**至少 n 只。
     ///
     /// [源码] 组装师的 `CanFabricate` 是
@@ -971,6 +1159,20 @@ pub enum ECond {
     /// 而 `Next::Cond` 一支只放得下一个 `ECond`。
     /// **拆成两支是错的** —— 那表达的是"或"。
     All(&'static [ECond]),
+    /// 知识的诅咒**已经落下过**不到 n 次 / 至少 n 次（知识恶魔思考之后的分支）。
+    ///
+    /// [源码] 读的是私有的 `_curseOfKnowledgeCounter`。观测里没有它，内核也不另存一份：
+    /// 从我身上的诅咒 status 反推（`content::curses_taken`），于是同步进来的局面自己带着答案。
+    CursesTakenBelow(&'static [CurseSet], u8),
+    CursesTakenAtLeast(&'static [CurseSet], u8),
+    /// 它自己身上某个 status 的层数 ≥ n / < n（蜂群术士的喷射信息素、熟睡甲虫的打鼾）。
+    ///
+    /// **判的是内核推进指针那一刻的层数**（`step::advance_move`，出完招立刻判），而 [源码] 的
+    /// `RollMove` 在**我方回合开始**才掷（`CombatManager.StartTurn` -> `PrepareForNextTurn`）。
+    /// 两者之间隔着敌人的回合末钩子 —— 那几个钩子会改这个 status 时，阈值要按「掷的那一刻」
+    /// 换算，写在消费者自己的机器上（熟睡甲虫就是这样，见 `M_SLUMBERING_BEETLE`）。
+    SelfStatusAtLeast(St, i32),
+    SelfStatusBelow(St, i32),
     /// 内核判不了 —— 允许集合退化成所有分支
     Unknown,
 }
@@ -1371,6 +1573,8 @@ pub const POTIONS: &[PotionDef] = &[
         targeted: false,
         ops: &[Op::GainEnergy(1), Op::Status { tgt: Tgt::Me, st: St::Radiance, amt: 3 }],
     },
+    // 23 [源码+实测] CureAll: energy first, then draw two.
+    PotionDef { name: "痊愈药水", targeted: false, ops: &[Op::GainEnergy(1), Op::Draw(2)] },
 ];
 
 /// **喝不了的药水**（[源码] `PotionUsage.Automatic`）。

@@ -550,6 +550,16 @@ pub fn fight_seed(base: u64, i: usize, k: usize) -> u64 {
     next_u64(&mut z)
 }
 
+/// 构成是分布的那一场**抽哪一支**（`Table::resolve_sampled` 的 `pick`，2026-09-14 盛碗虫两场）。
+///
+/// 和 `fight_seed` 一样只吃 `(base, i, k)` ⇒ 两个候选在同一个样本的同一间房抽到同一支，CRN 不断。
+/// **但不是同一个数**：直接拿 `fight_seed` 的话，「抽到哪一支」和「这一场敌人血量掷多少」
+/// 就绑在同一个随机数上 —— 两件事在游戏里互不相干，内核里也不该相关。
+pub fn variant_pick(base: u64, i: usize, k: usize) -> u64 {
+    let mut z = fight_seed(base, i, k) ^ 0xA076_1D64_78BD_642F;
+    next_u64(&mut z)
+}
+
 /// 走完这一幕 `cfg.samples` 次。
 ///
 /// `spec` 里的 `enemies` / `hp` / `after_rest` / `boss_room` / `seed`
@@ -667,6 +677,9 @@ fn one_chain(
     };
     // **进这一间之前的血量**（`FightSpec::hp` 的语义），开局回血由构造器自己加
     let mut hp = spec.hp;
+    // **最大生命也跨场带着走**：纸伤难愈（咬人卷轴）掉的、狂宴涨的都是局内永久的。
+    // 2026-09-13 之前每一场都拿 `spec.max_hp` 重开，休息处也按开局上限回血。
+    let mut max_hp = spec.max_hp;
     let (mut n_normal, mut n_elite, mut n_boss) = (0usize, 0usize, 0usize);
     // 上一间是不是休息处 —— 古茶具靠它武装（`content::CONDITIONAL_START`）。
     // **这就是阶段 1 留下的那个"欠一个参数"**：整幕链自己知道在模拟哪个房间。
@@ -675,7 +688,7 @@ fn one_chain(
     for (k, room) in plan.rooms.iter().enumerate() {
         if *room == Room::Rest {
             s.rests += 1;
-            hp = (hp + rest_heal(spec.max_hp)).min(spec.max_hp);
+            hp = (hp + rest_heal(max_hp)).min(max_hp);
             after_rest = true;
             continue;
         }
@@ -702,7 +715,8 @@ fn one_chain(
             push_unique(&mut skipped, Skipped::EmptyPool(*room));
             continue;
         };
-        let enemies = match t.resolve(key) {
+        // 构成是分布的那几场（盛碗虫）按权重抽一支；构成确定的和 `resolve` 逐字相同。
+        let enemies = match t.resolve_sampled(key, variant_pick(base, i, k)) {
             Ok(e) => e,
             Err(why) => {
                 s.unsimulated += 1;
@@ -712,6 +726,7 @@ fn one_chain(
         };
         let fight = FightSpec {
             hp,
+            max_hp,
             enemies: &enemies,
             after_rest,
             boss_room: t.is_boss(key),
@@ -743,6 +758,7 @@ fn one_chain(
             return (s, gaps, skipped);
         }
         hp = o.final_hp;
+        max_hp = o.final_max_hp;
         if o.died {
             s.died_at = Some(k);
             s.final_hp = hp;

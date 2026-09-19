@@ -422,6 +422,56 @@ fn parse_intent_label(label: &str) -> Option<(i32, i32)> {
     s.parse::<i32>().ok().map(|d| (d, 1))
 }
 
+/// Recover a private hit counter from the CURRENT observed intent. This is
+/// state synchronization, never a prediction of that same intent.
+fn sync_attack_counters(e: &EnemyObs, ent: &mut Entity) {
+    let Some(def) = enemy_id(&e.name) else { return };
+    for (mv, m) in crate::content::enemy_def(def).moves.iter().enumerate() {
+        if !crate::content::move_matches_form(def, mv, ent) { continue; }
+        for op in m.ops {
+            if let crate::ops::EOp::AttackPlusStackHits { hits, per, .. } = *op {
+                if let Some(&(_, observed_hits)) = e.attacks.first() {
+                    ent.set(per, (observed_hits - hits).max(0));
+                }
+            }
+        }
+    }
+}
+
+/// 私有计数器反推的上限。瀑布巨兽的爆炸伤害 = 15 + 每手 3，拖到 40 个回合也才 135；高压枪每次 +5。
+const PRIVATE_COUNTER_CAP: i32 = 400;
+
+/// 敌人**私有的**伤害计数器（`EOp::AttackPlusSelfStatus` 的 `per`，游戏不报、不在 [`ALL_ST`] 里的那种）
+/// 从**这一手**的意图标签反推：拿同一条签名正着算一遍，逐个值试过去（和 [`observed_thrash_bonus`]
+/// 同一招，所以永远和 `damage.rs` 同口径 —— 我身上的易伤、它身上的虚弱都自动算进去）。
+///
+/// 消费者是瀑布巨兽的两个：高压枪涨过多少（`PressureGunGrowth`）、爆炸记下多少（`EruptionDamage`）。
+/// 不反推的话，战斗中途同步进来它们一律是 0 —— `solve --live` 那条「现算必须和标签逐字相同」的
+/// 自检当场失败、整份退回冻住的标签，跨回合那几层按 0 预测高压枪和爆炸；
+/// 对齐出招指针时高压枪 25 还会按类型退回、对到同样是 `Attack + Buff` 的撞击上。
+///
+/// **这是同步不是预测**：读的是它这一手已经亮出来的标签，只拿来还原状态。
+/// 观测里有的 status（遗忘之物的敏捷）一概不碰。对不上返回 `None`。
+fn infer_private_attack_counter(
+    def_id: u16,
+    mv: usize,
+    ent: &Entity,
+    player: &Entity,
+    asc: u8,
+    want: &[(String, String)],
+) -> Option<(St, i32)> {
+    let m = crate::content::enemy_def(def_id).moves.get(mv)?;
+    let per = m.ops.iter().find_map(|op| match *op {
+        EOp::AttackPlusSelfStatus { per, .. } if !ALL_ST.contains(&per) => Some(per),
+        _ => None,
+    })?;
+    let mut probe = *ent;
+    (0..=PRIVATE_COUNTER_CAP).find_map(|v| {
+        probe.set(per, v);
+        (move_signature(def_id, mv, &probe, player, asc) == want).then_some((per, v))
+    })
+}
+
 fn parse_obs(j: &Json) -> Obs {
     let player = j.get("player");
     let mut enemies = Vec::new();
@@ -701,6 +751,11 @@ pub fn map_status(id: &str) -> Option<St> {
         "regen" | "再生" => St::Regen,
         "imbalanced" | "失衡" => St::Imbalanced,
         "personal_hive" | "人体蜂房" => St::PersonalHive,
+        "slumber" | "熟睡" => St::Slumber,
+        // 沉睡（乐加维林族母，2026-09-17）。**和熟睡不是一个 power**，见 `St::Asleep`。
+        "asleep" | "沉睡" => St::Asleep,
+        // 滑溜（墨影幻灵 / 墨宝，2026-09-17）。**和无实体不是一个** —— 它封的是掉血不是伤害。
+        "slippery" | "滑溜" => St::Slippery,
         "sandpit" | "沙坑" => St::Sandpit,
         "tainted" | "污染" => St::Tainted,
         "vital_spark" | "活力火花" => St::VitalSpark,
@@ -708,7 +763,20 @@ pub fn map_status(id: &str) -> Option<St> {
         "hatch" | "孵化" => St::Hatch,
         "flutter" | "扑翼" => St::Flutter,
         "escape_artist" | "逃跑大师" => St::EscapeArtist,
-        "swipe" | "偷窃" => St::Swipe,
+        // 偷窃草蜢偷牌的那个。本地化名是「顺走」—— 这里原来收的是「偷窃」，
+        // 那是地精佣兵 `THIEVERY_POWER` 的名字（2026-09-19 对 pck 对出来的）。观测走的是 id，没踩到过。
+        "swipe" | "顺走" => St::Swipe,
+        // 2026-09-19 第 1 幕批 4 / 批 5。id 照 [源码] 类名推（`HardenedShellPower` -> `HARDENED_SHELL_POWER`），
+        // 中文取自本地化表 `*_POWER.title`。**还没有一帧真实观测确认过**。
+        // 硬化外壳：mod 报的是 `DisplayAmount`（本回合余额），内核这一栏存的就是余额，原样搬。
+        "hardened_shell" | "硬化外壳" => St::HardenedShell,
+        "suck" | "吮吸" => St::Suck,
+        "surprise" | "意外" => St::Surprise,
+        "thievery" | "偷窃" => St::Thievery,
+        "heist" | "盗窃" => St::Heist,
+        // 2026-09-19 第 1 幕批 6。`TangledPower` -> `TANGLED_POWER`，中文取自 `TANGLED_POWER.title`（「缠绕」是另一个：`CONSTRICT`）。
+        // **还没有一帧真实观测确认过**。
+        "tangled" | "缠结" => St::Tangled,
         "thorns" | "荆棘" => St::Thorns,
         "ritual" | "仪式" => St::Ritual,
         // 尖叫：游戏报 `SHRIEK_POWER`，层数是**血量阈值**（70 / 进阶 75）
@@ -722,6 +790,11 @@ pub fn map_status(id: &str) -> Option<St> {
         "tender" | "娇弱" => St::Tender,
         "radiance" | "光耀" => St::Radiance,
         "reattach" | "接续" => St::Reattach,
+        // 知识恶魔的四个诅咒（2026-09-14）。中文名取自游戏本地化表 `*_POWER.title`
+        "disintegration" | "瓦解" => St::Disintegration,
+        "mind_rot" | "心灵腐化" => St::MindRot,
+        "sloth" | "懒惰" => St::Sloth,
+        "waste_away" | "虚脱" => St::WasteAway,
         "surrounded" | "遭到包围" => St::Surrounded,
         "back_attack_left" => St::BackAttackLeft,
         "back_attack_right" => St::BackAttackRight,
@@ -741,6 +814,15 @@ pub fn map_status(id: &str) -> Option<St> {
         "skittish" | "胆小" => St::Skittish,
         "steam_eruption" | "蒸汽喷发" => St::SteamEruption,
         "burrowed" | "钻地" => St::Burrowed,
+        // 2026-09-13 第 3 幕补敌人。id 取自 [源码] 类名（`GalvanicPower` -> `GALVANIC_POWER`），
+        // 中文取自游戏本地化表的 `*.title`。**还没有一帧真实观测确认过**。
+        "galvanic" | "流电" => St::Galvanic,
+        "paper_cuts" | "纸伤难愈" => St::PaperCuts,
+        "possess_strength" | "抢夺力量" => St::PossessStrength,
+        "possess_speed" | "抢夺速度" => St::PossessSpeed,
+        // 2026-09-14 骑士团。同样是照 [源码] 类名推的 id，**还没有观测确认过**。
+        "hex" | "恶咒" => St::Hex,
+        "dampen" | "抑制" => St::Dampen,
         _ => return None,
     })
 }
@@ -847,7 +929,7 @@ pub fn combat_over_obs(o: &Obs) -> bool {
 /// 推出来/造出来的，拿去比只会得到一列恒定的假不一致：
 /// * [`St::SlowSource`]：谁带缓慢是从敌人身上推的
 /// * [`St::VambraceCharge`]：臂甲这场用没用过，观测里根本没有这个字段
-pub(crate) const ALL_ST: [St; 62] = [
+pub(crate) const ALL_ST: [St; 81] = [
     St::Strength,
     St::Dexterity,
     St::Vulnerable,
@@ -890,11 +972,17 @@ pub(crate) const ALL_ST: [St; 62] = [
     // 游戏都报（`PLOW_POWER` / `RINGING_POWER`），进 ALL_ST
     St::Plow,
     St::Ringing,
-    // 游戏报 `PERSONAL_HIVE_POWER` / `HATCH_POWER`，进 ALL_ST。
-    // 行为没建模，但**层数是观测量**，进 diff 才能守住"层数怎么涨"这一半
-    // （人体蜂房会被信息素喷吐从 1 加到 3，孵化每回合末掉 1）。
+    // 游戏报 `PERSONAL_HIVE_POWER` / `HATCH_POWER`，进 ALL_ST。**层数是观测量**，进 diff 才能守住
+    // "层数怎么涨"（人体蜂房会被喷射信息素从 1 加到 3，孵化每回合末掉 1）。
+    // 人体蜂房的行为 2026-09-14 建了（挨一段攻击塞层数那么多张晕眩），孵化的还没建。
     St::PersonalHive,
     St::Hatch,
+    // 游戏报 `SLUMBER_POWER`（熟睡甲虫，2026-09-14），进 ALL_ST：减层是观测量，进 diff 才守得住。
+    St::Slumber,
+    // 游戏报 `ASLEEP_POWER`（乐加维林族母，2026-09-17），同上。
+    St::Asleep,
+    // 游戏报 `SLIPPERY_POWER`（墨影幻灵 / 墨宝，2026-09-17）：减层是观测量，进 diff 才守得住。
+    St::Slippery,
     // 游戏报 `TAINTED_POWER` / `VITAL_SPARK_POWER` / `DARK_SHACKLES_POWER`，进 ALL_ST。
     // 行为都没建模，但**层数是观测量**，进 diff 才守得住"层数怎么涨"那一半
     // （每打一张技能牌污染 +2、脉动给活力火花 +2）。
@@ -941,16 +1029,49 @@ pub(crate) const ALL_ST: [St; 62] = [
     // 和 `VambraceCharge` / `SlowSource` 是同一条理由。
     St::Unmovable,
     St::Adaptable,
+    // 接续（2026-09-14 进来）：游戏报 `REATTACH_POWER`，行为建了 ⇒ 进 diff。
+    // **倒计时 `ReattachDue` 故意不进**：内核私有，尸体整只不在观测里。
+    St::Reattach,
+    // 知识恶魔的四个诅咒（2026-09-14）：游戏报成 power，行为建了 ⇒ 进 diff。
+    St::Disintegration,
+    St::MindRot,
+    St::Sloth,
+    St::WasteAway,
     St::PainfulStabs,
     St::Nemesis,
     St::Smoggy,
     St::Skittish,
     St::SteamEruption,
     St::Burrowed,
+    // 第 3 幕补的四个（2026-09-13）：都是游戏报的 power，行为已建模 ⇒ 进 diff。
+    St::Galvanic,
+    St::PaperCuts,
+    St::PossessStrength,
+    St::PossessSpeed,
+    // 骑士团（2026-09-14）挂在我身上的两个。**施咒者标记 `HexCaster` / `DampenCaster`
+    // 故意不进**：那是内核私有的身份量，游戏不报。
+    St::Hex,
+    St::Dampen,
+    // 第 1 幕批 4 / 批 5（2026-09-19）。
+    // 硬化外壳的**余额**进 diff —— 游戏报的就是余额（`DisplayAmount`），这一列守的正是
+    // 「这一下该吃掉多少额度、回合开始有没有回满」。**上限 `HardenedShellCap` 故意不进**：游戏不报。
+    // 吮吸 / 意外 / 偷窃是开局写死、之后不变的层数，进 diff 守「挂没挂上」。
+    // **盗窃故意不进**：层数是偷到的金币数，内核给不出（召唤出来的胖地精身上不挂）。
+    St::HardenedShell,
+    St::Suck,
+    St::Surprise,
+    St::Thievery,
+    // 第 1 幕批 6（2026-09-19）：缠结挂在我身上，进 diff 守「挂没挂上、我的回合末摘没摘」。
+    St::Tangled,
 ];
 
-fn st_name(s: St) -> &'static str {
+pub fn st_name(s: St) -> &'static str {
     match s {
+        St::StrikeDummy => "打击木偶",
+        St::RedSkull => "红头骨",
+        St::RedSkullActive => "红头骨·已生效",
+        St::PressureGunGrowth => "瀑布巨兽·高压枪已涨",
+        St::EruptionDamage => "瀑布巨兽·爆炸伤害",
         // 钢笔尖的三个私有量（游戏显示在遗物上、不报成 status），名字只为 diff 可读
         St::PenNib => "钢笔尖",
         St::PenNibCount => "钢笔尖·攻击计数",
@@ -967,6 +1088,19 @@ fn st_name(s: St) -> &'static str {
         St::BloodVial => "小血瓶",
         St::Pantograph => "缩放仪",
         St::Burrowed => "钻地",
+        St::Galvanic => "流电",
+        St::PaperCuts => "纸伤难愈",
+        St::PossessStrength => "抢夺力量",
+        St::PossessSpeed => "抢夺速度",
+        St::Hex => "恶咒",
+        St::Dampen => "抑制",
+        St::HexCaster => "幽灵骑士·施咒者",
+        St::DampenCaster => "魔法骑士·施咒者",
+        St::ReattachDue => "接续·复活倒计时",
+        St::Disintegration => "瓦解",
+        St::MindRot => "心灵腐化",
+        St::Sloth => "懒惰",
+        St::WasteAway => "虚脱",
         St::SteamEruption => "蒸汽喷发",
         St::Skittish => "胆小",
         St::SkittishTriggered => "胆小·已触发",
@@ -1014,9 +1148,11 @@ fn st_name(s: St) -> &'static str {
         St::Plow => "耕地",
         St::Ringing => "轰鸣",
         // 游戏报 `PERSONAL_HIVE_POWER` / `HATCH_POWER`，进 ALL_ST。
-        // **内核不建模它们的行为**，映射只是为了别让整帧降级成 UNKNOWN
-        // （和 `Minion` / `Illusion` 同一条理由），欠什么写在 `St` 的注释里。
+        // 人体蜂房的行为建了（规则在 `POWERS`）；孵化没建，欠什么写在 `St` 的注释里。
         St::PersonalHive => "人体蜂房",
+        St::Slumber => "熟睡",
+        St::Asleep => "沉睡",
+        St::Slippery => "滑溜",
         St::Sandpit => "沙坑",
         St::Tainted => "污染",
         St::VitalSpark => "活力火花",
@@ -1090,9 +1226,19 @@ fn st_name(s: St) -> &'static str {
         St::Imbalanced => "失衡",
         St::Flutter => "扑翼",
         St::EscapeArtist => "逃跑大师",
-        St::Swipe => "偷窃",
+        // 本地化表 `SWIPE_POWER.title` 是「顺走」。原来写的「偷窃」是地精佣兵 `THIEVERY_POWER` 的名字
+        // （2026-09-19 从 pck 里取批 5 的名字时对出来的）。
+        St::Swipe => "顺走",
         St::Thorns => "荆棘",
         St::Smoggy => "侵蚀",
+        // 2026-09-19 第 1 幕批 4 / 批 5。名字取自本地化表 `*_POWER.title`
+        St::HardenedShell => "硬化外壳",
+        St::HardenedShellCap => "硬化外壳·上限",
+        St::Suck => "吮吸",
+        St::Surprise => "意外",
+        St::Thievery => "偷窃",
+        St::Heist => "盗窃",
+        St::Tangled => "缠结",
     }
 }
 
@@ -1135,6 +1281,8 @@ pub fn map_potion(id: &str) -> u8 {
     // 「瓶装潜能」和「瓶中精灵」都以"瓶"开头 ⇒ 两条都用完整词，别用单字匹配
     } else if s.contains("BOTTLED_POTENTIAL") || s.contains("瓶装潜能") {
         potion::BOTTLED_POTENTIAL
+    } else if s.contains("CURE_ALL") || s.contains("痊愈药水") {
+        potion::CURE_ALL
     } else if s.contains("RADIANT_TINCTURE") || s.contains("明耀酊剂") {
         potion::RADIANT_TINCTURE
     // 注意次序：`ATTACK_POTION` 必须排在含 "ATTACK" 的宽匹配之前，
@@ -1276,15 +1424,48 @@ pub fn enemy_id(name: &str) -> Option<u16> {
         "bowlbug_silk" | "bowlbug-silk" | "盛碗虫（蚕丝）" => "盛碗虫（蚕丝）",
         "chomper" | "大啃兽" => "大啃兽",
         "louse_progenitor" | "louse-progenitor" | "始祖虱虫" => "始祖虱虫",
-        "myte" | "螨虫" => "螨虫",
+        // 类名 key 给 `tools/dump_encounters.py` 用（没有实录的敌人只能靠它连上）。
+        // 知识恶魔 / 异螨 / 熟睡甲虫都是 2026-09-14 照 [源码] 建的，中文名取自本地化表、直配。
+        // 异螨这个下标原来是一条错的 [wiki]「螨虫」，那个旧名**故意不收** —— 游戏里没有叫它的怪。
+        "knowledge_demon" => "知识恶魔",
+        "myte" => "异螨",
+        "slumbering_beetle" => "熟睡甲虫",
         "ovicopter" | "直升虫" => "直升虫",
         "spiny_toad" | "spiny_toad_0" | "spiny-toad" | "spiny-toad-0" | "棘蟾" | "棘刺蟾蜍" | "多刺蟾蜍" => "棘蟾",
         "queen" | "蜂后" => "蜂后",
         "doormaker" | "造门者" => "造门者",
-        "knowledge_demon" | "knowledge-demon" | "知识恶魔" => "知识恶魔",
         "soul_nexus" | "soul-nexus" | "灵魂枢纽" => "灵魂枢纽",
         "test_subject" | "test_subject_0" | "test-subject" | "实验体" => "实验体",
         "tunneler" | "tunneler_0" | "tunneler-0" | "地道虫" => "地道虫",
+        // 2026-09-13 第 3 幕补的六只。中文名直配（取自游戏本地化表），这里只放**类名 key**，
+        // 给 `tools/dump_encounters.py` 从 [源码] 遭遇表连过来用（它按 key 小写查这张表）。
+        "slimed_berserker" => "史莱姆狂战士",
+        "mecha_knight" => "机甲骑士",
+        "globe_head" => "电球头",
+        "scroll_of_biting" => "咬人卷轴",
+        "the_lost" => "失落之物",
+        "the_forgotten" => "遗忘之物",
+        "flail_knight" => "连枷骑士",
+        "spectral_knight" => "幽灵骑士",
+        "magi_knight" => "魔法骑士",
+        // 2026-09-17 第 1 幕批 2。中文名直配（本地化表 `LAGAVULIN_MATRIARCH.name`），
+        // 这里只放**类名 key**，给 `tools/dump_encounters.py` 从 [源码] 遭遇表连过来用。
+        "lagavulin_matriarch" => "乐加维林族母",
+        // 2026-09-17 第 1 幕批 3，同上。
+        "vantom" => "墨影幻灵",
+        "inklet" => "墨宝",
+        // 2026-09-19 第 1 幕批 4 / 批 5（暗港精英 + 暗港杂兵），同上。
+        "skulking_colony" => "鬼祟珊瑚群",
+        "haunted_ship" => "幽灵船",
+        "toadpole" => "蟾蜍蝌蚪",
+        "fossil_stalker" => "化石追踪者",
+        "gremlin_merc" => "地精佣兵",
+        "sneaky_gremlin" => "卑鄙地精",
+        "fat_gremlin" => "胖地精",
+        // 2026-09-19 第 1 幕批 6（密林杂兵），同上。另外三种劫掠者早就有实录连接键（`act1_f12_seventh`）。
+        "vine_shambler" => "藤蔓蹒跚者",
+        "assassin_ruby_raider" => "劫掠者刺客",
+        "brute_ruby_raider" => "劫掠者暴徒",
         _ => return None,
     };
     crate::content::ENEMIES.iter().position(|d| d.name == alias).map(|i| i as u16)
@@ -1506,6 +1687,14 @@ fn push_carry(carry: &mut Vec<(St, i32)>, st: St, v: i32) {
     }
 }
 
+/// 一个槽位**上一次被观测到**时的样子，见 [`Replayer::seen`]。
+#[derive(Clone, Default)]
+struct SeenEnemy {
+    round: i32,
+    max_hp: i32,
+    name: String,
+}
+
 /// 把观测同步成内核状态的那一半对拍器。
 ///
 /// L2 的验收（`bin/solve.rs`）复用它，理由和 `verify` 一样：**观测怎么变成
@@ -1553,6 +1742,17 @@ pub struct Replayer {
     /// [实测] `act1_f15_ninth` 帧5 打死利齿之眼，帧6/7 观测里**整只消失**，
     /// 帧8 它 6/6 回来 —— 和实验体那几帧是同一个观测形状。
     illusion_owed: [i32; MAX_ENEMIES],
+    /// 同上，记的是**接续**（`St::Reattach`，残杀千足虫）。
+    ///
+    /// 和那两栏的区别是**光记层数不够，还要知道它是什么时候消失的**：接续不在下一个
+    /// 敌人回合，而在第二个（[源码] 死后先走 `DEAD_MOVE` 再走 `REATTACH_MOVE`），
+    /// 所以放回 `St::ReattachDue` 时要知道已经过了几个敌人回合 —— 读 [`Replayer::seen`]。
+    /// [实测] `act2_f28_decimillipede`：第 3 回合砍死、第 4 回合观测里没有、第 5 回合 25 血回来。
+    reattach_owed: [i32; MAX_ENEMIES],
+    /// 每个槽位**上一次被观测到**时的回合数 / 最大生命 / 名字。今天只给接续的尸体用：
+    /// 回合数推倒计时；最大生命是回血的上限（尸体的实体是清零重建的，不放回去就只能回到 0）；
+    /// 名字让 `identify_enemies` 把尸体认回 `EnemyDef`。
+    seen: [SeenEnemy; MAX_ENEMIES],
     /// 跨帧携带的选牌状态（Op 产生的 Pending）。
     pending: Pending,
     /// 这一局的进阶等级，每帧灌进 `State::ascension`。
@@ -1577,6 +1777,8 @@ impl Replayer {
             hp_loss_hits: 0,
             revive_owed: [0; MAX_ENEMIES],
             illusion_owed: [0; MAX_ENEMIES],
+            reattach_owed: [0; MAX_ENEMIES],
+            seen: Default::default(),
             pending: Pending::None,
             ascension: 0,
             report,
@@ -1691,12 +1893,24 @@ impl Replayer {
             if observed_has_slow(&e.status) {
                 s.enemies[slot].set(St::SlowSource, 10);
             }
+            // 「它是不是施咒者」同样是身份：幽灵骑士 / 魔法骑士身上挂私有标记，
+            // 解咒规则才找得到该在谁死的时候发作。名字走 `enemy_id`（截 `#`、别名），
+            // 和合成路径的 `begin_combat` 读同一张表（`content::ENEMY_PRIVATE_MARKERS`）。
+            // 鬼祟珊瑚群的硬化外壳**上限**也走这里：观测只报余额，上限（20）是这只怪的身份。
+            if let Some(id) = enemy_id(&e.name) {
+                for (st, v) in crate::content::enemy_private_markers(crate::content::enemy_def(id).name) {
+                    s.enemies[slot].set(st, v);
+                }
+            }
             s.enemy_def[slot] = enemy::UNKNOWN;
+            sync_attack_counters(e, &mut s.enemies[slot]);
             n_slots = n_slots.max(slot + 1);
             // 看得见它的时候记下适生力，看不见的时候才知道它是"欠一次复活"
             // 还是真死了。见 `revive_owed`。
             self.revive_owed[slot] = s.enemies[slot].get(St::Adaptable);
             self.illusion_owed[slot] = s.enemies[slot].get(St::Illusion);
+            self.reattach_owed[slot] = s.enemies[slot].get(St::Reattach);
+            self.seen[slot] = SeenEnemy { round: obs.round, max_hp: e.max_hp, name: e.name.clone() };
             if !lookup_enemy(&e.name) {
                 self.report.missing_enemies.insert(e.name.clone(), e.max_hp);
             }
@@ -1715,6 +1929,12 @@ impl Replayer {
                 // 而下一帧的观测本来就把复活后的血量报出来了。
                 if self.revive_owed[slot] > 0 {
                     s.enemies[slot].set(St::Adaptable, self.revive_owed[slot]);
+                    if let Some(def) = enemy_id(&self.seen[slot].name) {
+                        s.enemies[slot] = crate::step::reviving_enemy_snapshot(
+                            def, self.seen[slot].max_hp, self.revive_owed[slot], s.ascension);
+                        // Leave enemy_def UNKNOWN on the injection/replay path.
+                        s.enemy_move[slot] = 0;
+                    }
                 }
                 // 幻象走的是同一条路，但**不进 `any_enemy_present`** ——
                 // 它是爪牙，主人死了它就该跟着消失（`step::no_master_left`）。
@@ -1722,6 +1942,19 @@ impl Replayer {
                 if self.illusion_owed[slot] > 0 {
                     s.enemies[slot].set(St::Illusion, self.illusion_owed[slot]);
                     s.enemies[slot].set(St::Minion, 1);
+                }
+                // 接续（残杀千足虫）：同样不进 `any_enemy_present` —— 别的节全死了战斗就该结束。
+                // 放回的是层数（回血量）+ 倒计时 + 最大生命（回血的上限，实体刚被清零重建过）。
+                //
+                // **倒计时从"它最后一次被看见是第几回合"推**：同一回合里 = 2（还没过敌人回合），
+                // 下一回合 = 1。[实测] `act2_f28_decimillipede` 第 3 回合砍死、第 5 回合回来。
+                // 分不开的一种：被荆棘/火焰屏障**在敌人回合里**反伤打死的那一节，
+                // 源码里要再晚一个回合回来，这里会早一回合 —— 方向是悲观，而且极少见。
+                if self.reattach_owed[slot] > 0 {
+                    let seen = &self.seen[slot];
+                    s.enemies[slot].max_hp = seen.max_hp;
+                    s.enemies[slot].set(St::Reattach, self.reattach_owed[slot]);
+                    s.enemies[slot].set(St::ReattachDue, (2 - (obs.round - seen.round)).max(1));
                 }
             }
         }
@@ -1797,6 +2030,11 @@ impl Replayer {
             if let Some(cost) = c.cost {
                 let def = card(id);
                 let want = if c.upgraded { def.cost_upg } else { def.cost };
+                // **mod 报的是 `GetAmountToSpend`，已经含全局钩子**（缠结 +N）。下面两条判的都是
+                // 「这张**实例**被本地改过费」，所以先把全局那一截扣掉 —— 不扣的话缠结下每张攻击牌
+                // 记成 `cost_delta = +1`，`effective_cost` 再加一遍缠结，双算。
+                // `s.player` 这时已经从观测灌好了（本函数开头）。免费攻击牌在缠结下显示 1，扣完是 0，照旧盖免费。
+                let cost = cost - crate::step::tangled_cost_addend(&s.player, id);
                 if cost == 0 {
                     if want > 0 && !kernel_can_explain_zero_cost(def, free_attack) {
                         s.cards[ix as usize].flags |= F_FREE_THIS_TURN;
@@ -1986,6 +2224,9 @@ impl Replayer {
         for (st, v) in &self.relic_carry {
             s.player.set(*st, *v);
         }
+        // Observed Strength already includes RedSkull. Restore its latch only.
+        s.player.set(St::RedSkullActive, i32::from(
+            s.player.get(St::RedSkull) > 0 && crate::step::hp_threshold_active(&s.player)));
         // **开局赠予在第 0 帧之前就已经发生过了**（金刚杵的力量、护喉甲的覆甲…），
         // 观测里那份力量就是它发生过的证据。**修饰器要跟着记成用过一次** ——
         // 不消耗的话内核会以为这一场还能再翻一次倍（损毁头盔），那是**高估自己**。
@@ -2069,6 +2310,7 @@ fn infer_facing(r: &Replayer, s: &mut State, obs: &Obs) {
                 }
             }
             let want = observed_signature(e);
+            sync_attack_counters(e, &mut ent);
             if (0..n_moves).any(|m| move_signature(def_id, m, &ent, &player, s.ascension) == want)
             {
                 exact += 1;
@@ -2151,16 +2393,46 @@ impl Replayer {
                 }
             }
             let want = observed_signature(e);
-            // 先要求逐字相等，退而求其次只对意图类型（玩家带易伤时数字会差）
+            // 先要求逐字相等，退而求其次只对意图类型（玩家带易伤时数字会差）。
+            //
+            // **逐字相等的里面，先挑当前局面下机器走得到的那一手。** 两手签名可以逐字相同
+            // （蜂群术士的喷射信息素按蜂房层数拆成两手，都是 `Buff`），而 `find` 取第一个 ——
+            // 蜂房 ≥ 3 时就会对到「蜂房 +1、力量 +1」那一支，之后的推演每次喷射少 1 点力量。
+            // 判据见 `step::move_reachable_now`：只排掉「进它的条件边在当前局面下确定不成立」的。
+            // 私有计数器（瀑布巨兽高压枪涨过多少 / 爆炸记下多少）先从**这一手**的标签还原，再比签名。
+            // 不先还原的话高压枪 25 逐字对不上任何一手，按类型退回会对到同样是 `Attack + Buff` 的撞击上。
+            sync_attack_counters(e, &mut ent);
+            s.enemies[slot].set(St::ClawGrowth, ent.get(St::ClawGrowth));
+            let with_private = |m: usize| {
+                let mut e2 = ent;
+                if let Some((st, v)) =
+                    infer_private_attack_counter(def_id, m, &ent, &player, s.ascension, &want)
+                {
+                    e2.set(st, v);
+                }
+                e2
+            };
+            let exact = |m: usize| {
+                let e2 = with_private(m);
+                crate::content::move_matches_form(def_id, m, &e2)
+                    && move_signature(def_id, m, &e2, &player, s.ascension) == want
+            };
             let m = (0..n_moves)
-                .find(|&m| move_signature(def_id, m, &ent, &player, s.ascension) == want)
+                .find(|&m| exact(m) && crate::step::move_reachable_now(s, slot, def_id, m))
+                .or_else(|| (0..n_moves).find(|&m| exact(m)))
                 .or_else(|| {
                     (0..n_moves).find(|&m| {
-                        same_kinds(&move_signature(def_id, m, &ent, &player, s.ascension), &want)
+                        crate::content::move_matches_form(def_id, m, &ent)
+                            && same_kinds(&move_signature(def_id, m, &ent, &player, s.ascension), &want)
                     })
                 });
             if let Some(m) = m {
                 s.enemy_def[slot] = def_id;
+                if let Some((st, v)) =
+                    infer_private_attack_counter(def_id, m, &ent, &player, s.ascension, &want)
+                {
+                    s.enemies[slot].set(st, v);
+                }
                 // `enemy_move` 是"下一次出第几手"的计数器，观测到的意图就是
                 // **这一手**，所以指针直接指向它
                 s.enemy_move[slot] = m as u8;
@@ -2168,6 +2440,19 @@ impl Replayer {
                 row.move_ix = Some(m);
             }
             out.push(row);
+        }
+        // **欠一次接续的尸体不在观测里**，上面那个循环碰不到它。按它消失前的名字把
+        // `EnemyDef` 认回来 —— 不然推演里它复活之后是一只永远不出手的 UNKNOWN。
+        // 出招指针不用对齐：复活那一刻规则自己把它强制到「重接」（`St::ReattachDue`）。
+        // 不进 `out`：这张表报的是「观测里的敌人认出了几只」。
+        for slot in 0..s.n_enemies as usize {
+            if s.enemies[slot].alive() || (s.enemies[slot].get(St::ReattachDue) <= 0
+                && s.enemies[slot].get(St::Adaptable) <= 0) {
+                continue;
+            }
+            if let Some(def_id) = enemy_id(&self.seen[slot].name) {
+                s.enemy_def[slot] = def_id;
+            }
         }
         out
     }
@@ -2311,6 +2596,12 @@ pub const STATUS_HANDLED_OUTSIDE_MAP: &[&str] = &[FREE_ATTACK_STATUS];
 
 pub fn observed_free_attack(status: &BTreeMap<String, i32>) -> Option<i32> {
     status.get(FREE_ATTACK_STATUS).copied()
+}
+
+/// 观测到的某个 status 的层数（id 走 `map_status`，英文 id 和中文名都认；没有就是 0）。
+/// 和 `diff_statuses` 同一个口径。
+pub fn observed_player_status(status: &BTreeMap<String, i32>, st: St) -> i32 {
+    status.iter().filter(|(id, _)| map_status(id) == Some(st)).map(|(_, v)| *v).sum()
 }
 
 /// 观测里这张牌显示 0 费时，这个 0 **内核自己算得出来吗**。
@@ -2856,7 +3147,9 @@ pub fn move_signature(
         .iter()
         .enumerate()
         .map(|(oi, op)| match crate::asc::adjust(def_id, mv, oi, asc, *op) {
-            EOp::AddCardToDiscard { count, .. } | EOp::AddCardToDraw { count, .. } => count,
+            EOp::AddCardToDiscard { count, .. }
+            | EOp::AddCardToDraw { count, .. }
+            | EOp::AddCardToHand { count, .. } => count,
             _ => 0,
         })
         .sum();
@@ -2870,18 +3163,30 @@ pub fn move_signature(
                 let d = crate::damage::apply_modifiers(face, enemy, player);
                 label = if hits > 1 { format!("{d}×{hits}") } else { format!("{d}") };
             }
+            // 恐惧（遗忘之物）：[源码] 意图是 `SingleAttackIntent(() => DreadDamage)`，
+            // 那个 lambda 里已经加了它自己的敏捷 —— 标签里含它。
+            EOp::AttackPlusSelfStatus { base, hits, per } => {
+                let face = base + enemy.get(per) + enemy.get(St::Strength);
+                let d = crate::damage::apply_modifiers(face, enemy, player);
+                label = if hits > 1 { format!("{d}×{hits}") } else { format!("{d}") };
+            }
+            EOp::AttackPlusStackHits { base, hits, per } => {
+                let hits = hits + enemy.get(per);
+                let d = crate::damage::apply_modifiers(base + enemy.get(St::Strength), enemy, player);
+                label = if hits > 1 { format!("{d}×{hits}") } else { format!("{d}") };
+            }
             // 塞牌是**主意图**时（史莱姆吐黏液、异蛙寄生虫感染）写进主标签；
             // 是**副作用**时（扭动虫的扭动 `Buff:, StatusCard:1`）另起一个意图。
             // 2026-08-22 实战抓到：少了下面那条，扭动虫的签名只有一个 `Buff:1`，
             // 观测判成「不在允许集合里」—— 那是本轮唯一一次真红的指标。
             // 两条塞牌 op 共用**同一个总数**（见上面 `status_cards`），
             // 所以这里只认"有没有塞牌"，数字统一取那个和。
-            EOp::AddCardToDiscard { .. } | EOp::AddCardToDraw { .. }
+            EOp::AddCardToDiscard { .. } | EOp::AddCardToDraw { .. } | EOp::AddCardToHand { .. }
                 if m.intent == "StatusCard" =>
             {
                 label = format!("{status_cards}")
             }
-            EOp::AddCardToDiscard { .. } | EOp::AddCardToDraw { .. } => {
+            EOp::AddCardToDiscard { .. } | EOp::AddCardToDraw { .. } | EOp::AddCardToHand { .. } => {
                 extra.push(("StatusCard".to_string(), format!("{status_cards}")))
             }
             // 一手里带了副作用时，游戏会**额外显示一个意图**。实测三种：
@@ -2893,6 +3198,11 @@ pub fn move_signature(
                 extra.push(("Defend".to_string(), String::new()))
             }
             EOp::PlayerStatus { st: St::Smoggy, .. } if m.intent != "CardDebuff" => {
+                extra.push(("CardDebuff".to_string(), String::new()))
+            }
+            // 缠结（藤蔓蹒跚者的紧绕藤蔓）：[源码] `SingleAttackIntent + CardDebuffIntent`，
+            // 不是 `DebuffIntent` —— 它改的是**牌**的费用。落进下面那条通用臂就会签成 `Debuff`。
+            EOp::PlayerStatus { st: St::Tangled, .. } if m.intent != "CardDebuff" => {
                 extra.push(("CardDebuff".to_string(), String::new()))
             }
             EOp::PlayerStatus { .. } if m.intent != "Debuff" && m.intent != "DebuffStrong" => {
@@ -2913,6 +3223,9 @@ pub fn move_signature(
             EOp::Summon { .. } if m.intent != "Summon" => {
                 extra.push(("Summon".to_string(), String::new()))
             }
+            // 回血：游戏额外显示一个 `Heal:`（知识恶魔的思考是 攻击 + 回血 + 强化 三个意图）
+            EOp::Heal(_) if m.intent != "Heal" => extra.push(("Heal".to_string(), String::new())),
+            EOp::SelfStatus { st: St::ClawGrowth, .. } => {} // private counter, not a Buff intent
             EOp::SelfStatus { amt, .. } if amt > 0 && m.intent != "Buff" => {
                 extra.push(("Buff".to_string(), String::new()))
             }
@@ -3065,6 +3378,7 @@ pub fn verify_enemy_ai(t: &Trace) -> EnemyAiReport {
                     ent.set(st, *amt);
                 }
             }
+            sync_attack_counters(e, &mut ent);
             ent
         };
         // 玩家侧只需要能影响标签的部分（易伤）。这里退化成一个空玩家 ——
@@ -3123,6 +3437,25 @@ pub fn verify_enemy_ai(t: &Trace) -> EnemyAiReport {
             scratch.enemy_def[0] = def_id;
             scratch.enemies[0] = entity_of(o);
             scratch.enemy_move[0] = cur as u8;
+            let previous = entity_of(&obs_list[k - 1]);
+            // A changed maximum HP after Adaptable is observable evidence that
+            // a revive occurred between these snapshots. Advance its revive move,
+            // not the attack that was interrupted by the player killing that form.
+            let revived = previous.get(St::Adaptable) > 0 && o.max_hp > previous.max_hp;
+            if revived {
+                scratch.enemy_move[0] = 0;
+            }
+            // Predict growth from the PREVIOUS move's operations. Never use the
+            // current observed hit count as the expected value.
+            let mut growth = if revived { 0 } else { previous.get(St::ClawGrowth) };
+            if !revived {
+                for op in crate::content::enemy_def(def_id).moves[cur].ops {
+                    if let crate::ops::EOp::SelfStatus { st: St::ClawGrowth, amt } = *op {
+                        growth += amt;
+                    }
+                }
+            }
+            scratch.enemies[0].set(St::ClawGrowth, growth);
             // `hist[0]` 必须**已经是刚打完的那一手** —— `branch_open` 的
             // `NotTwice` 判的就是它。差一位的话"不能连出"会判到上上手去。
             scratch.enemy_hist[0] = hist;
@@ -3139,7 +3472,7 @@ pub fn verify_enemy_ai(t: &Trace) -> EnemyAiReport {
                 if allowed & (1 << m) == 0 {
                     continue;
                 }
-                let pred = move_signature(def_id, m, &entity_of(o), &player, t.ascension);
+                let pred = move_signature(def_id, m, &scratch.enemies[0], &player, t.ascension);
                 if pred == seen {
                     exact_hit = Some(m);
                     break;
@@ -3659,7 +3992,12 @@ pub fn verify_step(r: &mut Replayer, t: &Trace, i: usize) -> Option<FrameResult>
                         let want = if c.upgraded { def.cost_upg } else { def.cost };
                         let discountable =
                             kernel_can_explain_zero_cost(def, r.counters.free_attack);
-                        if let Some(cost) = c.cost {
+                        // 缠结是全局改费，不是内容表的错：比之前扣掉（和 `sync` 同一个函数）。
+                        let tangled = observed_player_status(&f.obs.status, St::Tangled);
+                        let mut who = Entity::new(1);
+                        who.set(St::Tangled, tangled);
+                        let global = crate::step::tangled_cost_addend(&who, cid);
+                        if let Some(cost) = c.cost.map(|c| c - global) {
                             if cost != want && !discountable {
                                 res.diffs.push(Diff::soft(
                                     format!("{card_name}.费用(内容表)"),
@@ -3829,6 +4167,163 @@ mod tests {
         r2.sync(&parse_trace(&last_form).unwrap().frames[0].obs);
         let s = r2.sync(&parse_trace(&gone).unwrap().frames[0].obs).state;
         assert!(!s.any_enemy_present(), "没有适生力就是真死了，别把战斗吊着");
+    }
+
+    /// **接续的尸体：不在观测里，但欠一次复活 —— 而且要推回"还差几个敌人回合"。**
+    ///
+    /// [实测] `act2_f28_decimillipede` 节 1：第 3 回合砍死、第 4 回合观测里没有、
+    /// 第 5 回合 25/44 回来。三样缺一不可：层数（回多少）· 倒计时（什么时候回）·
+    /// 最大生命（回血的上限 —— 尸体的实体是清零重建的，不放回去就只能回到 0）。
+    #[test]
+    fn sync_keeps_a_vanished_segment_as_a_corpse_owed_a_reattach() {
+        fn frame(round: i32, enemies: &str) -> String {
+            format!(
+                r#"{{
+  "version": 1,
+  "run": {{ "act": 2, "floor": 28, "ascension": 2, "character": "铁甲战士" }},
+  "frames": [
+    {{ "i": 0,
+      "obs": {{
+        "state_type": "elite", "round": {round}, "is_play_phase": true,
+        "energy": 3, "max_energy": 3,
+        "player": {{ "hp": 60, "max_hp": 80, "block": 0, "status": {{}} }},
+        "enemies": {enemies},
+        "hand": [], "draw_count": 0, "draw": [], "discard": [], "exhaust": [],
+        "pending": null
+      }},
+      "action": null,
+      "settle": {{ "polls": 1, "ms": 0, "unstable": false, "intermediate_differs": false }} }}
+  ]
+}}"#
+            )
+        }
+        fn seg(id: &str, hp: i32, max_hp: i32) -> String {
+            format!(
+                r#""{id}": {{ "entity_id": "decimillipede_segment_{id}", "name": "残杀千足虫",
+                        "hp": {hp}, "max_hp": {max_hp}, "block": 0,
+                        "status": {{ "REATTACH_POWER": 25 }}, "intents": [] }}"#
+            )
+        }
+        let tr = |round: i32, segs: &[String]| {
+            parse_trace(&frame(round, &format!("{{ {} }}", segs.join(", ")))).unwrap()
+        };
+
+        let mut r = Replayer::new("");
+        r.sync(&tr(3, &[seg("1", 12, 44), seg("2", 40, 40), seg("3", 46, 46)]).frames[0].obs);
+
+        // 同一回合里节 1 从观测里消失：死了，但欠一次接续，倒计时 2（还没过敌人回合）
+        let s = r.sync(&tr(3, &[seg("2", 40, 40), seg("3", 46, 46)]).frames[0].obs).state;
+        assert!(!s.enemies[0].alive(), "尸体打不到");
+        assert_eq!(s.enemies[0].get(St::Reattach), 25);
+        assert_eq!(s.enemies[0].get(St::ReattachDue), 2, "砍死那一回合：还要过两个敌人回合");
+        assert_eq!(s.enemies[0].max_hp, 44, "回血上限要放回去");
+        assert!(s.any_enemy_present());
+
+        // 下一回合仍然不在：倒计时 1。走一个敌人回合，它该 25 血回来 ——
+        // 对拍路径上尸体是 UNKNOWN def，回血那条规则不能依赖认出它是谁
+        let s = r.sync(&tr(4, &[seg("2", 40, 40), seg("3", 46, 46)]).frames[0].obs).state;
+        assert_eq!(s.enemies[0].get(St::ReattachDue), 1, "过了一个敌人回合");
+        let s = crate::step::end_turn_with_incoming(s, &crate::step::NO_INCOMING);
+        assert_eq!(s.enemies[0].hp, 25, "第二个敌人回合开始时 25 血回来");
+
+        // 对照：三节都不在了 —— 尸体照样挂着接续，但战斗该结束（接续不进 any_enemy_present）
+        let s = r.sync(&tr(4, &[]).frames[0].obs).state;
+        assert!(!s.any_enemy_present(), "别的节全死了就是真结束，别把战斗吊着");
+    }
+
+    /// **硬化外壳从战斗中途接进来。** mod 报的是 `DisplayAmount`（这个回合的**余额**），
+    /// 原样搬进 `St::HardenedShell`；上限（`Amount` = 20）观测里没有，按名字从
+    /// `content::ENEMY_PRIVATE_MARKERS` 挂回来 —— 挂不上的话，下一个回合开始它永远回不满，
+    /// 而余额是 0 的那一帧外壳会「消失」（`absorb` 的门是上限）。
+    #[test]
+    fn sync_reads_the_hardened_shell_balance_and_puts_the_cap_back_by_name() {
+        fn frame(balance: i32) -> String {
+            format!(
+                r#"{{
+  "version": 1,
+  "run": {{ "act": 1, "floor": 9, "ascension": 2, "character": "铁甲战士" }},
+  "frames": [
+    {{ "i": 0,
+      "obs": {{
+        "state_type": "elite", "round": 2, "is_play_phase": true,
+        "energy": 3, "max_energy": 3,
+        "player": {{ "hp": 60, "max_hp": 80, "block": 0, "status": {{}} }},
+        "enemies": {{ "1": {{ "entity_id": "skulking_colony_0", "name": "鬼祟珊瑚群",
+                            "hp": 60, "max_hp": 75, "block": 0,
+                            "status": {{ "HARDENED_SHELL_POWER": {balance} }}, "intents": [] }} }},
+        "hand": [], "draw_count": 0, "draw": [], "discard": [], "exhaust": [],
+        "pending": null
+      }},
+      "action": null,
+      "settle": {{ "polls": 1, "ms": 0, "unstable": false, "intermediate_differs": false }} }}
+  ]
+}}"#
+            )
+        }
+        let mut r = Replayer::new("");
+        let s = r.sync(&parse_trace(&frame(5)).unwrap().frames[0].obs).state;
+        assert_eq!(s.enemies[0].get(St::HardenedShell), 5, "余额原样搬");
+        assert_eq!(s.enemies[0].get(St::HardenedShellCap), 20, "上限按名字挂回来");
+        let mut e = s.enemies[0];
+        assert_eq!(crate::damage::absorb(&mut e, 12), 5, "这个回合只剩 5");
+        let s = crate::step::end_turn_with_incoming(s, &crate::step::NO_INCOMING);
+        assert_eq!(s.enemies[0].get(St::HardenedShell), 20, "回合开始回满到上限");
+
+        let mut r = Replayer::new("");
+        let s = r.sync(&parse_trace(&frame(0)).unwrap().frames[0].obs).state;
+        let mut e = s.enemies[0];
+        assert_eq!(crate::damage::absorb(&mut e, 12), 0, "余额 0 的那一帧外壳还在");
+    }
+
+    /// **缠结下 mod 报的手牌费用已经含 +1**（`GetAmountToSpend` 过了全局钩子），`sync` 要先扣掉再判
+    /// 「这张实例被本地改过费」。不扣的话每张攻击牌记成 `cost_delta = +1`，`effective_cost` 再加一遍缠结 ——
+    /// 打击变 3 费，求解器给出游戏里根本打得出、却被它当成打不出的线（和无情猛攻那个 bug 同一个形状）。
+    /// 第四张是缠结下的**免费**打击：显示 1，扣完 0 ⇒ 照旧盖「本回合免费」，内核算回 1。
+    #[test]
+    fn sync_does_not_double_count_tangled_in_the_observed_hand_cost() {
+        let hand = r#"[
+          { "slot": 0, "id": "STRIKE_IRONCLAD", "name": "打击", "cost": 2, "type": "Attack", "upgraded": false, "can_play": true, "description": "" },
+          { "slot": 1, "id": "DEFEND_IRONCLAD", "name": "防御", "cost": 1, "type": "Skill", "upgraded": false, "can_play": true, "description": "" },
+          { "slot": 2, "id": "BASH", "name": "痛击", "cost": 3, "type": "Attack", "upgraded": false, "can_play": true, "description": "" },
+          { "slot": 3, "id": "STRIKE_IRONCLAD", "name": "打击", "cost": 1, "type": "Attack", "upgraded": false, "can_play": true, "description": "" }
+        ]"#;
+        let frame = |status: &str| {
+            format!(
+                r#"{{
+  "version": 1,
+  "run": {{ "act": 1, "floor": 5, "ascension": 2, "character": "铁甲战士" }},
+  "frames": [
+    {{ "i": 0,
+      "obs": {{
+        "state_type": "monster", "round": 3, "is_play_phase": true,
+        "energy": 3, "max_energy": 3,
+        "player": {{ "hp": 60, "max_hp": 80, "block": 0, "status": {{ {status} }} }},
+        "enemies": {{ "1": {{ "entity_id": "vine_shambler_0", "name": "藤蔓蹒跚者",
+                            "hp": 50, "max_hp": 61, "block": 0, "status": {{}}, "intents": [] }} }},
+        "hand": {hand},
+        "draw_count": 0, "draw": [], "discard": [], "exhaust": [], "pending": null
+      }},
+      "action": null,
+      "settle": {{ "polls": 1, "ms": 0, "unstable": false, "intermediate_differs": false }} }}
+  ]
+}}"#
+            )
+        };
+        let mut r = Replayer::new("");
+        let s = r.sync(&parse_trace(&frame(r#""TANGLED_POWER": 1"#)).unwrap().frames[0].obs).state;
+        assert_eq!(s.player.get(St::Tangled), 1);
+        let costs: Vec<i32> = (0..4).map(|i| crate::step::effective_cost(&s, i)).collect();
+        assert_eq!(costs, vec![2, 1, 3, 1], "和游戏显示的逐张相同，没有双算");
+        let deltas: Vec<i8> = (0..4).map(|i| s.cards[s.hand[i] as usize].cost_delta).collect();
+        assert_eq!(deltas, vec![0, 0, 0, 0], "缠结是全局改费，不是这张实例被改过");
+        assert!(s.cards[s.hand[3] as usize].flags & F_FREE_THIS_TURN != 0, "显示 1 = 免费 + 缠结");
+        assert!(s.cards[s.hand[0] as usize].flags & F_FREE_THIS_TURN == 0);
+
+        // 对照：同一手牌、没有缠结 ⇒ 打击 2 费 / 痛击 3 费就是这张实例真被改过（狂乱逃离那种）
+        let mut r2 = Replayer::new("");
+        let s = r2.sync(&parse_trace(&frame("")).unwrap().frames[0].obs).state;
+        let deltas: Vec<i8> = (0..4).map(|i| s.cards[s.hand[i] as usize].cost_delta).collect();
+        assert_eq!(deltas, vec![1, 0, 1, 0]);
     }
 
     /// **扯碎的段数从卡面反推。**

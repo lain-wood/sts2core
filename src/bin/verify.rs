@@ -192,7 +192,7 @@ fn main() -> ExitCode {
              \n  * 「对不齐」多半是内容表里那些占位的 `EOp::Nothing`：它表达不出\
              \n    意图类型，沉睡和「有一手但没建模」在这里长得一样\
              \n\n这里验的是「下一手是什么」（出招循环），不是「这一手打多少」——\
-             \n后者由默认模式的注入检验（那条已全绿）。两者要分开看。"
+             \n后者由默认模式的注入检验检查，是否通过以该次报告为准。两者要分开看。"
         );
         return ExitCode::SUCCESS;
     }
@@ -264,7 +264,7 @@ fn print_report(r: &Report, show_all: bool) {
     if !r.missing_potions.is_empty() {
         let names: Vec<String> =
             r.missing_potions.iter().map(|(n, c)| format!("{n}×{c}")).collect();
-        println!("  用过的药水（内核无药水模型）: {}", names.join(" "));
+        println!("  用过但内核尚未建模的药水: {}", names.join(" "));
     }
     // **没建全的附魔**。这一栏 2026-09-06 之前只往 `Report` 里写、没人印出来 ——
     // 和「没映射的 status」是同一类静默洞：字段有、看不见。

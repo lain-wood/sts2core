@@ -21,6 +21,15 @@
 //! [`Table::resolve`] 对它们**整条拒绝**，返回 [`Unresolved::Inexact`] ——
 //! 编一个自洽的多重集出来是这个仓库明令不做的事。
 //! 认得出来的那些由 `data/encounters_overrides.json` 手填（那份也在这里读）。
+//!
+//! # 分布不是代表值（2026-09-14）
+//!
+//! 有几场构成随机、但**分布本身在 [源码] 里逐支枚举得完**（盛碗虫两场）。它们在
+//! `encounters_overrides.json` 的 `distributions` 里列出全部构成和相对权重，进表后是
+//! `exact: false` + [`Encounter::variants`]。**严格的 [`Table::resolve`] 照旧拒绝它们**
+//! （它答的是「这一场是哪几只」，而答案不唯一）；整幕链走 [`Table::resolve_sampled`]，
+//! 每个样本按权重抽一支 —— 那是在抽样一个分布，不是挑一个自洽的解写进去。
+//! 覆盖率（[`Table::coverage`]）要**每一支都开得出**才算这一场开得出。
 
 use std::collections::BTreeMap;
 
@@ -44,12 +53,17 @@ pub struct Encounter {
     /// 不并进来的话，盛碗虫那几场（石 + 卵/蜜/丝）一场都认不出来。
     pub all_possible: Vec<String>,
     pub exact: bool,
-    /// 解析器为什么放弃（`exact == false` 时）
+    /// 解析器为什么放弃（`exact == false` 时）；分布的那几场是手写的 `why`
     pub note: Option<String>,
     /// [源码] `EncounterModel.Tags`。**抽序列时是个约束**：
     /// `ActModel.AddWithoutRepeatingTags` 不让相邻两场共享 tag
     /// （连着两场史莱姆），见 [`crate::synth::act`]。没有 tag 的一律空表。
     pub tags: Vec<String>,
+    /// **构成是分布**时的全部分支：`(相对权重, 怪物类名)`。其余遭遇一律空表。
+    ///
+    /// 只有 `exact == false` 的遭遇会有它（`dump_encounters.py` 自检拦着），
+    /// 来源是 `encounters_overrides.json` 的 `distributions`，见模块头。
+    pub variants: Vec<(u32, Vec<String>)>,
 }
 
 /// 一幕。
@@ -72,7 +86,8 @@ pub enum Unresolved {
     /// 表里没有这个 key
     NoSuchEncounter(String),
     /// 构成含随机，`dump_encounters.py` 标了 `exact: false`。
-    /// 补法：`data/encounters_overrides.json` 手填
+    /// 补法：`data/encounters_overrides.json` 手填（构成确定的填 `encounters`，
+    /// 分布逐支枚举得完的填 `distributions`，后者走 [`Table::resolve_sampled`]）
     Inexact { key: String, note: String },
     /// 这只怪物还没有「英文类名 ↔ 内核敌人」的连接键（没在实录里见过）
     NoKernelName { key: String, monster: String },
@@ -122,6 +137,22 @@ fn arr_of_str(j: Option<&Json>) -> Vec<String> {
     }
 }
 
+/// `variants` 那一栏：`[{"weight": 1, "monsters": [...]}, ...]`。缺了就是空表。
+/// 权重非正或者构成为空的那一支**丢掉**（脚本的自检本来就不让它进表，这里是第二道）。
+fn variants_of(j: Option<&Json>) -> Vec<(u32, Vec<String>)> {
+    match j {
+        Some(Json::Arr(a)) => a
+            .iter()
+            .filter_map(|v| {
+                let w = v.i64("weight").unwrap_or(0);
+                let ms = arr_of_str(v.get("monsters"));
+                (w > 0 && !ms.is_empty()).then_some((w as u32, ms))
+            })
+            .collect(),
+        _ => Vec::new(),
+    }
+}
+
 impl Table {
     /// 从 `data/` 读两份表。路径是**目录**，好让调用方（和测试）指到别处去。
     pub fn load(dir: &str) -> Result<Table, String> {
@@ -153,6 +184,7 @@ impl Table {
         let mut encounters = BTreeMap::new();
         if let Some(m) = enc.obj("encounters") {
             for (key, v) in m {
+                let exact = v.get("exact").and_then(Json::as_bool).unwrap_or(false);
                 encounters.insert(
                     key.clone(),
                     Encounter {
@@ -167,13 +199,19 @@ impl Table {
                                     a.extend(arr_of_str(Some(list)));
                                 }
                             }
+                            // 分布里的怪也算「可能出现」（`Bugs` 那种属性解析器看不见）
+                            for (_, ms) in variants_of(v.get("variants")) {
+                                a.extend(ms);
+                            }
                             a.sort();
                             a.dedup();
                             a
                         },
-                        exact: v.get("exact").and_then(Json::as_bool).unwrap_or(false),
+                        exact,
                         note: v.str("note").map(str::to_string),
                         tags: arr_of_str(v.get("tags")),
+                        // 构成确定的遭遇上出现 `variants` 是数据写错了，不认
+                        variants: if exact { Vec::new() } else { variants_of(v.get("variants")) },
                     },
                 );
             }
@@ -203,19 +241,9 @@ impl Table {
         crate::replay::enemy_id(kernel)
     }
 
-    /// 遭遇 key -> 这一场要放几只什么敌人（血量留给 [`crate::synth::build`] 掷）。
-    ///
-    /// **构成含随机的整条拒绝**，见模块头。
-    pub fn resolve(&self, key: &str) -> Result<Vec<EnemySpec>, Unresolved> {
-        let Some(e) = self.encounters.get(key) else {
-            return Err(Unresolved::NoSuchEncounter(key.to_string()));
-        };
-        let Some(monsters) = e.monsters.as_ref().filter(|_| e.exact) else {
-            return Err(Unresolved::Inexact {
-                key: key.to_string(),
-                note: e.note.clone().unwrap_or_else(|| "构成不确定".to_string()),
-            });
-        };
+    /// 一串怪物类名 -> 这一场要放的敌人。[`Table::resolve`] 和 [`Table::resolve_sampled`] 共用，
+    /// 「连接键没有 / 内核没建」只报一份。
+    fn to_specs(&self, key: &str, monsters: &[String]) -> Result<Vec<EnemySpec>, Unresolved> {
         let mut out = Vec::new();
         for m in monsters {
             match self.kernel_name.get(m).and_then(|k| k.as_deref()) {
@@ -240,26 +268,86 @@ impl Table {
         Ok(out)
     }
 
+    /// 遭遇 key -> 这一场要放几只什么敌人（血量留给 [`crate::synth::build`] 掷）。
+    ///
+    /// **构成含随机的整条拒绝**，见模块头 —— 分布的那几场也拒绝（答案不唯一），
+    /// 要抽样走 [`Table::resolve_sampled`]。
+    pub fn resolve(&self, key: &str) -> Result<Vec<EnemySpec>, Unresolved> {
+        let Some(e) = self.encounters.get(key) else {
+            return Err(Unresolved::NoSuchEncounter(key.to_string()));
+        };
+        let Some(monsters) = e.monsters.as_ref().filter(|_| e.exact) else {
+            return Err(Unresolved::Inexact {
+                key: key.to_string(),
+                note: e.note.clone().unwrap_or_else(|| "构成不确定".to_string()),
+            });
+        };
+        self.to_specs(key, monsters)
+    }
+
+    /// 同 [`Table::resolve`]，但**构成是分布的那几场按权重抽一支**。
+    ///
+    /// `pick` 是调用方给的随机数（整幕链用 `(种子基, 样本, 房间)` 派生的那一份 ——
+    /// 同一个样本、同一间房，两个候选抽到同一支，CRN 不断）。取法是 `pick % 总权重`
+    /// 落在哪一段，所以 `pick = 0, 1, 2…` 在等权时就是逐支枚举。
+    /// **构成确定的遭遇和 `resolve` 逐字相同，`pick` 不读**；既不确定又没有分布的照旧拒绝。
+    pub fn resolve_sampled(&self, key: &str, pick: u64) -> Result<Vec<EnemySpec>, Unresolved> {
+        let Some(e) = self.encounters.get(key) else {
+            return Err(Unresolved::NoSuchEncounter(key.to_string()));
+        };
+        let total: u64 = e.variants.iter().map(|(w, _)| *w as u64).sum();
+        if e.exact || total == 0 {
+            return self.resolve(key);
+        }
+        let mut r = pick % total;
+        for (w, ms) in &e.variants {
+            if r < *w as u64 {
+                return self.to_specs(key, ms);
+            }
+            r -= *w as u64;
+        }
+        unreachable!("r < total，总有一段接得住")
+    }
+
+    /// 内核开不开得出这一场。**分布要每一支都开得出**才算 —— 只开得出一部分的话，
+    /// 抽到开不出的那一支就是跳过，和"开不出"没有区别。
+    pub fn can_open(&self, key: &str) -> bool {
+        match self.encounters.get(key) {
+            Some(e) if !e.exact && !e.variants.is_empty() => {
+                e.variants.iter().all(|(_, ms)| self.to_specs(key, ms).is_ok())
+            }
+            _ => self.resolve(key).is_ok(),
+        }
+    }
+
     /// 场上这批敌人**是哪一场遭遇**。给的是内核 def 的多重集，
     /// 返回全部对得上的 key（构成确定的那些优先，见 `exact`）。
     ///
     /// 两种命中分开报，因为它们说的不是一件事：
-    /// * `exact` —— 这一场的构成在 [源码] 里就是定死的，认得死
+    /// * `exact` —— 这一场的构成在 [源码] 里就是定死的，认得死；**分布里逐支枚举出来的某一支**
+    ///   对上了也算（那一支本身是确定的构成）
     /// * 只落在 `all_possible` 里 —— 构成含随机，只能说"可能是它"
+    ///
+    /// 分布的那几场**不退回宽口径**：观测到的构成不在任何一支里，说明那张分布表错了 ——
+    /// 这时报「表里没有」比悄悄报「构成含随机」更响。
     pub fn identify(&self, defs: &[u16]) -> (Vec<String>, Vec<String>) {
         let mut want: Vec<u16> = defs.to_vec();
         want.sort_unstable();
+        let same = |ms: &[String]| {
+            let mut got: Vec<u16> = ms.iter().filter_map(|m| self.def_of_monster(m)).collect();
+            got.sort_unstable();
+            got.len() == ms.len() && got == want
+        };
         let mut exact_hits = Vec::new();
         let mut loose_hits = Vec::new();
         for (key, e) in &self.encounters {
             if e.exact {
-                if let Some(ms) = &e.monsters {
-                    let mut got: Vec<u16> =
-                        ms.iter().filter_map(|m| self.def_of_monster(m)).collect();
-                    got.sort_unstable();
-                    if got.len() == ms.len() && got == want {
-                        exact_hits.push(key.clone());
-                    }
+                if e.monsters.as_deref().map_or(false, same) {
+                    exact_hits.push(key.clone());
+                }
+            } else if !e.variants.is_empty() {
+                if e.variants.iter().any(|(_, ms)| same(ms)) {
+                    exact_hits.push(key.clone());
                 }
             } else {
                 let pool: Vec<u16> =
@@ -303,12 +391,12 @@ impl Table {
             .collect()
     }
 
-    /// 这一幕**内核今天开得出几场仗**。分子是 [`Table::resolve`] 成功的场数。
+    /// 这一幕**内核今天开得出几场仗**。分子是 [`Table::can_open`] 成立的场数。
     ///
     /// 这个数和 `tools/dump_encounters.py` 的覆盖率报告问的是同一件事，
     /// 但它是**内核这一侧**算的 —— 两边对不上就说明有一侧的连接键读错了。
     pub fn coverage(&self, act: &Act) -> (usize, usize) {
-        let ok = act.encounters.iter().filter(|k| self.resolve(k).is_ok()).count();
+        let ok = act.encounters.iter().filter(|k| self.can_open(k)).count();
         (ok, act.encounters.len())
     }
 }
