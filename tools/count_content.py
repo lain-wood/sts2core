@@ -6,14 +6,14 @@ r"""内容清单重数 —— 唯一权威的计数口径。
 这类计数手改必错**（roadmap 里错过两次、verification-log 尾部的文件清单停在
 「70 张牌」时内核已经 114 张）。所以：
 
-    这些数只有一个家 —— `CLAUDE.md` 的「内容清单」，由本脚本重数。
+    这些数只有一个家 —— `docs/content.md`，由本脚本重数。
     别在任何别的文档里手写它们。
 
 用法（无参数）：
 
     "D:\game mod\sts2core\.venv\Scripts\python.exe" tools/count_content.py
 
-`--md` 直接吐出 CLAUDE.md 那张表的 markdown，贴过去就行。
+`--md` 直接吐出 docs/content.md 那张表的 markdown，贴过去就行。
 
 两个坑，都踩过：
   * **别 `grep -c "EnemyDef {"`** —— 文件末尾的 `pub fn enemy_def(...)` 也会被数
@@ -115,7 +115,7 @@ def main():
     cat_potions, _ = catalog("potions_catalog.json", "potions")
     cat_enemies, _ = catalog("enemies_wiki.json", "enemies")
 
-    # 覆盖：按牌名求差集（CLAUDE.md 记着的口径）
+    # 覆盖：按牌名求差集（docs/content.md 记着的口径）
     missing = []
     if cards_j:
         have = set(names(cards_b))

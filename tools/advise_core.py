@@ -16,7 +16,7 @@ r"""L3 构筑顾问的**脏活那一半**：读实况 -> 拼一份请求 -> 交�
 
 ## 牌组从哪来：**mod 的第四个本地补丁**
 
-`player.deck` 是主牌组，**每个界面都报**（父目录 `CLAUDE.md` 的补丁表）。
+`player.deck` 是主牌组，**每个界面都报**（`docs/sts2mcp-patches.md` 的第四个补丁）。
 在它之前，牌组只在战斗里看得到，于是「拿牌 / 移除 / 升级」这些**全都发生在
 战斗外**的决策只能靠一份出手就过期的缓存。所以这里**优先读 `player.deck`**，
 读不到才退回"手牌 + 三个牌堆"（战斗中才凑得齐），两条都没有就**报错而不是
@@ -112,7 +112,7 @@ def deck_from_state(raw: dict) -> tuple[list[dict], str]:
         return cards, "战斗中的手牌+三个牌堆（mod 没报 player.deck）"
     raise AdviseError(
         "牌组读不出来：`player.deck` 没有，也不在战斗里。\n"
-        "  装的 DLL 可能不带牌组补丁（父目录 CLAUDE.md 的第四个补丁）——\n"
+        "  装的 DLL 可能不带牌组补丁（docs/sts2mcp-patches.md 的第四个补丁）——\n"
         "  **不拿缓存顶上**：一份过期的牌组会给出一个自信的错答案。"
     )
 
@@ -128,7 +128,7 @@ def relics_from_state(raw: dict) -> list[dict]:
 def potions_from_state(raw: dict) -> tuple[list, int]:
     """按槽位排好的药水 id（空槽是 `None`）+ 槽位数。
 
-    **槽号每次都要重读**（父目录 CLAUDE.md：喝掉一瓶之后槽号会重排）。
+    **槽号每次都要重读**（docs/driving.md：喝掉一瓶之后槽号会重排）。
     """
     player = raw.get("player") or {}
     slots = int(player.get("max_potion_slots") or 3)

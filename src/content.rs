@@ -1542,7 +1542,7 @@ pub static CARDS: &[CardDef] = &[
     // 顺手重导权威表，发现它从 106 涨到了 **128 张**（档案又发现了 22 张）。
     // 下面 9 张是**现有原语就能表达**的那些，每张都读了 [源码]，
     // 卡面和源码不一致时以源码为准（坚定不移就是一例，见它自己的注释）。
-    // 剩下 18 张各自卡在一个还没有的机制上，逐条记在 CLAUDE.md。
+    // 剩下 18 张各自卡在一个还没有的机制上，逐条记在 docs/content.md。
 
     // 102 [源码] 亮剑「造成5点伤害。抽1张牌。」升级 8 点
     //     `FlashOfSteel`：`DamageCmd.Attack(5)` 然后 `CardPileCmd.Draw(1)`，
@@ -3384,7 +3384,7 @@ pub static RULE_MODIFIERS: &[St] = &[
 ///
 /// 它们不是触发器（`POWERS` 里没有它们的规则），消费点全在
 /// [`crate::damage`] 的 `apply_modifiers` / `card_block` 和 `step.rs` 里
-/// 那几个窄 `if`。伤害管线的顺序在 `CLAUDE.md` 里，**改数字先去看那张表**。
+/// 那几个窄 `if`。伤害管线的顺序在 `docs/design-l1.md` 里，**改数字先去看那张表**。
 ///
 /// 这张表和 `RULE_MODIFIERS` 一样**不带行为**，作用是让这个类别可枚举 ——
 /// `no_status_handed_out_by_a_relic_or_an_enemy_is_a_dud` 靠它区分

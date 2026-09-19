@@ -133,7 +133,7 @@ pub fn probe_boss_room(table: Option<&Table>, o: &Obs) -> bool {
 ///
 /// **牌组 = 手牌 + 抽牌堆**：第 0 帧弃牌堆和消耗堆都是空的，所以这两堆合起来
 /// 就是这场仗开局的整副牌。（mod 2026-09-08 起直接报 `deck`，但录制器的
-/// `normalize()` 是白名单式的，语料里一条都没有 —— 见父目录 CLAUDE.md。）
+/// `normalize()` 是白名单式的，语料里一条都没有 —— 见 docs/sts2mcp-patches.md。）
 pub fn extract(t: &Trace, o: &Obs, boss_room: bool) -> Extracted {
     let mut deck = Vec::new();
     let mut deck_names = Vec::new();

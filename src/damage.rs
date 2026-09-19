@@ -44,7 +44,7 @@ pub fn tagged_attack_bonus(attacker: &Entity, strike: bool) -> i32 {
 /// 位置为什么在力量之前：[源码] `EnchantmentModel.EnchantDamageMultiplicative`
 /// 的文档写着 "This hook runs BEFORE all other damage modification hooks"，
 /// 而力量走的是普通的 `ModifyDamageAdditive`。腐化那一版本来就是这么建的
-/// （`CLAUDE.md` 伤害管线的第 2 步），这里只是把它从一个 `bool` 推广成一对整数。
+/// （`docs/design-l1.md` 伤害管线的第 2 步），这里只是把它从一个 `bool` 推广成一对整数。
 #[inline]
 pub fn card_face_damage(base: i32, mul: (i32, i32), bonus: i32, strength: i32, vigor: i32) -> i32 {
     let mut d = base;

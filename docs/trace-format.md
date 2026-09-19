@@ -7,7 +7,7 @@
 
 录制用**固定的一条命令** `record_trace.py --plan`，动作写进
 `traces/_plan.txt`（命令字符串一变就要重新过权限确认）。语法和落盘语义见
-`sts2core/CLAUDE.md` 的「录制：永远只用这一条命令」。
+[`driving.md`](driving.md) 的「录制对拍 trace」。
 
 ---
 
@@ -110,7 +110,7 @@ trace 侧对应 `draw_order_enchant` / `discard`、`exhaust` 里的 `enchantment
 
 **格式对策**：**不预测敌人行动**。`end_turn` 帧上，敌人打了多少由
 `obs_after - obs_before` 反推，内核侧直接注入这个结果。
-这符合 `sts2core/CLAUDE.md` 里"敌人 AI 只是循环出招"本来就在故意没做清单里。
+这符合 [`roadmap.md`](roadmap.md) 里"敌人 AI 只是循环出招"本来就在故意没做清单里。
 原始 intent 文本照抄进 trace，留给后面灌内容用。
 
 见过的标签格式：纯数字 `"5"` / `"23"`，多段 `"1×8"`（乘号是 U+00D7，
@@ -303,5 +303,5 @@ trace 损坏而不是内核错。
 ### 另一种模式：`--per-turn`
 
 一段连续出牌只在开头同步一次，连着跑完，只比末态 —— 检验的是
-「内核连续跑 k 步会不会飘」。限制和成色见 `sts2core/CLAUDE.md` 的
-「两种对拍模式」，**同一份 trace 两种模式都能跑，不用重录**。
+「内核连续跑 k 步会不会飘」。限制和成色见 [`acceptance.md`](acceptance.md) 的
+「每一项独占的检验面」，**同一份 trace 两种模式都能跑，不用重录**。

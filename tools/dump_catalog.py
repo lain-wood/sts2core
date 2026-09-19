@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 r"""导出权威卡表：discovered 卡 id -> 卡面文本（基础版 + 升级版）。
 
-内容表最终要变成生成产物（见 sts2core/CLAUDE.md 第 3 步）。这是那条流水线的
+内容表最终要变成生成产物（见 docs/roadmap.md 的「L1 内容填充」）。这是那条流水线的
 第一段：把权威数据落盘，后面的转换脚本读文件，不再打扰运行中的游戏。
 
 数据从哪来（都是 mod 的只读 HTTP 接口，见 STS2MCP/docs/raw-full.md）：

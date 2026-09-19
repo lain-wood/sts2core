@@ -1,0 +1,125 @@
+diff --git a/McpMod.StateBuilder.cs b/McpMod.StateBuilder.cs
+index 76eee84..4c48811 100644
+--- a/McpMod.StateBuilder.cs
++++ b/McpMod.StateBuilder.cs
+@@ -1135,6 +1135,43 @@ public static partial class McpMod
+                 ? c1.Rarity.CompareTo(c2.Rarity)
+                 : string.Compare(c1.Id.Entry, c2.Id.Entry, StringComparison.Ordinal));
+             state["draw_pile"] = BuildPileCardList(drawCards, PileType.Draw);
++
++            // LOCAL PATCH (not upstream) -- true draw-pile order, index 0 == top of pile.
++            //
++            // "draw_pile" above is deliberately re-sorted to match the in-game pile viewer,
++            // which destroys the real order. Simulators need the real order: without it the
++            // next N draws are unknowable and every cross-turn search has to sample them.
++            //
++            // Index 0 is the top: CardPileCmd.Draw() takes drawPile.Cards.FirstOrDefault(),
++            // and CardPile.MoveToTopInternal does _cards.Insert(0, card).
++            //
++            // Titles carry the upgrade marker (e.g. "Strike+"), so they are sufficient
++            // identity -- same as the existing "draw_pile" entries. Kept as a separate key
++            // so "draw_pile" and the markdown renderer are byte-for-byte unchanged.
++            var drawOrder = new List<string?>();
++            var drawOrderEnchantments = new List<Dictionary<string, object?>?>();
++            foreach (var card in combatState.DrawPile.Cards)
++            {
++                drawOrder.Add(SafeGetText(() => card.Title));
++                drawOrderEnchantments.Add(BuildEnchantment(card));
++            }
++            state["draw_pile_order"] = drawOrder;
++
++            // LOCAL PATCH (not upstream) -- enchantments positionally paired with
++            // "draw_pile_order" (same length, same indices; null where unenchanted).
++            //
++            // Enchantments are per-instance, so they cannot be looked up from the card id:
++            // a Nimble 耸肩无视 gives 10 block while the card definition says 8. Hand cards
++            // carry "enchantment" already; a card still in the draw pile does not, so a
++            // simulator that draws it mid-turn silently reverts to the unenchanted number.
++            //
++            // It has to hang off "draw_pile_order" rather than "draw_pile": the latter is
++            // re-sorted above, so its indices no longer say which physical card is which.
++            // Always emitted at full length, nulls included: "same length as
++            // draw_pile_order, same indices" is the whole contract, and an array that
++            // sometimes collapses to null would make "no enchantments" and "mod without
++            // this patch" indistinguishable.
++            state["draw_pile_order_enchantments"] = drawOrderEnchantments;
+             state["discard_pile"] = BuildPileCardList(combatState.DiscardPile.Cards, PileType.Discard);
+             state["exhaust_pile"] = BuildPileCardList(combatState.ExhaustPile.Cards, PileType.Exhaust);
+ 
+@@ -1178,6 +1215,24 @@ public static partial class McpMod
+             }
+         }
+ 
++        // LOCAL PATCH (not upstream) -- the master deck, on every screen.
++        //
++        // Everything above this point lives inside the "combat is in progress" branch,
++        // so outside combat the response carries relics, potions and gold but not a
++        // single card. Deck-building decisions -- card rewards, removals, upgrades,
++        // shop purchases -- all happen exactly there, and a deck-building advisor that
++        // cannot see the deck has to fall back on a cache that goes stale the moment
++        // it acts. Player.Deck is the master pile (Player.cs: `public CardPile Deck`)
++        // and is live at all times, in and out of combat.
++        //
++        // Same lightweight shape as the existing pile lists (name carries the upgrade
++        // marker, plus cost/description/enchantment), under its own key, so nothing
++        // already emitted moves. During combat it is redundant with hand + the three
++        // piles; emitted anyway so the field is unconditional.
++        var deckCards = BuildPileCardList(player.Deck.Cards, PileType.Deck);
++        state["deck"] = deckCards;
++        state["deck_count"] = deckCards.Count;
++
+         state["gold"] = player.Gold;
+ 
+         // Powers (status effects)
+@@ -1250,10 +1305,37 @@ public static partial class McpMod
+             ["description"] = SafeGetCardDescription(card, pile),
+             ["rarity"] = card.Rarity.ToString(),
+             ["is_upgraded"] = card.IsUpgraded,
++            ["enchantment"] = BuildEnchantment(card),
+             ["keywords"] = BuildHoverTips(card.HoverTips)
+         };
+     }
+ 
++    /// <summary>
++    /// A card's enchantment, or null. Cards carry at most one
++    /// (<c>CardModel.Enchantment</c> is a single reference, not a list).
++    ///
++    /// Without this the enchantment is only visible baked into the rendered
++    /// <c>description</c> string: a Nimble 耸肩无视 reads "获得10点格挡" while the
++    /// card definition says 8, and nothing in the JSON says why. Anything that
++    /// simulates from the card id then silently uses the wrong number.
++    ///
++    /// <c>amount</c> is the raw <c>Amount</c>; how it applies depends on the
++    /// enchantment (Nimble is <c>EnchantBlockAdditive</c>, others are
++    /// multiplicative or change play count), so consumers must key off
++    /// <c>id</c> rather than assuming it is additive.
++    /// </summary>
++    private static Dictionary<string, object?>? BuildEnchantment(CardModel card)
++    {
++        var e = card.Enchantment;
++        if (e == null) return null;
++        return new Dictionary<string, object?>
++        {
++            ["id"] = e.Id.Entry,
++            ["name"] = SafeGetText(() => e.Title),
++            ["amount"] = e.Amount,
++        };
++    }
++
+     private static Dictionary<string, object?> BuildCardState(CardModel card, int index)
+     {
+         card.CanPlay(out var unplayableReason, out _);
+@@ -1311,7 +1393,12 @@ public static partial class McpMod
+                 ["name"] = SafeGetText(() => card.Title),
+                 ["cost"] = GetCostDisplay(card),
+                 ["star_cost"] = GetStarCostDisplay(card),
+-                ["description"] = SafeGetCardDescription(card, pile)
++                ["description"] = SafeGetCardDescription(card, pile),
++                // LOCAL PATCH (not upstream) -- see "draw_pile_order_enchantments".
++                // The enchantment is per-instance and not derivable from the name, so a
++                // card fetched back out of the discard pile (Headbutt, Dropkick) would
++                // otherwise come back with the unenchanted numbers.
++                ["enchantment"] = BuildEnchantment(card)
+             });
+         }
+         return list;

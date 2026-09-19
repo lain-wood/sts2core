@@ -14,7 +14,7 @@
 > 砍掉的全是已完成事项的复盘。**
 >
 > **计数一律不写在这里。** 建了多少牌 / 多少遗物 / 多少药水，只有一个家：
-> `../CLAUDE.md` 的「内容清单」，由 `tools/count_content.py` 重数。
+> [`content.md`](content.md)，由 `tools/count_content.py` 重数。
 > 这里只说"还欠这一类东西"，不说数字。
 
 ---
@@ -149,7 +149,7 @@ B 要动搜索行为，所以**做之前先量**：拿现有语料跑一次对�
 ### L1 内容填充：卡面文本 → `Op` 序列的编译器
 
 权威数据已落盘（`traces/cards_catalog.json`）。**还差最后一段**：让 `content.rs`
-变成生成产物，而不是手写表。**还缺哪几张牌、缺多少，看 `../CLAUDE.md` 的内容清单**
+变成生成产物，而不是手写表。**还缺哪几张牌、缺多少，看 [`content.md`](content.md)**
 （那边由脚本重数；这个数在这份文件里错过两次，都是补完牌忘了改）。
 
 要点，按重要性排：
@@ -284,7 +284,7 @@ Overgrowth **20/22 -> 22/22**，整幕漏掉 **0.2 -> 0.1 场** —— **第 1 �
 
 2026-09-12 接完线：`advisor/` 的八个 MCP 工具全部改调
 `bin/advise`（`tools/advise_core.py` 拼请求），工具名和签名一个没动。
-设计和三个问法见 `../CLAUDE.md` 的「L3：MCP 接线」，证据在 verification-log。
+设计和三个问法见 [`design-l3.md`](design-l3.md) 的「L3：MCP 接线」，证据在 verification-log。
 
 **下面三条是这一层今天会算偏的东西，每条都印在报告里、而且每条都有出路。**
 按能买到多少排：
@@ -368,11 +368,15 @@ Overgrowth **20/22 -> 22/22**，整幕漏掉 **0.2 -> 0.1 场** —— **第 1 �
   **对拍语料**和**权威数据表**（`cards_catalog.json` / `enemies_wiki.json` /
   `relics_catalog.json` / `enemies_observed.json`）。后者不是 trace，于是
   `verify traces/*.json` 会在它们身上报「不支持的 trace 版本 0」，今天靠 glob 绕开
-  （见 `../CLAUDE.md` 的对拍命令）。**新的表已经直接落在 `data/`**，
+  （见 [`acceptance.md`](acceptance.md) 的命令）。**新的表已经直接落在 `data/`**，
   剩下的是把这四份搬过去 —— 会牵动 `src/lib.rs` 那条 `relics_catalog.json` 的
   路径断言和四个 dump 工具的默认输出路径。
 * `traces/passive_*.json`（被动录制的语料）**不在任何默认 glob 里** ——
   `act*.json` 不匹配它。今天要判得显式写文件名，于是它很容易被忘掉。
 * **`--predict-enemy` 的读法**（四种结局怎么分、两条已知局限要扣掉）今天写在
   verification-log 的 2026-08-16 那条里。那是**使用说明不是观测**，该搬进
-  `../CLAUDE.md` 的验收一节 —— 2026-09-05 治理文档时发现的，没动。
+  [`acceptance.md`](acceptance.md) —— 2026-09-05 治理文档时发现的，没动。
+
+* **`verified-rules.md` 从 §2.12 起是按日期批次编号的**（「第 1 幕批 4」「骑士团带进来的规则」），
+  不是按主题：同一类机制（覆甲 / 硬化外壳 / 滑溜这类「封掉血」的，复活 / 接续 / 幻象这类「死了不算完」的）
+  散在好几节里。该按机制重排，但它是规则的正本，重排要逐条对账，2026-09-19 拆 CLAUDE.md 时没动。
