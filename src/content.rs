@@ -1961,12 +1961,12 @@ pub static POWERS: &[PowerDef] = &[
             then: &[TOp::AllEnemiesStatus { st: St::Weak, amt: Amt::Stacks }],
         }],
     },
-    // 准备背包：[源码] 改的是第 1 回合的抽牌张数。`Hook::TurnStart` 在**抽牌之前**
-    // 点火（见钩子表），所以这里多抽 2 张就等价于「起手多 2 张」。
+    // 准备背包：[源码] 改的是第 1 回合的抽牌张数（`ModifyHandDraw`）。
+    // `OwnerHandDraw` 在 `TurnStart` 上只记账，`open_hand` 一次发完 —— 小提琴不拦它。
     PowerDef {
         st: St::BagOfPreparation,
         hook: Hook::TurnStart,
-        ops: &[TOp::If { cond: TCond::TurnAtMost(1), then: &[TOp::OwnerDraw(Amt::Stacks)] }],
+        ops: &[TOp::If { cond: TCond::TurnAtMost(1), then: &[TOp::OwnerHandDraw(Amt::Stacks)] }],
     },
     // 烛台：[源码] `TurnNumber == 2`，**是等于不是大于等于**。
     PowerDef {
@@ -1991,21 +1991,25 @@ pub static POWERS: &[PowerDef] = &[
     PowerDef {
         st: St::PollinousCore,
         hook: Hook::TurnStart,
-        ops: &[TOp::If { cond: TCond::TurnMultipleOf(4), then: &[TOp::OwnerDraw(Amt::Stacks)] }],
+        // [源码] `ModifyHandDraw` ⇒ 发牌那条路，同准备背包
+        ops: &[TOp::If { cond: TCond::TurnMultipleOf(4), then: &[TOp::OwnerHandDraw(Amt::Stacks)] }],
     },
     // 佩尔之血：[源码] `ModifyHandDraw => count + Cards(1)`，**无条件、每回合**。
     // 这一族里唯一一个连 `TCond` 都不需要的。
     //
-    // **为什么建成"回合开始多抽"而不是"把 5 改成 6"**：`Hook::TurnStart` 在
-    // `open_hand` **之前**跑（`start_player_turn` = `start_player_turn_before_draw`
-    // + `open_hand`），先抽 1 再抽 5 和一次抽 6 从牌堆顶取到的是同一批牌，
-    // 而且和准备背包/花粉核心逐字同一个形状 —— 不必为它新开一条"抽牌数修饰器"。
-    // 手牌上限也不用另管：`draw_one` 自己拦 `MAX_HAND`。
+    // 和准备背包/花粉核心逐字同一个形状：`TurnStart` 上记 +1，`open_hand` 发 6 张。
+    // **2026-09-25 之前是在 `TurnStart` 上先抽 1 张**（理由是"先抽 1 再抽 5 和一次抽 6
+    // 取到的是同一批牌"）—— 对 L1 自己确实一样，但那一张抽在 planner 的机会节点**之前**，
+    // 取的是内核那次洗牌的牌序：6 张不同的牌里它进手 100%、别的 5/6，真值 6/7，
+    // 换 `Plan::seed` 也不变。
     //
     // [实测] 2026-09-06 `act3_f46_elite_soul_nexus`：内核每个回合比游戏少发 1 张
     //（`~ 回合开始手牌张数 游戏=7 内核=6`，把王室认证的保留建好之后还差这一张）。
     // 补上之后 5 + 1(本条) + 摆动球那一张 = 7，和观测对上。
-    PowerDef { st: St::PaelsBlood, hook: Hook::TurnStart, ops: &[TOp::OwnerDraw(Amt::Stacks)] },
+    //
+    // 2026-09-25 从 `OwnerDraw` 换成 `OwnerHandDraw`：抽到的牌逐张不变，差别只在
+    // 小提琴的抽牌锁拦不拦它 —— `ModifyHandDraw` 改的是发牌张数，不拦。
+    PowerDef { st: St::PaelsBlood, hook: Hook::TurnStart, ops: &[TOp::OwnerHandDraw(Amt::Stacks)] },
     // 佩尔之肉：[源码] `if (TurnNumber < 3) return;` —— 第 3 回合起**每回合**都给。
     PowerDef {
         st: St::PaelsFlesh,
@@ -2089,6 +2093,99 @@ pub static POWERS: &[PowerDef] = &[
             cond: TCond::EveryNthSkillThisTurn(3),
             then: &[TOp::DamageAllEnemies(Amt::Stacks)],
         }],
+    },
+    // ---- 2026-09-25 一批遗物。数值和时点全部取自 [源码]，**没有一件实测过** ----
+    //
+    // [源码] 这几件全是 `AfterCardPlayed` ⇒ 挂在**结算之后**的 `PlayerAttack` / `CardPlayed` 上。
+    //
+    // 手里剑：`AttacksPlayedThisTurn % 3 == 0` —— 和苦无逐字同一个条件（计数器在
+    // `BeforeSideTurnStart` 清零，就是内核的 `attacks_played`）。
+    PowerDef {
+        st: St::Shuriken,
+        hook: Hook::PlayerAttack,
+        ops: &[TOp::If {
+            cond: TCond::EveryNthAttackThisTurn(3),
+            then: &[TOp::OwnerStatus { st: St::Strength, amt: Amt::Stacks }],
+        }],
+    },
+    // 锁镰：同一个条件，打**随机一个**敌人（`Rng.CombatTargets.NextItem(HittableEnemies)`），
+    // `ValueProp.Unpowered` ⇒ 不吃力量。和势不可当共用 `DamageRandomEnemy`。
+    // [源码] 它的计数器在 `AfterSideTurnEnd` 清零而不是回合开始，对一回合之内的数没有区别。
+    PowerDef {
+        st: St::Kusarigama,
+        hook: Hook::PlayerAttack,
+        ops: &[TOp::If {
+            cond: TCond::EveryNthAttackThisTurn(3),
+            then: &[TOp::DamageRandomEnemy(Amt::Stacks)],
+        }],
+    },
+    // 风的女儿：每一张攻击牌 +1 格挡。[源码] `GainBlock(.., null)`、`Unpowered` ⇒ 不吃敏捷/脆弱，
+    // 和精致折扇同一条 `OwnerBlock`。
+    PowerDef {
+        st: St::DaughterOfTheWind,
+        hook: Hook::PlayerAttack,
+        ops: &[TOp::OwnerBlock(Amt::Stacks)],
+    },
+    // 双截棍：`AttacksPlayed++; if (AttacksPlayed % 10 == 0) GainEnergy(1)`。
+    // 计数器**跨战斗**（`[SavedProperty]`），走 `counter_to` 从面板灌；判倍数的理由见 `TCond::CounterMultipleOf`。
+    PowerDef {
+        st: St::Nunchaku,
+        hook: Hook::PlayerAttack,
+        ops: &[
+            TOp::OwnerStatus { st: St::NunchakuCount, amt: Amt::Fixed(1) },
+            TOp::If {
+                cond: TCond::CounterMultipleOf { st: St::NunchakuCount, n: 10 },
+                then: &[TOp::OwnerEnergy(Amt::Stacks)],
+            },
+        ],
+    },
+    // 铁棒：同一个形状，数的是**任意**牌（`CardPlayed`），每第 4 张抽 1 张。
+    PowerDef {
+        st: St::IronClub,
+        hook: Hook::CardPlayed,
+        ops: &[
+            TOp::OwnerStatus { st: St::IronClubCount, amt: Amt::Fixed(1) },
+            TOp::If {
+                cond: TCond::CounterMultipleOf { st: St::IronClubCount, n: 4 },
+                then: &[TOp::OwnerDraw(Amt::Stacks)],
+            },
+        ],
+    },
+    // 棋子：打出**能力牌**抽 1。和流电同一个判据（`LastPlayedKindIs`）。
+    PowerDef {
+        st: St::GamePiece,
+        hook: Hook::CardPlayed,
+        ops: &[TOp::If {
+            cond: TCond::LastPlayedKindIs(Kind::Power),
+            then: &[TOp::OwnerDraw(Amt::Stacks)],
+        }],
+    },
+    // 小提琴，一半：开局发牌多 2 张（[源码] `ModifyHandDrawLate`，内核并进同一笔加张数，
+    // 差别见 `step::hand_draw_count`）。另一半（回合中抽牌锁）不是触发器，在 `State::draw_one`。
+    PowerDef { st: St::Fiddle, hook: Hook::TurnStart, ops: &[TOp::OwnerHandDraw(Amt::Stacks)] },
+    // 波纹水盆：[源码] `BeforeSideTurnEnd` ⇒ 内核的 `TurnEnd`（和奥利哈钢第二段、钻石头冠同一档）。
+    // 本回合没打过攻击就给 4 格挡，`Unpowered`。
+    PowerDef {
+        st: St::RippleBasin,
+        hook: Hook::TurnEnd,
+        ops: &[TOp::If { cond: TCond::NoAttackThisTurn, then: &[TOp::OwnerBlock(Amt::Stacks)] }],
+    },
+    // 钻石头冠：我的回合末（`BeforeSideTurnEnd`）本回合出牌 ≤ 2 ⇒ 挂上减半的那个 power；
+    // 敌人回合末（[源码] `DiamondDiademPower.AfterSideTurnEnd(Enemy)`）摘掉。
+    // **两条都挂在头冠本体上**，不给那个 power 自己开规则 —— 挂在它身上的 `ClearSelf`
+    // 会让 `spent_once_per_combat` 把它认成「一场一次」。减半本身在 `damage.rs`。
+    PowerDef {
+        st: St::DiamondDiadem,
+        hook: Hook::TurnEnd,
+        ops: &[TOp::If {
+            cond: TCond::CardsPlayedAtMost(2),
+            then: &[TOp::OwnerSetStatus { st: St::DiamondDiademActive, amt: Amt::Stacks }],
+        }],
+    },
+    PowerDef {
+        st: St::DiamondDiadem,
+        hook: Hook::EnemyTurnEnd,
+        ops: &[TOp::OwnerClearStatus(St::DiamondDiademActive)],
     },
     // 蟹之怒：[源码] `CrabRagePower` —— **有盟友死亡时**，持有者 +6 力量 +99 格挡。
     // 挂 `Hook::AllyDied`（**不是 `EnemyDied`**）：后者的语义是"死掉的那只自己
@@ -3146,6 +3243,38 @@ pub static POWERS: &[PowerDef] = &[
     },
 ];
 
+/// `POWERS` 里挂在 `hook` 上的那几条，**组内保持表内顺序**。`step::fire_ctx` 的唯一数据源。
+///
+/// # 为什么要有它
+///
+/// `fire_ctx` 原来每次点火都把整张表扫一遍、逐条比 `def.hook`，而点火是全内核最密的调用之一
+/// （每打一张牌至少 `PlayerSkill`/`PlayerAttack` + `CardPlayed`，每一段伤害一次 `EnemyAttacked`/`EnemyDamaged`）。
+/// 2026-09-25 加了 11 条遗物规则，`bin/bench` 单线程当场掉了约 5.5% —— 条数只涨了一成，
+/// 掉的主要是那一成比较落在了每一次点火上。design-l1 早就写着「要优化的话第一步是按 hook 分组」。
+///
+/// # 等价性
+///
+/// 一次点火只跑**一个**钩子的规则，所以「整表扫 + 跳过别的钩子」和「只扫这一组」跑的是
+/// 同一串规则、同一个顺序 —— 前提是组内顺序 = 表内顺序，这里按表的顺序 `push`，天然成立。
+/// （表内顺序本来就不该承重 —— 奥利哈钢那条注释 —— 但今天的读数是在这个顺序下量的，不许悄悄换。）
+/// `powers_by_hook_is_the_table_filtered_in_order` 守着。
+///
+/// 第一次调用时建（`OnceLock`），之后每次是一次原子读 + 一次下标。
+/// 没有任何规则的钩子返回空切片。
+#[inline]
+pub fn powers_for(hook: Hook) -> &'static [&'static PowerDef] {
+    static BY_HOOK: std::sync::OnceLock<Vec<Vec<&'static PowerDef>>> = std::sync::OnceLock::new();
+    let t = BY_HOOK.get_or_init(|| {
+        let n = POWERS.iter().map(|p| p.hook as usize + 1).max().unwrap_or(0);
+        let mut t: Vec<Vec<&'static PowerDef>> = vec![Vec::new(); n];
+        for p in POWERS {
+            t[p.hook as usize].push(p);
+        }
+        t
+    });
+    t.get(hook as usize).map_or(&[], |v| v.as_slice())
+}
+
 /// 只在「这个回合」内有效的 status，在**我的下一个回合开始时**清零。
 ///
 /// 清的时机不能提前到回合结束：火焰屏障要挡的正是敌人回合那几下。
@@ -3337,6 +3466,8 @@ pub static RULE_MODIFIERS: &[St] = &[
     // 懒惰：`step::cards_locked` + `step` 的 `PlayCard` 拒绝第 N+1 张。
     St::MindRot,
     St::Sloth,
+    // 天鹅绒颈圈（2026-09-25）：和懒惰同一个形状、同一个消费点（`step::play_cap_reached`）。
+    St::VelvetChoker,
     St::Barricade,
     St::Entrench,
     St::AllOrNothing,
@@ -3412,6 +3543,9 @@ pub static PIPELINE_STATUSES: &[St] = &[
     St::PenNibArmed,
     // 硬化外壳的余额：`damage::absorb` 里封掉血、扣余额（回满那一半是 `POWERS` 里上限那条规则）
     St::HardenedShell,
+    // 钻石头冠挂上的减半（2026-09-25）：`damage::apply_modifiers` 的乘区 +
+    // `damage::frozen_label_after_turn_end`（冻住的意图标签那条路）。挂 / 摘在头冠本体的两条规则里
+    St::DiamondDiademActive,
 ];
 
 /// **纯标记 status**：游戏把它显示成一个 power，但效果在**打出那一刻就结算完了**，
@@ -4200,6 +4334,88 @@ pub static RELICS: &[RelicDef] = &[
         id: "AMETHYST_AUBERGINE", name: "紫水晶茄子",
         start_status: &[], private_status: &[], counter_to: None, modelled: true,
         note: "局外：[源码] 敌人额外掉落 15 金币。战斗层无关",
+    },
+    // ---- 2026-09-25 预先补的一批（还没有一件在身上出现过）。全部 [源码]，**未实测** ----
+    //
+    // 两类：会让 L2 出非法线 / 明显错线的四件（颈圈 / 小提琴 / 头冠 / 水盆），
+    // 和形状跟现有遗物一样的八件。赝品复用正品的 status —— 两件同时在身上时相加，
+    // 和锚 + 锚？？？是同一个先例（`replay::push_carry`）。
+    RelicDef {
+        id: "VELVET_CHOKER", name: "天鹅绒颈圈",
+        start_status: &[], private_status: &[(St::VelvetChoker, 6)],
+        counter_to: None, modelled: true,
+        note: "[源码] ShouldPlay：本回合打满 6 张就不能再出牌（自动打出的也拦）。和懒惰共用 `step::play_cap_reached`。
+               +1 能量是 ModifyMaxEnergy，对拍路径观测的 max_energy 已含；L3 在战斗外读不到能量上限，按 3 算（advise 会报）。
+               面板计数器 = 本回合已出几张，`sync` 拿它覆盖单帧同步时不知道的 cards_played",
+    },
+    RelicDef {
+        id: "FIDDLE", name: "小提琴",
+        start_status: &[], private_status: &[(St::Fiddle, 2)],
+        counter_to: None, modelled: true,
+        note: "[源码] 开局发牌 +2（ModifyHandDrawLate，走 OwnerHandDraw）；我的回合里除开局发牌外一张都不能抽
+               （ShouldDraw，锁在 `State::draw_one`，敌人回合里不拦）",
+    },
+    RelicDef {
+        id: "DIAMOND_DIADEM", name: "钻石头冠",
+        start_status: &[], private_status: &[(St::DiamondDiadem, 1)],
+        counter_to: None, modelled: true,
+        note: "[源码] 我的回合末本回合出牌 ≤ 2 ⇒ 敌人这一回合的有源攻击伤害 ×0.5（乘区，敌人回合末移除）。
+               冻住的意图标签不含它，`damage::frozen_label_after_turn_end` 补",
+    },
+    RelicDef {
+        id: "RIPPLE_BASIN", name: "波纹水盆",
+        start_status: &[], private_status: &[(St::RippleBasin, 4)],
+        counter_to: None, modelled: true,
+        note: "[源码] 我的回合末本回合没打过攻击牌 ⇒ 4 格挡（Unpowered）。单帧同步时 attacks_played 不可知（按 0），方向乐观",
+    },
+    RelicDef {
+        id: "DAUGHTER_OF_THE_WIND", name: "风的女儿",
+        start_status: &[], private_status: &[(St::DaughterOfTheWind, 1)],
+        counter_to: None, modelled: true,
+        note: "[源码] 每打出一张攻击牌 1 格挡（Unpowered，不吃敏捷）",
+    },
+    RelicDef {
+        id: "SHURIKEN", name: "手里剑",
+        start_status: &[], private_status: &[(St::Shuriken, 1)],
+        counter_to: None, modelled: true,
+        note: "[源码] 同回合每第 3 张攻击牌 +1 力量（第 3/6/9 张都给），和苦无同一个条件",
+    },
+    RelicDef {
+        id: "KUSARIGAMA", name: "锁镰",
+        start_status: &[], private_status: &[(St::Kusarigama, 6)],
+        counter_to: None, modelled: true,
+        note: "[源码] 同回合每第 3 张攻击牌，随机一个敌人 6 点（Unpowered）",
+    },
+    RelicDef {
+        id: "NUNCHAKU", name: "双截棍",
+        start_status: &[], private_status: &[(St::Nunchaku, 1)],
+        counter_to: Some(St::NunchakuCount), modelled: true,
+        note: "[源码] 每打出第 10 张攻击牌 +1 能量。计数器跨战斗（SavedProperty），从面板灌",
+    },
+    RelicDef {
+        id: "GAME_PIECE", name: "棋子",
+        start_status: &[], private_status: &[(St::GamePiece, 1)],
+        counter_to: None, modelled: true,
+        note: "[源码] 打出能力牌抽 1 张（真抽牌：带着小提琴会被拦）",
+    },
+    RelicDef {
+        id: "IRON_CLUB", name: "铁棒",
+        start_status: &[], private_status: &[(St::IronClub, 1)],
+        counter_to: Some(St::IronClubCount), modelled: true,
+        note: "[源码] 每打出第 4 张牌（任意类型）抽 1 张。计数器跨战斗（SavedProperty），从面板灌",
+    },
+    RelicDef {
+        id: "FAKE_STRIKE_DUMMY", name: "打击木偶？？？",
+        start_status: &[], private_status: &[(St::StrikeDummy, 1)],
+        counter_to: None, modelled: true,
+        note: "假商人版：[源码] 和打击木偶逐字同一个类，只有 ExtraDamage 1（真品 3）",
+    },
+    RelicDef {
+        id: "FAKE_ORICHALCUM", name: "奥利哈钢？？？",
+        start_status: &[], private_status: &[(St::Orichalcum, 3)],
+        counter_to: None, modelled: true,
+        note: "假商人版：[源码] 和奥利哈钢逐字同一个类，只有 Block 3（真品 6）。两件一起带时共用一个武装标记，
+               给的格挡相加（6+3），和游戏里两件各判各的结果相同",
     },
 ];
 

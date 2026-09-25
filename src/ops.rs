@@ -623,6 +623,26 @@ pub enum TCond {
     ///
     /// 读 `State::last_hit_unblocked`，同上。**不分是不是攻击** —— 熟睡的门里没有 `IsPoweredAttack`。
     LastHitUnblocked,
+    /// 本回合**已经打出的牌数** ≤ n（钻石头冠 n=2）。读 `State::cards_played`。
+    ///
+    /// [源码] `DiamondDiadem` 自己数（`AfterCardPlayed` 里 `CardsPlayedThisTurn++`，
+    /// 我的回合末判完清零），数的口径和 `cards_played` 一样：只数我的牌、自动打出的也算。
+    CardsPlayedAtMost(i32),
+    /// 本回合**一张攻击牌都还没打过**（波纹水盆）。读 `State::attacks_played`。
+    ///
+    /// [源码] `RippleBasin.BeforeSideTurnEnd` 翻的是 `History.CardPlaysFinished`
+    /// 里本回合、我的、`CardType.Attack` 的条目 —— 就是 `attacks_played == 0`。
+    NoAttackThisTurn,
+    /// 持有者身上**另一个** status（一个计数器）是 n 的正倍数（双截棍 10 / 铁棒 4）。
+    ///
+    /// 用法是同一段 op 里**先把计数器加 1、再判**，和 [源码] 的
+    /// `AttacksPlayed++; if (AttacksPlayed % n == 0)` 逐句对应。
+    ///
+    /// **判倍数而不是判 ≥ n 再减回去**：面板计数器在触发后的那一秒显示 n 而不是 0
+    /// （[源码] `DisplayAmount` 在 `IsActivating` 时返回 `Cards.IntValue`），
+    /// `sync` 恰好在那一秒读到的话灌进来的就是 n。取模的写法对这个值天然正确
+    /// （n+1 ≡ 1），「≥ n 就发作」会凭空多发一次。钢笔尖的 `% 10` 是同一个理由。
+    CounterMultipleOf { st: St, n: i32 },
 }
 
 /// 触发时能做的事。刻意做得很小 —— 每多一条都要有一张真牌在等着它。
@@ -652,7 +672,18 @@ pub enum TOp {
     /// 回血，封顶在 max_hp（再生）
     OwnerHeal(Amt),
     OwnerEnergy(Amt),
+    /// **真的抽牌**（[源码] `CardPileCmd.Draw`，`fromHandDraw: false`）。小提琴在我的回合里拦它。
     OwnerDraw(Amt),
+    /// **开局发牌多发几张**（[源码] `ModifyHandDraw` / `ModifyHandDrawLate` 那一族：
+    /// 佩尔之血 / 准备背包 / 花粉核心 / 小提琴）。只对玩家持有的有意义。
+    ///
+    /// 源码里它们不抽牌，改的是 `CombatManager` 那一次 `Draw(..., fromHandDraw: true)` 的张数。
+    /// 内核照做：挂在 `Hook::TurnStart` 上**只记账**（加进 `St::HandDrawBonus`），
+    /// `step::open_hand` 按 `step::hand_draw_count` 一次发完 —— 所以小提琴的抽牌锁不拦它，
+    /// planner 的机会节点也枚举得到这几张（2026-09-25 之前是在 `TurnStart` 上先抽，
+    /// 抽在机会节点之前）。
+    /// 摆动球是 `AfterPlayerTurnStart` 里的真抽牌，留在 `OwnerDraw` —— 带着小提琴它就被拦掉。
+    OwnerHandDraw(Amt),
     /// 只对玩家持有的 power 有意义（滚石）
     DamageAllEnemies(Amt),
     /// 触发后把自己的层数加 n（滚石：伤害每回合 +5）

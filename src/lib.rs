@@ -411,6 +411,8 @@ mod tests {
                         match cond {
                             TCond::EveryNTurns { phase, .. } => out.push(*phase),
                             TCond::OwnerHas(st) => out.push(*st),
+                            // 双截棍 / 铁棒的跨战斗计数器只被这个条件读
+                            TCond::CounterMultipleOf { st, .. } => out.push(*st),
                             _ => {}
                         }
                         refs_in_ops(then, out);
@@ -2106,11 +2108,17 @@ mod tests {
     /// 2026-09-06 建佩尔之血时这条测试当场红了：它不在 09-01 那份快照里，
     /// 而它明明躺在两条第 3 幕实录的 `relics[]` 里 —— **快照旧了，不是 id 错了**。
     /// 两处都找不到才是真的拼错。
+    ///
+    /// **第三个权威（2026-09-25）**：`data/relic_ids.json`，[源码] 档 ——
+    /// 游戏自己算 id 的那个函数（`StringHelper.Slugify(类名)`）照抄出来的全表
+    /// （`tools/dump_relic_ids.py`，它自检过游戏导出的每一个 id 都算得出来）。
+    /// 为**预先补**的遗物加的：那一批 12 件这个存档一件都没捡到过，前两个权威都没有。
     #[test]
     fn relic_ids_exist_in_the_authoritative_catalog() {
         let Ok(src) = std::fs::read_to_string("traces/relics_catalog.json") else {
             return; // 权威表还没导出来就跳过，不因此挡住构建
         };
+        let from_source = std::fs::read_to_string("data/relic_ids.json").unwrap_or_default();
         // 实录那一侧是**懒扫**：快照命中就不去读那几十兆 JSON。
         fn seen_in_a_trace(needle: &str) -> bool {
             let Ok(rd) = std::fs::read_dir("traces") else { return false };
@@ -2127,8 +2135,8 @@ mod tests {
         for r in RELICS {
             let needle = format!("\"{}\"", r.id);
             assert!(
-                src.contains(&needle) || seen_in_a_trace(&needle),
-                "{}（{}）**两个权威都找不到**（导出的遗物表 + 全部实录）
+                src.contains(&needle) || from_source.contains(&needle) || seen_in_a_trace(&needle),
+                "{}（{}）**三个权威都找不到**（导出的遗物表 + 源码 id 表 + 全部实录）
                  —— id 是不是拼错了？",
                 r.name,
                 r.id
@@ -5967,6 +5975,12 @@ mod tests {
             // （本场第一次加力量 ×2）。和钢笔尖同一族 —— 改的是"正在算的那个数"，
             // 所以消费点在施加 status 那条路上，不是触发器。
             St::RuinedHelmet,
+            // 天鹅绒颈圈：`step::play_cap_reached`（和懒惰同一处）。
+            St::VelvetChoker,
+            // 双截棍 / 铁棒的跨战斗计数器：和摆动球的相位一样是**条件的输入**
+            // （`TCond::CounterMultipleOf`），加 1 的那一步在各自本体的规则里。
+            St::NunchakuCount,
+            St::IronClubCount,
         ];
         // `counter_to` 那一栏也要查 —— 它同样是"遗物往状态里塞了个东西"，
         // 塞了没人读一样是哑弹。摆动球的相位就在这一栏里。
@@ -8421,6 +8435,313 @@ mod tests {
         // 前两张技能不发作；第 3 张 -5；**第 4 张是攻击**：只吃打击自己的 6 点；
         // 第 5 张技能（技能数 4，不是 3 的倍数）不发作。
         assert_eq!(hp, vec![500, 500, 495, 489, 489], "实际 {hp:?}");
+    }
+
+    /// `content::powers_for` 必须**逐条等于**「整表按钩子过滤、保持表内顺序」——
+    /// `fire_ctx` 从整表线性扫换成按组扫，全部等价性就押在这一条上。
+    /// 顺序换了不会报错，只会让同一钩子上两条规则的先后悄悄变掉（奥利哈钢那条注释说的那种）。
+    #[test]
+    fn powers_by_hook_is_the_table_filtered_in_order() {
+        let mut hooks: Vec<crate::ops::Hook> = Vec::new();
+        for p in POWERS {
+            if !hooks.contains(&p.hook) {
+                hooks.push(p.hook);
+            }
+        }
+        let mut total = 0;
+        for h in hooks {
+            let want: Vec<*const crate::ops::PowerDef> = POWERS.iter().filter(|p| p.hook == h).map(|p| p as *const _).collect();
+            let got: Vec<*const crate::ops::PowerDef> = powers_for(h).iter().map(|&p| p as *const _).collect();
+            assert_eq!(got, want, "{h:?} 那一组和整表过滤不一致");
+            total += got.len();
+        }
+        assert_eq!(total, POWERS.len(), "每一条规则恰好在一组里");
+    }
+
+    // -----------------------------------------------------------------------
+    // 2026-09-25 预先补的一批遗物。全部照 [源码]，还没有一件在实录里出现过。
+    // -----------------------------------------------------------------------
+
+    fn relic_state(relics: &[&str], cards: &[u16], seed: u64) -> State {
+        let mut s = State::new(80, seed);
+        s.add_enemy(enemy::DUMMY, 500);
+        for &c in cards {
+            s.add_card(c, 0, 0);
+        }
+        let defs: Vec<_> = relics.iter().map(|id| (relic_by_id(id).expect(id), None)).collect();
+        grant_relics(&mut s, &defs);
+        begin_combat(s)
+    }
+
+    /// 天鹅绒颈圈：第 7 张一张都不给打（`legal_actions` 和 `step` 同一个答案），下回合重数。
+    #[test]
+    fn velvet_choker_stops_the_seventh_card_and_resets_next_turn() {
+        let mut s = hand_of(3, 500, &[card::STRIKE; 8], 99);
+        s.player.set(St::VelvetChoker, 6);
+        for _ in 0..6 {
+            s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        }
+        assert_eq!(s.cards_played, 6);
+        let (acts, n) = legal_actions(&s);
+        assert!(!acts[..n].iter().any(|a| matches!(a, Action::PlayCard { .. })), "第 7 张不给打");
+        assert_eq!(step(s, Action::PlayCard { hand: 0, target: 0 }), s, "step 也原样返回（不变量 5）");
+        let s = end_turn_with_incoming(s, &no_incoming());
+        let (acts, n) = legal_actions(&s);
+        assert!(acts[..n].iter().any(|a| matches!(a, Action::PlayCard { .. })), "下个回合重新数");
+    }
+
+    /// 出牌数打满之后，**自动打出**的牌也被拦：[源码] `CardCmd.AutoPlay` 里 `ShouldPlay`
+    /// 返回 false 就 `MoveToResultPileWithoutPlaying`，和不可打出的牌同一句。
+    #[test]
+    fn play_cap_also_blocks_autoplay_from_exhaust() {
+        let run = |cap: i32| {
+            let mut s = hand_of(3, 500, &[card::HOWL_FROM_BEYOND], 3);
+            let cix = s.take_from_hand(0);
+            s.to_exhaust(cix);
+            s.player.set(St::VelvetChoker, cap);
+            s.cards_played = 6;
+            end_turn_with_incoming(s, &no_incoming()).enemies[0].hp
+        };
+        assert_eq!(run(7), 484, "没打满：彼岸咆哮回合末从消耗堆里打出 16");
+        assert_eq!(run(6), 500, "打满了：没打出去");
+    }
+
+    /// 单帧同步时 `cards_played` 游戏不报，但颈圈 / 头冠的面板计数器就是它。
+    #[test]
+    fn cards_played_is_read_from_the_choker_or_diadem_counter() {
+        use crate::replay::{observed_cards_played, RelicObs};
+        let relic = |id: &str, counter: Option<i32>| RelicObs { counter, id: id.into(), name: String::new() };
+        assert_eq!(observed_cards_played(&[relic("VELVET_CHOKER", Some(4))]), Some(4));
+        assert_eq!(observed_cards_played(&[relic("PEN_NIB", Some(7)), relic("DIAMOND_DIADEM", Some(2))]), Some(2));
+        assert_eq!(observed_cards_played(&[relic("PEN_NIB", Some(7))]), None, "别的遗物的计数器不算");
+    }
+
+    /// 小提琴：开局 5+2；回合中的抽牌全部被拦；`ModifyHandDraw` 那一族（佩尔之血）不拦；
+    /// 摆动球是真抽牌（`AfterPlayerTurnStart`），拦。
+    #[test]
+    fn fiddle_draws_seven_then_locks_draws_for_the_rest_of_my_turn() {
+        let s = relic_state(&["FIDDLE"], &[card::POMMEL_STRIKE; 20], 5);
+        assert_eq!(s.n_hand, 7, "开局 5 + 2");
+        let t = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(t.n_hand, 6, "剑柄打击的抽 1 被拦：打出一张、没抽回来");
+        assert_eq!(t.n_draw, s.n_draw, "被拦的抽牌不动抽牌堆");
+
+        let s = relic_state(&["FIDDLE", "PAELS_BLOOD"], &[card::STRIKE; 20], 5);
+        assert_eq!(s.n_hand, 8, "佩尔之血改的是发牌张数，不拦");
+
+        let mut s = relic_state(&["FIDDLE"], &[card::STRIKE; 20], 5);
+        s.player.set(St::Pendulum, 1);
+        s.player.set(St::PendulumPhase, 1); // 下一回合（第 2 回合）就发作
+        let s = end_turn_with_incoming(s, &no_incoming());
+        assert_eq!(s.n_hand, 7, "摆动球那 1 张是回合中的真抽牌，被拦");
+    }
+
+    /// 小提琴的锁**只在我的回合里**（[源码] `Side != CurrentSide` 就放行）：
+    /// 敌人回合挨打触发的百年积木照抽 3 张，下回合开局 3 + 7 = 10 张（顶到手牌上限）。
+    /// 锁要是不看是谁的回合，那 3 张会被拦掉，开局只有 7 张。
+    #[test]
+    fn fiddle_does_not_lock_draws_during_the_enemy_turn() {
+        let s = relic_state(&["FIDDLE", "CENTENNIAL_PUZZLE"], &[card::STRIKE; 30], 5);
+        assert!(!s.enemy_side);
+        let mut inc = no_incoming();
+        inc[0] = (5, 1);
+        let t = end_turn_with_incoming(s, &inc);
+        assert_eq!(t.player.hp, 75, "敌人那 5 点打穿了");
+        assert_eq!(t.n_hand, 10, "敌人回合里百年积木抽的 3 张没被拦");
+        assert!(!t.enemy_side, "回到我的回合，锁又生效");
+    }
+
+    /// 战斗专注的「不能再抽牌」**到我的回合结束为止**（[源码] `NoDrawPower.AfterSideTurnEnd`）：
+    /// 敌人回合里挨打触发的百年积木照抽 3 张。原来的内核拦到下一个回合开始，这 3 张被吞掉。
+    /// 同一回合里的抽牌照旧被拦（这一半是 2026-08 实测过的老行为）。
+    #[test]
+    fn battle_trance_stops_draws_only_until_my_turn_ends() {
+        let mut cards = vec![card::BATTLE_TRANCE, card::POMMEL_STRIKE];
+        cards.extend([card::STRIKE; 20]);
+        let mut s = relic_state(&["CENTENNIAL_PUZZLE"], &cards, 4);
+        // 两张牌都要在手上：在抽牌堆里的就和手牌对调（两边都不重复）
+        for (slot, id) in [(0usize, card::BATTLE_TRANCE), (1, card::POMMEL_STRIKE)] {
+            let cix = (0..s.n_cards).find(|&i| s.cards[i as usize].id == id).unwrap();
+            if let Some(p) = (0..s.n_draw as usize).find(|&p| s.draw[p] == cix) {
+                s.draw[p] = s.hand[slot];
+                s.hand[slot] = cix;
+            }
+        }
+        s.energy = 9;
+        let s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::BATTLE_TRANCE), target: 0 });
+        assert!(s.player.get(St::NoDraw) > 0);
+        let before = s.n_hand;
+        let s = step(s, Action::PlayCard { hand: hand_ix_of(&s, card::POMMEL_STRIKE), target: 0 });
+        assert_eq!(s.n_hand, before - 1, "同一回合：剑柄打击的抽 1 被拦");
+        let mut inc = no_incoming();
+        inc[0] = (5, 1);
+        let t = end_turn_with_incoming(s, &inc);
+        assert_eq!(t.player.hp, 75, "敌人那 5 点打穿了");
+        assert_eq!(t.n_hand, 3 + 5, "敌人回合里百年积木的 3 张没被拦，加上开局 5 张");
+        assert_eq!(t.player.get(St::NoDraw), 0, "到我的下一个回合它已经不在了（和观测一致）");
+    }
+
+    /// 钻石头冠：本回合出牌 ≤ 2 ⇒ 敌人这一手 ×0.5；3 张就不给。
+    /// **两条敌人回合的路都要减半**：冻住的意图标签（对拍 / `Threat::set`）和现算（`Threat::set_live`）。
+    #[test]
+    fn diamond_diadem_halves_the_next_enemy_turn_only_after_a_short_turn() {
+        let hit = |played: usize, live: bool| {
+            let mut s = hand_of(3, 500, &[card::DEFEND; 4], 99);
+            s.player.set(St::DiamondDiadem, 1);
+            s.player.set(St::Dexterity, -5); // 防御给 0 格挡，只数出牌张数
+            for _ in 0..played {
+                s = step(s, Action::PlayCard { hand: 0, target: 0 });
+            }
+            let mut inc = no_incoming();
+            inc[0] = (11, 1);
+            let t = if live { end_turn_with_live_incoming(s, &inc) } else { end_turn_with_incoming(s, &inc) };
+            assert_eq!(t.player.get(St::DiamondDiademActive), 0, "敌人回合末摘掉");
+            80 - t.player.hp
+        };
+        assert_eq!(hit(2, false), 5, "冻住的标签 11 -> ⌊11/2⌋");
+        assert_eq!(hit(2, true), 5, "现算：11 × 1/2 只取整一次");
+        assert_eq!(hit(0, false), 5, "一张不出也算 ≤ 2");
+        assert_eq!(hit(3, false), 11, "出了 3 张：不减半");
+        assert_eq!(hit(3, true), 11);
+    }
+
+    /// 冻住的标签上补减半：无实体下标签已经是 1，不补（游戏是先 ×0.5 再压成 1）。
+    #[test]
+    fn frozen_label_halving_respects_intangible() {
+        let mut me = Entity::new(80);
+        assert_eq!(frozen_label_after_turn_end(11, &me), 11, "没挂减半不动");
+        me.set(St::DiamondDiademActive, 1);
+        assert_eq!(frozen_label_after_turn_end(11, &me), 5);
+        assert_eq!(frozen_label_after_turn_end(1, &me), 0, "1 × 0.5 = 0.5 -> 0");
+        me.set(St::Intangible, 1);
+        assert_eq!(frozen_label_after_turn_end(1, &me), 1, "无实体：标签就是答案");
+    }
+
+    /// 波纹水盆：本回合没打过攻击 ⇒ 回合末 4 格挡（在敌人出手之前）；打过一张就没有。
+    #[test]
+    fn ripple_basin_blocks_only_on_a_turn_without_attacks() {
+        let taken = |first: u16| {
+            let mut s = hand_of(3, 500, &[first], 99);
+            s.player.set(St::RippleBasin, 4);
+            s.player.set(St::Dexterity, -5);
+            let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+            let mut inc = no_incoming();
+            inc[0] = (6, 1);
+            80 - end_turn_with_incoming(s, &inc).player.hp
+        };
+        assert_eq!(taken(card::DEFEND), 2, "只打了技能：4 格挡吃掉 6 里的 4");
+        assert_eq!(taken(card::STRIKE), 6, "打过攻击：没有格挡");
+    }
+
+    /// 风的女儿：每张攻击 +1 格挡，`Unpowered` ⇒ 不吃敏捷；技能不给。
+    #[test]
+    fn daughter_of_the_wind_gives_one_block_per_attack_ignoring_dexterity() {
+        let mut s = hand_of(3, 500, &[card::STRIKE, card::STRIKE], 99);
+        s.player.set(St::DaughterOfTheWind, 1);
+        s.player.set(St::Dexterity, 3);
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.player.block, 1);
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.player.block, 2);
+    }
+
+    /// 手里剑：和苦无同一个条件（第 3/6 张），给的是力量。
+    #[test]
+    fn shuriken_fires_every_third_attack() {
+        let mut s = hand_of(7, 500, &[card::STRIKE; 6], 99);
+        s.player.set(St::Shuriken, 1);
+        let mut st = vec![];
+        for _ in 0..6 {
+            s = step(s, Action::PlayCard { hand: 0, target: 0 });
+            st.push(s.player.get(St::Strength));
+        }
+        assert_eq!(st, vec![0, 0, 1, 1, 1, 2], "实际 {st:?}");
+    }
+
+    /// 锁镰：同回合第 3 张攻击，随机一个敌人 6 点（`Unpowered`，不吃力量）。
+    #[test]
+    fn kusarigama_hits_a_random_enemy_on_every_third_attack_without_strength() {
+        let mut s = hand_of(7, 500, &[card::STRIKE; 3], 99);
+        s.player.set(St::Kusarigama, 6);
+        s.player.set(St::Strength, 2);
+        let mut hp = vec![];
+        for _ in 0..3 {
+            s = step(s, Action::PlayCard { hand: 0, target: 0 });
+            hp.push(s.enemies[0].hp);
+        }
+        // 每张打击 6+2 = 8；第 3 张之后锁镰 6（不加力量）
+        assert_eq!(hp, vec![492, 484, 470], "实际 {hp:?}");
+    }
+
+    /// 双截棍：计数器跨战斗，从面板灌；第 10 张攻击 +1 能量。
+    /// 面板在触发后的那一秒显示 10（`IsActivating`），灌进来 10 也不能凭空多给。
+    #[test]
+    fn nunchaku_counts_across_combats_and_tolerates_the_activating_display() {
+        let energy_after = |counter: i32, attacks: usize| {
+            let mut s = hand_of(3, 500, &[card::STRIKE; 4], 50);
+            s.player.set(St::Nunchaku, 1);
+            s.player.set(St::NunchakuCount, counter);
+            let e0 = s.energy;
+            for _ in 0..attacks {
+                s = step(s, Action::PlayCard { hand: 0, target: 0 });
+            }
+            s.energy - (e0 - attacks as i32)
+        };
+        assert_eq!(energy_after(8, 1), 0, "第 9 张：不给");
+        assert_eq!(energy_after(8, 2), 1, "第 10 张：+1");
+        assert_eq!(energy_after(10, 1), 0, "面板显示 10 = 刚触发过，下一张是第 1 张");
+        assert_eq!(energy_after(0, 4), 0);
+    }
+
+    /// 铁棒：任意牌，第 4 张抽 1（计数器同双截棍）。
+    #[test]
+    fn iron_club_draws_on_every_fourth_card_of_any_kind() {
+        let s = relic_state(&["IRON_CLUB"], &[card::DEFEND; 20], 5);
+        let mut s = s;
+        s.energy = 99;
+        s.player.set(St::IronClubCount, 2);
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.n_hand, 4, "第 3 张：不抽");
+        let s = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.n_hand, 4, "第 4 张：打出一张、抽回一张");
+    }
+
+    /// 棋子：打能力牌抽 1；带着小提琴时被拦（它是真抽牌）。
+    #[test]
+    fn game_piece_draws_on_power_and_is_locked_by_fiddle() {
+        let mut cards = vec![card::DEMON_FORM];
+        cards.extend([card::STRIKE; 20]);
+        let play_power = |relics: &[&str]| {
+            let mut s = relic_state(relics, &cards, 9);
+            s.energy = 99;
+            // 恶魔形态不一定在起手里：在抽牌堆里的话和手牌第一格对调（两边都不重复）
+            let dix = (0..s.n_cards).find(|&i| s.cards[i as usize].id == card::DEMON_FORM).unwrap();
+            if let Some(p) = (0..s.n_draw as usize).find(|&p| s.draw[p] == dix) {
+                s.draw[p] = s.hand[0];
+                s.hand[0] = dix;
+            }
+            let h = hand_ix_of(&s, card::DEMON_FORM);
+            s.n_hand as i32 - step(s, Action::PlayCard { hand: h, target: 0 }).n_hand as i32
+        };
+        assert_eq!(play_power(&["GAME_PIECE"]), 0, "打出一张、抽回一张");
+        assert_eq!(play_power(&["GAME_PIECE", "FIDDLE"]), 1, "小提琴拦掉了那 1 张");
+    }
+
+    /// 两件赝品复用正品的 status：同时带着时相加（和锚 + 锚？？？同一个先例）。
+    #[test]
+    fn fake_strike_dummy_and_fake_orichalcum_stack_with_the_real_ones() {
+        let s = relic_state(&["STRIKE_DUMMY", "FAKE_STRIKE_DUMMY"], &[card::STRIKE; 10], 3);
+        assert_eq!(s.player.get(St::StrikeDummy), 4);
+        let t = step(s, Action::PlayCard { hand: 0, target: 0 });
+        assert_eq!(s.enemies[0].hp - t.enemies[0].hp, 6 + 4, "打击 6 + 木偶 3 + 赝品 1");
+
+        let s = relic_state(&["FAKE_ORICHALCUM"], &[card::STRIKE; 10], 3);
+        let mut inc = no_incoming();
+        inc[0] = (3, 1);
+        assert_eq!(end_turn_with_incoming(s, &inc).player.hp, 80, "赝品单独带：3 格挡挡住 3 点");
+        let s = relic_state(&["ORICHALCUM", "FAKE_ORICHALCUM"], &[card::STRIKE; 10], 3);
+        inc[0] = (10, 1);
+        assert_eq!(end_turn_with_incoming(s, &inc).player.hp, 79, "两件一起：6 + 3 = 9 格挡");
     }
 
     /// 我方**虚弱**要作用在 AoE 牌上（突破+ 13 点打全体）。
@@ -12272,5 +12593,584 @@ mod tests {
             paired_act_delta_across_routes(&a, &other_seed).is_none(),
             "种子基不同就不是配对比较了"
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // 2026-09-20 修 L2 审计（09-19）里的四条：指纹漏字段 / 附魔分组 / 截断 / 开着的选牌
+    //
+    // 每一条都先断言「场景立得住」（反例的前提真的成立），再断言修好的行为 ——
+    // 否则撤掉修复也不会红，守卫就成了摆设。
+    // -----------------------------------------------------------------------
+
+    /// 手牌 / 抽牌堆 / 弃牌堆各放指定的牌，全是 `enemy::DUMMY`，抽牌堆顺序未知。
+    /// `draw` 的最后一张在数组末尾 = 牌堆顶。
+    fn audit_scene(
+        seed: u64,
+        enemies: &[i32],
+        hand: &[u16],
+        draw: &[u16],
+        disc: &[u16],
+        energy: i32,
+    ) -> State {
+        let mut s = State::new(80, seed);
+        for &hp in enemies {
+            s.add_enemy(enemy::DUMMY, hp);
+        }
+        let h: Vec<u8> = hand.iter().map(|&c| s.add_card(c, 0, 0)).collect();
+        let d: Vec<u8> = draw.iter().map(|&c| s.add_card(c, 0, 0)).collect();
+        let x: Vec<u8> = disc.iter().map(|&c| s.add_card(c, 0, 0)).collect();
+        let mut s = begin_combat(s);
+        s.n_hand = h.len() as u8;
+        s.hand[..h.len()].copy_from_slice(&h);
+        s.n_draw = d.len() as u8;
+        s.draw[..d.len()].copy_from_slice(&d);
+        s.n_draw_known = 0;
+        s.n_disc = x.len() as u8;
+        s.disc[..x.len()].copy_from_slice(&x);
+        s.n_exh = 0;
+        s.energy = energy;
+        s
+    }
+
+    /// 按顺序打出 `(牌, 目标)`，每一张都必须合法。
+    fn audit_play_all(s: State, plays: &[(u16, u8)]) -> State {
+        plays.iter().fold(s, |st, &(id, target)| {
+            let i = (0..st.n_hand as usize)
+                .find(|&i| st.cards[st.hand[i] as usize].id == id)
+                .expect("手里没有这张牌");
+            let ns = step(st, Action::PlayCard { hand: i as u8, target });
+            assert_ne!(ns, st, "非法动作");
+            ns
+        })
+    }
+
+    /// **不去重**的穷举，和求解器同一套终点（开着选牌的局面不算终点）。只回最优分。
+    fn audit_brute(s: &State, th: &Threat, sc: fn(&State) -> i32, depth: usize, best: &mut i32) {
+        if s.pending == Pending::None || s.combat_over {
+            *best = (*best).max(sc(&th.end_turn(*s)));
+        }
+        if s.combat_over || depth >= 30 {
+            return;
+        }
+        let (acts, n) = legal_actions(s);
+        for &a in &acts[..n] {
+            if matches!(a, Action::EndTurn | Action::UsePotion { .. }) {
+                continue;
+            }
+            let ns = step(*s, a);
+            if ns != *s {
+                audit_brute(&ns, th, sc, depth + 1, best);
+            }
+        }
+    }
+
+    /// 荆棘 2 / 4 的两只敌人 + 一只没荆棘的，手上防御 + 三张打击 + 扯碎。
+    fn thorns_scene() -> State {
+        let mut s = audit_scene(
+            2,
+            &[200, 200, 200],
+            &[card::DEFEND, card::STRIKE, card::STRIKE, card::STRIKE, card::TEAR_ASUNDER],
+            &[],
+            &[],
+            6,
+        );
+        s.enemies[0].set(St::Thorns, 2);
+        s.enemies[1].set(St::Thorns, 4);
+        s
+    }
+
+    /// **掉血一样、挨穿次数不一样的两个局面，指纹必须分开。**
+    ///
+    /// 荆棘反弹和格挡谁先谁后：先挡住两下 2 点、第三下 4 点打穿 3 ⇒ 挨穿 1 次；
+    /// 先挡住 4 点、剩下的 1 点格挡只吃掉一下 2 点的一半 ⇒ 挨穿 2 次。
+    /// 两边都是 77 血、0 格挡、`hp_lost_this_turn` 3，而扯碎的段数 = 1 + 挨穿次数。
+    /// 2026-09-20 之前两个指纹逐字相同，后访问到的那个被当成重复剪掉。
+    #[test]
+    fn dedup_keeps_states_that_differ_only_in_hp_loss_hits() {
+        let s = thorns_scene();
+        let a = audit_play_all(
+            s,
+            &[(card::DEFEND, 0), (card::STRIKE, 0), (card::STRIKE, 0), (card::STRIKE, 1)],
+        );
+        let b = audit_play_all(
+            s,
+            &[(card::DEFEND, 0), (card::STRIKE, 1), (card::STRIKE, 0), (card::STRIKE, 0)],
+        );
+        // 前提：规则看得见的只差这一栏，而扯碎读的正是它
+        assert_eq!(
+            (a.player.hp, a.player.block, a.hp_lost_this_turn),
+            (b.player.hp, b.player.block, b.hp_lost_this_turn),
+            "场景立不住：两条顺序掉的血或剩的格挡不一样"
+        );
+        assert_eq!((a.hp_loss_hits, b.hp_loss_hits), (1, 2), "场景立不住：挨穿次数没分开");
+        let hit = |st: State| st.enemies[2].hp - audit_play_all(st, &[(card::TEAR_ASUNDER, 2)]).enemies[2].hp;
+        assert_eq!((hit(a), hit(b)), (10, 15), "场景立不住：扯碎的段数没跟着挨穿次数走");
+
+        assert_ne!(crate::solver::key(&a), crate::solver::key(&b), "单回合指纹把两个未来不同的局面并成了一个");
+        assert_ne!(crate::plan::key(&a), crate::plan::key(&b), "跨回合指纹把两个未来不同的局面并成了一个");
+    }
+
+    /// 同一个毛病的**后果**：去重剪掉了最优线。
+    ///
+    /// 网格扫描里差得最多的那一例（2026-09-19，`leaf` 口径）：荆棘 4 / 6、力量 1、扯碎+。
+    /// 修之前求解器给 68 血 / 敌伤 53，不去重的穷举是 **71 血 / 敌伤 53** —— 白丢 3 血。
+    /// 判据不写死那个数，写成「求解器 = 不去重的穷举」。
+    #[test]
+    fn dedup_does_not_prune_the_best_line_behind_an_hp_loss_hits_collision() {
+        let mut s = audit_scene(
+            11,
+            &[200, 200, 200],
+            &[card::DEFEND, card::STRIKE, card::STRIKE, card::STRIKE, card::TEAR_ASUNDER],
+            &[],
+            &[],
+            10,
+        );
+        s.enemies[0].set(St::Thorns, 4);
+        s.enemies[1].set(St::Thorns, 6);
+        s.player.set(St::Strength, 1);
+        let t = s.hand[4] as usize;
+        s.cards[t].flags |= F_UPGRADED;
+
+        let sol = solve_turn_budget(&s, &Threat::NONE, score::leaf, 200_000);
+        assert!(sol.complete, "场景立不住：搜索没搜完，比不了");
+        let mut best = i32::MIN;
+        audit_brute(&s, &Threat::NONE, score::leaf, 0, &mut best);
+        let end = crate::solver::replay_line(&s, sol.line.acts()).unwrap();
+        assert_eq!(
+            sol.line.score,
+            best,
+            "搜完了却比不去重的穷举差 {} 分（求解器那条打完剩 {} 血）：{:?}",
+            best - sol.line.score,
+            end.player.hp,
+            explain(&s, sol.line.acts())
+        );
+        assert_eq!(end.player.hp, 71, "穷举最优是 71 血（修之前求解器给 68）");
+    }
+
+    /// **机会节点要把带附魔的那一张和普通的分开算。**
+    ///
+    /// 6 张打击、1 张带锋利、抽 5：锋利那张进手的概率是 5/6，**和它在数组里的位置无关**。
+    /// 2026-09-20 之前 `plan::ident` 不含附魔，6 张并成一组、只给一个 `p = 1.0` 的孩子，
+    /// 锋利那张在 `draw[0]` 时 100%、在 `draw[5]` 时 0%。
+    #[test]
+    fn chance_node_tells_enchanted_copies_apart() {
+        use crate::plan::{chance_children, Plan};
+        let sharp = crate::content::enchant_by_id("SHARP").unwrap().0;
+        for pos in [0usize, 5] {
+            let mut s = audit_scene(3, &[200], &[], &[card::STRIKE; 6], &[], 3);
+            let ix = s.draw[pos];
+            s.cards[ix as usize].ench = sharp;
+            s.cards[ix as usize].ench_amt = 3;
+            let kids = chance_children(&s, &Plan::default(), 1);
+            let total: f64 = kids.iter().map(|k| k.p).sum();
+            assert!((total - 1.0).abs() < 1e-9, "draw[{pos}]：概率和是 {total}");
+            let p: f64 = kids
+                .iter()
+                .filter(|k| k.state.hand[..k.state.n_hand as usize].contains(&ix))
+                .map(|k| k.p)
+                .sum();
+            assert!(
+                (p - 5.0 / 6.0).abs() < 1e-9,
+                "锋利那张在 draw[{pos}]：进手概率 {p}，应为 5/6（{} 个孩子）",
+                kids.len()
+            );
+        }
+    }
+
+    /// 机会节点的孩子里，`ix` 那张进手的总概率。
+    fn p_in_hand(kids: &[crate::plan::Draw], ix: u8) -> f64 {
+        kids.iter()
+            .filter(|k| k.state.hand[..k.state.n_hand as usize].contains(&ix))
+            .map(|k| k.p)
+            .sum()
+    }
+
+    /// 7 张各不相同的牌（一张一个身份，好逐张数进手概率）。
+    const SEVEN_DISTINCT: [u16; 7] =
+        [card::STRIKE, card::DEFEND, card::BASH, card::DISMANTLE, card::ASH_STRIKE, card::DEMON_FLAME, card::LIGHTNING];
+
+    /// **机会节点抽几张，问 L1。** 心灵腐化那一手只发 4 张：6 张不同的牌逐张进手 2/3。
+    ///
+    /// 2026-09-25 之前机会节点写死 5：按 5 张挑一个多重集放到顶上，`open_hand` 只拿走 4 张，
+    /// 挑出来的第一张永远留在牌堆里 —— 逐张 0 / 2/3 / 5/6 ×4，**概率和照样是 1**。
+    /// 牌堆正着放、倒着放各跑一遍：错的那一版偏向哪张取决于数组顺序。
+    #[test]
+    fn chance_node_draws_as_many_as_open_hand_does_under_mind_rot() {
+        use crate::plan::{chance_children, Plan};
+        for rev in [false, true] {
+            let mut ids = SEVEN_DISTINCT[..6].to_vec();
+            if rev {
+                ids.reverse();
+            }
+            let mut s = audit_scene(3, &[200], &[], &ids, &[], 3);
+            s.player.set(St::MindRot, 1);
+            assert_eq!(hand_draw_count(&s), 4, "场景立不住：心灵腐化 1 层该发 4 张");
+            let kids = chance_children(&s, &Plan::default(), 1);
+            let total: f64 = kids.iter().map(|k| k.p).sum();
+            assert!((total - 1.0).abs() < 1e-9, "概率和是 {total}");
+            assert!(kids.iter().all(|k| k.state.n_hand == 4), "有孩子不是 4 张手牌");
+            for &ix in &s.draw[..6] {
+                let p = p_in_hand(&kids, ix);
+                assert!(
+                    (p - 2.0 / 3.0).abs() < 1e-9,
+                    "{}（倒序={rev}）进手概率 {p}，应为 2/3",
+                    card(s.cards[ix as usize].id).name
+                );
+            }
+        }
+    }
+
+    /// **手牌上限也进张数**：手上留着 6 张，这一手最多再发 4 张。
+    #[test]
+    fn chance_node_respects_the_hand_limit() {
+        use crate::plan::{chance_children, Plan};
+        let s = audit_scene(3, &[200], &[card::DEFEND; 6], &SEVEN_DISTINCT[..6], &[], 3);
+        assert_eq!(hand_draw_count(&s), 4, "场景立不住：手上 6 张该只发 4 张");
+        let kids = chance_children(&s, &Plan::default(), 1);
+        for &ix in &s.draw[..6] {
+            let p = p_in_hand(&kids, ix);
+            assert!((p - 2.0 / 3.0).abs() < 1e-9, "进手概率 {p}，应为 2/3");
+        }
+    }
+
+    /// **佩尔之血那 +1 要进机会节点**，不能在它之前就从牌序数组顶上抽走。
+    ///
+    /// 走真实路径（`end_turn_before_draw`，`TurnStart` 在里面点火）：7 张不同的牌、
+    /// 这一手发 6 张 ⇒ 逐张进手 6/7。2026-09-25 之前那一张在 `TurnStart` 上先抽了，
+    /// 机会节点只枚举剩下 6 张里的 5 张：先抽的那张 100%、其余 5/6，换种子也不变。
+    #[test]
+    fn paels_blood_extra_card_is_part_of_the_chance_node() {
+        use crate::plan::{chance_children, Plan};
+        let mut s = audit_scene(3, &[200], &[], &SEVEN_DISTINCT, &[], 3);
+        s.player.set(St::PaelsBlood, 1);
+        let pre = end_turn_before_draw(s);
+        assert!(!pre.combat_over && !pre.player_dead, "场景立不住：假人回合就打完了");
+        assert_eq!(pre.n_hand, 0, "佩尔之血在发牌之前就抽了牌");
+        assert_eq!((pre.n_draw, pre.n_draw_known), (7, 0), "场景立不住：牌堆不是 7 张全未知");
+        assert_eq!(hand_draw_count(&pre), 6, "佩尔之血该让这一手发 6 张");
+        let kids = chance_children(&pre, &Plan::default(), 1);
+        assert!(kids.iter().all(|k| k.state.n_hand == 6), "有孩子不是 6 张手牌");
+        for &ix in &pre.draw[..7] {
+            let p = p_in_hand(&kids, ix);
+            assert!((p - 6.0 / 7.0).abs() < 1e-9, "进手概率 {p}，应为 6/7");
+        }
+    }
+
+    /// **`open_hand` 发的就是 `hand_draw_count` 张**，两边是同一个数 ——
+    /// 机会节点靠的就是这一条。加张数（佩尔之血 / 小提琴）只记账不先抽，发完清零。
+    ///
+    /// 外加手满时的一条 [源码] 细节：`CardPileCmd.Draw` 在手满时**直接返回、不洗牌**
+    /// （`num == 0` 在 `ShuffleIfNecessary` 之前）。
+    #[test]
+    fn open_hand_deals_exactly_hand_draw_count() {
+        for (mind_rot, pael, fiddle, kept) in
+            [(0, 0, 0, 0), (1, 0, 0, 0), (0, 1, 0, 0), (1, 1, 0, 0), (0, 0, 2, 0), (1, 1, 2, 0), (0, 1, 0, 6), (0, 0, 2, 8)]
+        {
+            let mut s = audit_scene(3, &[200], &[], &[card::STRIKE; 30], &[], 3);
+            s.player.set(St::MindRot, mind_rot);
+            s.player.set(St::PaelsBlood, pael);
+            s.player.set(St::Fiddle, fiddle);
+            let mut pre = end_turn_before_draw(s);
+            // 回合末留在手上的牌（保留那一类）：直接塞进手牌。`add_card` 顺手把它放进了抽牌堆顶，挪过来
+            for _ in 0..kept {
+                let ix = pre.add_card(card::DEFEND, 0, 0);
+                pre.n_draw -= 1;
+                pre.hand[pre.n_hand as usize] = ix;
+                pre.n_hand += 1;
+            }
+            let tag = format!("心灵腐化 {mind_rot} · 佩尔之血 {pael} · 小提琴 {fiddle} · 留手 {kept}");
+            let want = hand_draw_count(&pre);
+            let expect = ((5 + pael + fiddle - mind_rot).max(0) as usize).min(MAX_HAND - pre.n_hand as usize);
+            assert_eq!(want, expect, "{tag}");
+            let mut t = pre;
+            open_hand(&mut t);
+            assert_eq!(t.n_hand as usize - pre.n_hand as usize, want, "{tag}：`open_hand` 发的张数和 `hand_draw_count` 不一样");
+            assert_eq!(t.player.get(St::HandDrawBonus), 0, "{tag}：加张数发完没清零");
+        }
+
+        // 手满、抽牌堆空、弃牌堆有牌：一张不抽，**也不洗**
+        let mut full = audit_scene(3, &[200], &[card::DEFEND; MAX_HAND], &[], &[card::STRIKE; 5], 3);
+        assert_eq!(hand_draw_count(&full), 0);
+        let before = full;
+        open_hand(&mut full);
+        assert_eq!((full.n_hand, full.n_disc, full.n_draw), (before.n_hand, before.n_disc, 0), "手满了还洗了牌");
+        assert_eq!(full.rng.shuffle, before.rng.shuffle, "手满了还推动了洗牌流");
+
+        // 停在发牌之前、没接着 `open_hand` 就又结束一个回合（`Leaf::Rollout` 碰上留手牌时
+        // 就是这样跳过发牌的）：上回合记的加张数不许叠到这一回合
+        let mut s = audit_scene(3, &[200], &[], &[card::STRIKE; 30], &[], 3);
+        s.player.set(St::PaelsBlood, 1);
+        let twice = end_turn_before_draw(end_turn_before_draw(s));
+        assert_eq!(twice.player.get(St::HandDrawBonus), 1, "没发牌的那一回合的加张数叠进了下一回合");
+    }
+
+    /// **线被 `MAX_LINE` 截断而局面还能往下走，就不许报穷尽。**
+    ///
+    /// 手上 5 张、抽牌堆 30 张亮剑（0 费、5 伤、抽 1）：一条过牌链能一直打下去。
+    /// 2026-09-20 之前搜到第 24 步直接返回、`complete = true`，而线末再合法打一张
+    /// 分数还能 +150。
+    #[test]
+    fn a_line_cut_at_max_line_is_not_reported_as_exhaustive() {
+        let s = audit_scene(6, &[1000], &[card::FLASH_OF_STEEL; 5], &[card::FLASH_OF_STEEL; 30], &[], 3);
+        let sol = solve_turn_budget(&s, &Threat::NONE, score::survive_first, 200_000);
+        assert_eq!(sol.line.n as usize, crate::solver::MAX_LINE, "场景立不住：线没顶到上限");
+        let end = crate::solver::replay_line(&s, sol.line.acts()).unwrap();
+        let (acts, n) = legal_actions(&end);
+        assert!(
+            acts[..n].iter().any(|a| matches!(a, Action::PlayCard { .. })),
+            "场景立不住：线末已经没牌可打"
+        );
+        assert!(!sol.complete, "线被截断、局面还能走，却报了穷尽");
+
+        // 反过来：真搜完了照样报穷尽，别把这一栏变成恒 false
+        let short = hand_of(1, 100, &[card::STRIKE, card::DEFEND], 3);
+        assert!(solve_turn_budget(&short, &Threat::NONE, score::survive_first, 200_000).complete);
+    }
+
+    /// **开着子选择的局面不是合法终点。** 线里一定把选牌做完，候选表同口径。
+    ///
+    /// 2026-09-20 之前两种样子都出现过：
+    /// 1. 线中途开出选牌（头槌，弃牌堆 2 张）：返回的线就是 `[头槌]`，选牌没做 ——
+    ///    做不做在这一回合的分数里是平的，而并列时短线赢；
+    /// 2. 根上就开着选牌、能量 0：返回 **0 个动作**、`complete = true`，
+    ///    而 `step(EndTurn)` 在那个局面上原地不动。
+    #[test]
+    fn an_open_choice_is_not_a_legal_terminal() {
+        let s = audit_scene(8, &[100], &[card::HEADBUTT], &[], &[card::STRIKE, card::DEFEND], 1);
+        let sol = solve_turn_budget(&s, &Threat::NONE, score::survive_first, 200_000);
+        let end = crate::solver::replay_line(&s, sol.line.acts()).unwrap();
+        assert!(
+            sol.line.acts().iter().any(|a| matches!(a, Action::PlayCard { .. })),
+            "场景立不住：头槌都没打"
+        );
+        assert_eq!(end.pending, Pending::None, "线停在选牌之前：{:?}", explain(&s, sol.line.acts()));
+        assert_ne!(step(end, Action::EndTurn), end, "线末结束不了回合");
+        for c in crate::solver::solve_turn_topk(&s, &Threat::NONE, score::leaf, 200_000, 0, 6, 2, 2) {
+            let e = crate::solver::replay_line(&s, c.acts()).unwrap();
+            assert_eq!(e.pending, Pending::None, "候选线停在选牌之前：{:?}", explain(&s, c.acts()));
+        }
+
+        let mut r = audit_scene(7, &[100], &[card::STRIKE, card::DEFEND, card::BASH], &[], &[], 0);
+        r.pending = Pending::ExhaustFromHand { remaining: 1 };
+        assert_eq!(step(r, Action::EndTurn), r, "场景立不住：根上的结束回合居然合法");
+        let sol = solve_turn_budget(&r, &Threat::NONE, score::survive_first, 200_000);
+        assert!(sol.complete);
+        let end = crate::solver::replay_line(&r, sol.line.acts()).unwrap();
+        assert_eq!(end.pending, Pending::None, "根上开着的选牌没做就收手了");
+        assert_ne!(step(end, Action::EndTurn), end, "线末结束不了回合");
+    }
+
+    /// 反过来的边角：**选牌一个都走不动**（手牌满了还要从弃牌堆拿牌）。
+    ///
+    /// # 这一格 2026-09-22 之前是个真的死局
+    ///
+    /// `legal_actions` 在 `Pending` 分支里提前 return（只给 `Choose`、不给 `EndTurn`），
+    /// 而每个 `Choose` 都被 `step` 那条 `n_hand < MAX_HAND` 的守卫挡住、原地不动，
+    /// `step(EndTurn)` 又因为 `pending != None` 原样返回 ——
+    /// **没有任何一个动作改得了状态，回合也结束不了，这一局再也走不下去。**
+    /// （3000 场随机战斗扫出一场：`FetchFromDiscard{1}` + 手牌 10 + 弃牌堆 6。）
+    ///
+    /// 当时这个测试断言的是**下游的止血**（求解器退回老口径、不报穷尽）。
+    /// 止血留着，但病因修在了 L1：[`step::close_pending_if_stuck`] 让内核吐出来的
+    /// `State` 永远不带一个推不动的 `Pending`。所以这里改成钉**那条不变量**。
+    #[test]
+    fn a_choice_that_cannot_close_is_never_a_dead_end() {
+        let mut s = audit_scene(12, &[100], &[card::DEFEND; 10], &[], &[card::STRIKE, card::BASH], 0);
+        s.pending = Pending::FetchFromDiscard { remaining: 1 };
+        // 场景立得住：这个 `Pending` 真的推不动（手牌满 10 张）
+        assert!(!crate::step::pending_is_satisfiable(&s), "场景立不住：这个选牌还推得动");
+        let (acts, n) = legal_actions(&s);
+        assert!(n > 0, "场景立不住：一个候选都没有");
+
+        // **每一个合法动作都必须真的推动局面**，而且推完之后选牌是关掉的
+        for &a in &acts[..n] {
+            let ns = step(s, a);
+            assert_ne!(ns, s, "死局：{:?} 原地不动", a);
+            assert_eq!(ns.pending, Pending::None, "{:?} 之后选牌还开着", a);
+        }
+        // 出口收口在 `step` 上，所以走一步就能结束回合
+        let out = step(s, acts[0]);
+        assert_ne!(step(out, Action::EndTurn), out, "走一步之后仍然结束不了回合");
+
+        // 求解器因此能正常作答：有线、有分数、而且是**穷尽**的
+        let sol = solve_turn_budget(&s, &Threat::NONE, score::survive_first, 200_000);
+        assert!(sol.line.score > i32::MIN, "没给分数");
+        assert!(sol.complete, "这个局面小得很，该搜得穷尽");
+        let end = crate::solver::replay_line(&s, sol.line.acts()).unwrap();
+        assert_eq!(end.pending, Pending::None, "线末选牌还开着");
+        assert_ne!(step(end, Action::EndTurn), end, "线末结束不了回合");
+    }
+
+    /// 止血本身还留着：**一个合法终点都没找到时不许报穷尽**。
+    ///
+    /// 病因修掉之后这条路只剩一个来源 —— **预算在闭环之前就用光**。
+    /// 用它来钉，比用一个已经不存在的死局来钉诚实。
+    #[test]
+    fn finding_no_legal_terminal_is_never_reported_as_exhaustive() {
+        let mut s = audit_scene(12, &[100], &[card::DEFEND; 10], &[], &[card::STRIKE, card::BASH], 0);
+        s.pending = Pending::FetchFromDiscard { remaining: 1 };
+        // 预算 0：根上开着选牌 ⇒ 不评"到此为止"，而第一个孩子就被预算拦住
+        let sol = solve_turn_budget(&s, &Threat::NONE, score::survive_first, 0);
+        assert!(sol.line.is_empty());
+        assert!(sol.line.score > i32::MIN, "没给分数");
+        assert!(!sol.complete, "一个合法终点都没走到，不许报穷尽");
+    }
+
+    /// **planner 不许把开着的选牌带进下一回合。**
+    ///
+    /// 涅奥之怒（从弃牌堆拿 2 张进手）打完能量就光了，拿不拿在这一回合的分数里是平的。
+    /// 2026-09-20 之前候选里有一条停在选牌之前的线，`end_turn_before_draw` 把 `Pending`
+    /// 原样带进下一回合，下一回合拿**新的**手牌和弃牌堆做一次幻影选牌 ——
+    /// 那条线的深层估值比做完选牌的高 650 分，而两者真实的未来一模一样。
+    #[test]
+    fn the_planner_never_hands_an_open_choice_to_the_next_turn() {
+        use crate::plan::{plan_candidates, plan_report, Plan};
+        let s = audit_scene(9, &[300], &[card::NEOW_WRATH], &[card::DEFEND; 10], &[card::POMMEL_STRIKE; 3], 1);
+        let th = rollout::predicted_threat(&s);
+        let cfg = Plan { depth: 2, ..Plan::default() };
+        let (cands, _) = plan_candidates(&s, &cfg, &th);
+        assert!(
+            cands.iter().any(|(l, _)| l.acts().iter().any(|a| matches!(a, Action::Choose { .. }))),
+            "场景立不住：候选里一条选牌都没有"
+        );
+        for (l, _) in &cands {
+            let e = crate::solver::replay_line(&s, l.acts()).unwrap();
+            assert_eq!(e.pending, Pending::None, "候选线停在选牌之前：{:?}", explain(&s, l.acts()));
+        }
+        let rep = plan_report(&s, &cfg, &th);
+        let e = crate::solver::replay_line(&s, rep.line.acts()).unwrap();
+        assert_eq!(e.pending, Pending::None, "planner 选的线停在选牌之前");
+        assert_eq!(crate::step::end_turn_before_draw(e).pending, Pending::None);
+    }
+
+    /// **往抽牌堆顶放牌不算抽牌。** `Line::drew` 管的是"抽到什么是不是猜的"。
+    ///
+    /// 判据原来是 `n_draw` 变没变，头槌的选牌让它 +1 也算。线里做完选牌之后
+    /// （开着的选牌不再算终点），`--live` 就在一张牌都没抽的线上印
+    /// 「抽穿了已知牌序（中途洗过牌）」。反过来那一半也要守住：真抽了牌照样要标。
+    #[test]
+    fn putting_a_card_on_the_draw_pile_is_not_drawing() {
+        let s = audit_scene(8, &[100], &[card::HEADBUTT], &[], &[card::STRIKE, card::DEFEND], 1);
+        let sol = solve_turn_budget(&s, &Threat::NONE, score::survive_first, 200_000);
+        assert!(
+            sol.line.acts().iter().any(|a| matches!(a, Action::Choose { .. })),
+            "场景立不住：线里没有那次放牌"
+        );
+        assert!(!sol.line.drew, "只往牌堆顶放了一张，却被记成抽过牌");
+
+        let s = audit_scene(8, &[100], &[card::FLASH_OF_STEEL], &[card::STRIKE, card::DEFEND], &[], 1);
+        let sol = solve_turn_budget(&s, &Threat::NONE, score::survive_first, 200_000);
+        assert!(sol.line.drew, "亮剑抽了一张，却没被标出来");
+    }
+
+    /// `explain` 对**弃牌堆**选牌要去弃牌堆查名字（头槌 / 涅奥之怒）。
+    ///
+    /// `bin/solve` 的逐步清单 2026-08-30 修过，`explain` 一直按手牌查 ——
+    /// 修 `Pending` 那一条之后线里的选牌多了，D=2 那一行会成批印出「选牌:<越界>」。
+    #[test]
+    fn explain_names_discard_choices_from_the_discard_pile() {
+        let s = audit_scene(8, &[100], &[card::HEADBUTT], &[], &[card::STRIKE, card::DEFEND], 1);
+        let names = explain(&s, &[Action::PlayCard { hand: 0, target: 0 }, Action::Choose { hand: 1 }]);
+        assert_eq!(names, vec!["头槌".to_string(), "选牌:防御".to_string()]);
+    }
+
+    // -----------------------------------------------------------------------
+    // 2026-09-22 代码审查修的三条。同一条规矩：先断言「场景立得住」，再断言行为。
+    // -----------------------------------------------------------------------
+
+    /// **注入式敌人回合和完整敌人回合，回合末必须逐字相同。**
+    ///
+    /// L2 的每一个叶子都走注入路径（`Threat::end_turn`），而 `injected_enemy_turn`
+    /// 2026-09-22 之前只 fire 了 `EnemyTurnStart`，三档 `EnemyTurnEnd*` 一个都没发。
+    /// 后果清一色是**乐观**（叶子上的敌人比真实的弱）：仪式/高压/领地意识不涨力量、
+    /// 覆甲不给格挡、沉睡/熟睡不掉层、宿敌不切无实体。
+    ///
+    /// 招式取**纯攻击**（`ops` 只有一条 `EOp::Attack`），这样差出来的东西只可能
+    /// 来自钩子，不可能来自招式自己的 op —— 少了这一条，测试会把
+    /// 「小啃兽啃咬并戒备自带 5 格挡」误当成钩子的功劳。
+    #[test]
+    fn the_injected_enemy_turn_fires_the_same_turn_end_hooks_as_the_real_one() {
+        use crate::ops::EOp;
+        // 找一手纯攻击招
+        let (def_ix, mv) = (0..ENEMIES.len())
+            .find_map(|d| {
+                let def = enemy_def(d as u16);
+                (0..def.moves.len())
+                    .find(|&m| matches!(def.moves[m].ops, [EOp::Attack { .. }]))
+                    .map(|m| (d as u16, m))
+            })
+            .expect("内容表里一手纯攻击招都没有");
+
+        let probe = |st: St, amt: i32| -> (State, State) {
+            let mut s = State::new(80, 99);
+            s.add_enemy(def_ix, 200);
+            for _ in 0..8 {
+                s.add_card(card::DEFEND, 0, 0);
+            }
+            let mut s = begin_combat(s);
+            s.enemy_move[0] = mv as u8;
+            s.enemies[0].set(st, amt);
+            let threat = rollout::predicted_threat(&s);
+            (threat.end_turn(s), step(s, Action::EndTurn))
+        };
+
+        // 覆甲：回合末给自己格挡（`Hook::EnemyTurnEndEarly`）
+        let (inj, full) = probe(St::PlatedArmor, 7);
+        assert_eq!(full.enemies[0].block, 7, "场景立不住：完整回合也没给格挡");
+        assert_eq!(inj.enemies[0].block, full.enemies[0].block, "注入回合漏了敌人的覆甲");
+
+        // 高压：回合末给自己加力量（`Hook::EnemyTurnEnd`）
+        let (inj, full) = probe(St::HighVoltage, 2);
+        assert_eq!(full.enemies[0].get(St::Strength), 2, "场景立不住：完整回合也没涨力量");
+        assert_eq!(
+            inj.enemies[0].get(St::Strength),
+            full.enemies[0].get(St::Strength),
+            "注入回合漏了敌人的高压"
+        );
+
+        // 沉睡：回合末掉 1 层（`Hook::EnemyTurnEnd`）—— 它决定族母什么时候醒
+        let (inj, full) = probe(St::Asleep, 2);
+        assert_eq!(full.enemies[0].get(St::Asleep), 1, "场景立不住：完整回合也没掉层");
+        assert_eq!(
+            inj.enemies[0].get(St::Asleep),
+            full.enemies[0].get(St::Asleep),
+            "注入回合漏了沉睡掉层"
+        );
+    }
+
+    /// **喝不了的药水，`step` 也必须拒绝。**
+    ///
+    /// `legal_actions` 一直查 `potion_is_automatic`（瓶中精灵），`use_potion`
+    /// 2026-09-22 之前没查 —— 两个入口对同一个局面给出两个答案（不变量 5）。
+    ///
+    /// 而且这条不一致不是无害的：`use_potion` 会先把槽位清空，
+    /// 而瓶中精灵的 ops 是空的（效果在 `try_fairy`）⇒ **保命药水白白扔掉、
+    /// 还返回一个"变了"的状态**，求解器那条 `ns == *s` 的守卫因此也接不住它。
+    #[test]
+    fn step_refuses_to_drink_an_automatic_potion() {
+        let mut s = hand_of(3, 60, &[card::STRIKE, card::DEFEND], 3);
+        s.potions[0] = potion::FAIRY;
+        s.potion_slots = 3;
+
+        // 场景立得住：`legal_actions` 确实不给这个动作
+        let (acts, n) = legal_actions(&s);
+        assert!(
+            !acts[..n].iter().any(|a| matches!(a, Action::UsePotion { slot: 0, .. })),
+            "场景立不住：legal_actions 居然给出了喝瓶中精灵"
+        );
+
+        assert_eq!(step(s, Action::UsePotion { slot: 0, target: 0 }), s, "step 喝掉了喝不了的药水");
+        assert_eq!(s.potions[0], potion::FAIRY, "瓶中精灵被清掉了");
+
+        // 它照常在"将要死"的那一刻发作 —— 拒绝喝不等于把它建废了
+        let mut dying = s;
+        dying.player.hp = 1;
+        let dead = crate::step::end_turn_with_incoming(dying, &{
+            let mut inc = crate::step::NO_INCOMING;
+            inc[0] = (50, 1);
+            inc
+        });
+        assert!(!dead.player_dead, "瓶中精灵没救人");
+        assert_eq!(dead.potions[0], potion::NONE, "救人之后瓶子该没了");
     }
 }

@@ -41,7 +41,11 @@ pub const ENEMY_HIST: usize = 4;
 /// **一格不剩**（`St::ALL` 正好 148 条）。照旧一次给 16 格，免得每建一只敌人都来动这里 ——
 /// roadmap 上第 1 幕剩下的批 4/5/6 还要 7 格，150 + 7 = 157 仍在这一档里。
 /// 代价照规矩实测记在 verification-log 里。
-pub const N_STATUS: usize = 164;
+/// **164 → 176（2026-09-25）**：一批 12 件遗物要 13 格（157 + 13 = 170）。
+/// **这次只给 12 格，不给 16**：`State` 离 4 KB 上限只剩三百来字节，
+/// 16 格要 192 字节，再扩一次就顶破了。剩下 6 格，再往后扩之前先清掉只映射不建模的那几格。
+/// 2026-09-25 同一天又用掉一格（`HandDrawBonus`，发牌加张数的记账量），剩 5 格。
+pub const N_STATUS: usize = 176;
 
 /// Status / power slots. Indexed into `Entity::status`.
 ///
@@ -912,6 +916,53 @@ pub enum St {
     /// 消失挂 `Hook::TurnEndLate`（[源码] `AfterSideTurnEnd`，`participants` 含我 ⇒ 只有我的回合结束才摘）。
     /// **mod 报的手牌费用已经含它**（`GetAmountToSpend`），`sync` 要先扣掉，见 `step::tangled_cost_addend`。
     Tangled,
+    // ---- 2026-09-25 一批 12 件遗物（两件赝品复用正品的 status，所以是 10 件的 13 格）。
+    // 全部是**遗物私有量**：游戏不报、不进 `ALL_ST`。数值和时点全部取自 [源码]。
+    /// 天鹅绒颈圈（[源码] `VelvetChoker.ShouldPlay`）：本回合打满**层数**张就不能再出牌（6）。
+    /// 和懒惰是同一个形状，消费点同一处：`step::cards_locked` + `step` 的 `PlayCard`。
+    /// 它的 +1 能量是 `ModifyMaxEnergy`，观测的 `max_energy` 本来就含，不重复建。
+    VelvetChoker,
+    /// 小提琴（[源码] `Fiddle`）：层数 = 开局发牌多几张（2，`ModifyHandDrawLate`）。
+    /// 同时是**回合中抽牌锁**的门：`ShouldDraw` 只放行回合开始那次发牌（`fromHandDraw`）
+    /// 和**不在我的回合**的抽牌 —— 消费点 `State::draw_one`，读 [`State::enemy_side`]。
+    Fiddle,
+    /// 钻石头冠（[源码] `DiamondDiadem.BeforeSideTurnEnd`）：我的回合末**本回合出牌 ≤ 2**
+    /// 就挂上 [`St::DiamondDiademActive`]。层数 = 挂上去的那个 power 的层数（1）。
+    DiamondDiadem,
+    /// 钻石头冠挂上的那个 power（[源码] `DiamondDiademPower`，`Single`）：**受到的有源攻击伤害 ×0.5**，
+    /// 敌人回合末（`AfterSideTurnEnd(Enemy)`）移除。消费点 `damage::apply_modifiers` 和
+    /// `damage::frozen_label_after_turn_end`（冻住的意图标签是它挂上之前算的）。
+    DiamondDiademActive,
+    /// 波纹水盆（[源码] `RippleBasin.BeforeSideTurnEnd`）：本回合**没打过攻击牌**就给层数点格挡（4）。
+    RippleBasin,
+    /// 风的女儿（[源码] `DaughterOfTheWind.AfterCardPlayed`）：每打出一张攻击牌给层数点格挡（1，`Unpowered`）。
+    DaughterOfTheWind,
+    /// 手里剑（[源码] `Shuriken`）：同回合每第 3 张攻击牌 +层数点力量（1）。和苦无同一个条件。
+    Shuriken,
+    /// 锁镰（[源码] `Kusarigama`）：同回合每第 3 张攻击牌，对随机一个敌人造成层数点伤害（6，`Unpowered`）。
+    Kusarigama,
+    /// 双截棍（[源码] `Nunchaku`）：每打出第 10 张攻击牌 +层数点能量（1）。计数在 [`St::NunchakuCount`]。
+    Nunchaku,
+    /// 双截棍**打出过几张攻击牌**（[源码] `AttacksPlayed`，`[SavedProperty]`，**跨战斗保留**）。
+    /// 走 `RelicDef::counter_to` 从面板计数器灌，和钢笔尖的 `PenNibCount` 同一条路。
+    NunchakuCount,
+    /// 棋子（[源码] `GamePiece.AfterCardPlayed`）：打出能力牌抽层数张（1）。
+    GamePiece,
+    /// 铁棒（[源码] `IronClub`）：每打出第 4 张牌（任意类型）抽层数张（1）。计数在 [`St::IronClubCount`]。
+    IronClub,
+    /// 铁棒**打出过几张牌**（[源码] `CardsPlayed`，`[SavedProperty]`，**跨战斗保留**）。同双截棍。
+    IronClubCount,
+    /// **这一手开局发牌多发几张**（佩尔之血 / 准备背包 / 花粉核心 / 小提琴，
+    /// [源码] `ModifyHandDraw` / `ModifyHandDrawLate` 那一族）。
+    ///
+    /// 不是遗物本身，是它们在 `Hook::TurnStart` 上**记的账**：`TOp::OwnerHandDraw`
+    /// 往这里加，`step::open_hand` 一次读完、清零。只在「回合开始、还没发牌」那一段
+    /// 非零 —— 那一段正是 planner 的机会节点，所以它**必须在状态里**（进指纹、进 `==`），
+    /// 不能是 `open_hand` 的参数。
+    ///
+    /// 2026-09-25 之前这几件是在 `TurnStart` 上**直接抽**，抽在机会节点之前 ——
+    /// 那几张牌取的是内核自己那次洗牌的牌序，机会节点枚举不到、换种子也不变。
+    HandDrawBonus,
 }
 
 impl St {
@@ -973,6 +1024,10 @@ impl St {
         St::HardenedShell, St::HardenedShellCap,
         St::Suck, St::Surprise, St::Thievery, St::Heist,
         St::Tangled,
+        St::VelvetChoker, St::Fiddle, St::DiamondDiadem, St::DiamondDiademActive,
+        St::RippleBasin, St::DaughterOfTheWind, St::Shuriken, St::Kusarigama,
+        St::Nunchaku, St::NunchakuCount, St::GamePiece, St::IronClub, St::IronClubCount,
+        St::HandDrawBonus,
     ];
 
     /// 这个下标叫什么（`St` 自带的 `Debug` 名）。超出 [`St::ALL`] 就是 `None`，
@@ -1394,6 +1449,17 @@ pub struct State {
     pub pending: Pending,
     pub player_dead: bool,
     pub combat_over: bool,
+    /// **现在是不是敌人那一边的回合**（[源码] `CombatState.CurrentSide == Enemy`）。
+    ///
+    /// `begin_enemy_turn` 置 true、`start_player_turn_before_draw` 置 false。
+    /// 对拍 / 求解的每一个决策点都在我的回合里，所以 `sync` 出来的局面恒为 false。
+    ///
+    /// 唯一的消费者是小提琴的抽牌锁（[源码] `Fiddle.ShouldDraw`：
+    /// `if (player.Creature.Side != CombatState.CurrentSide) return true`）——
+    /// 敌人回合里的抽牌（百年积木挨打抽 3、地精之角）**不拦**。
+    /// 做成字段而不是 status：它是回合结构本身，不是谁身上挂着的东西；
+    /// 而且一个 `bool` 落进了现有的对齐空隙，`State` 一个字节没涨。
+    pub enemy_side: bool,
 }
 
 impl State {
@@ -1441,6 +1507,7 @@ impl State {
             pending: Pending::None,
             player_dead: false,
             combat_over: false,
+            enemy_side: false,
         }
     }
 
@@ -1556,9 +1623,42 @@ impl State {
     }
 
     pub fn draw_one(&mut self) {
+        self.draw_one_impl(false);
+    }
+
+    pub fn draw_n(&mut self, n: i32) {
+        for _ in 0..n {
+            self.draw_one();
+        }
+    }
+
+    /// **回合开始那一次发牌**（[源码] `CardPileCmd.Draw(..., fromHandDraw: true)`，
+    /// 全游戏只有 `CombatManager` 发开局手牌那一处这么调）。
+    ///
+    /// 和 [`State::draw_n`] 只差一件事：**小提琴的锁不拦它**。
+    /// 唯一的客户是 `step::open_hand`，张数由 `step::hand_draw_count` 定
+    /// （`ModifyHandDraw` 那一族遗物加的张数也在那里面，不再单独先发）。
+    pub fn hand_draw_n(&mut self, n: i32) {
+        for _ in 0..n {
+            self.draw_one_impl(true);
+        }
+    }
+
+    fn draw_one_impl(&mut self, from_hand_draw: bool) {
         // 战斗专注「你在本回合内不能再抽任何牌」。放在**最前面**：连洗牌都不该发生，
         // 否则一次被禁止的抽牌仍然会推动 shuffle 流，让同种子的复现对不上。
-        if self.player.get(St::NoDraw) > 0 {
+        //
+        // **只在我的回合里拦**（2026-09-25 对齐源码）：[源码] `NoDrawPower.AfterSideTurnEnd` 在**我的**
+        // 回合结束就把自己移除，而内核把它放在 `TURN_SCOPED` 里清到下一个回合开始 —— 两边在每一个
+        // 决策点上的层数逐字相同，差的只有**敌人回合里**那几次抽牌（挨打的百年积木、荆棘打死敌人的地精之角），
+        // 原来被它多拦了。`fromHandDraw` 那一半（[源码] 第一句就放行）在内核里碰不到：
+        // 开局发牌之前 `TURN_SCOPED` 已经清过了，照源码写上。
+        if !from_hand_draw && !self.enemy_side && self.player.get(St::NoDraw) > 0 {
+            return;
+        }
+        // 小提琴（[源码] `Fiddle.ShouldDraw`）：**我的回合里**只放行开局发牌。
+        // 和战斗专注同一个位置、同一个理由（被拦的抽牌不许推动洗牌流）。
+        if !from_hand_draw && !self.enemy_side && self.player.get(St::Fiddle) > 0 {
             return;
         }
         if self.n_draw == 0 {
@@ -1570,12 +1670,6 @@ impl State {
         let Some(c) = self.pop_draw_top() else { return };
         self.hand[self.n_hand as usize] = c;
         self.n_hand += 1;
-    }
-
-    pub fn draw_n(&mut self, n: i32) {
-        for _ in 0..n {
-            self.draw_one();
-        }
     }
 
     /// Remove hand slot `i`, returning the card index.

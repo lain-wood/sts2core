@@ -157,10 +157,18 @@ impl Leaf {
 
 const GOLDEN: u64 = 0x9E37_79B9_7F4A_7C15;
 
-/// 一手抽几张。**只有这一处定义** —— `chance_children` / `sample_children` /
-/// `chance_is_certain` 三个地方各写一个 `5`，改起来必然漏一个。
-/// （`step::open_hand` 那个 5 是另一件事：那是 L1 的规则，这里是 L2 对它的预期。）
-const WANT: usize = 5;
+/// 这个机会节点上**这一手发几张** —— **问 L1**（[`step::hand_draw_count`](crate::step::hand_draw_count)），
+/// `open_hand` 发的就是这个数。
+///
+/// 2026-09-25 之前这里是 `const WANT: usize = 5`，注释说「那是 L2 对 L1 的预期」——
+/// 而那个预期在心灵腐化（少发）、手牌上限（手上留着保留牌）、佩尔之血那一族（多发）
+/// 下都是错的，错的样子是**概率和照样是 1、逐张进手概率歪掉**：枚举按 5 张挑出一个
+/// 多重集放到顶上，`open_hand` 只拿走其中 4 张，剩下那张永远是挑出来的第一张。
+/// 三个调用方（`chance_children` / `sample_children` / `chance_is_certain`）共用这一处。
+#[inline]
+fn want(s: &State) -> usize {
+    crate::step::hand_draw_count(s)
+}
 
 /// 一次跨回合搜索的参数。
 #[derive(Clone, Copy, Debug)]
@@ -866,15 +874,18 @@ pub struct Draw {
 
 /// 一张牌在"能不能抽到"这件事上的身份。
 ///
-/// 和 `solver::key` 里的 `card_ident` 同一个口径（id / 升级 / 腐化 / 加值 /
-/// 改过的费用），**因为"抽到哪一张"就是按这个口径区分的**：
-/// 两张同名但一张涨过费的牌，抽到哪张不一样。
+/// **就是 [`solver::card_ident`](crate::solver::card_ident)，不另写一份**
+/// ——「抽到哪一张」就是按这个口径区分的：两张同名但一张涨过费、
+/// 或者一张带锋利的牌，抽到哪张不一样。
+///
+/// 2026-09-20 之前这里自己拼了一份，注释写着"和 `card_ident` 同一个口径"，
+/// 实际**少了附魔的 `ench` / `ench_amt`**。后果不只是"确定性"判宽了：
+/// 带锋利的打击和普通打击被并成一组，`enumerate_takes` 按数组顺序取每组的
+/// 前几张，于是 6 张打击（1 张锋利）抽 5 时只给一个 `p = 1.0` 的孩子，
+/// 锋利那张**要么 100% 要么 0%**（看它在数组里的位置），真值是 5/6。
+/// `chance_node_tells_enchanted_copies_apart` 守着。
 fn ident(s: &State, ix: u8) -> u64 {
-    let c = s.cards[ix as usize];
-    (c.id as u64) << 40
-        | (c.flags as u64) << 24
-        | (c.bonus as u16 as u64) << 8
-        | (c.cost_delta as u8 as u64)
+    crate::solver::card_ident(s, ix)
 }
 
 fn binom(n: usize, k: usize) -> f64 {
@@ -972,22 +983,26 @@ pub fn distinct_hands(s: &State, r: usize) -> usize {
 /// 这个机会节点**真的确定**吗 —— [`chance_children`] 会不会返回单个 `p = 1.0`
 /// 的孩子。两种情况：
 ///
-/// 1. **前 5 张全是已知前缀**（`n_draw_known` 盖满一手）：身份全明确，
+/// 1. **这一手要发的全是已知前缀**（`n_draw_known` 盖满 [`want`] 张）：身份全明确，
 ///    头槌那类放到顶上的牌本来就不该当随机。
 /// 2. **抽牌堆凑不齐一手、而弃牌堆是空的**：剩下几张全抽走，没别的可能。
+///
+/// 「一手」是 [`want`] 张（问 L1），不是写死的 5：心灵腐化那一手只发 4 张时，
+/// 已知 4 张就已经确定了。
 ///
 /// # 它比「孩子只有一个」窄一点，这是**故意的**
 ///
 /// 枚举分支在退化情况下也会给出单个 `p = 1.0` 的孩子（未知区里所有牌
-/// 身份相同，比如整堆都是打击）。那种"确定"只确定到 [`ident`] 那个口径为止，
-/// 而 `ident` 今天**不含附魔的 `ench` / `ench_amt`** —— 带灵巧的防御和普通防御
-/// 会被并成一组（关键字那半跟着 `flags` 进来了，数值那半没有）。
-/// 拿一个已知欠定的身份口径去支撑"这一层是事实"，方向是乐观的，
-/// 所以这里**不认**它，代价只是少借几层深度。
+/// 身份相同，比如整堆都是打击）。这里**不认**那种单孩子，代价只是少借几层深度。
+///
+/// 原来的理由是 [`ident`] 不含附魔、那种"确定"是欠定的。2026-09-20 `ident`
+/// 换成了完整的 `card_ident`，这条理由已经不成立 —— 但**认它会改变确定性窗口的
+/// 行为**（多借层），那是另一次改动、要单独量，所以判据原样没动。
 pub fn chance_is_certain(s: &State) -> bool {
     let n = s.n_draw as usize;
-    let known = (s.n_draw_known as usize).min(n).min(WANT);
-    known == WANT || (n < WANT && s.n_disc == 0)
+    let want = want(s);
+    let known = (s.n_draw_known as usize).min(n).min(want);
+    known == want || (n < want && s.n_disc == 0)
 }
 
 /// 每只**活着的**敌人下一手都唯一吗。
@@ -1044,8 +1059,13 @@ pub fn window_is_certain(s: &State) -> bool {
 /// 它比 `bin/plan_audit` 筛确定性起点那两条（整堆已知 + 机器里没有 `Next::Rand`）
 /// **宽**，宽出来的正好是"抽牌定死了、敌人要掷骰"那一类 —— 审计台自己量到
 /// 14 个。那批局面里 K 开大照样便宜，只是"最优"没有定义、进不了那三个读数。
+///
+/// 那个张数用的是**基础** 5 张（`step::BASE_HAND_DRAW`），不是 [`want`]：
+/// 根是回合中途的局面，下一手发几张要等回合开始的钩子记完账才知道。
+/// 这里答的是「候选集开多大」这个**花钱**的问题，不进任何概率 ——
+/// 判宽判窄只改 K，不改哪个孩子拿多少权重。
 pub fn root_is_narrow(s: &State) -> bool {
-    (s.n_draw as usize) >= WANT && s.n_draw_known == s.n_draw
+    (s.n_draw as usize) >= crate::step::BASE_HAND_DRAW && s.n_draw_known == s.n_draw
 }
 
 /// **机会节点**：`s` 是「回合开始、还没抽牌」的局面
@@ -1071,8 +1091,9 @@ pub fn root_is_narrow(s: &State) -> bool {
 /// > 写在 [`chance_children`] 里那个分支上。
 pub fn chance_children(s: &State, cfg: &Plan, depth: usize) -> Vec<Draw> {
     let n = s.n_draw as usize;
-    let known = (s.n_draw_known as usize).min(n).min(WANT);
-    let r = WANT - known;
+    let want = want(s);
+    let known = (s.n_draw_known as usize).min(n).min(want);
+    let r = want - known;
 
     // **1. 真的确定的那两种情况 ⇒ 单个 `p = 1.0` 的孩子。**
     // 判据收口在 [`chance_is_certain`]（确定性窗口也读同一份，见 [`Plan::window`]）——
@@ -1102,7 +1123,7 @@ pub fn chance_children(s: &State, cfg: &Plan, depth: usize) -> Vec<Draw> {
     // 弃牌堆是空的时候它**仍然是确定的**（把抽牌堆剩下的全抽走，没别的可能），
     // 那种情况上面那条 `chance_is_certain` 已经接走了 —— 采 12 个一模一样的
     // 样本只是白花 12 倍的钱。
-    if n < WANT {
+    if n < want {
         return sample_children(s, cfg, depth);
     }
 
@@ -1179,7 +1200,7 @@ fn sample_children(s: &State, cfg: &Plan, depth: usize) -> Vec<Draw> {
     // **只在真要洗牌时动它。** 抽牌堆够抽的时候这一手已经被 `shuffle_unknown`
     // 定死了，`rng.shuffle` 只影响**更深层**的抽牌 —— 顺手改掉它就等于
     // 悄悄改了原有那条采样路径的行为（和这次要修的东西无关）。
-    let needs_reshuffle = (s.n_draw as usize) < WANT;
+    let needs_reshuffle = (s.n_draw as usize) < want(s);
     let mut out = Vec::with_capacity(w);
     let p = 1.0 / w as f64;
     for _ in 0..w {

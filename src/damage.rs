@@ -190,6 +190,11 @@ pub fn apply_modifiers(face: i32, attacker: &Entity, defender: &Entity) -> i32 {
     if defender.get(St::Flutter) > 0 {
         den *= 2;
     }
+    // 钻石头冠：[源码] `DiamondDiademPower.ModifyDamageMultiplicative` —— 防御方是持有者、
+    // 有源攻击 ⇒ `0.5m`。和翱翔 / 扑翼逐字同构。冻住的意图标签那条路见 `frozen_label_after_turn_end`。
+    if defender.get(St::DiamondDiademActive) > 0 {
+        den *= 2;
+    }
     let slow = defender.get(St::Slow);
     if slow > 0 {
         num *= (100 + slow) as i64;
@@ -206,6 +211,32 @@ pub fn apply_modifiers(face: i32, attacker: &Entity, defender: &Entity) -> i32 {
         d = 1;
     }
     d
+}
+
+/// **冻住的意图标签**在敌人真打下来那一刻还要补的乘区：**我的回合末才挂上的**那几个。
+///
+/// 对拍和 L2 的 `Threat::set` 拿观测到的意图标签直接扣血（`injected_enemy_turn` 的
+/// `live == false`），标签是同步那一刻按当时的局面算好的。今天只有一个乘区在那之后才出现：
+/// **钻石头冠**（[源码] `DiamondDiadem.BeforeSideTurnEnd` 挂 `DiamondDiademPower`，
+/// 我出牌的时候它根本不在身上），所以标签里一定没有它。
+///
+/// # 在取整过的标签上再乘一次为什么是精确的
+///
+/// 游戏算的是 `⌊x × 0.5⌋`（`x` = 面板值过完其余乘区的有理数，只取整一次），
+/// 标签是 `⌊x⌋`。对正整数除数恒有 `⌊⌊x⌋ / 2⌋ = ⌊x / 2⌋`，所以不丢精度。
+///
+/// **无实体 / 难以杀灭在身上时不补**：它们在乘区**之后**（第 7、8 步），标签已经被它们
+/// 改过，原来的 `x` 还原不出来。无实体下标签是 1、真值也是 1，不补正好对；
+/// 难以杀灭玩家身上今天没有，真遇上了按不减半算（多挨，不高估自己）。
+#[inline]
+pub fn frozen_label_after_turn_end(label: i32, defender: &Entity) -> i32 {
+    if label <= 0 || defender.get(St::DiamondDiademActive) == 0 {
+        return label;
+    }
+    if defender.get(St::Intangible) > 0 || defender.get(St::DamageCap) > 0 {
+        return label;
+    }
+    label / 2
 }
 
 /// **不吃乘区的那一档伤害**（[源码] `ValueProp.Unpowered`：

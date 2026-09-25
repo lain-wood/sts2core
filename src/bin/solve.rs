@@ -44,6 +44,39 @@ use sts2core::solver::{
 use sts2core::state::State;
 use sts2core::step::Action;
 
+/// 在选牌那一步上，**和线里选的那张同分（或更高）的其它选项**，以及几次续搜是不是都搜完了。
+///
+/// 每个选项各续搜一次（同一威胁、同一目标函数、同一预算、不碰药水 —— 和建议线
+/// 同一口径），比的是"选完之后这一回合最好能打成几分"。
+fn tied_choices(
+    st: &State,
+    chosen: Action,
+    threat: &Threat,
+    scorer: fn(&State) -> i32,
+    budget: u32,
+) -> (Vec<Action>, bool) {
+    let cont = |x: State| solve_turn_potions(&x, threat, scorer, budget, 0);
+    let mine = cont(sts2core::step(*st, chosen));
+    let mut all_done = mine.complete;
+    let mut tied = Vec::new();
+    let (acts, n) = sts2core::step::legal_actions(st);
+    for &alt in &acts[..n] {
+        if alt == chosen || !matches!(alt, Action::Choose { .. }) {
+            continue;
+        }
+        let ns = sts2core::step(*st, alt);
+        if ns == *st {
+            continue;
+        }
+        let o = cont(ns);
+        all_done &= o.complete;
+        if o.line.score >= mine.line.score {
+            tied.push(alt);
+        }
+    }
+    (tied, all_done)
+}
+
 /// 一个回合的比较结果。
 enum Turn {
     /// 比不了，附原因
@@ -767,21 +800,10 @@ fn live_advise(
             // 于是印出了「选牌:巨像」，可弃牌堆里那时只有御血术一张。
             // 名字错了不会让内核算错，但会让读输出的人（我）判断错，
             // 而这一行的全部意义就是给人读。
+            //
+            // 查名字收口在 `solver::choice_card`（`explain` 也走它）。
             Action::Choose { hand } => {
-                let i = hand as usize;
-                let cix = match st.pending {
-                    // 候选是弃牌堆
-                    sts2core::state::Pending::FetchFromDiscard { .. } | sts2core::state::Pending::DiscardToDrawTop { .. } => {
-                        (i < st.n_disc as usize).then(|| st.disc[i])
-                    }
-                    // 候选是手牌
-                    sts2core::state::Pending::ExhaustFromHand { .. }
-                    | sts2core::state::Pending::PutToDrawPile { .. }
-                    | sts2core::state::Pending::UpgradeInHand { .. } => (i < st.n_hand as usize).then(|| st.hand[i]),
-                    // 没挂 Pending 却出现了 Choose：不该发生，但不猜
-                    sts2core::state::Pending::None => None,
-                };
-                match cix {
+                match sts2core::solver::choice_card(&st, hand as usize) {
                     Some(c) => println!(
                         "  {}. 选牌[{}] {}",
                         k + 1,
@@ -789,6 +811,28 @@ fn live_advise(
                         sts2core::content::card(st.cards[c as usize].id).name
                     ),
                     None => println!("  {}. 选牌[{}] <越界>", k + 1, hand),
+                }
+                // **这一张是不是任选的。** 2026-09-20 起开着选牌的局面不再算终点，
+                // 线里一定把选牌做完 —— 于是几个选项在这一回合的分数里一样时，
+                // 线里写的只是搜索**先碰到的那一张**。头槌把哪张放到牌堆顶、
+                // 烙印消耗哪张，单回合目标函数都看不见后面几个回合，照着一个任意的
+                // 选择打比没有建议更糟，所以并列就点名。
+                let (tied, all_done) = tied_choices(&st, *a, &threat, scorer, budget);
+                if !tied.is_empty() {
+                    let names: Vec<&str> = tied
+                        .iter()
+                        .filter_map(|&c| match c {
+                            Action::Choose { hand } => sts2core::solver::choice_card(&st, hand as usize)
+                                .map(|ix| sts2core::content::card(st.cards[ix as usize].id).name),
+                            _ => None,
+                        })
+                        .collect();
+                    println!(
+                        "     ↑ **任选**：这一回合的分数上和 {} 并列{} —— 选哪张影响的是后面几个回合，\
+                         单回合求解器看不见，按自己判断",
+                        names.join("、"),
+                        if all_done { "" } else { "（有的分支没搜完，并列只是下界）" }
+                    );
                 }
             }
             Action::UsePotion { slot, target } => {

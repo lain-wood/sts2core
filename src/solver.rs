@@ -49,7 +49,7 @@
 use std::collections::HashSet;
 
 use crate::content::card;
-use crate::state::{State, MAX_ENEMIES};
+use crate::state::{Pending, State, MAX_ENEMIES};
 use crate::step::{legal_actions, step, Action, NO_INCOMING};
 
 /// 一条线最多几个动作。一回合能打出的牌被能量卡着，实战里 6-8 张已经是上限，
@@ -934,6 +934,9 @@ pub mod score {
 /// * 弃牌堆按**多重集**算 —— 洗牌是随机的，顺序不同的两个弃牌堆洗出来的结果
 ///   在期望上没有区别，而真实牌序本来就不可知
 /// * 消耗堆只算**张数** —— 只有灰烬打击读它，读的是张数
+/// * **规则会读的计数器都要进**：每回合那几个（踩踏/怨恨/邪眼），外加整场累加的
+///   `hp_loss_hits`（扯碎）—— 后者 2026-09-20 才补上，见 [`key`] 里那一行
+///
 /// 一个 64 位的雪崩混合（splitmix64 的 finalizer）。
 ///
 /// 它就是**按需生成的 Zobrist 表**：Zobrist 要的是"每个 (位置, 取值) 一个
@@ -1054,6 +1057,13 @@ pub fn key(s: &State) -> u64 {
     mix(s.attacks_played as u64, &mut h);
     mix(s.exhausted_this_turn as u64, &mut h);
     mix(s.hp_lost_this_turn as u64, &mut h);
+    // **本场挨穿过几次**（扯碎的段数、`optimistic_damage` 都读它）。
+    // 它和上面那个不是一回事：同样掉 3 血，可以是一次 3 点也可以是 1 + 2 两次 ——
+    // 荆棘反弹和格挡谁先谁后就能做到。2026-09-20 之前漏了这一栏，
+    // 两个局面指纹相同而扯碎一个打 10 一个打 15，后访问到的那个被当成重复剪掉，
+    // 结构化网格里 5760 次求解丢了 362 次最优线。
+    // `dedup_keeps_states_that_differ_only_in_hp_loss_hits` 守着。
+    mix(s.hp_loss_hits as u64, &mut h);
     mix(s.free_attack as u64, &mut h);
     mix(s.last_damage as u64, &mut h);
     for p in s.potions.iter() {
@@ -1279,9 +1289,41 @@ impl Search<'_> {
         }
     }
 
+    /// 这个局面上还有没有能往下走的动作（结束回合不算，不许碰的药水不算）。
+    fn has_move(&self, s: &State) -> bool {
+        let (acts, n) = legal_actions(s);
+        acts[..n].iter().any(|&a| match a {
+            Action::EndTurn => false,
+            Action::UsePotion { slot, .. } => self.allowed_potions & (1u16 << slot) != 0,
+            _ => true,
+        })
+    }
+
     fn dfs(&mut self, s: &State, drew: bool) {
-        self.consider_stopping_here(s, drew);
-        if s.combat_over || self.cur.n as usize >= MAX_LINE {
+        // **开着子选择的局面不是合法终点**：`legal_actions` 这时只给 `Choose`，
+        // `step(EndTurn)` 原地不动 —— 游戏里不选完就结束不了回合。
+        //
+        // 2026-09-20 之前这里无条件评"到此为止"，而 `end_turn_impl` 不看 `Pending`，
+        // 于是"打出头槌、不选"被当成一条合法的线来打分。更糟的是**并列时短线赢**：
+        // 只要那次选择在这一回合的分数里是平的，返回的线就系统性地停在选牌之前
+        // （`complete = true`）。planner 那边再拿这条线走 `end_turn_before_draw`，
+        // `Pending` 原样带进下一回合，下一回合拿**新的手牌和弃牌堆**做一次幻影选牌
+        // （涅奥之怒那例估值虚高 650 分）。
+        //
+        // 战斗已经结束的例外：打出最后一张牌的同时立了标记，那一刻仗就打完了。
+        if s.pending == Pending::None || s.combat_over {
+            self.consider_stopping_here(s, drew);
+        }
+        if s.combat_over {
+            return;
+        }
+        if self.cur.n as usize >= MAX_LINE {
+            // **线被截断了而局面还能往下走 ⇒ 不是穷尽。** 2026-09-20 之前这里
+            // 直接 return、`complete` 照报 true —— 0 费过牌链（亮剑）能搜到第 24 步
+            // 停下，再合法打一张分数还能涨，报告却说"穷尽"。
+            if self.has_move(s) {
+                self.complete = false;
+            }
             return;
         }
         let (acts, n) = legal_actions(s);
@@ -1310,7 +1352,11 @@ impl Search<'_> {
             if !self.seen.insert(key(&ns)) {
                 continue;
             }
-            let drew = drew || ns.n_draw != s.n_draw;
+            // 「抽过牌」= 从抽牌堆**拿走**过牌（抽、翻顶、消耗顶），或者洗过牌。
+            // **往上放牌不算**：头槌 / 战吼的选牌让 `n_draw` +1，2026-09-20 之前那也被
+            // 记成"抽过牌"，而线里做完选牌之后（见上面 `Pending` 那一条）它就会触发
+            // `--live` 那句「抽穿了已知牌序（中途洗过牌）」—— 一张牌都没抽、也没洗。
+            let drew = drew || ns.n_draw < s.n_draw || ns.rng.shuffle != s.rng.shuffle;
             // 能力牌要在 `step` **之前**认（牌打出去就离手了）。
             // `power_reserve == 0` 时这一句短路，主线一分钱不多花。
             let pw = (self.power_reserve > 0 && plays_power_card(s, a)) as u32;
@@ -1491,6 +1537,14 @@ pub fn solve_turn_potions(
     };
     sr.cur.score = 0;
     sr.dfs(s, false);
+    if sr.best.score == i32::MIN {
+        // **一个合法终点都没找到**：根上开着子选择，而每个选项都走不动
+        // （比如手牌满了还要从弃牌堆拿牌），或者预算在闭环之前就用光了。
+        // 退回老口径 —— 把根当终点评一次，调用方总能拿到一条线和一个分数 ——
+        // 但**不许报穷尽**：这条"线"在游戏里结束不了回合。
+        sr.consider_stopping_here(s, false);
+        sr.complete = false;
+    }
     Solved { line: sr.best, nodes: sr.nodes, complete: sr.complete, baseline }
 }
 
@@ -1742,6 +1796,26 @@ pub fn score_line(
     Some(score(&threat.end_turn(end)))
 }
 
+/// `Action::Choose { hand: i }` 选中的是哪张牌（`cards` 里的下标）。
+///
+/// **候选集在哪个牌堆由 `Pending` 说了算**：头槌 / 涅奥之怒是弃牌堆，
+/// 烙印 / 战吼 / 武装是手牌 —— 字段名 `hand` 是历史遗留（见 `legal_actions`）。
+/// `bin/solve` 的逐步清单 2026-08-30 修过一次这个错，而 [`explain`] 一直按手牌查，
+/// D=2 那一行和保底线因此会印出「选牌:<越界>」或者一张弃牌堆里没有的牌。
+/// 两处现在共用这一份。
+pub fn choice_card(s: &State, i: usize) -> Option<u8> {
+    match s.pending {
+        Pending::FetchFromDiscard { .. } | Pending::DiscardToDrawTop { .. } => {
+            (i < s.n_disc as usize).then(|| s.disc[i])
+        }
+        Pending::ExhaustFromHand { .. }
+        | Pending::PutToDrawPile { .. }
+        | Pending::UpgradeInHand { .. } => (i < s.n_hand as usize).then(|| s.hand[i]),
+        // 没挂 Pending 却出现了 Choose：不该发生，但不猜
+        Pending::None => None,
+    }
+}
+
 /// 把一条线翻译成人能读的一串描述（牌名 + 目标槽位）。
 ///
 /// 必须重放才能翻译：动作里的 `hand` 是执行到那一步时的下标。
@@ -1769,10 +1843,9 @@ pub fn explain(s: &State, acts: &[Action]) -> Vec<String> {
                 }
             }
             Action::Choose { hand } => {
-                let name = if (hand as usize) < st.n_hand as usize {
-                    card(st.cards[st.hand[hand as usize] as usize].id).name.to_string()
-                } else {
-                    "<越界>".to_string()
+                let name = match choice_card(&st, hand as usize) {
+                    Some(c) => card(st.cards[c as usize].id).name.to_string(),
+                    None => "<越界>".to_string(),
                 };
                 out.push(format!("选牌:{name}"));
             }

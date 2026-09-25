@@ -84,9 +84,9 @@ pub fn grant_relic(s: &mut State, def: &RelicDef, counter: Option<i32>);  // L3 
 改代码前先确认没有破坏这些。它们是性能和正确性的地基：
 
 1. **`State` 保持 POD + `Copy`。** 不许出现 `Vec` / `HashMap` / `Box` / 引用，
-   clone 必须是一条 memcpy。当前 **3736 字节**，`state_is_a_value` 守着 4 KB 上限。
-   `N_STATUS` = 164，用了 157 格：再往后加要么继续扩（`State` 按 `Entity` × 6 涨），
-   要么先清掉只映射不建模的那几格。**每次扩容都要拿 `bin/bench` 连跑三次量代价**，
+   clone 必须是一条 memcpy。当前 **3880 字节**，`state_is_a_value` 守着 4 KB 上限。
+   `N_STATUS` = 176，用了 171 格：**再扩 16 格就顶破 4 KB**（每格 12 字节，还剩约 216 字节），
+   下一次要加之前先清掉只映射不建模的那几格。**每次扩容都要拿 `bin/bench` 连跑三次量代价**，
    读数记进 verification-log。
    `CardInst` 是 8 字节 × 128 张 = 1024 字节，占三分之一；`flags` 是 `u8`，
    **还剩 2 个位**。`solver.rs` 里一条 `size_of::<CardInst>() == 8` 的编译期断言守着
@@ -175,7 +175,7 @@ cargo run --release --bin act_eval    -- traces/act*.json
 2. **抽牌只有当前这一堆是确定的。** `draw_pile_order` 补丁之后 `sync` 整堆照抄；
    抽牌堆抽空之后那次洗牌的结果不可知（游戏的 `Rng.Shuffle` 状态没暴露）。
    老 trace 没这个字段，照旧自己洗一个样本。`Line::drew` 把这件事标出来。
-3. **预算用光就退化成启发式排名**，`Solved::complete` 报出来。手牌一大，
+3. **预算用光（或者线长顶到 `MAX_LINE` 24 步）就退化成启发式排名**，`Solved::complete` 报出来。手牌一大，
    "穷尽搜索"这个前提就开始失效。**读 `--live` 时看 `complete` 那一列。**
 4. **从战斗中途接入时**（实战驱动永远是中途），「一场只用得掉一次」的遗物一律当成已经用掉
    （`content::spent_once_per_combat`）：前面发生过什么不可知，宁可低估自己。

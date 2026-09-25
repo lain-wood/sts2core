@@ -1239,6 +1239,22 @@ pub fn st_name(s: St) -> &'static str {
         St::Thievery => "偷窃",
         St::Heist => "盗窃",
         St::Tangled => "缠结",
+        // 2026-09-25 一批遗物（名字取自本地化表 `*.title`）
+        St::VelvetChoker => "天鹅绒颈圈",
+        St::Fiddle => "小提琴",
+        St::DiamondDiadem => "钻石头冠",
+        St::DiamondDiademActive => "钻石头冠·减半",
+        St::RippleBasin => "波纹水盆",
+        St::DaughterOfTheWind => "风的女儿",
+        St::Shuriken => "手里剑",
+        St::Kusarigama => "锁镰",
+        St::Nunchaku => "双截棍",
+        St::NunchakuCount => "双截棍·攻击计数",
+        St::GamePiece => "棋子",
+        St::IronClub => "铁棒",
+        St::IronClubCount => "铁棒·出牌计数",
+        // 内核私有的记账量（`open_hand` 读完就清），游戏不报，不进 diff
+        St::HandDrawBonus => "开局发牌·加张数",
     }
 }
 
@@ -2256,6 +2272,11 @@ impl Replayer {
             s.free_attack = n;
             self.counters.free_attack = n;
         }
+        // 本回合出牌数同理：带着天鹅绒颈圈 / 钻石头冠时面板上就是它。见 `observed_cards_played`。
+        if let Some(n) = observed_cards_played(&obs.relics) {
+            s.cards_played = n;
+            self.counters.cards_played = n;
+        }
         // 扯碎的段数同理：卡面上那个「命中 N 次」是游戏算好的，比内核自己
         // 从同步那一刻起数的靠谱。读不出来（牌不在手上 / 换了语言）就用携带值，
         // 那是个**下界** —— 方向是低估，和本仓库其它拿不到数时的处置一致。
@@ -2269,6 +2290,14 @@ impl Replayer {
         } else if !obs.pending {
             self.pending = Pending::None;
         }
+        // 携带过来的那个 `Pending` 是**上一帧**的，而牌区是**这一帧**观测灌的 ——
+        // 两者可能已经对不上（最典型的是手牌在这中间满了，头槌/涅奥之怒因此
+        // 再也捞不回来）。`sync` 是 `step` / `begin_combat` 之外第三个产出 `State`
+        // 的地方，所以同一条出口收口也要走一遍，否则内核对外那条
+        // 「拿到手的 `State` 不会带着推不动的 `Pending`」就漏了一个口子 ——
+        // 而漏掉的恰恰是**实战驱动**那条路。见 `step::close_pending_if_stuck`。
+        crate::step::close_pending_if_stuck(&mut s);
+        self.pending = s.pending;
 
         unmapped.sort();
         unmapped.dedup();
@@ -2596,6 +2625,24 @@ pub const STATUS_HANDLED_OUTSIDE_MAP: &[&str] = &[FREE_ATTACK_STATUS];
 
 pub fn observed_free_attack(status: &BTreeMap<String, i32>) -> Option<i32> {
     status.get(FREE_ATTACK_STATUS).copied()
+}
+
+/// 面板计数器**就是本回合已出牌数**的遗物。
+///
+/// [源码] 两件都自己数 `_cardsPlayedThisTurn`（`AfterCardPlayed` 里 `++`，只数我的牌），
+/// `DisplayAmount` 直接返回它：天鹅绒颈圈在 `BeforeSideTurnStart` 清零，
+/// 钻石头冠在我的 `BeforeSideTurnEnd` 清零 —— 我的回合里两者都等于 `cards_played`。
+///
+/// 为什么要读：`cards_played` 是 `TurnCounters` 里**游戏不报**的那一批，单帧同步
+/// （`solve_now.py` 没有录制中的 trace 时）只能当 0。带着天鹅绒颈圈时那就是
+/// **非法线**：第 4 张出完再同步，求解器以为还能再出 6 张。能观测就以观测为准。
+pub const CARDS_PLAYED_COUNTER_RELICS: &[&str] = &["VELVET_CHOKER", "DIAMOND_DIADEM"];
+
+pub fn observed_cards_played(relics: &[RelicObs]) -> Option<i32> {
+    relics
+        .iter()
+        .filter(|r| CARDS_PLAYED_COUNTER_RELICS.contains(&r.id.as_str()))
+        .find_map(|r| r.counter)
 }
 
 /// 观测到的某个 status 的层数（id 走 `map_status`，英文 id 和中文名都认；没有就是 0）。

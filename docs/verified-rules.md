@@ -378,9 +378,23 @@ r2=4 · r3=3 · r4=2（打了一张 ->3）· r5=2（再打一张 ->3）· r6=2 �
 | 保留（`F_RETAIN`） | 上一回合没弃掉的留在手上 | `[源码]`+`[实测]` |
 | 上限 | 手牌 10 张封顶 | `[实测]` |
 
-**内核把这几件都建成"回合开始多抽 N 张"而不是"把 5 改成 5+N"** ——
-`Hook::TurnStart` 在 `open_hand` 之前跑，先抽 N 再抽 5 和一次抽 5+N
-从牌堆顶取到的是同一批牌。
+**这一手发几张只有一处定义：`step::hand_draw_count`**（2026-09-25），`open_hand` 发的就是它，
+planner 的机会节点也读它。照 `[源码]` `CombatManager.SetupPlayerTurn` 的顺序：
+
+1. `Hook.ModifyHandDraw(5)`：佩尔之血 / 准备背包 / 花粉核心**加**，心灵腐化**减**、到 0 封底。
+   内核里这几件挂在 `Hook::TurnStart` 上**只记账**（`TOp::OwnerHandDraw` 加进 `St::HandDrawBonus`），
+   不先抽；
+2. `ModifyHandDrawLate`：小提琴 +2。内核并进第 1 步那笔加张数，只在「5 + 加张数 − 心灵腐化 < 0」时
+   和源码不同（心灵腐化今天只有 1 层）；
+3. `CardPileCmd.Draw`：**手牌上限封顶**，手满了一张不抽、**也不洗牌**（`num == 0` 直接返回，
+   在 `ShuffleIfNecessary` 之前）。
+
+摆动球**不在这里面**：它是 `AfterPlayerTurnStart` 里的真抽牌（小提琴拦它），内核仍挂在 `TurnStart` 上。
+
+> 2026-09-25 之前这几件是在 `TurnStart` 上**直接抽 N 张**，理由是"先抽 N 再抽 5 和一次抽 5+N
+> 从牌堆顶取到的是同一批牌"。**对 L1 自己确实一样**，逐帧对拍看不出区别 —— 但那 N 张抽在 planner 的
+> 机会节点**之前**，取的是内核自己那次洗牌的牌序：机会节点枚举不到、换种子也不变。
+> 而机会节点那边写死按 5 张枚举，心灵腐化 / 手牌上限下也是错的。见 verification-log 同日条目。
 
 ### 摆动球的相位：观测到的计数器**已经加过这一场的回合数了**
 
@@ -1172,6 +1186,48 @@ VeryEarly -> Early -> Before 三档依次跑），沉睡是它唯一的消费者
 > **打法**：缠结值的不是血是**回合** —— `advise` 单场问法（A10，256 次）把它摘掉对比：
 > 起手牌组 终点血量 p50 不动、p10 39 -> 30、回合 p50 3 -> 4；13 张带四张额外攻击牌的牌组战损 p50 23 -> **31**、回合 2 -> 3。
 > 紧绕藤蔓之后那一回合攻击贵 1，拖出来的那一回合正好吃大啃 16。**紧绕藤蔓那一回合前先把血量压低**，或者那一回合转去挡。
+
+## 2.26 预先补的 12 件遗物（2026-09-25，**全部 `[源码]`，未实测**）
+
+**没有一件在实录里出现过**，所以 79 条语料一个字节都没动 —— 下面每一条都只被单元测试守着，
+第一次带着它们打仗时要重点看对拍。
+
+| 遗物 | 规则 | 源码出处 | 守卫 |
+|---|---|---|---|
+| 天鹅绒颈圈 | 本回合打满 6 张就**不能再出牌**，**自动打出的也拦**（进结果堆、不结算）；+1 能量是 `ModifyMaxEnergy`，观测的 `max_energy` 已含 | `VelvetChoker.ShouldPlay(card, _)` · `CardCmd.AutoPlay`：`ShouldPlay` 为 false 和 `Unplayable` 同一句 `MoveToResultPileWithoutPlaying` | `velvet_choker_stops_the_seventh_card_and_resets_next_turn` · `play_cap_also_blocks_autoplay_from_exhaust` |
+| 懒惰（顺带） | 同上：**自动打出的也拦**（它的 `ShouldPlay` 也不看 `AutoPlayType`）。内核原来只拦手动出牌 | `SlothPower.ShouldPlay(card, _)` | 同上（两件共用 `step::play_cap_reached`） |
+| 小提琴 | 开局发牌 +2；**我的回合里**除开局发牌外一张都抽不到；**敌人回合里的抽牌不拦** | `Fiddle.ModifyHandDrawLate` · `ShouldDraw(player, fromHandDraw)`：`fromHandDraw` 放行、`Side != CurrentSide` 放行 · 全游戏只有 `CombatManager` 发开局手牌那一处传 `fromHandDraw: true` | `fiddle_draws_seven_then_locks_draws_for_the_rest_of_my_turn` · `fiddle_does_not_lock_draws_during_the_enemy_turn` |
+| 「发牌」和「抽牌」 | 佩尔之血 / 准备背包 / 花粉核心改的是**发牌张数**（小提琴不拦）；摆动球是 `AfterPlayerTurnStart` 里的**真抽牌**（小提琴拦） | 前三件 `ModifyHandDraw` · `Pendulum.AfterPlayerTurnStart` → `CardPileCmd.Draw` | 同上（带佩尔之血开局 8 张、带摆动球那一张被拦） |
+| 钻石头冠 | 我的回合末本回合出牌 ≤ 2 ⇒ 挂上一个 power：**受到的有源攻击伤害 ×0.5**（乘区，和别的乘区一起只取整一次），**敌人回合末**摘掉 | `DiamondDiadem.BeforeSideTurnEnd`（`<= CardThreshold`，2）· `DiamondDiademPower.ModifyDamageMultiplicative` 带 `IsPoweredAttack` · `AfterSideTurnEnd(Enemy)` 移除 | `diamond_diadem_halves_the_next_enemy_turn_only_after_a_short_turn` |
+| 钻石头冠 × 冻住的意图标签 | 标签是**我出牌时**算的，那时 power 还没挂 ⇒ 注入路径要在标签上补 ×0.5。**在取整过的标签上再减半是精确的**：`⌊⌊x⌋/2⌋ = ⌊x/2⌋`。无实体 / 难以杀灭在身上时不补（它们在乘区之后，标签已经被改过） | 同上 | 同上（冻住 / 现算两条路各测一遍）· `frozen_label_halving_respects_intangible` |
+| 波纹水盆 | 我的回合末本回合**没打过攻击牌** ⇒ 4 格挡（`Unpowered`），在敌人出手之前 | `RippleBasin.BeforeSideTurnEnd` 翻 `CardPlaysFinished` | `ripple_basin_blocks_only_on_a_turn_without_attacks` |
+| 风的女儿 | 每打出一张攻击 1 格挡，`Unpowered` ⇒ **不吃敏捷** | `AfterCardPlayed` · `BlockVar(1, Unpowered)`、`GainBlock(.., null)` | `daughter_of_the_wind_gives_one_block_per_attack_ignoring_dexterity` |
+| 手里剑 | 同回合第 3/6/9… 张攻击 +1 力量（和苦无同一个条件） | `AttacksPlayedThisTurn % 3 == 0` | `shuriken_fires_every_third_attack` |
+| 锁镰 | 同上的条件，随机一个敌人 6 点，`Unpowered` ⇒ **不吃力量** | `Rng.CombatTargets.NextItem(HittableEnemies)` · `DamageVar(6, Unpowered)` | `kusarigama_hits_a_random_enemy_on_every_third_attack_without_strength` |
+| 双截棍 / 铁棒 | 第 10 张攻击 +1 能量 / 第 4 张牌（任意）抽 1；**计数器跨战斗**，从面板灌 | `AttacksPlayed` / `CardsPlayed` 带 `[SavedProperty]` · `% n == 0` | `nunchaku_counts_across_combats_and_tolerates_the_activating_display` · `iron_club_draws_on_every_fourth_card_of_any_kind` |
+| 面板计数器触发后那一秒显示 n | 同步恰好读到 n 时要当 0：**判倍数，不判 ≥ n** | `DisplayAmount` 在 `IsActivating` 时返回 `Cards.IntValue`（钢笔尖同一个写法） | 同上（灌 10 再打一张：不给） |
+| 棋子 | 打出能力牌抽 1（真抽牌 ⇒ 小提琴拦） | `AfterCardPlayed`，`CardType.Power` | `game_piece_draws_on_power_and_is_locked_by_fiddle` |
+| 打击木偶？？？ / 奥利哈钢？？？ | 和正品**逐字同一个类**，只有数值不同（1 / 3）；和正品同时带着时相加（奥利哈钢两件各判各的，结果等于 6+3） | 两对 `.cs` 逐行 diff 只差类名、稀有度、`MerchantCost` 和那一个数 | `fake_strike_dummy_and_fake_orichalcum_stack_with_the_real_ones` |
+| 颈圈 / 头冠的面板计数器 | **就是本回合已出牌数** ⇒ 单帧同步时拿它覆盖不可知的 `cards_played` | 两件都自己数 `_cardsPlayedThisTurn` 并 `DisplayAmount` 返回它 | `cards_played_is_read_from_the_choker_or_diadem_counter` |
+
+**已知没建的**：
+
+* 颈圈等几件 `ModifyMaxEnergy` 的 +1 能量在 **L3 战斗外**拿不到（advise 在战斗外读不到能量上限，按 3 算并报一句）——
+  这是所有加能量上限遗物共有的洞，不是这一件的
+* 单帧同步（没有录制中的 trace）时 `attacks_played` 不可知、按 0 算 ⇒ 波纹水盆偏乐观、手里剑 / 锁镰的第 3 张可能数错。
+  和苦无、踩踏同一个老洞；颈圈 / 头冠那两个计数器只补得上 `cards_played`
+* ~~战斗专注在敌人回合里多拦抽牌~~ **同一天对齐了**，见下一条
+
+### 2.26.1 战斗专注的「不能再抽牌」到**我的回合结束**为止（2026-09-25，`[源码]`，未实测）
+
+| 规则 | 源码出处 | 守卫 |
+|---|---|---|
+| 同一回合里的抽牌照旧被拦；**敌人回合里的抽牌不拦**（挨打的百年积木、荆棘打死敌人的地精之角）；开局发牌不拦 | `NoDrawPower.ShouldDraw`：`fromHandDraw` 放行 · `AfterSideTurnEnd` 且 participants 含我 ⇒ 移除 | `battle_trance_stops_draws_only_until_my_turn_ends` |
+
+内核没挪它的清零时点（仍在 `TURN_SCOPED`、我的下一个回合开始清），而是在锁上加了 `!State::enemy_side`：
+**每一个决策点上两者的层数逐字相同**（游戏那边已经移除，内核这边已经清零），差的只有敌人回合里那几次抽牌。
+对拍语料一帧都没碰到它；变的只有推演（fight_eval 死亡 487 -> 486，act_eval 3842 -> 3841），
+是带战斗专注的牌组在敌人回合里多摸到了百年积木那几张。
 
 ---
 

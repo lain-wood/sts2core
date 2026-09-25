@@ -6,7 +6,7 @@
 
 | 文件 | 内容 |
 |---|---|
-| `state.rs` | POD 状态、状态位 `St`、牌区、RNG、抽牌/洗牌、抽牌堆的**已知前缀** `n_draw_known`（+ 收口点 `pop_draw_top`）、卡实例 `CardInst`（8 字节：id/flags/bonus/cost_delta/**ench**/**ench_amt**）。`MAX_ENEMIES 5` / `N_STATUS 164` / `MAX_POTIONS 10` |
+| `state.rs` | POD 状态、状态位 `St`、牌区、RNG、抽牌/洗牌、抽牌堆的**已知前缀** `n_draw_known`（+ 收口点 `pop_draw_top`）、卡实例 `CardInst`（8 字节：id/flags/bonus/cost_delta/**ench**/**ench_amt**）。`MAX_ENEMIES 5` / `N_STATUS 176` / `MAX_POTIONS 10` |
 | `damage.rs` | **唯一**伤害管线 + 格挡 / 人工制品 |
 | `asc.rs` | **生成产物，别手改**（`tools/dump_ascension.py`）。进阶数值两档：`ASC_HP`（血量区间）+ `ASC_OPS`（招式数值）+ **唯一的收口点 `adjust`**。见 [design-l1.md](design-l1.md) 的「L1：进阶」 |
 | `ops.rs` | `Op` / `EOp` / `CardDef` / `EnemyDef` 定义 + `POTIONS`（表头列着故意不建的那些各自欠什么机制）|
@@ -56,6 +56,7 @@
 | `count_content.py` | **内容清单唯一的计数口径**。`--md` 直接吐上面那张表的 markdown，整块替换。**任何文档里的计数都从这里来，不要手写** |
 | `enemy_report.py` | 从 trace 聚合敌人观测 → `traces/enemies_observed.json` |
 | `relic_hooks.py` | 从反编译源码读每件遗物的**钩子面**（行为，不是静态字段）|
+| `dump_relic_ids.py` | 从反编译源码导**全部遗物的 id**（照抄游戏的 `StringHelper.Slugify(类名)`）到 `data/relic_ids.json`，自检游戏导出的 id 全部算得出来。给「预先补」的遗物证明 id 没拼错 |
 | `dump_ascension.py` | 从反编译源码导**进阶数值**（A8 敌人耐久 / A9 敌人输出）到 `data/ascension.json` + 生成 `src/asc.rs`。**按 (种类, 低进阶值) 认内核的 op**，认不准就整条跳过并报出来 |
 | `dump_encounters.py` | **L3 的数据地基**：从反编译源码导「幕 → 遭遇 → 怪物」到 `data/encounters.json`，从实录导英文类名 ↔ 内核敌人的连接键到 `data/enemy_ids.json`，并印**覆盖率**（这一幕内核今天开得出几场仗）。`--md` 吐覆盖率表。**解析器敢于放弃** —— 构成含随机的遭遇标 `exact: false`，由 `data/encounters_overrides.json` 手填 |
 
@@ -77,6 +78,7 @@
 |---|---|---|
 | `encounters.json` | [源码] 幕 → 遭遇 → 怪物 + 房间构成 + 怪物血量区间 | `dump_encounters.py` |
 | `enemy_ids.json` | [实录] 英文 `MonsterModel` 类名 ↔ 内核敌人 | 同上 |
+| `relic_ids.json` | [源码] 全部 298 个遗物类 -> 游戏 id（+ 池、稀有度）。`relic_ids_exist_in_the_authoritative_catalog` 的第三个权威 | `dump_relic_ids.py` |
 | `encounters_overrides.json` | **手写**：解析器放弃掉的那几场，每条写着为什么确定 | 人 |
 | `ascension.json` | [源码] 进阶数值全表，含 `unmatched` 那份欠账 | `dump_ascension.py` |
 | `ascension_overrides.json` | **手写**：生成器认不出的那些填这里（今天是空的） | 人 |

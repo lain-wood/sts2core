@@ -3,7 +3,7 @@
 //! `State` is `Copy`, so this genuinely takes ownership of a value and returns a
 //! new one. Search code can keep states on the stack and never allocate.
 
-use crate::content::{card, card_ops, enemy_def, playable, HAND_END, POWERS, TURN_SCOPED};
+use crate::content::{card, card_ops, enemy_def, playable, HAND_END, TURN_SCOPED};
 use crate::damage::*;
 use crate::ops::*;
 use crate::state::*;
@@ -79,10 +79,89 @@ pub fn tangled_cost_addend(player: &Entity, id: u16) -> i32 {
 /// **只挡牌，不挡药水** —— `ShouldPlay` 的入参是 `CardModel`。
 #[inline]
 pub fn cards_locked(s: &State) -> bool {
-    (s.player.get(St::Ringing) > 0 && s.cards_played > 0)
-        // 懒惰（知识恶魔的诅咒，[源码] `SlothPower.ShouldPlay => cardsPlayedThisTurn < Amount`）：
-        // 本回合打满 N 张就锁死。和轰鸣同一类（"这一回合最多出几张"），收在同一个判据里。
-        || (s.player.get(St::Sloth) > 0 && s.cards_played >= s.player.get(St::Sloth))
+    (s.player.get(St::Ringing) > 0 && s.cards_played > 0) || play_cap_reached(s)
+}
+
+/// 「本回合最多出 N 张」打满了没有。懒惰和天鹅绒颈圈是**同一个形状**，
+/// `cards_locked`（`legal_actions` / rollout）和 `step` 的 `PlayCard` 共用这一份。
+///
+/// * 懒惰（知识恶魔的诅咒，[源码] `SlothPower.ShouldPlay => cardsPlayedThisTurn < Amount`）
+/// * 天鹅绒颈圈（[源码] `VelvetChoker.ShouldPlay => !(_cardsPlayedThisTurn >= 6)`）
+///
+/// 轰鸣不在这里：它一直只在 `legal_actions` 那一侧，见 `step` 的 `PlayCard`。
+#[inline]
+pub fn play_cap_reached(s: &State) -> bool {
+    let cap = |st: St| s.player.get(st) > 0 && s.cards_played >= s.player.get(st);
+    cap(St::Sloth) || cap(St::VelvetChoker)
+}
+
+/// 这个子选择**还推得动吗** —— 候选集非空，而且目的地装得下。
+///
+/// # 推不动的 `Pending` 是一个真的死局
+///
+/// [`legal_actions`] 在 `Pending` 分支里**提前 return**（只给 `Choose`，不给
+/// `EndTurn`），而 [`step`] 的 `EndTurn` 又在 `pending != None` 时原样返回。
+/// 于是一旦每个 `Choose` 都推不动局面，**这一局再也走不下去**：
+/// 没有任何一个动作改得了状态，回合也结束不了。
+///
+/// [实测] 2026-09-22，3000 场随机战斗扫出一场：
+/// `FetchFromDiscard { remaining: 1 }` + 手牌 10 张（满）+ 弃牌堆 6 张 ——
+/// 6 个合法 `Choose` 全部原地不动。
+///
+/// 下游各自都打过补丁（`rollout::close_pending` 有"一圈推不动就关掉"的逃生门，
+/// `solver::solve_turn_potions` 有"一个合法终点都没找到"的兜底，注释里甚至
+/// 点名了"比如手牌满了还要从弃牌堆拿牌"），但**L1 自己没有出口** ——
+/// 而 `replay::sync` 从真实游戏灌进来同样的局面时，那些下游补丁一个都不在场。
+///
+/// # 两半都要判
+///
+/// 设 `Pending` 的那几个 op 只守了**源**这一半（`n_disc > 0` / `n_hand > 0` /
+/// "有没有可升的牌"），**目的地**那一半一处都没守。而且光在设的时候守也不够：
+/// `FetchFromDiscard { remaining: 3 }` 可以在第 2 张把手牌填满，
+/// 变成推不动是**中途**才发生的。所以判据要能随时重算，收口在
+/// [`close_pending_if_stuck`]。
+///
+/// 头槌那一支还要**排掉它自己**（`exclude`）：弃牌堆里只剩那一张时，
+/// `legal_actions` 一个候选都给不出来，同样是死局。
+pub fn pending_is_satisfiable(s: &State) -> bool {
+    match s.pending {
+        Pending::None => true,
+        // 去处是消耗堆 / 抽牌堆顶，都装得下（一张牌只在一个牌区里，
+        // `n_hand + n_draw <= n_cards <= MAX_CARDS`），只要手上还有牌就推得动
+        Pending::ExhaustFromHand { .. } | Pending::PutToDrawPile { .. } => s.n_hand > 0,
+        // 升级要的是"手上有**可升的**牌"。`legal_actions` 那边有一条兜底
+        // （筛不出来就退回全都可选），所以这里和它同一个口径：手上有牌就行。
+        Pending::UpgradeInHand { .. } => s.n_hand > 0,
+        // **手牌满了就拿不回来**（`step` 那一支的守卫是 `n_hand < MAX_HAND`）
+        Pending::FetchFromDiscard { .. } => {
+            s.n_disc > 0 && (s.n_hand as usize) < MAX_HAND
+        }
+        Pending::DiscardToDrawTop { exclude, .. } => {
+            (s.n_draw as usize) < MAX_CARDS
+                && (0..s.n_disc as usize).any(|i| s.disc[i] != exclude)
+        }
+    }
+}
+
+/// 推不动就把这个子选择关掉。**所有产出 `State` 的地方都要过它一次。**
+///
+/// 于是内核对外维持一条不变量：**拿到手的 `State` 永远不会带着一个推不动的
+/// `Pending`**。这条不变量买下来的东西：`legal_actions` 的 `Pending` 分支、
+/// `step` 那三处 `pending != None` 的守卫、`solver::dfs` 那条"开着子选择的局面
+/// 不是合法终点"——**一个字都不用改**，它们的前提自动成立。
+///
+/// # 关掉 = 这次选择什么也没发生
+///
+/// **游戏怎么处理这一格是欠定的**（语料里一个样本都没有：既没有"手牌满时
+/// 头槌还捞不捞得回来"，也没有"多选到一半手牌满了"）。两条候选里选了
+/// **不给玩家任何他没挣到的东西**那一条 —— 和 `damage::card_block` 里
+/// 脆弱/臂甲顺序取"不高估玩家"是同一条规矩。真拿到判决样本再改这里。
+///
+/// 方向是**低估自己**，所以求解器不会因此去打一张它其实兑现不了的牌。
+pub(crate) fn close_pending_if_stuck(s: &mut State) {
+    if !pending_is_satisfiable(s) {
+        s.pending = Pending::None;
+    }
 }
 
 /// 选牌候选去重：**同一张牌的两个副本完全可互换**，展开两次是白搜。
@@ -584,60 +663,60 @@ fn fire_ctx(s: &mut State, hook: Hook, depth: u8, ctx: usize) {
     if depth > MAX_HOOK_DEPTH {
         return;
     }
-    for def in POWERS {
-        if def.hook != hook {
-            continue;
-        }
-        // `EnemyDamaged` 的持有者**必须是挨打的那一只**，别的敌人不该跟着触发
-        // —— 这和 `Attacked` 正好相反：那个的持有者是玩家、`ctx` 是攻击者。
-        // 一个钩子的 `ctx` 到底指谁，是每个钩子自己的语义，不能一概而论。
-        // 敌人侧**只有 ctx 那一只**触发的钩子。`EnemyDied` 也在其中：
-        // 死的是谁，就只有谁的能力发作（寄生物只召唤自己那 4 只）。
-        //
-        // **`GainBlock` 的 `ctx` 是"谁获得了格挡"**（玩家时是 `usize::MAX`）。
-        // [源码] `JuggernautPower.AfterBlockGained` 的第二个条件就是
-        // `creature == base.Owner` —— 势不可当只对**自己**获得的格挡发作。
-        // 不带这条的话，敌人蜷身获得格挡会触发**我的**势不可当，
-        // 而那一下又把蜷身打醒：两条规则各自没错，合起来是个无限环。
-        // [实测] 2026-09-12 整幕链的一条链上真的绕进去了（栈爆在工作线程里）。
-        // `AttackUnblocked` 的 `ctx` 是攻击者，持有者就是它本身（纸伤难愈只认自己打穿的）。
-        let only_ctx = matches!(
-            hook,
-            Hook::EnemyDamaged | Hook::EnemyAttacked | Hook::EnemyDied | Hook::GainBlock | Hook::AttackUnblocked
-        );
-        // `AllyDied` 正好相反：**除了 ctx 之外**的活敌人才触发
-        let except_ctx = hook == Hook::AllyDied;
-        // 玩家侧照常触发的钩子。`EnemyDamaged` 是唯一的例外
-        // —— `EnemyDied` 玩家是要触发的（地精之角）。
-        // `GainBlock` 那一条是"获得格挡的不是我就不发作"，见上面。
-        let player_fires =
-            !matches!(hook, Hook::EnemyDamaged | Hook::EnemyAttacked | Hook::AllyDied | Hook::AttackUnblocked)
-            && !(hook == Hook::GainBlock && ctx != usize::MAX);
-        // **`Attacked` 只在玩家侧触发。** 它的语义就是"我挨了一下攻击"
-        //（唯一的触发点是 `take_attack_hit`，那是玩家专用的），
-        // 敌人身上同名的 status 跟着发作是没有意义的。
-        //
-        // 以前这条无所谓：`Attacked` 只有火焰屏障一个消费者，而没有敌人带火焰屏障。
-        // 加了荆棘之后就有意义了 —— 多刺蟾蜍带 5 层荆棘，不拦住的话
-        // 「我挨了碾碎爪一下」会让蟾蜍也反弹一次，而且反弹给碾碎爪。
-        let enemies_fire = hook != Hook::Attacked;
-        // **允许死人触发**。只有 `EnemyDied` 需要：触发的前提就是它死了，
-        // 按活人过滤等于这个钩子永远不发作。这一条踩过：寄生物的召唤
-        // 一次都没执行，因为宿主在触发那一刻已经是死的。
-        // **允许死人触发**。`EnemyDied` 的理由见上；`EnemyTurnStart` 是给
-        // 实验体的复苏用的 —— 它被砍死之后血量是 0、要等到自己的回合开始
-        // 才回满，那条规则必须在"还是死的"时候跑得起来。
-        let allow_dead = matches!(hook, Hook::EnemyDied | Hook::EnemyTurnStart);
+    // 下面五个开关**只看钩子**，和是哪一条规则无关 —— 提到循环外面算一次。
+    // `EnemyDamaged` 的持有者**必须是挨打的那一只**，别的敌人不该跟着触发
+    // —— 这和 `Attacked` 正好相反：那个的持有者是玩家、`ctx` 是攻击者。
+    // 一个钩子的 `ctx` 到底指谁，是每个钩子自己的语义，不能一概而论。
+    // 敌人侧**只有 ctx 那一只**触发的钩子。`EnemyDied` 也在其中：
+    // 死的是谁，就只有谁的能力发作（寄生物只召唤自己那 4 只）。
+    //
+    // **`GainBlock` 的 `ctx` 是"谁获得了格挡"**（玩家时是 `usize::MAX`）。
+    // [源码] `JuggernautPower.AfterBlockGained` 的第二个条件就是
+    // `creature == base.Owner` —— 势不可当只对**自己**获得的格挡发作。
+    // 不带这条的话，敌人蜷身获得格挡会触发**我的**势不可当，
+    // 而那一下又把蜷身打醒：两条规则各自没错，合起来是个无限环。
+    // [实测] 2026-09-12 整幕链的一条链上真的绕进去了（栈爆在工作线程里）。
+    // `AttackUnblocked` 的 `ctx` 是攻击者，持有者就是它本身（纸伤难愈只认自己打穿的）。
+    let only_ctx = matches!(
+        hook,
+        Hook::EnemyDamaged | Hook::EnemyAttacked | Hook::EnemyDied | Hook::GainBlock | Hook::AttackUnblocked
+    );
+    // `AllyDied` 正好相反：**除了 ctx 之外**的活敌人才触发
+    let except_ctx = hook == Hook::AllyDied;
+    // 玩家侧照常触发的钩子。`EnemyDamaged` 是唯一的例外
+    // —— `EnemyDied` 玩家是要触发的（地精之角）。
+    // `GainBlock` 那一条是"获得格挡的不是我就不发作"，见上面。
+    let player_fires =
+        !matches!(hook, Hook::EnemyDamaged | Hook::EnemyAttacked | Hook::AllyDied | Hook::AttackUnblocked)
+        && !(hook == Hook::GainBlock && ctx != usize::MAX);
+    // **`Attacked` 只在玩家侧触发。** 它的语义就是"我挨了一下攻击"
+    //（唯一的触发点是 `take_attack_hit`，那是玩家专用的），
+    // 敌人身上同名的 status 跟着发作是没有意义的。
+    //
+    // 以前这条无所谓：`Attacked` 只有火焰屏障一个消费者，而没有敌人带火焰屏障。
+    // 加了荆棘之后就有意义了 —— 多刺蟾蜍带 5 层荆棘，不拦住的话
+    // 「我挨了碾碎爪一下」会让蟾蜍也反弹一次，而且反弹给碾碎爪。
+    let enemies_fire = hook != Hook::Attacked;
+    // **允许死人触发**。只有 `EnemyDied` 需要：触发的前提就是它死了，
+    // 按活人过滤等于这个钩子永远不发作。这一条踩过：寄生物的召唤
+    // 一次都没执行，因为宿主在触发那一刻已经是死的。
+    // **允许死人触发**。`EnemyDied` 的理由见上；`EnemyTurnStart` 是给
+    // 实验体的复苏用的 —— 它被砍死之后血量是 0、要等到自己的回合开始
+    // 才回满，那条规则必须在"还是死的"时候跑得起来。
+    let allow_dead = matches!(hook, Hook::EnemyDied | Hook::EnemyTurnStart);
+    // **只扫这个钩子那一组**（组内是表内顺序，见 `content::powers_for`）。
+    // 敌人个数每条规则都重新读：规则可以召唤（寄生物、库存），召出来的那只同一轮就该被扫到。
+    for &def in crate::content::powers_for(hook) {
         if player_fires {
             let n = s.player.get(def.st);
             if n > 0 {
                 run_trigger(s, def, Owner::Player, n, depth, ctx);
             }
         }
+        if !enemies_fire {
+            continue;
+        }
         for e in 0..s.n_enemies as usize {
-            if !enemies_fire {
-                break;
-            }
             if !allow_dead && !s.enemies[e].alive() {
                 continue;
             }
@@ -711,6 +790,13 @@ fn tcond_holds(s: &State, who: Owner, c: TCond, stacks: i32, self_st: St) -> boo
         // 刚落地的那一下。两个字段由 `hit_enemy_with` 在点 `EnemyDamaged` 之前写好。
         TCond::LastHitWasAttack => s.last_hit_attack,
         TCond::LastHitUnblocked => s.last_hit_unblocked,
+        TCond::CardsPlayedAtMost(n) => s.cards_played <= n,
+        TCond::NoAttackThisTurn => s.attacks_played == 0,
+        // 判倍数不判 ≥ n，理由见 `TCond::CounterMultipleOf`。
+        TCond::CounterMultipleOf { st, n } => {
+            let c = owner_ref(s, who).get(st);
+            n > 0 && c > 0 && c % n == 0
+        }
     }
 }
 
@@ -856,6 +942,13 @@ fn run_ops(
             TOp::OwnerDraw(amt) => {
                 if matches!(who, Owner::Player) {
                     s.draw_n(val(amt));
+                }
+            }
+            // **只记账，不抽。** [源码] 这一族改的是 `CombatManager` 那一次发牌的张数，
+            // 不自己抽牌 —— 张数在 `hand_draw_count` 里合起来，`open_hand` 一次发完。
+            TOp::OwnerHandDraw(amt) => {
+                if matches!(who, Owner::Player) {
+                    s.player.add(St::HandDrawBonus, val(amt));
                 }
             }
             // 滚石。**这里不加力量**：它不是攻击牌，卡面也没说吃力量，
@@ -2249,7 +2342,11 @@ fn auto_play_card(s: &mut State, cix: u8, force_exhaust: bool, depth: u8) {
     let inst = s.cards[cix as usize];
     let d = card(inst.id);
     // 不可打出的牌（黏液/伤口那类）：不结算，直接进弃牌堆。
-    if !playable(inst.id) {
+    //
+    // **出牌数打满了（懒惰 / 天鹅绒颈圈）也是这一支**：[源码] `CardCmd.AutoPlay` 里
+    // `Hook.ShouldPlay` 返回 false 和 `Unplayable` 走的是同一句 `MoveToResultPileWithoutPlaying`，
+    // 而这两件的 `ShouldPlay` 都不看 `AutoPlayType`（参数名就是 `_`）。
+    if !playable(inst.id) || play_cap_reached(s) {
         s.to_discard(cix);
         return;
     }
@@ -2330,6 +2427,8 @@ pub(crate) fn take_attack_hit(s: &mut State, attacker: usize, d: i32) {
 fn begin_enemy_turn(s: &mut State) {
     // 敌人这一边的回合开始，**最早一档**（[源码] `BeforeSideTurnStart`，在清格挡之前）。
     // 两条敌人回合路径都走这里，所以注入式威胁下硬化外壳也照样回满。见 `Hook::SideTurnStart`。
+    // 翻到敌人那一边（小提琴的抽牌锁从这里起不拦，见 `State::enemy_side`）。
+    s.enemy_side = true;
     fire(s, Hook::SideTurnStart, 0);
     for e in 0..s.n_enemies as usize {
         if s.enemies[e].get(St::Burrowed) == 0 {
@@ -2991,6 +3090,7 @@ fn enemy_turn(s: &mut State) {
 fn start_player_turn_before_draw(s: &mut State) {
     // 我这一边的回合开始，**最早一档**（[源码] `BeforeSideTurnStart`）：
     // 清格挡、能量回满、`TurnStart`（水银沙漏 / 滚石打敌人）全在它后面。见 `Hook::SideTurnStart`。
+    s.enemy_side = false;
     fire(s, Hook::SideTurnStart, 0);
     s.turn += 1;
     // 壁垒：「格挡不再在你的回合开始时消失。」
@@ -3004,6 +3104,10 @@ fn start_player_turn_before_draw(s: &mut State) {
     s.exhausted_this_turn = 0;
     s.hp_lost_this_turn = 0;
     s.free_attack = 0;
+    // 上一次记的发牌加张数**一律作废**：正常路径上 `open_hand` 已经读完清零了，
+    // 这一句兜的是调用方停在发牌之前、没接着 `open_hand` 的局面 —— 不清的话
+    // 下一回合会把上回合那几张叠上去。`TurnStart` 在这句**之后**才重新记账。
+    s.player.set(St::HandDrawBonus, 0);
     // 缓慢 accumulates within a turn only
     //
     // 敌人的格挡**不在这里清**：格挡在其拥有者的回合开始时才消失，敌人挡下的
@@ -3029,21 +3133,50 @@ fn start_player_turn_before_draw(s: &mut State) {
     fire(s, Hook::TurnStart, 0);
 }
 
-/// 抽开局手牌（5 张）。**跨回合 planner 的机会节点就插在它前面。**
+/// 开局发牌的基础张数（[源码] `CombatManager.SetupPlayerTurn` 里那个 `5m`）。
+pub const BASE_HAND_DRAW: usize = 5;
+
+/// **这一手开局发牌会往手里放几张**（抽牌堆 + 弃牌堆够的话）。
 ///
-/// 那个 5 是基础张数。今天唯一**减**它的是心灵腐化（知识恶魔的诅咒）；
-/// 加它的佩尔之血挂在 `TurnStart` 上先抽。清晰/稳定血清那类药水没建，
-/// 理由在 `ops.rs::POTIONS` 表头 —— 将来有了，改这一处。
+/// 只在「回合开始、还没发牌」的局面上有意义（`end_turn_before_draw` 的输出）——
+/// `open_hand` 发的就是这个数，**planner 的机会节点也读它**：抽几张是 L1 的规则，
+/// L2 不许抄一份。2026-09-25 之前机会节点写死 5，心灵腐化那一手实际只抽 4，
+/// 6 张不同的牌逐张进手概率被算成 0 / 2/3 / 5/6 ×4（真值每张 2/3），概率和照样是 1。
+///
+/// 照 [源码] 的顺序：
+///
+/// 1. `Hook.ModifyHandDraw(5)`：佩尔之血 / 准备背包 / 花粉核心 **加**
+///    （它们在 `TurnStart` 上记进 [`St::HandDrawBonus`]），心灵腐化 **减**、到 0 封底；
+/// 2. `ModifyHandDrawLate`：小提琴 +2。**内核把它并进了第 1 步的加张数**，
+///    只在 `5 + 加张数 − 心灵腐化 < 0` 时和源码不同 —— 心灵腐化今天只有 1 层；
+/// 3. `CardPileCmd.Draw`：**手牌上限封顶**，手满了一张都不抽、**也不洗牌**
+///    （`num == 0` 直接返回，在 `ShuffleIfNecessary` 之前）。
+///
+/// 第 1 回合的固有牌（[源码] `Math.Max(handDraw, 固有张数)`）没建：
+/// `begin_combat` 只把固有牌挪到牌堆顶，固有牌超过这一手张数时会少发。
+pub fn hand_draw_count(s: &State) -> usize {
+    let n = (BASE_HAND_DRAW as i32 + s.player.get(St::HandDrawBonus) - s.player.get(St::MindRot)).max(0);
+    (n as usize).min(MAX_HAND.saturating_sub(s.n_hand as usize))
+}
+
+/// 发开局手牌（[`hand_draw_count`] 张）。**跨回合 planner 的机会节点就插在它前面。**
+///
+/// 清晰/稳定血清那类「改每回合抽几张」的药水没建，理由在 `ops.rs::POTIONS` 表头 ——
+/// 将来有了，进 `hand_draw_count`。
 pub fn open_hand(s: &mut State) {
-    // 心灵腐化（知识恶魔的诅咒，[源码] `MindRotPower.ModifyHandDraw => max(0, count − Amount)`）。
-    // 佩尔之血那 +1 挂在 `TurnStart` 上先抽了，这里只减基础那 5 张 ——
-    // 合起来和源码的 `max(0, 5 + 1 − Amount)` 相同（`Amount` 只来自一次诅咒，1 层）。
-    s.draw_n((5 - s.player.get(St::MindRot)).max(0) as _);
+    let n = hand_draw_count(s);
+    s.player.set(St::HandDrawBonus, 0);
+    // 走发牌那条路（`hand_draw_n`）：小提琴的抽牌锁不拦开局发牌。
+    s.hand_draw_n(n as i32);
     // 手牌发下来之后才发作的那几件（风箱/骨茶升级手牌）。**必须在这里，
     // 不能挂 `TurnStart`** —— 那个钩子在抽牌之前，升级的是一手空牌。
     fire(s, Hook::HandDrawn, 0);
     // 绯红披风/滚石 可能在这里就把人打死或把敌人打死
     check_over(s);
+    // **抽牌本身就能把一个子选择变成推不动的**（上回合留下来的头槌/涅奥之怒，
+    // 这一手把手牌抽满了）。`open_hand` 是 `step` 之外的一个入口 ——
+    // planner 的机会节点和 `Leaf::Rollout` 都直接调它，见 `close_pending_if_stuck`。
+    close_pending_if_stuck(s);
 }
 
 fn start_player_turn(s: &mut State) {
@@ -3120,7 +3253,8 @@ fn injected_enemy_turn(s: &mut State, inc: &Incoming, live: bool) {
                 let face = base + s.enemies[e].get(St::Strength);
                 crate::damage::apply_modifiers(face, &s.enemies[e], &s.player)
             } else {
-                base
+                // 标签是同步那一刻冻住的；**我的回合末才挂上的**乘区（钻石头冠）它不含，补在这里。
+                crate::damage::frozen_label_after_turn_end(base, &s.player)
             };
             take_attack_hit(s, e, d);
         }
@@ -3134,6 +3268,25 @@ fn injected_enemy_turn(s: &mut State, inc: &Incoming, live: bool) {
         if s.player.hp <= 0 {
             break;
         }
+    }
+    // **注入路径也要发这三档。** 和上面 `EnemyTurnStart` 逐字同一条理由：
+    // 它们管的是"敌人整边**结束**时发生的事"，和"这一手打多少"是两件事 ——
+    // 注入的只有后者。
+    //
+    // 漏掉它们同样是**结构性**的：L2 走的正是这条注入路径，于是每一个叶子上
+    // 敌人都不涨力量（仪式 / 高压 / 领地意识）、覆甲不给格挡、沉睡/熟睡不掉层、
+    // 宿敌不切无实体。方向清一色是**乐观**（敌人比真实的弱）。
+    // [实测] 2026-09-22，一手纯攻击招上单独量出来的三笔：
+    //   覆甲 7 -> 注入后格挡 0，完整回合 7
+    //   高压 2 -> 注入后力量 0，完整回合 2
+    //   沉睡 2 -> 注入后仍是 2，完整回合掉到 1
+    //
+    // 三档的顺序和 `if s.player.hp > 0` 那道门都照抄 `enemy_turn`，
+    // **两条路径的回合末必须逐字相同** —— 抄成一份就是这个函数存在的理由。
+    if s.player.hp > 0 {
+        fire(s, Hook::EnemyTurnEndVeryEarly, 0);
+        fire(s, Hook::EnemyTurnEndEarly, 0);
+        fire(s, Hook::EnemyTurnEnd, 0);
     }
 }
 
@@ -3289,6 +3442,9 @@ fn end_turn_impl(mut s: State, inc: Option<(&Incoming, bool)>, open: bool) -> St
         open_hand(&mut s);
     }
     check_over(&mut s);
+    // `end_turn_before_draw`（`open == false`）是跨回合 planner 的回合边界，
+    // 它不经过 `step` 也不经过 `open_hand` —— 同一条出口收口要自己走一遍。
+    close_pending_if_stuck(&mut s);
     s
 }
 
@@ -3309,6 +3465,18 @@ fn use_potion(mut s: State, slot: usize, target: usize) -> State {
     if pot_id == potion::NONE || pot_id == potion::UNKNOWN {
         return s;
     }
+    // **喝不了的药水在这里也要拦一道**（[源码] `PotionUsage.Automatic`，瓶中精灵）。
+    // `legal_actions` 早就不给这个动作了（那边同样查 `potion_is_automatic`），
+    // 但 `step` 少了这条就和它对同一个局面给出**两个不同的答案** —— 不变量 5。
+    //
+    // 而且这不是一条无害的不一致：底下那句 `s.potions[slot] = NONE` 会把瓶子
+    // 清掉，而瓶中精灵的 ops 是空的（效果在 `try_fairy`）—— 净结果是
+    // **把玩家的保命药水白白扔掉，还返回一个"变了"的状态**，
+    // `ns == *s` 那条守卫因此也接不住它。
+    // [实测] 2026-09-22：`step(UsePotion{slot:0})` 把槽 0 的瓶中精灵从 14 变成 0。
+    if crate::ops::potion_is_automatic(pot_id) {
+        return s;
+    }
     s.potions[slot] = potion::NONE;
     let ops = potion_def(pot_id).ops;
     // `cix` 传 0 是安全的：`Op::GrowThisCard` 在 `Source::Potion` 下被守卫跳过。
@@ -3318,7 +3486,18 @@ fn use_potion(mut s: State, slot: usize, target: usize) -> State {
 }
 
 /// The public transition. Illegal actions return the state unchanged.
-pub fn step(mut s: State, a: Action) -> State {
+///
+/// **出口收口**：末态一律过一遍 [`close_pending_if_stuck`]，于是内核吐出来的
+/// `State` 永远不会带着一个推不动的子选择（见那个函数）。放在这里而不是散在
+/// 每个设 `Pending` 的 op 旁边，是因为"变得推不动"可以发生在**两个**时点 ——
+/// 挂上去的那一刻（手牌本来就满），和多选到一半的时候（第 2 张把手牌填满）。
+pub fn step(s: State, a: Action) -> State {
+    let mut s = step_inner(s, a);
+    close_pending_if_stuck(&mut s);
+    s
+}
+
+fn step_inner(mut s: State, a: Action) -> State {
     if s.combat_over {
         return s;
     }
@@ -3420,9 +3599,9 @@ pub fn step(mut s: State, a: Action) -> State {
             if s.pending != Pending::None {
                 return s;
             }
-            // 懒惰：`legal_actions` 不给打，`step` 也要原样返回（不变量 5）。
+            // 懒惰 / 天鹅绒颈圈：`legal_actions` 不给打，`step` 也要原样返回（不变量 5）。
             // 轰鸣故意没收进来：它一直只在 `legal_actions` 那一侧，改它要单独过一遍对拍。
-            if s.player.get(St::Sloth) > 0 && s.cards_played >= s.player.get(St::Sloth) {
+            if play_cap_reached(&s) {
                 return s;
             }
             let i = hand as usize;
@@ -3600,5 +3779,9 @@ pub fn begin_combat(mut s: State) -> State {
     }
     s.turn = 0;
     start_player_turn(&mut s);
+    // 和 `step` 同一条出口收口：开局那几个钩子（骨茶的升级手牌之类）也能挂出
+    // `Pending`，而 `begin_combat` 不经过 `step`。少这一句的话，一个**开局就
+    // 推不动**的子选择会让 `legal_actions` 当场给出空集 —— 那是比死锁更早的死局。
+    close_pending_if_stuck(&mut s);
     s
 }
